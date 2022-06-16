@@ -59,7 +59,10 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         $this->displayBlock('stylesheets', $context, $blocks);
         // line 11
         echo "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-
+        <link rel=\"stylesheet\" href=\"";
+        // line 12
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/styles.css"), "html", null, true);
+        echo "\">
         ";
         // line 13
         $this->displayBlock('javascripts', $context, $blocks);
@@ -174,9 +177,14 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         return "base.html.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  155 => 20,  143 => 16,  137 => 14,  127 => 13,  114 => 9,  104 => 8,  85 => 5,  73 => 21,  71 => 20,  67 => 18,  65 => 13,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
+        return array (  158 => 20,  146 => 16,  140 => 14,  130 => 13,  117 => 9,  107 => 8,  88 => 5,  76 => 21,  74 => 20,  70 => 18,  68 => 13,  64 => 12,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -192,7 +200,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
         <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-
+        <link rel=\"stylesheet\" href=\"{{ asset('css_files/styles.css') }}\">
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
              <!-- Include the compiled script-->
@@ -203,6 +211,6 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         {% block body %}{% endblock %}
     </body>
 </html>
-", "base.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\symfony-react-starter\\templates\\base.html.twig");
+", "base.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\base.html.twig");
     }
 }

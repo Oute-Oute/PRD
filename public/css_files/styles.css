@@ -1,0 +1,16 @@
+body {
+    background-color: lightgray;
+    height : 100vh;
+}
+
+div#add_user_form {
+
+display:flex;
+align-items: center;
+flex-direction : column;
+justify-content : center;
+height : 100vh;
+}
+
+form#
+
