@@ -29,6 +29,8 @@
                 <td>
                     <button class = "btn_infos_user btn-secondary" onclick="window.location.href='{{ path('app_user_show', {'id': user.id}) }}'">Infos</a>
                     <button class = "btn_edit_user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
+                    {{ include('user/_delete_form.html.twig') }}
+
                 </td>
             </tr>
         {% else %}

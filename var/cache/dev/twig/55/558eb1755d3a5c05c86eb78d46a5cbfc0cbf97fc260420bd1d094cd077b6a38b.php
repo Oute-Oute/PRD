@@ -134,6 +134,19 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["users"]) || array_key_exists("users", $context) ? $context["users"] : (function () { throw new RuntimeError('Variable "users" does not exist.', 24, $this->source); })()));
         $context['_iterated'] = false;
+        $context['loop'] = [
+          'parent' => $context['_parent'],
+          'index0' => 0,
+          'index'  => 1,
+          'first'  => true,
+        ];
+        if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+            $length = count($context['_seq']);
+            $context['loop']['revindex0'] = $length - 1;
+            $context['loop']['revindex'] = $length;
+            $context['loop']['length'] = $length;
+            $context['loop']['last'] = 1 === $length;
+        }
         foreach ($context['_seq'] as $context["_key"] => $context["user"]) {
             // line 25
             echo "            <tr>
@@ -158,13 +171,26 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
             // line 31
             echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 31)]), "html", null, true);
             echo "'\">Éditer</a>
+                    ";
+            // line 32
+            echo twig_include($this->env, $context, "user/_delete_form.html.twig");
+            echo "
+
                 </td>
             </tr>
         ";
             $context['_iterated'] = true;
+            ++$context['loop']['index0'];
+            ++$context['loop']['index'];
+            $context['loop']['first'] = false;
+            if (isset($context['loop']['length'])) {
+                --$context['loop']['revindex0'];
+                --$context['loop']['revindex'];
+                $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+            }
         }
         if (!$context['_iterated']) {
-            // line 35
+            // line 37
             echo "            <tr>
                 <td colspan=\"4\">Pas d'utilisateurs créés !</td>
             </tr>
@@ -173,7 +199,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['user'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 39
+        // line 41
         echo "        </tbody>
     </table>
 </div>
@@ -199,7 +225,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
     public function getDebugInfo()
     {
-        return array (  177 => 39,  168 => 35,  159 => 31,  155 => 30,  150 => 28,  146 => 27,  142 => 26,  139 => 25,  134 => 24,  119 => 12,  114 => 9,  104 => 8,  92 => 6,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
+        return array (  203 => 41,  194 => 37,  176 => 32,  172 => 31,  168 => 30,  163 => 28,  159 => 27,  155 => 26,  152 => 25,  134 => 24,  119 => 12,  114 => 9,  104 => 8,  92 => 6,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -235,6 +261,8 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
                 <td>
                     <button class = \"btn_infos_user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_show', {'id': user.id}) }}'\">Infos</a>
                     <button class = \"btn_edit_user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
+                    {{ include('user/_delete_form.html.twig') }}
+
                 </td>
             </tr>
         {% else %}

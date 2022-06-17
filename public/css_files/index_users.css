@@ -3,9 +3,9 @@ body {
     height : 100vh;
 }
 
-.btn_add_user, .btn_edit_user, .btn_infos_user {
+.btn_add_user, .btn_edit_user, .btn_infos_user, .btn_delete_user {
     border : 2px solid #34EB67;
-    margin-top : 20px;
+    margin-top : 10px;
     border: none;
     background: #404040;
     color: #ffffff;
@@ -16,10 +16,11 @@ body {
     transition: all 0.3s ease 0s;
     border : 1px solid black;
     margin-left : 10px;
+    margin-bottom : 5px;
 }
 
 
-.btn_add_user:hover, .btn_edit_user:hover, .btn_infos_user:hover {
+.btn_add_user:hover, .btn_edit_user:hover, .btn_infos_user:hover, .btn_delete_user:hover {
     color: #404040;
     background : none;
     border : 1px solid black;
@@ -42,3 +43,4 @@ body {
 .table-index-users{
     width : 100%;
 }
+

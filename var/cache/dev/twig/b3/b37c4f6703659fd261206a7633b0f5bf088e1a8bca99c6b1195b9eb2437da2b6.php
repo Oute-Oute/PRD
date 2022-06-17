@@ -56,7 +56,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 class=\"dashboard-nav-dropdown-item\">Humaines</a>
                 <a href=\"#\" class=\"dashboard-nav-dropdown-item\">Matérielles</a></div>
             </div>
-            <a href=\"consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
+            <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
             <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
           <div class=\"nav-item-divider\"></div>
           <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
@@ -100,7 +100,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 class=\"dashboard-nav-dropdown-item\">Humaines</a>
                 <a href=\"#\" class=\"dashboard-nav-dropdown-item\">Matérielles</a></div>
             </div>
-            <a href=\"consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
+            <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
             <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
           <div class=\"nav-item-divider\"></div>
           <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
