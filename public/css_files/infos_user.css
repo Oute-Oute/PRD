@@ -9,18 +9,23 @@ body {
     border: none;
     background: #404040;
     color: #ffffff;
-    font-weight: 100;
-    padding: 20px;
-    text-transform: uppercase;
+    padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    margin-left : 50px;
+    border : 1px solid black;
+    margin-left : 10px;
 }
 
 .btn_consult_users:hover, .btn_edit_user:hover, .btn_delete_user:hover {
     color: #404040;
     background : none;
     border : 1px solid black;
+}
+
+#show_user {
+    position : relative;
+    width: 100%;
+    padding : 20px;
 }

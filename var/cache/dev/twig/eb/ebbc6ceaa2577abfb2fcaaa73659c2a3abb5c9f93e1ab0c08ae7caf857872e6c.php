@@ -58,15 +58,27 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         echo "        ";
         $this->displayBlock('stylesheets', $context, $blocks);
         // line 11
-        echo "        ";
+        echo "        <link rel=\"stylesheet\" href=\"";
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/Menu.css"), "html", null, true);
+        echo "\">
+                <link rel=\"stylesheet\" href=\"";
+        // line 12
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/Main.css"), "html", null, true);
+        echo "\">
+
+        ";
+        // line 14
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 16
+        // line 22
         echo "    </head>
     <body>
-        ";
-        // line 18
+    ";
+        // line 24
+        $this->loadTemplate("global/menu.html", "base.html.twig", 24)->display($context);
+        // line 25
+        echo "        ";
         $this->displayBlock('body', $context, $blocks);
-        // line 19
+        // line 26
         echo "    </body>
 </html>
 ";
@@ -120,7 +132,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 11
+    // line 14
     public function block_javascripts($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -130,16 +142,25 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 12
+        // line 15
         echo "            ";
         echo $this->extensions['Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension']->renderWebpackScriptTags("app");
         echo "
+            ";
+        // line 16
+        echo $this->extensions['Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension']->renderWebpackScriptTags("Menu");
+        echo "
              <!-- Include the compiled script-->
+             <script src=\"https://code.jquery.com/jquery-1.9.1.js\"></script>
              <script type=\"text/javascript\" src=\"";
-        // line 14
+        // line 19
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/js/app.js"), "html", null, true);
         echo "\"></script>
-        ";
+             <script type=\"text/javascript\" src=\"";
+        // line 20
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/js/Menu.js"), "html", null, true);
+        echo "\"></script>
+";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
 
@@ -148,7 +169,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 18
+    // line 25
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -171,9 +192,14 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         return "base.html.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  152 => 18,  140 => 14,  134 => 12,  124 => 11,  111 => 9,  101 => 8,  82 => 5,  70 => 19,  68 => 18,  64 => 16,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
+        return array (  173 => 25,  161 => 20,  157 => 19,  151 => 16,  146 => 15,  136 => 14,  123 => 9,  113 => 8,  94 => 5,  82 => 26,  79 => 25,  77 => 24,  73 => 22,  71 => 14,  66 => 12,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -188,13 +214,20 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        <link rel=\"stylesheet\" href=\"{{ asset('css_files/Menu.css') }}\">
+                <link rel=\"stylesheet\" href=\"{{ asset('css_files/Main.css') }}\">
+
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('Menu') }}
              <!-- Include the compiled script-->
+             <script src=\"https://code.jquery.com/jquery-1.9.1.js\"></script>
              <script type=\"text/javascript\" src=\"{{ asset('build/js/app.js') }}\"></script>
-        {% endblock %}
+             <script type=\"text/javascript\" src=\"{{ asset('build/js/Menu.js') }}\"></script>
+{% endblock %}
     </head>
     <body>
+    {% include 'global/menu.html' %}
         {% block body %}{% endblock %}
     </body>
 </html>

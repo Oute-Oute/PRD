@@ -111,16 +111,17 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
         // line 11
-        echo "<div id = \"add_user_form\">
+        echo "<!--- FORMULAIRE -->
+<div id = \"add_user_form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>
 
     ";
-        // line 15
+        // line 16
         echo twig_include($this->env, $context, "user/_form.html.twig");
         echo "
     <button class=\"btn_consult_users btn-secondary\" onclick=\"window.location.href='";
-        // line 16
+        // line 17
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</button>
 </div>
@@ -146,7 +147,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     public function getDebugInfo()
     {
-        return array (  124 => 16,  120 => 15,  114 => 11,  104 => 10,  92 => 7,  89 => 6,  79 => 5,  60 => 4,  37 => 1,);
+        return array (  125 => 17,  121 => 16,  114 => 11,  104 => 10,  92 => 7,  89 => 6,  79 => 5,  60 => 4,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -161,6 +162,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         {% endblock %}
 
 {% block body %}
+<!--- FORMULAIRE -->
 <div id = \"add_user_form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>

@@ -55,3 +55,10 @@ import React from 'react';
  }
  
  ReactDOM.render(<App />, document.getElementById('root'));
+
+ //Pour éviter l'erreur $ is not defined etc..
+import './styles/app.scss';
+ 
+import './bootstrap';
+ 
+const $ = require('jquery');

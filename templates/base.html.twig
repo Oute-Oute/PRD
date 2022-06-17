@@ -8,13 +8,20 @@
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
+        <link rel="stylesheet" href="{{ asset('css_files/Menu.css') }}">
+                <link rel="stylesheet" href="{{ asset('css_files/Main.css') }}">
+
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('Menu') }}
              <!-- Include the compiled script-->
+             <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
              <script type="text/javascript" src="{{ asset('build/js/app.js') }}"></script>
-        {% endblock %}
+             <script type="text/javascript" src="{{ asset('build/js/Menu.js') }}"></script>
+{% endblock %}
     </head>
     <body>
+    {% include 'global/menu.html' %}
         {% block body %}{% endblock %}
     </body>
 </html>
