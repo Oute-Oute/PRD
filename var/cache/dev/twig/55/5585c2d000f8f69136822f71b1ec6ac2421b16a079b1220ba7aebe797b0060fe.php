@@ -26,6 +26,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
         $this->blocks = [
             'title' => [$this, 'block_title'],
+            'stylesheets' => [$this, 'block_stylesheets'],
             'body' => [$this, 'block_body'],
         ];
     }
@@ -74,7 +75,32 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     }
 
-    // line 6
+    // line 5
+    public function block_stylesheets($context, array $blocks = [])
+    {
+        $macros = $this->macros;
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->enter($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        // line 6
+        echo "                <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
+                <link rel=\"stylesheet\" href=\"";
+        // line 7
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/add_user.css"), "html", null, true);
+        echo "\">
+        ";
+        
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
+
+        
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->leave($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof);
+
+    }
+
+    // line 10
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -84,20 +110,21 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 7
+        // line 11
         echo "<div id = \"add_user_form\">
-    <h1>Ajouter un nouvel utilisateur</h1>
+<div id = \"container\">
+    <h3>Ajouter un nouvel utilisateur</h3>
 
     ";
-        // line 10
+        // line 15
         echo twig_include($this->env, $context, "user/_form.html.twig");
         echo "
-
-    <a href=\"";
-        // line 12
+    <button class=\"btn_consult_users btn-secondary\" onclick=\"window.location.href='";
+        // line 16
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
-        echo "\">Consulter les utilisateurs</a>
-    </div>
+        echo "'\">Consulter les utilisateurs</button>
+</div>
+</div>
 ";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
@@ -119,7 +146,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     public function getDebugInfo()
     {
-        return array (  98 => 12,  93 => 10,  88 => 7,  78 => 6,  59 => 4,  36 => 1,);
+        return array (  124 => 16,  120 => 15,  114 => 11,  104 => 10,  92 => 7,  89 => 6,  79 => 5,  60 => 4,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -128,15 +155,20 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         
 
 {% block title %}Ajouter un nouvel utilisateur{% endblock %}
+        {% block stylesheets %}
+                <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
+                <link rel=\"stylesheet\" href=\"{{ asset('css_files/add_user.css') }}\">
+        {% endblock %}
 
 {% block body %}
 <div id = \"add_user_form\">
-    <h1>Ajouter un nouvel utilisateur</h1>
+<div id = \"container\">
+    <h3>Ajouter un nouvel utilisateur</h3>
 
     {{ include('user/_form.html.twig') }}
-
-    <a href=\"{{ path('app_user_index') }}\">Consulter les utilisateurs</a>
-    </div>
+    <button class=\"btn_consult_users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
+</div>
+</div>
 {% endblock %}
 ", "user/new.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
     }

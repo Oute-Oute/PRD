@@ -22,4 +22,5 @@ return [
     '_profiler_exception' => [['token'], ['_controller' => 'web_profiler.controller.exception_panel::body'], [], [['text', '/exception'], ['variable', '/', '[^/]++', 'token', true], ['text', '/_profiler']], [], [], []],
     '_profiler_exception_css' => [['token'], ['_controller' => 'web_profiler.controller.exception_panel::stylesheet'], [], [['text', '/exception.css'], ['variable', '/', '[^/]++', 'token', true], ['text', '/_profiler']], [], [], []],
     'add_user' => [[], ['_controller' => 'App\\Controller\\UserController::new'], [], [['text', '/add_user']], [], [], []],
+    'consult_users' => [[], ['_controller' => 'App\\Controller\\UserController::index'], [], [['text', '/consult_users']], [], [], []],
 ];

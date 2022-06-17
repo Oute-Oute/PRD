@@ -58,21 +58,15 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         echo "        ";
         $this->displayBlock('stylesheets', $context, $blocks);
         // line 11
-        echo "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"";
-        // line 12
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/styles.css"), "html", null, true);
-        echo "\">
-        ";
-        // line 13
+        echo "        ";
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 18
+        // line 16
         echo "    </head>
     <body>
         ";
-        // line 20
+        // line 18
         $this->displayBlock('body', $context, $blocks);
-        // line 21
+        // line 19
         echo "    </body>
 </html>
 ";
@@ -126,7 +120,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 13
+    // line 11
     public function block_javascripts($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -136,13 +130,13 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 14
+        // line 12
         echo "            ";
         echo $this->extensions['Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension']->renderWebpackScriptTags("app");
         echo "
              <!-- Include the compiled script-->
              <script type=\"text/javascript\" src=\"";
-        // line 16
+        // line 14
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/js/app.js"), "html", null, true);
         echo "\"></script>
         ";
@@ -154,7 +148,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 20
+    // line 18
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -177,14 +171,9 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         return "base.html.twig";
     }
 
-    public function isTraitable()
-    {
-        return false;
-    }
-
     public function getDebugInfo()
     {
-        return array (  158 => 20,  146 => 16,  140 => 14,  130 => 13,  117 => 9,  107 => 8,  88 => 5,  76 => 21,  74 => 20,  70 => 18,  68 => 13,  64 => 12,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
+        return array (  152 => 18,  140 => 14,  134 => 12,  124 => 11,  111 => 9,  101 => 8,  82 => 5,  70 => 19,  68 => 18,  64 => 16,  61 => 11,  58 => 8,  53 => 5,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -199,8 +188,6 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
-        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"{{ asset('css_files/styles.css') }}\">
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
              <!-- Include the compiled script-->
