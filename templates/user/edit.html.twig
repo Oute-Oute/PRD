@@ -2,17 +2,16 @@
 
 {% block title %}Éditer un utilisateur{% endblock %}
 {% block stylesheets %}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{ asset('css_files/edit_user.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/User/EditUser.css') }}">
 {% endblock %}
 {% block body %}
-<div id = "edit_user_form">
+<div id = "edit-user-form">
 <div id = "container">
     <h1>Éditer un utilisateur</h1>
 
-    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('user/_form.html.twig', {'button_label': 'Valider'}) }}
 
-    <button class = "btn_consult_users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
+    <button class = "btn-consult-users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>

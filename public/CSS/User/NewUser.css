@@ -1,0 +1,63 @@
+body {
+    background-color: lightgray;
+    height : 100vh;
+}
+
+div#add-user-form {
+
+display:flex;
+align-items: center;
+flex-direction : column;
+justify-content : center;
+height : 100vh;
+width : 100%;
+
+}
+
+div#container {
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
+    padding : 15px 40px;
+    display : flex;
+    align-items : center;
+    flex-direction: column;
+    
+}
+form {
+    display : flex;
+    align-items : center;
+    flex-direction : column;
+}
+
+div#user{
+    display : grid;
+    justify-items : end;
+    margin-right : 55px;
+}
+
+input {
+    margin-left : 10px;
+}
+
+.btn-consult-users, .btn-valide-user {
+    border : 2px solid #34EB67;
+    margin-top : 20px;
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    border : 1px solid black;
+}
+
+h1 {
+    margin-bottom : 25px;
+}
+
+.btn-consult-users:hover, .btn-valide-user:hover {
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+  }

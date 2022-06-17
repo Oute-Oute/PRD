@@ -1,0 +1,43 @@
+
+
+.btn-add-user, .btn-edit-user, .btn-infos-user, .btn-delete-user {
+    border : 2px solid #34EB67;
+    margin-top : 10px;
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    border : 1px solid black;
+    margin-left : 10px;
+    margin-bottom : 5px;
+}
+
+
+.btn-add-user:hover, .btn-edit-user:hover, .btn-infos-user:hover, .btn-delete-user:hover {
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+}
+
+.btn-add-user {
+    margin-left : 50px;
+    margin-right : 50px;
+    margin-bottom : 30px;
+}
+
+#index-users {
+    display : flex;
+    flex-direction : column;
+    width : 100%;
+    padding : 20px 30px;
+
+}
+
+.table-index-users{
+    width : 100%;
+}
+

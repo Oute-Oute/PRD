@@ -2,14 +2,13 @@
 
 {% block title %}Listing des utilisateurs{% endblock %}
 {% block stylesheets %}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{ asset('css_files/index_users.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/User/IndexUser.css') }}">
         {% endblock %}
 {% block body %}
-    <div id = "index_users">
+    <div id = "index-users">
 
     <h1>Listing des utilisateurs</h1>
-    <button class ="btn_add_user" onclick="window.location.href='{{ path('app_user_new') }}'">Ajouter un nouvel utilisateur</button>
+    <button class ="btn-add-user" onclick="window.location.href='{{ path('app_user_new') }}'">Ajouter un nouvel utilisateur</button>
     <br>
     <table class="table table-striped table-index-users">
         <thead>
@@ -17,7 +16,7 @@
                 <th>Id</th>
                 <th>Mail</th>
                 <th>Password</th>
-                <th class = "th_actions">Actions</th>
+                <th class = "th-actions">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,8 +26,8 @@
                 <td>{{ user.mail }}</td>
                 <td>{{ user.password }}</td>
                 <td>
-                    <button class = "btn_infos_user btn-secondary" onclick="window.location.href='{{ path('app_user_show', {'id': user.id}) }}'">Infos</a>
-                    <button class = "btn_edit_user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
+                    <button class = "btn-infos-user btn-secondary" onclick="window.location.href='{{ path('app_user_show', {'id': user.id}) }}'">Infos</a>
+                    <button class = "btn-edit-user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
                     {{ include('user/_delete_form.html.twig') }}
 
                 </td>

@@ -1,12 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block stylesheets %}
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-                <link rel="stylesheet" href="{{ asset('css_files/infos_user.css') }}">
+                <link rel="stylesheet" href="{{ asset('CSS/User/ShowUser.css') }}">
         {% endblock %}
 {% block title %}User{% endblock %}
 
 {% block body %}
-<div id ="show_user">
+<div id ="show-user">
     <h1>Informations de l'utilisateur {{ user.id }}</h1>
 
     <table class="table table-striped">
@@ -26,9 +25,9 @@
         </tbody>
     </table>
 
-    <button class = "btn_consult_users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
+    <button class = "btn-consult-users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
 
-    <button class = "btn_edit_user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
+    <button class = "btn-edit-user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>
