@@ -8,3 +8,7 @@ add_user:
 consult_users:
     path : /consult_users
     controller: App\Controller\UserController::index
+
+ModificationPlanning:
+  path: /ModificationPlanning
+  controller: App\Controller\ModificationPlanningController::modificationPlanningGet
