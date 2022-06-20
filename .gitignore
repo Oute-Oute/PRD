@@ -25,3 +25,5 @@ yarn-error.log
 .php-version
 /var/cache
 /var/log
+/var/cache/dev
+
