@@ -27,3 +27,5 @@ yarn-error.log
 /var/log
 /var/cache/dev
 
+*.csv
+*.log

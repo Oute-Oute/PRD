@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() 
 {
+    
+    const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, 
     {
@@ -11,7 +13,8 @@ document.addEventListener('DOMContentLoaded', function()
         selectable: true,
         selectHelper: true,
         editable: true,
-        contentHeight: 600,
+        contentHeight: height-120,
+        handleWindowResize: true,
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
             minute: '2-digit', //2-digit, numeric
