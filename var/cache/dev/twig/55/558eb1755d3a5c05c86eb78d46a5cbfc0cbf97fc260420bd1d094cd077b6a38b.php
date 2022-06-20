@@ -87,7 +87,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
         // line 5
         echo "        <link rel=\"stylesheet\" href=\"";
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/IndexUser.css"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/IndexCrud.css"), "html", null, true);
         echo "\">
         ";
         
@@ -112,7 +112,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         echo "    <div id = \"index-users\">
 
     <h1>Listing des utilisateurs</h1>
-    <button class =\"btn-add-user\" onclick=\"window.location.href='";
+    <button class =\"btn-add\" onclick=\"window.location.href='";
         // line 11
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_new");
         echo "'\">Ajouter un nouvel utilisateur</button>
@@ -166,11 +166,11 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "status", [], "any", false, false, false, 29), "html", null, true);
             echo "</td>
                 <td>
-                    <button class = \"btn-infos-user btn-secondary\" onclick=\"window.location.href='";
+                    <button class = \"btn-infos btn-secondary\" onclick=\"window.location.href='";
             // line 31
             echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_show", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 31)]), "html", null, true);
             echo "'\">Infos</a>
-                    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='";
+                    <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='";
             // line 32
             echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 32)]), "html", null, true);
             echo "'\">Éditer</a>
@@ -237,13 +237,13 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
 {% block title %}Listing des utilisateurs{% endblock %}
 {% block stylesheets %}
-        <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/IndexUser.css') }}\">
+        <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/IndexCrud.css') }}\">
         {% endblock %}
 {% block body %}
     <div id = \"index-users\">
 
     <h1>Listing des utilisateurs</h1>
-    <button class =\"btn-add-user\" onclick=\"window.location.href='{{ path('app_user_new') }}'\">Ajouter un nouvel utilisateur</button>
+    <button class =\"btn-add\" onclick=\"window.location.href='{{ path('app_user_new') }}'\">Ajouter un nouvel utilisateur</button>
     <br>
     <table class=\"table table-striped table-index-users\">
         <thead>
@@ -263,8 +263,8 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
                 <td>{{ user.password }}</td>
                 <td>{{ user.status }}</td>
                 <td>
-                    <button class = \"btn-infos-user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_show', {'id': user.id}) }}'\">Infos</a>
-                    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
+                    <button class = \"btn-infos btn-secondary\" onclick=\"window.location.href='{{ path('app_user_show', {'id': user.id}) }}'\">Infos</a>
+                    <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
                     {{ include('user/_delete_form.html.twig') }}
 
                 </td>

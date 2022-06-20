@@ -1,6 +1,7 @@
 calendrier:
     path: /
     controller: App\Controller\DefaultController::index
+
 add_user:
     path: /add_user
     controller: App\Controller\UserController::new
@@ -9,6 +10,13 @@ consult_users:
     path : /consult_users
     controller: App\Controller\UserController::index
 
+<<<<<<< Updated upstream
 ModificationPlanning:
   path: /ModificationPlanning
   controller: App\Controller\ModificationPlanningController::modificationPlanningGet
+=======
+get_patients:
+    path : /patients
+    controller: App\Controller\PatientController::index
+
+>>>>>>> Stashed changes

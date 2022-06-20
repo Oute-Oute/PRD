@@ -1,0 +1,15 @@
+
+
+
+#index-users {
+    display : flex;
+    flex-direction : column;
+    width : 100%;
+    padding : 20px 30px;
+
+}
+
+.table-index{
+    width : 100%;
+}
+

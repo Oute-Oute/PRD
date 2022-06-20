@@ -4,3 +4,70 @@ body {
     height: 100vh;
 }
 
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult {
+    border : 2px solid #34EB67;
+    margin-top : 10px;
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    border : 1px solid black;
+    margin-left : 10px;
+    margin-bottom : 5px;
+}
+
+
+
+.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover {
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+}
+
+
+.btn-valide:hover{
+    box-shadow: 0px 0px 5px green;
+    color :green;
+    border: 1px solid green;
+}
+
+.btn-consult:hover, .btn-infos:hover, .btn-edit:hover, .btn-add:hover  {
+    box-shadow: 0px 0px 5px blue;
+    color :blue;
+    border: 1px solid blue;
+}
+
+.btn-delete {
+    border : 2px solid #34EB67;
+    margin-top : 10px;
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    border : 1px solid black;
+    margin-left : 10px;
+    margin-bottom : 5px;
+    
+}
+
+
+.btn-add {
+    margin-left : 50px;
+    margin-right : 50px;
+    margin-bottom : 30px;
+}
+
+
+.btn-delete:hover {   
+    box-shadow: 0px 0px 5px red;
+   color :red;
+   border: 1px solid red;
+}

@@ -87,7 +87,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
         // line 5
         echo "        <link rel=\"stylesheet\" href=\"";
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/EditUser.css"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/EditCrud.css"), "html", null, true);
         echo "\">
 ";
         
@@ -109,7 +109,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
         // line 8
-        echo "<div id = \"edit-user-form\">
+        echo "<div id = \"edit-form\">
 <div id = \"container\">
     <h1>Éditer un utilisateur</h1>
 
@@ -118,7 +118,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         echo twig_include($this->env, $context, "user/_form.html.twig", ["button_label" => "Valider"]);
         echo "
 
-    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
+    <button class = \"btn-consult btn-secondary\" onclick=\"window.location.href='";
         // line 14
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</a>
@@ -159,16 +159,16 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
 {% block title %}Éditer un utilisateur{% endblock %}
 {% block stylesheets %}
-        <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/EditUser.css') }}\">
+        <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/EditCrud.css') }}\">
 {% endblock %}
 {% block body %}
-<div id = \"edit-user-form\">
+<div id = \"edit-form\">
 <div id = \"container\">
     <h1>Éditer un utilisateur</h1>
 
     {{ include('user/_form.html.twig', {'button_label': 'Valider'}) }}
 
-    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
+    <button class = \"btn-consult btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>
