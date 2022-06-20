@@ -86,10 +86,8 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
 
         // line 5
-        echo "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"";
-        // line 6
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/index_users.css"), "html", null, true);
+        echo "        <link rel=\"stylesheet\" href=\"";
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/IndexUser.css"), "html", null, true);
         echo "\">
         ";
         
@@ -100,7 +98,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
     }
 
-    // line 8
+    // line 7
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -110,12 +108,12 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 9
-        echo "    <div id = \"index_users\">
+        // line 8
+        echo "    <div id = \"index-users\">
 
     <h1>Listing des utilisateurs</h1>
-    <button class =\"btn_add_user\" onclick=\"window.location.href='";
-        // line 12
+    <button class =\"btn-add-user\" onclick=\"window.location.href='";
+        // line 11
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_new");
         echo "'\">Ajouter un nouvel utilisateur</button>
     <br>
@@ -125,14 +123,14 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
                 <th>Id</th>
                 <th>Mail</th>
                 <th>Password</th>
-                <th class = \"th_actions\">Actions</th>
+                <th class = \"th-actions\">Actions</th>
             </tr>
         </thead>
         <tbody>
         ";
-        // line 24
+        // line 23
         $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable((isset($context["users"]) || array_key_exists("users", $context) ? $context["users"] : (function () { throw new RuntimeError('Variable "users" does not exist.', 24, $this->source); })()));
+        $context['_seq'] = twig_ensure_traversable((isset($context["users"]) || array_key_exists("users", $context) ? $context["users"] : (function () { throw new RuntimeError('Variable "users" does not exist.', 23, $this->source); })()));
         $context['_iterated'] = false;
         $context['loop'] = [
           'parent' => $context['_parent'],
@@ -148,31 +146,31 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
             $context['loop']['last'] = 1 === $length;
         }
         foreach ($context['_seq'] as $context["_key"] => $context["user"]) {
-            // line 25
+            // line 24
             echo "            <tr>
                 <td>";
+            // line 25
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 25), "html", null, true);
+            echo "</td>
+                <td>";
             // line 26
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 26), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "mail", [], "any", false, false, false, 26), "html", null, true);
             echo "</td>
                 <td>";
             // line 27
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "mail", [], "any", false, false, false, 27), "html", null, true);
-            echo "</td>
-                <td>";
-            // line 28
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "password", [], "any", false, false, false, 28), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "password", [], "any", false, false, false, 27), "html", null, true);
             echo "</td>
                 <td>
-                    <button class = \"btn_infos_user btn-secondary\" onclick=\"window.location.href='";
-            // line 30
-            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_show", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 30)]), "html", null, true);
+                    <button class = \"btn-infos-user btn-secondary\" onclick=\"window.location.href='";
+            // line 29
+            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_show", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 29)]), "html", null, true);
             echo "'\">Infos</a>
-                    <button class = \"btn_edit_user btn-secondary\" onclick=\"window.location.href='";
-            // line 31
-            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 31)]), "html", null, true);
+                    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='";
+            // line 30
+            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, $context["user"], "id", [], "any", false, false, false, 30)]), "html", null, true);
             echo "'\">Éditer</a>
                     ";
-            // line 32
+            // line 31
             echo twig_include($this->env, $context, "user/_delete_form.html.twig");
             echo "
 
@@ -190,7 +188,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
             }
         }
         if (!$context['_iterated']) {
-            // line 37
+            // line 36
             echo "            <tr>
                 <td colspan=\"4\">Pas d'utilisateurs créés !</td>
             </tr>
@@ -199,7 +197,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['user'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 41
+        // line 40
         echo "        </tbody>
     </table>
 </div>
@@ -225,7 +223,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
     public function getDebugInfo()
     {
-        return array (  203 => 41,  194 => 37,  176 => 32,  172 => 31,  168 => 30,  163 => 28,  159 => 27,  155 => 26,  152 => 25,  134 => 24,  119 => 12,  114 => 9,  104 => 8,  92 => 6,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
+        return array (  201 => 40,  192 => 36,  174 => 31,  170 => 30,  166 => 29,  161 => 27,  157 => 26,  153 => 25,  150 => 24,  132 => 23,  117 => 11,  112 => 8,  102 => 7,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -234,14 +232,13 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 
 {% block title %}Listing des utilisateurs{% endblock %}
 {% block stylesheets %}
-        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"{{ asset('css_files/index_users.css') }}\">
+        <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/IndexUser.css') }}\">
         {% endblock %}
 {% block body %}
-    <div id = \"index_users\">
+    <div id = \"index-users\">
 
     <h1>Listing des utilisateurs</h1>
-    <button class =\"btn_add_user\" onclick=\"window.location.href='{{ path('app_user_new') }}'\">Ajouter un nouvel utilisateur</button>
+    <button class =\"btn-add-user\" onclick=\"window.location.href='{{ path('app_user_new') }}'\">Ajouter un nouvel utilisateur</button>
     <br>
     <table class=\"table table-striped table-index-users\">
         <thead>
@@ -249,7 +246,7 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
                 <th>Id</th>
                 <th>Mail</th>
                 <th>Password</th>
-                <th class = \"th_actions\">Actions</th>
+                <th class = \"th-actions\">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -259,8 +256,8 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
                 <td>{{ user.mail }}</td>
                 <td>{{ user.password }}</td>
                 <td>
-                    <button class = \"btn_infos_user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_show', {'id': user.id}) }}'\">Infos</a>
-                    <button class = \"btn_edit_user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
+                    <button class = \"btn-infos-user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_show', {'id': user.id}) }}'\">Infos</a>
+                    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
                     {{ include('user/_delete_form.html.twig') }}
 
                 </td>

@@ -23,7 +23,7 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
-                <td>{{ user.mail }}</td>
+                <td>{{ user.name }}</td>
                 <td>{{ user.password }}</td>
                 <td>
                     <button class = "btn-infos-user btn-secondary" onclick="window.location.href='{{ path('app_user_show', {'id': user.id}) }}'">Infos</a>

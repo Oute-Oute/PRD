@@ -9,11 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/default", name="app_default")
+     * @Route("/", name="calendrier")
      */
-    public function indexAction()
+    public function index()
     {
-        return $this->render('default/index.html.twig', [
+        return $this->render('calendrier/calendrier.html.twig', [
             'controller_name' => 'DefaultController',
         ]);
     }

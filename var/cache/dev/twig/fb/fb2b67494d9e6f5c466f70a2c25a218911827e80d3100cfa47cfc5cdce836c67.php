@@ -86,10 +86,8 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
 
         // line 5
-        echo "        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"";
-        // line 6
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/edit_user.css"), "html", null, true);
+        echo "        <link rel=\"stylesheet\" href=\"";
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/EditUser.css"), "html", null, true);
         echo "\">
 ";
         
@@ -100,7 +98,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
     }
 
-    // line 8
+    // line 7
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -110,23 +108,23 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 9
-        echo "<div id = \"edit_user_form\">
+        // line 8
+        echo "<div id = \"edit-user-form\">
 <div id = \"container\">
     <h1>Éditer un utilisateur</h1>
 
     ";
-        // line 13
-        echo twig_include($this->env, $context, "user/_form.html.twig", ["button_label" => "Modifier"]);
+        // line 12
+        echo twig_include($this->env, $context, "user/_form.html.twig", ["button_label" => "Valider"]);
         echo "
 
-    <button class = \"btn_consult_users btn-secondary\" onclick=\"window.location.href='";
-        // line 15
+    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
+        // line 14
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</a>
 
     ";
-        // line 17
+        // line 16
         echo twig_include($this->env, $context, "user/_delete_form.html.twig");
         echo "
 </div>
@@ -152,7 +150,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
     public function getDebugInfo()
     {
-        return array (  130 => 17,  125 => 15,  120 => 13,  114 => 9,  104 => 8,  92 => 6,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
+        return array (  128 => 16,  123 => 14,  118 => 12,  112 => 8,  102 => 7,  89 => 5,  79 => 4,  60 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -161,17 +159,16 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
 {% block title %}Éditer un utilisateur{% endblock %}
 {% block stylesheets %}
-        <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"{{ asset('css_files/edit_user.css') }}\">
+        <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/EditUser.css') }}\">
 {% endblock %}
 {% block body %}
-<div id = \"edit_user_form\">
+<div id = \"edit-user-form\">
 <div id = \"container\">
     <h1>Éditer un utilisateur</h1>
 
-    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('user/_form.html.twig', {'button_label': 'Valider'}) }}
 
-    <button class = \"btn_consult_users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
+    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>

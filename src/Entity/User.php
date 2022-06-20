@@ -18,28 +18,33 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=48)
+     * @ORM\Column(type="string", length=255)
      */
-    private $mail;
+    private $login;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMail(): ?string
+    public function getLogin(): ?string
     {
-        return $this->mail;
+        return $this->login;
     }
 
-    public function setMail(string $mail): self
+    public function setLogin(string $login): self
     {
-        $this->mail = $mail;
+        $this->login = $login;
 
         return $this;
     }
@@ -52,6 +57,18 @@ class User
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
