@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function()
         selectHelper: true,
         editable: true,
         contentHeight: 600,
+        slotLabelFormat: { //modifie l'affichage des heures de la journée
+            hour: '2-digit', //2-digit, numeric
+            minute: '2-digit', //2-digit, numeric
+            meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
+            hour12: false //true, false
+          },
         resources: [
         {
             id: 'a',
