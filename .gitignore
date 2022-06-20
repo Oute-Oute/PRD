@@ -23,3 +23,6 @@ npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 .php-version
+/var/log
+var/cache
+/vendor
