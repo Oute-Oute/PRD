@@ -86,10 +86,8 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
 
         // line 6
-        echo "                <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-                <link rel=\"stylesheet\" href=\"";
-        // line 7
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("css_files/add_user.css"), "html", null, true);
+        echo "                <link rel=\"stylesheet\" href=\"";
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/NewUser.css"), "html", null, true);
         echo "\">
         ";
         
@@ -100,7 +98,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     }
 
-    // line 10
+    // line 9
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -110,18 +108,18 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 11
+        // line 10
         echo "<!--- FORMULAIRE -->
-<div id = \"add_user_form\">
+<div id = \"add-user-form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>
 
     ";
-        // line 16
+        // line 15
         echo twig_include($this->env, $context, "user/_form.html.twig");
         echo "
-    <button class=\"btn_consult_users btn-secondary\" onclick=\"window.location.href='";
-        // line 17
+    <button class=\"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
+        // line 16
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</button>
 </div>
@@ -147,7 +145,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     public function getDebugInfo()
     {
-        return array (  125 => 17,  121 => 16,  114 => 11,  104 => 10,  92 => 7,  89 => 6,  79 => 5,  60 => 4,  37 => 1,);
+        return array (  123 => 16,  119 => 15,  112 => 10,  102 => 9,  89 => 6,  79 => 5,  60 => 4,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -157,21 +155,20 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
 {% block title %}Ajouter un nouvel utilisateur{% endblock %}
         {% block stylesheets %}
-                <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">
-                <link rel=\"stylesheet\" href=\"{{ asset('css_files/add_user.css') }}\">
+                <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/NewUser.css') }}\">
         {% endblock %}
 
 {% block body %}
 <!--- FORMULAIRE -->
-<div id = \"add_user_form\">
+<div id = \"add-user-form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>
 
     {{ include('user/_form.html.twig') }}
-    <button class=\"btn_consult_users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
+    <button class=\"btn-consult-users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
 </div>
 </div>
 {% endblock %}
-", "user/new.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
+", "user/new.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
     }
 }

@@ -125,10 +125,10 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
         echo "</td>
             </tr>
             <tr>
-                <th>Mail</th>
+                <th>Login</th>
                 <td>";
         // line 19
-        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 19, $this->source); })()), "mail", [], "any", false, false, false, 19), "html", null, true);
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 19, $this->source); })()), "login", [], "any", false, false, false, 19), "html", null, true);
         echo "</td>
             </tr>
             <tr>
@@ -138,21 +138,28 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "password", [], "any", false, false, false, 23), "html", null, true);
         echo "</td>
             </tr>
+            <tr>
+                <th>Status</th>
+                <td>";
+        // line 27
+        echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 27, $this->source); })()), "status", [], "any", false, false, false, 27), "html", null, true);
+        echo "</td>
+            </tr>
         </tbody>
     </table>
 
     <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
-        // line 28
+        // line 32
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</a>
 
     <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='";
-        // line 30
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 30, $this->source); })()), "id", [], "any", false, false, false, 30)]), "html", null, true);
+        // line 34
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 34, $this->source); })()), "id", [], "any", false, false, false, 34)]), "html", null, true);
         echo "'\">Éditer</a>
 
     ";
-        // line 32
+        // line 36
         echo twig_include($this->env, $context, "user/_delete_form.html.twig");
         echo "
 </div>
@@ -178,7 +185,7 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
 
     public function getDebugInfo()
     {
-        return array (  156 => 32,  151 => 30,  146 => 28,  138 => 23,  131 => 19,  124 => 15,  115 => 9,  112 => 8,  102 => 7,  83 => 5,  70 => 3,  60 => 2,  37 => 1,);
+        return array (  163 => 36,  158 => 34,  153 => 32,  145 => 27,  138 => 23,  131 => 19,  124 => 15,  115 => 9,  112 => 8,  102 => 7,  83 => 5,  70 => 3,  60 => 2,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -200,12 +207,16 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
                 <td>{{ user.id }}</td>
             </tr>
             <tr>
-                <th>Mail</th>
-                <td>{{ user.mail }}</td>
+                <th>Login</th>
+                <td>{{ user.login }}</td>
             </tr>
             <tr>
                 <th>Password</th>
                 <td>{{ user.password }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ user.status }}</td>
             </tr>
         </tbody>
     </table>
