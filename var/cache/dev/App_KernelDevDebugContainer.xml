@@ -348,11 +348,19 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\DefaultController"/>
       </call>
     </service>
+<<<<<<< Updated upstream
     <service id="App\Controller\ModificationPlanningController" class="App\Controller\ModificationPlanningController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ModificationPlanningController"/>
+=======
+    <service id="App\Controller\PatientController" class="App\Controller\PatientController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\PatientController"/>
+>>>>>>> Stashed changes
       </call>
     </service>
     <service id="App\Controller\UserController" class="App\Controller\UserController" public="true" autowire="true" autoconfigure="true">
@@ -362,8 +370,15 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\UserController"/>
       </call>
     </service>
+    <service id="App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
     <service id="App\Form\UserType" class="App\Form\UserType" autowire="true" autoconfigure="true">
       <tag name="form.type"/>
+    </service>
+    <service id="App\Repository\AppointmentRepository" class="App\Repository\AppointmentRepository" autowire="true" autoconfigure="true">
+      <tag name="doctrine.repository_service"/>
+      <argument type="service" id="doctrine"/>
     </service>
     <service id="App\Repository\CircuitRepository" class="App\Repository\CircuitRepository" autowire="true" autoconfigure="true">
       <tag name="doctrine.repository_service"/>
@@ -1177,6 +1192,7 @@
         <argument>Symfony\Bridge\Doctrine\Form\Type</argument>
       </argument>
       <argument type="collection">
+        <argument>App\Form\PatientType</argument>
         <argument>App\Form\UserType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\FormType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\ChoiceType</argument>
@@ -3338,7 +3354,7 @@
       <argument type="service" id="form.registry"/>
     </service>
     <service id="form.extension" class="Symfony\Component\Form\Extension\DependencyInjection\DependencyInjectionExtension">
-      <argument type="service" id=".service_locator.CfnR51D"/>
+      <argument type="service" id=".service_locator.GVxAiMt"/>
       <argument type="collection">
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="iterator">
           <argument type="service" id="form.type_extension.form.transformation_failure_handling"/>
@@ -4237,7 +4253,7 @@
       <factory class="Doctrine\ORM\EntityManager" method="create"/>
     </service>
     <service id="doctrine.orm.container_repository_factory" class="Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory">
-      <argument type="service" id=".service_locator.9l8ORGy"/>
+      <argument type="service" id=".service_locator.GOZcjQJ"/>
     </service>
     <service id="doctrine.orm.manager_configurator.abstract" class="Doctrine\Bundle\DoctrineBundle\ManagerConfigurator" abstract="true">
       <argument type="collection"/>
@@ -6280,14 +6296,24 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" autoconfigure="true" abstract="true"/>
+<<<<<<< Updated upstream
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ModificationPlanningController" class="App\Controller\ModificationPlanningController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ModificationPlanningController" class="App\Controller\ModificationPlanningController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\ModificationPlanningController" class="App\Controller\ModificationPlanningController" autowire="true" autoconfigure="true" abstract="true"/>
+=======
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" autoconfigure="true" abstract="true"/>
+>>>>>>> Stashed changes
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\UserController" class="App\Controller\UserController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\PatientType" class="App\Form\PatientType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\UserType" class="App\Form\UserType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\UserType" class="App\Form\UserType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\AppointmentRepository" class="App\Repository\AppointmentRepository" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Repository\AppointmentRepository" class="App\Repository\AppointmentRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\CircuitRepository" class="App\Repository\CircuitRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\CircuitRepository" class="App\Repository\CircuitRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\EventRepository" class="App\Repository\EventRepository" autowire="true" abstract="true"/>
@@ -6626,6 +6652,25 @@
         <argument key="loader" type="service_closure" id=".errored..service_locator.KfbR3DY.Symfony\Component\Config\Loader\LoaderInterface"/>
       </argument>
     </service>
+    <service id=".service_locator.XupNM.k" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="patientRepository" type="service_closure" id="App\Repository\PatientRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.mk9shxU" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="patient" type="service_closure" id=".errored..service_locator.mk9shxU.App\Entity\Patient"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ESMXKlZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="patient" type="service_closure" id=".errored..service_locator.ESMXKlZ.App\Entity\Patient"/>
+        <argument key="patientRepository" type="service_closure" id="App\Repository\PatientRepository"/>
+      </argument>
+    </service>
     <service id=".service_locator..Ae5NXw" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6645,9 +6690,14 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.Ph9wBO2" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.5zdrETL" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
+        <argument key="App\Controller\PatientController::edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
+        <argument key="App\Controller\PatientController::index" type="service_closure" id=".service_locator.XupNM.k"/>
+        <argument key="App\Controller\PatientController::new" type="service_closure" id=".service_locator.XupNM.k"/>
+        <argument key="App\Controller\PatientController::show" type="service_closure" id=".service_locator.mk9shxU"/>
         <argument key="App\Controller\UserController::delete" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController::edit" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController::index" type="service_closure" id=".service_locator..Ae5NXw"/>
@@ -6659,6 +6709,11 @@
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::terminate" type="service_closure" id=".service_locator.KfwZsne"/>
+        <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
+        <argument key="App\Controller\PatientController:edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
+        <argument key="App\Controller\PatientController:index" type="service_closure" id=".service_locator.XupNM.k"/>
+        <argument key="App\Controller\PatientController:new" type="service_closure" id=".service_locator.XupNM.k"/>
+        <argument key="App\Controller\PatientController:show" type="service_closure" id=".service_locator.mk9shxU"/>
         <argument key="App\Controller\UserController:delete" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController:edit" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController:index" type="service_closure" id=".service_locator..Ae5NXw"/>
@@ -6728,9 +6783,10 @@
       <argument type="service" id="debug.argument_resolver.not_tagged_controller.inner"/>
       <argument type="service" id="debug.stopwatch"/>
     </service>
-    <service id=".service_locator.CfnR51D" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.GVxAiMt" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Form\PatientType" type="service_closure" id="App\Form\PatientType"/>
         <argument key="App\Form\UserType" type="service_closure" id="App\Form\UserType"/>
         <argument key="Symfony\Bridge\Doctrine\Form\Type\EntityType" type="service_closure" id="form.type.entity"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\ChoiceType" type="service_closure" id="form.type.choice"/>
@@ -6817,9 +6873,10 @@
         <argument key="doctrine.orm.messenger.doctrine_schema_subscriber" type="service_closure" id="doctrine.orm.messenger.doctrine_schema_subscriber"/>
       </argument>
     </service>
-    <service id=".service_locator.9l8ORGy" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.GOZcjQJ" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Repository\AppointmentRepository" type="service_closure" id="App\Repository\AppointmentRepository"/>
         <argument key="App\Repository\CircuitRepository" type="service_closure" id="App\Repository\CircuitRepository"/>
         <argument key="App\Repository\EventRepository" type="service_closure" id="App\Repository\EventRepository"/>
         <argument key="App\Repository\PatientRepository" type="service_closure" id="App\Repository\PatientRepository"/>
@@ -7099,9 +7156,15 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
+<<<<<<< Updated upstream
     <service id=".service_locator.GNc8e5B.App\Controller\ModificationPlanningController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\ModificationPlanningController"/>
       <argument>App\Controller\ModificationPlanningController</argument>
+=======
+    <service id=".service_locator.GNc8e5B.App\Controller\PatientController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\PatientController"/>
+      <argument>App\Controller\PatientController</argument>
+>>>>>>> Stashed changes
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
@@ -7285,12 +7348,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.Ph9wBO2"/>
+      <argument type="service" id=".service_locator.5zdrETL"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.Ph9wBO2"/>
+      <argument type="service" id=".service_locator.5zdrETL"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -7319,6 +7382,8 @@
     </service>
     <service id=".errored..service_locator.KfwZsne.Symfony\Component\HttpFoundation\Response" class="Symfony\Component\HttpFoundation\Response"/>
     <service id=".errored..service_locator.KfbR3DY.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface"/>
+    <service id=".errored..service_locator.mk9shxU.App\Entity\Patient" class="App\Entity\Patient"/>
+    <service id=".errored..service_locator.ESMXKlZ.App\Entity\Patient" class="App\Entity\Patient"/>
     <service id=".errored..service_locator.ch4Jgvl.App\Entity\User" class="App\Entity\User"/>
     <service id=".errored..service_locator.4MF6DUv.App\Entity\User" class="App\Entity\User"/>
     <service id=".console.command.about.lazy" class="Symfony\Component\Console\Command\LazyCommand">
@@ -8269,7 +8334,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.Ph9wBO2"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.5zdrETL"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8294,9 +8359,9 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~9XKB6WR"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.7FA.b2f" alias=".service_locator.Ph9wBO2"/>
+    <service id=".service_locator.Q4mSh59" alias=".service_locator.5zdrETL"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
-    <service id=".service_locator.GRReuIi" alias=".service_locator.CfnR51D"/>
+    <service id=".service_locator.DzW4dDP" alias=".service_locator.GVxAiMt"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
     <service id=".service_locator.W9y3dzm" alias=".service_locator.GNc8e5B"/>
@@ -8323,6 +8388,9 @@
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator._5g_Wvc" alias=".service_locator.KfwZsne"/>
     <service id=".service_locator.JBAFp66" alias=".service_locator.KfbR3DY"/>
+    <service id=".service_locator.GIAnriR" alias=".service_locator.XupNM.k"/>
+    <service id=".service_locator.gU1RRJi" alias=".service_locator.mk9shxU"/>
+    <service id=".service_locator.Hpcjtxb" alias=".service_locator.ESMXKlZ"/>
     <service id=".service_locator.8PQa8Mp" alias=".service_locator..Ae5NXw"/>
     <service id=".service_locator.NFoOWn0" alias=".service_locator.ch4Jgvl"/>
     <service id=".service_locator.IyTIsd6" alias=".service_locator.4MF6DUv"/>

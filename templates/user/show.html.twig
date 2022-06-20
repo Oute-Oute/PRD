@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block stylesheets %}
-                <link rel="stylesheet" href="{{ asset('CSS/User/ShowUser.css') }}">
+                <link rel="stylesheet" href="{{ asset('CSS/Global/ShowCrud.css') }}">
         {% endblock %}
 {% block title %}User{% endblock %}
 
@@ -29,9 +29,9 @@
         </tbody>
     </table>
 
-    <button class = "btn-consult-users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
+    <button class = "btn-consult btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</a>
 
-    <button class = "btn-edit-user btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
+    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>

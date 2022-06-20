@@ -87,7 +87,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
         // line 6
         echo "                <link rel=\"stylesheet\" href=\"";
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/NewUser.css"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/NewCrud.css"), "html", null, true);
         echo "\">
         ";
         
@@ -110,7 +110,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
         // line 10
         echo "<!--- FORMULAIRE -->
-<div id = \"add-user-form\">
+<div id = \"add-form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>
 
@@ -118,7 +118,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         // line 15
         echo twig_include($this->env, $context, "user/_form.html.twig");
         echo "
-    <button class=\"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
+    <button class=\"btn-consult btn-secondary\" onclick=\"window.location.href='";
         // line 16
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</button>
@@ -155,17 +155,17 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
 {% block title %}Ajouter un nouvel utilisateur{% endblock %}
         {% block stylesheets %}
-                <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/NewUser.css') }}\">
+                <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/NewCrud.css') }}\">
         {% endblock %}
 
 {% block body %}
 <!--- FORMULAIRE -->
-<div id = \"add-user-form\">
+<div id = \"add-form\">
 <div id = \"container\">
     <h3>Ajouter un nouvel utilisateur</h3>
 
     {{ include('user/_form.html.twig') }}
-    <button class=\"btn-consult-users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
+    <button class=\"btn-consult btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
 </div>
 </div>
 {% endblock %}

@@ -68,7 +68,7 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
 
         // line 3
         echo "                <link rel=\"stylesheet\" href=\"";
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/User/ShowUser.css"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/ShowCrud.css"), "html", null, true);
         echo "\">
         ";
         
@@ -148,12 +148,12 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
         </tbody>
     </table>
 
-    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='";
+    <button class = \"btn-consult btn-secondary\" onclick=\"window.location.href='";
         // line 32
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</a>
 
-    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='";
+    <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='";
         // line 34
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 34, $this->source); })()), "id", [], "any", false, false, false, 34)]), "html", null, true);
         echo "'\">Éditer</a>
@@ -192,7 +192,7 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
     {
         return new Source("{% extends 'base.html.twig' %}
 {% block stylesheets %}
-                <link rel=\"stylesheet\" href=\"{{ asset('CSS/User/ShowUser.css') }}\">
+                <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/ShowCrud.css') }}\">
         {% endblock %}
 {% block title %}User{% endblock %}
 
@@ -221,9 +221,9 @@ class __TwigTemplate_a23b767c2b515665bf855be66467195107c5e01c266b08f5c3347141a07
         </tbody>
     </table>
 
-    <button class = \"btn-consult-users btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
+    <button class = \"btn-consult btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</a>
 
-    <button class = \"btn-edit-user btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
+    <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'\">Éditer</a>
 
     {{ include('user/_delete_form.html.twig') }}
 </div>

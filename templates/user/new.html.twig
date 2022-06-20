@@ -3,17 +3,17 @@
 
 {% block title %}Ajouter un nouvel utilisateur{% endblock %}
         {% block stylesheets %}
-                <link rel="stylesheet" href="{{ asset('CSS/User/NewUser.css') }}">
+                <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         {% endblock %}
 
 {% block body %}
 <!--- FORMULAIRE -->
-<div id = "add-user-form">
+<div id = "add-form">
 <div id = "container">
     <h3>Ajouter un nouvel utilisateur</h3>
 
     {{ include('user/_form.html.twig') }}
-    <button class="btn-consult-users btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</button>
+    <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les utilisateurs</button>
 </div>
 </div>
 {% endblock %}
