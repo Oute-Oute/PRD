@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', function()
     {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         initialView: 'resourceTimelineDay',
+        slotDuration: '00:20:00',
+        locale: 'fr',
+        timeZone: 'Europe/Paris',
+        selectable: true,
+        selectHelper: true,
+        editable: true,
+        contentHeight: 600,
         resources: [
         {
             id: 'a',
