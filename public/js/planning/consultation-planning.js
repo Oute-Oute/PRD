@@ -1,4 +1,5 @@
 var calendar;
+var datepicker;
 
 document.addEventListener('DOMContentLoaded', function() 
 {
@@ -57,37 +58,24 @@ document.addEventListener('DOMContentLoaded', function()
             ]
     },
     );
-
-    
-    $(function() {
-      $("#datepicker").datepicker({
-        showOn: "both",
-        showOptions: { 
-          direction: "down" 
-        },
-        
-        autoSize: true,
-        buttonImage: "https://icons.getbootstrap.com/assets/icons/calendar3.svg",
-        buttonText: "Select date",
-        changeMonth: true,
-        changeYear: true,
-        currentText: "Now",
-        firstDay: 1,
-        showOtherMonths: true,
-        selectOtherMonths: true,
-        
-        onSelect: function (selectedDate) {
-          calendar.gotoDate($.datepicker.formatDate("yy-mm-dd",new Date(selectedDate)))
-        }
-      });
-        $("#datepicker").datepicker("option", "dateFormat", "DD, d MM, yy");
-      $("#datepicker").datepicker( "setDate" , "+0d" );
-    });
     calendar.render();
 });
 
+$(function () {
+  // ACTIVATION DU DATEPICKER 
+  $('.form-control').datepicker({
+    language: 'fr',
+      clearBtn: true,
+      format: "dd/mm/yyyy",
+      autoclose: true,
+      todayHighlight: true,
+});
+});
 
-
+function changeDate(){
+  calendar.gotoDate($( ".form-control" ).datepicker( "getDate" ))
+  calendar.next()
+}
 
 function changePlanning(){
   var selectedItem = document.getElementById("displayList");
@@ -105,4 +93,6 @@ function changePlanning(){
   console.warn(selectedVar);
   calendar.render();
 }
+
+
 

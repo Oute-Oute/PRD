@@ -7,16 +7,14 @@
         {% endblock %}
 {% block body %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.11.0/main.css">
-    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.11.0/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="js/planning/consultation-planning.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
-
-
+    <!-- Extension jquery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Extension DATEPICKER -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    
     <div class="container"><h1>Consultation du Planning</h1>
     <button class ="btn-valide" onclick="window.location.href='{{ path('ModificationPlanning') }}'">Modifier le planning</button>
     <select class ="list-edit" id="displayList" onchange="changePlanning()">
@@ -26,8 +24,26 @@
            <option value="rh">Ressources humaines</option>
            <option value="rm">Ressources Matérielles</option>
     </select>
+
+    <script>
     
-<input type="text" id="datepicker"></input>
+    </script>
+
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="form-group">
+          <div class="form-group">
+              <div class="datepicker date input-group">
+                  <input type="text" placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()">
+                  <div class="input-group-append"><span class="input-group-text px-4"><i class="fa fa-calendar"></i></span></div>
+              </div>
+          </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div id = 'calendar'>
     
     </div>
