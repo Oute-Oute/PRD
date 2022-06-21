@@ -15,8 +15,8 @@ ConsultationPlanning:
   controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
 
 ModificationPlanning:
-  path: /ModificationPlanning
-  controller: App\Controller\ModificationPlanningController::modificationPlanningGet
+    path: /ModificationPlanning
+    controller: App\Controller\ModificationPlanningController::modificationPlanningGet
 
 index_patients:
     path : /patients
@@ -37,4 +37,8 @@ index_type_circuits:
 index_resources:
     path: /resources
     controller: App\Controller\ResourceController:index
+
+index_resources_types:
+    path: /resources-types
+    controller: App\Controller\ResourceTypeController:index
 

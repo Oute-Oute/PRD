@@ -1,13 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit ResourceType{% endblock %}
+{% block title %} Éditer un type de ressource {% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+{% endblock %}
 
 {% block body %}
-    <h1>Edit ResourceType</h1>
+<div id = "edit-form">
+    <div id = "container">
+        <h1 id="title">Éditer un type de ressource </h1>
 
-    {{ include('resource_type/_form.html.twig', {'button_label': 'Update'}) }}
+        {{ include('resource_type/_form.html.twig', {'button_label': 'Valider'}) }}
 
-    <a href="{{ path('app_resource_type_index') }}">back to list</a>
+        <button class = "btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_type_index') }}'">Consulter les utilisateurs</a>
 
-    {{ include('resource_type/_delete_form.html.twig') }}
+        {{ include('resource_type/_delete_form.html.twig') }}
+    </div>
+</div>
+    
 {% endblock %}

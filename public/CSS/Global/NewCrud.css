@@ -26,7 +26,7 @@ form {
     flex-direction : column;
 }
 
-div#user, div#activity, div#patient1{
+div#user, div#activity, div#patient1, div#resource_type{
     display : grid;
     justify-items : end;
     margin-right : 55px;

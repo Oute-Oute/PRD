@@ -20,29 +20,45 @@
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Modifier l'activité</h5>
       </div>
-        <form method="post" action="/admin">
+        <form method="post" action="/ModificationPlanning">
             <div class="modal-body">
                 <label>Nom de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="titre" name="nouveauTitre" value="Titre1" required>
+                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="new-title" name="new-title" required>
+                </div>
+                <div id='modalTitle'></div>
+
+                <label>Date de début de l'activité : </label>
+                <div class="input-container onWhite">
+                    <input class="input-field" type="text" placeholder="Date de début de l'activité" id="new-start" name="new-start" required>
                 </div>
 
-                <label>Nom de l'activité : </label>
+                <label>Durée de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="titre" name="nouveauTitre" value="Titre1" required>
+                    <input class="input-field" type="text" placeholder="Durée de l'activité en minutes" id="new-time" name="new-time" required>
+                    <label>minutes</label>
                 </div>
                 
+                {% for type in resourcestypes %}
+                  Nom de la resource : {{type.name}} et nom de la categorie : {{type.category}}
+                {% endfor %}
+
                 <div class="modal-footer">
-                    <button type="button" class="btn-infos btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn-edit btn-secondary" onclick="modifyEvent()">Valider</button>
+                    <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
                 </div>
             </div>
 	    </form>
     </div>
   </div>
 </div>
+
     <input type=hidden id="date" value=<?php eco $$_GET['date']; ?>/>
-    <div class="container"><h1>Modification du Planning</h1>
+    
+  <div class="container"><h1>Modification du Planning</h1>
+      <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
+      <button type="submit" class="btn-valide btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Valider</button>
+
     <div id = 'calendar'>
     </div>
 </div>
