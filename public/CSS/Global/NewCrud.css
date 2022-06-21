@@ -26,11 +26,7 @@ form {
     flex-direction : column;
 }
 
-<<<<<<< HEAD
-div#user, div#activity, div#resource_type{
-=======
-div#user, div#activity, div#patient1{
->>>>>>> db3e91f5b3baa8db9a18d46e1fc4b9a63e55536e
+div#user, div#activity, div#patient1, div#resource_type{
     display : grid;
     justify-items : end;
     margin-right : 55px;

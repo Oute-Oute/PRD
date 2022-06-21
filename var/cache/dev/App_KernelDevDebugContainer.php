@@ -16,6 +16,6 @@ if (!\class_exists(App_KernelDevDebugContainer::class, false)) {
 
 return new \ContainerEOxAdBr\App_KernelDevDebugContainer([
     'container.build_hash' => 'EOxAdBr',
-    'container.build_id' => 'b6d543b5',
-    'container.build_time' => 1655818028,
+    'container.build_id' => 'b8027219',
+    'container.build_time' => 1655822159,
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerEOxAdBr');

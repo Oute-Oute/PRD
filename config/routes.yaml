@@ -34,3 +34,7 @@ index_resources:
     path: /resources
     controller: App\Controller\ResourceController:index
 
+index_resources_types:
+    path: /resources-types
+    controller: App\Controller\ResourceTypeController:index
+
