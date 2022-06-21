@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ResourceRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,14 +23,9 @@ class Resource
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Event::class, mappedBy="resource")
+     * @ORM\ManyToOne(targetEntity=ResourceType::class, inversedBy="resources")
      */
-    private $events;
-
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
-    }
+    private $resource_type;
 
     public function getId(): ?int
     {
@@ -51,29 +44,14 @@ class Resource
         return $this;
     }
 
-    /**
-     * @return Collection<int, Event>
-     */
-    public function getEvents(): Collection
+    public function getResourceType(): ?ResourceType
     {
-        return $this->events;
+        return $this->resource_type;
     }
 
-    public function addEvent(Event $event): self
+    public function setResourceType(?ResourceType $resource_type): self
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->addResource($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEvent(Event $event): self
-    {
-        if ($this->events->removeElement($event)) {
-            $event->removeResource($this);
-        }
+        $this->resource_type = $resource_type;
 
         return $this;
     }

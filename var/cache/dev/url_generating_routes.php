@@ -27,9 +27,6 @@ return [
     'calendrier' => [[], ['_controller' => 'App\\Controller\\DefaultController::index'], [], [['text', '/']], [], [], []],
     'add_user' => [[], ['_controller' => 'App\\Controller\\UserController::new'], [], [['text', '/add_user']], [], [], []],
     'consult_users' => [[], ['_controller' => 'App\\Controller\\UserController::index'], [], [['text', '/consult_users']], [], [], []],
-<<<<<<< Updated upstream
     'ModificationPlanning' => [[], ['_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningGet'], [], [['text', '/ModificationPlanning']], [], [], []],
-=======
     'get_patients' => [[], ['_controller' => 'App\\Controller\\PatientController::index'], [], [['text', '/patients']], [], [], []],
->>>>>>> Stashed changes
 ];

@@ -19,11 +19,8 @@ return [
         '/' => [[['_route' => 'calendrier', '_controller' => 'App\\Controller\\DefaultController::index'], null, null, null, false, false, null]],
         '/add_user' => [[['_route' => 'add_user', '_controller' => 'App\\Controller\\UserController::new'], null, null, null, false, false, null]],
         '/consult_users' => [[['_route' => 'consult_users', '_controller' => 'App\\Controller\\UserController::index'], null, null, null, false, false, null]],
-<<<<<<< Updated upstream
         '/ModificationPlanning' => [[['_route' => 'ModificationPlanning', '_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningGet'], null, null, null, false, false, null]],
-=======
         '/patients' => [[['_route' => 'get_patients', '_controller' => 'App\\Controller\\PatientController::index'], null, null, null, false, false, null]],
->>>>>>> Stashed changes
     ],
     [ // $regexpList
         0 => '{^(?'
