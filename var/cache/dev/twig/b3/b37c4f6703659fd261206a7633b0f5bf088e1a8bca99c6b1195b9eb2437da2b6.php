@@ -53,7 +53,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                     </a>
                 </header>
                 <a href=\"#\" class=\"dashboard-nav-item\"> <i class=\"fas fa-home\"></i> Accueil </a>
-                <a href=\"#\" class=\"dashboard-nav-item active\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
+                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
     
@@ -110,7 +110,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                     </a>
                 </header>
                 <a href=\"#\" class=\"dashboard-nav-item\"> <i class=\"fas fa-home\"></i> Accueil </a>
-                <a href=\"#\" class=\"dashboard-nav-item active\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
+                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
     
@@ -133,6 +133,6 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
         </nav>
     </div>
 
-", "Global/Menu.html", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\global\\menu.html");
+", "Global/Menu.html", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\global\\menu.html");
     }
 }

@@ -25,19 +25,18 @@ class Circuit
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Appointment::class, mappedBy="circuit")
+     * @ORM\ManyToOne(targetEntity=CircuitType::class, inversedBy="circuits")
      */
-    private $appointments;
+    private $circuit_type;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Event::class, mappedBy="circuits")
+     * @ORM\ManyToMany(targetEntity=Activity::class, mappedBy="circuits")
      */
-    private $events;
+    private $activities;
 
     public function __construct()
     {
-        $this->appointments = new ArrayCollection();
-        $this->events = new ArrayCollection();
+        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,58 +56,40 @@ class Circuit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Appointment>
-     */
-    public function getAppointments(): Collection
+    public function getCircuitType(): ?CircuitType
     {
-        return $this->appointments;
+        return $this->circuit_type;
     }
 
-    public function addAppointment(Appointment $appointment): self
+    public function setCircuitType(?CircuitType $circuit_type): self
     {
-        if (!$this->appointments->contains($appointment)) {
-            $this->appointments[] = $appointment;
-            $appointment->setCircuit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAppointment(Appointment $appointment): self
-    {
-        if ($this->appointments->removeElement($appointment)) {
-            // set the owning side to null (unless already changed)
-            if ($appointment->getCircuit() === $this) {
-                $appointment->setCircuit(null);
-            }
-        }
+        $this->circuit_type = $circuit_type;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Event>
+     * @return Collection<int, Activity>
      */
-    public function getEvents(): Collection
+    public function getActivities(): Collection
     {
-        return $this->events;
+        return $this->activities;
     }
 
-    public function addEvent(Event $event): self
+    public function addActivity(Activity $activity): self
     {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->addCircuit($this);
+        if (!$this->activities->contains($activity)) {
+            $this->activities[] = $activity;
+            $activity->addCircuit($this);
         }
 
         return $this;
     }
 
-    public function removeEvent(Event $event): self
+    public function removeActivity(Activity $activity): self
     {
-        if ($this->events->removeElement($event)) {
-            $event->removeCircuit($this);
+        if ($this->activities->removeElement($activity)) {
+            $activity->removeCircuit($this);
         }
 
         return $this;

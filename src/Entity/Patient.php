@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\PatientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,22 +25,12 @@ class Patient
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $surname;
+    private $patient_id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $patient_id;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Appointment::class, mappedBy="patient")
-     */
-    private $appointments;
-
-    public function __construct()
-    {
-        $this->appointments = new ArrayCollection();
-    }
+    private $surname;
 
     public function getId(): ?int
     {
@@ -61,18 +49,6 @@ class Patient
         return $this;
     }
 
-    public function getSurname(): ?string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): self
-    {
-        $this->surname = $surname;
-
-        return $this;
-    }
-
     public function getPatientId(): ?string
     {
         return $this->patient_id;
@@ -85,32 +61,14 @@ class Patient
         return $this;
     }
 
-    /**
-     * @return Collection<int, Appointment>
-     */
-    public function getAppointments(): Collection
+    public function getSurname(): ?string
     {
-        return $this->appointments;
+        return $this->surname;
     }
 
-    public function addAppointment(Appointment $appointment): self
+    public function setSurname(string $surname): self
     {
-        if (!$this->appointments->contains($appointment)) {
-            $this->appointments[] = $appointment;
-            $appointment->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAppointment(Appointment $appointment): self
-    {
-        if ($this->appointments->removeElement($appointment)) {
-            // set the owning side to null (unless already changed)
-            if ($appointment->getPatient() === $this) {
-                $appointment->setPatient(null);
-            }
-        }
+        $this->surname = $surname;
 
         return $this;
     }
