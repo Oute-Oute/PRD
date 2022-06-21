@@ -8,7 +8,7 @@ h1#title {
     margin-bottom: 50px;
 }
 
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult {
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult, .list-edit {
     border : 2px solid #34EB67;
     margin-top : 10px;
     border: none;

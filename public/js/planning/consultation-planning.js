@@ -94,5 +94,9 @@ function changePlanning(){
   calendar.render();
 }
 
+function modify(){
+  window.location.assign("/ModificationPlanning?date="+calendar.getDate());
+}
+
 
 

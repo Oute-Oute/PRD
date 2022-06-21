@@ -1,9 +1,11 @@
+//var date = document.getElementById(date).value;
+//alert(document.getElementById(date).value);
+var calendar;
 document.addEventListener('DOMContentLoaded', function() 
 {
-    
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, 
+    calendar = new FullCalendar.Calendar(calendarEl, 
     {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         initialView: 'resourceTimelineDay',
@@ -54,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function()
             },
     },
     );
-
+    //alert(date);
+    //calendar.goToDate(date);
     calendar.render();
 });
 

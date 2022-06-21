@@ -16,7 +16,7 @@
     <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     
     <div class="container"><h1>Consultation du Planning</h1>
-    <button class ="btn-valide" onclick="window.location.href='{{ path('ModificationPlanning') }}'">Modifier le planning</button>
+    <button class ="btn-valide" onclick="modify()">Modifier le planning</button>
     <select class ="list-edit" id="displayList" onchange="changePlanning()">
            <option value="0" selected disabled>Changer l'affichage </option>
            <option value="parcours">Parcours</option>
