@@ -362,6 +362,13 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\CircuitTypeController"/>
       </call>
     </service>
+    <service id="App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ConsultationPlanningController"/>
+      </call>
+    </service>
     <service id="App\Controller\DefaultController" class="App\Controller\DefaultController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -6384,6 +6391,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -7440,6 +7450,12 @@
     <service id=".service_locator.GNc8e5B.App\Controller\CircuitTypeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\CircuitTypeController"/>
       <argument>App\Controller\CircuitTypeController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ConsultationPlanningController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ConsultationPlanningController"/>
+      <argument>App\Controller\ConsultationPlanningController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>

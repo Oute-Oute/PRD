@@ -58,4 +58,5 @@ return [
     'index_activities' => [[], ['_controller' => 'App\\Controller\\ActivityController:index'], [], [['text', '/activities']], [], [], []],
     'index_circuits' => [[], ['_controller' => 'App\\Controller\\CircuitController:index'], [], [['text', '/circuits']], [], [], []],
     'index_type_circuits' => [[], ['_controller' => 'App\\Controller\\CircuitTypeController:index'], [], [['text', '/type-circuits']], [], [], []],
+    'index_resources' => [[], ['_controller' => 'App\\Controller\\ResourceController:index'], [], [['text', '/resources']], [], [], []],
 ];
