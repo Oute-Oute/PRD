@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', function()
         editable: true,
         contentHeight: height-120,
         handleWindowResize: true,
+        headerToolbar: {
+            start: 'prev,next today',
+            center: 'title',
+            end: 'resourceTimelineDay'
+        },
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
             minute: '2-digit', //2-digit, numeric
@@ -42,9 +47,21 @@ document.addEventListener('DOMContentLoaded', function()
              textColor:'#000',
              textFont:'Trebuchet MS'
             }
-            ]
+            ],
+        select: function(event, element) {
+            $('#modify-planning-modal').modal('toggle');
+            },
     },
     );
 
     calendar.render();
 });
+
+function modifyEvent(){
+    
+    document.getElementById("succ").innerHTML="Ajout compte réussi";
+    document.getElementById("success").style.display="block";
+    unshowDiv('modify-planning-modal');
+    setTimeout(()=>{document.getElementById("success").style.display="none";},6000);
+    
+}
