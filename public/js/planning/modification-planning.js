@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', function()
         handleWindowResize: true,
         eventDurationEditable: false,
         headerToolbar: {
-            start: 'prev,next today',
+            start: null,
             center: 'title',
-            end: 'resourceTimelineDay'
+            end: null
         },
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
@@ -49,8 +49,19 @@ document.addEventListener('DOMContentLoaded', function()
              textFont:'Trebuchet MS'
             }
             ],
-        select: function(event, element) {
-            $('#modify-planning-modal').modal('toggle');
+            eventClick: function(event, element) {
+                var id = event.event._def.publicId;
+                var activity = calendar.getEventById(id);
+                var tmp = activity.end - activity.start;
+                time = Math.floor((tmp/1000/60));
+    
+                const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                date = activity.start.toLocaleDateString(undefined, options);
+    
+                $('#new-start').val(date);
+                $('#new-title').val(activity.title);
+                $('#new-time').val(time);
+                $('#modify-planning-modal').modal("show");
             },
     },
     );
@@ -60,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function()
 
 function modifyEvent(){
     
-    document.getElementById("succ").innerHTML="Ajout compte réussi";
+    document.getElementById("succ").innerHTML="Modification de l'activité réussie";
     document.getElementById("success").style.display="block";
     unshowDiv('modify-planning-modal');
     setTimeout(()=>{document.getElementById("success").style.display="none";},6000);
