@@ -97,6 +97,6 @@ class __TwigTemplate_63141de5b98f3f185c68c26e0b5fe1c24238b442a7f37a5d54f688d4688
         </div>
     </div>
 </div>
-", "@WebProfiler/Profiler/header.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\symfony-react-starter\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Profiler\\header.html.twig");
+", "@WebProfiler/Profiler/header.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Profiler\\header.html.twig");
     }
 }

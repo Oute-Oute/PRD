@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Éditer une activité{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+{% endblock %}
+{% block body %}
+<div id = "edit-form">
+<div id = "container">
+    <h1 id="title">Éditer une activité</h1>
+
+    {{ include('activity/_form.html.twig', {'button_label': 'Valider'}) }}
+
+    <button class = "btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</a>
+
+    {{ include('activity/_delete_form.html.twig') }}
+</div>
+</div>
+{% endblock %}

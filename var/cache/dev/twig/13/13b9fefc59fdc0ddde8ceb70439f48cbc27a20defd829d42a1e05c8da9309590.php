@@ -63,6 +63,6 @@ class __TwigTemplate_a3fa0fb2ba3f26d9c0b370cb9e4296218e20690cc80a4ee0749a5438a05
     public function getSourceContext()
     {
         return new Source("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"#AAA\" d=\"M13 3v18c0 1.1-.9 2-2 2s-2-.9-2-2V3c0-1.1.9-2 2-2s2 .9 2 2zm10.2 1.6l-1.8-1.4c-.2-.3-.6-.2-1-.2H14v5h6.4c.4 0 .8-.3 1.1-.5l1.8-1.6c.3-.3.3-1-.1-1.3zm-3.7 4.8c-.3-.3-.7-.4-1.1-.4H14v5h4.4a2 2 0 0 0 1.1-.3l1.8-1.5c.4-.3.4-.9 0-1.3l-1.8-1.5zM3.5 7c-.4 0-.7 0-1 .3L.7 8.8c-.4.3-.4.9 0 1.3l1.8 1.6c.3.2.6.3 1 .3H8V7H3.5z\"/></svg>
-", "@WebProfiler/Icon/router.svg", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\symfony-react-starter\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\router.svg");
+", "@WebProfiler/Icon/router.svg", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\router.svg");
     }
 }

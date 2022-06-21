@@ -341,6 +341,34 @@
       <tag name="controller.service_arguments"/>
       <tag name="routing.route_loader"/>
     </service>
+    <service id="App\Controller\ActivityController" class="App\Controller\ActivityController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ActivityController"/>
+      </call>
+    </service>
+    <service id="App\Controller\CircuitController" class="App\Controller\CircuitController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\CircuitController"/>
+      </call>
+    </service>
+    <service id="App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\CircuitTypeController"/>
+      </call>
+    </service>
+    <service id="App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ConsultationPlanningController"/>
+      </call>
+    </service>
     <service id="App\Controller\DefaultController" class="App\Controller\DefaultController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -362,6 +390,20 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\PatientController"/>
       </call>
     </service>
+    <service id="App\Controller\ResourceController" class="App\Controller\ResourceController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ResourceController"/>
+      </call>
+    </service>
+    <service id="App\Controller\ResourceTypeController" class="App\Controller\ResourceTypeController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ResourceTypeController"/>
+      </call>
+    </service>
     <service id="App\Controller\UserController" class="App\Controller\UserController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -369,7 +411,25 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\UserController"/>
       </call>
     </service>
+    <service id="App\Form\ActivityType" class="App\Form\ActivityType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
+    <service id="App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
+    <service id="App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
+    <service id="App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
     <service id="App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
+    <service id="App\Form\ResourceType" class="App\Form\ResourceType" autowire="true" autoconfigure="true">
+      <tag name="form.type"/>
+    </service>
+    <service id="App\Form\ResourceTypeType" class="App\Form\ResourceTypeType" autowire="true" autoconfigure="true">
       <tag name="form.type"/>
     </service>
     <service id="App\Form\UserType" class="App\Form\UserType" autowire="true" autoconfigure="true">
@@ -1215,7 +1275,13 @@
         <argument>Symfony\Bridge\Doctrine\Form\Type</argument>
       </argument>
       <argument type="collection">
+        <argument>App\Form\ActivityType</argument>
+        <argument>App\Form\CircuitType</argument>
+        <argument>App\Form\CircuitTypeType</argument>
+        <argument>App\Form\Patient1Type</argument>
         <argument>App\Form\PatientType</argument>
+        <argument>App\Form\ResourceType</argument>
+        <argument>App\Form\ResourceTypeType</argument>
         <argument>App\Form\UserType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\FormType</argument>
         <argument>Symfony\Component\Form\Extension\Core\Type\ChoiceType</argument>
@@ -3377,7 +3443,7 @@
       <argument type="service" id="form.registry"/>
     </service>
     <service id="form.extension" class="Symfony\Component\Form\Extension\DependencyInjection\DependencyInjectionExtension">
-      <argument type="service" id=".service_locator.GVxAiMt"/>
+      <argument type="service" id=".service_locator.LIxftAD"/>
       <argument type="collection">
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="iterator">
           <argument type="service" id="form.type_extension.form.transformation_failure_handling"/>
@@ -6316,6 +6382,18 @@
     <service id="framework_extra_bundle.argument_name_convertor" class="Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter">
       <argument type="service" id="argument_metadata_factory"/>
     </service>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ActivityController" class="App\Controller\ActivityController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ActivityController" class="App\Controller\ActivityController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ActivityController" class="App\Controller\ActivityController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CircuitController" class="App\Controller\CircuitController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CircuitController" class="App\Controller\CircuitController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\CircuitController" class="App\Controller\CircuitController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\DefaultController" class="App\Controller\DefaultController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -6325,11 +6403,29 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\PatientController" class="App\Controller\PatientController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ResourceController" class="App\Controller\ResourceController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ResourceController" class="App\Controller\ResourceController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ResourceController" class="App\Controller\ResourceController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ResourceTypeController" class="App\Controller\ResourceTypeController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ResourceTypeController" class="App\Controller\ResourceTypeController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ResourceTypeController" class="App\Controller\ResourceTypeController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\UserController" class="App\Controller\UserController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\ActivityType" class="App\Form\ActivityType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\ActivityType" class="App\Form\ActivityType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\PatientType" class="App\Form\PatientType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\ResourceType" class="App\Form\ResourceType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\ResourceType" class="App\Form\ResourceType" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\ResourceTypeType" class="App\Form\ResourceTypeType" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Form\ResourceTypeType" class="App\Form\ResourceTypeType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\UserType" class="App\Form\UserType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\UserType" class="App\Form\UserType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\ActivityRepository" class="App\Repository\ActivityRepository" autowire="true" abstract="true"/>
@@ -6684,6 +6780,63 @@
         <argument key="loader" type="service_closure" id=".errored..service_locator.KfbR3DY.Symfony\Component\Config\Loader\LoaderInterface"/>
       </argument>
     </service>
+    <service id=".service_locator.XkeYMKj" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="activityRepository" type="service_closure" id="App\Repository\ActivityRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ozaOL.8" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="activity" type="service_closure" id=".errored..service_locator.ozaOL.8.App\Entity\Activity"/>
+      </argument>
+    </service>
+    <service id=".service_locator.SdyZWuD" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="activity" type="service_closure" id=".errored..service_locator.SdyZWuD.App\Entity\Activity"/>
+        <argument key="activityRepository" type="service_closure" id="App\Repository\ActivityRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.gRWhDnJ" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuitRepository" type="service_closure" id="App\Repository\CircuitRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.98tDWxn" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuit" type="service_closure" id=".errored..service_locator.98tDWxn.App\Entity\Circuit"/>
+      </argument>
+    </service>
+    <service id=".service_locator.Luo071z" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuit" type="service_closure" id=".errored..service_locator.Luo071z.App\Entity\Circuit"/>
+        <argument key="circuitRepository" type="service_closure" id="App\Repository\CircuitRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.187puZt" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.DpqeDM1" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuitType" type="service_closure" id=".errored..service_locator.DpqeDM1.App\Entity\CircuitType"/>
+      </argument>
+    </service>
+    <service id=".service_locator.InuE3of" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="circuitType" type="service_closure" id=".errored..service_locator.InuE3of.App\Entity\CircuitType"/>
+        <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
+      </argument>
+    </service>
     <service id=".service_locator.XupNM.k" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6701,6 +6854,44 @@
       <argument type="collection">
         <argument key="patient" type="service_closure" id=".errored..service_locator.ESMXKlZ.App\Entity\Patient"/>
         <argument key="patientRepository" type="service_closure" id="App\Repository\PatientRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.zWCawnN" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resourceRepository" type="service_closure" id="App\Repository\ResourceRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.em6sZ1k" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resource" type="service_closure" id=".errored..service_locator.em6sZ1k.App\Entity\Resource"/>
+      </argument>
+    </service>
+    <service id=".service_locator.pj7ZZti" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resource" type="service_closure" id=".errored..service_locator.pj7ZZti.App\Entity\Resource"/>
+        <argument key="resourceRepository" type="service_closure" id="App\Repository\ResourceRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.p8eToqg" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resourceTypeRepository" type="service_closure" id="App\Repository\ResourceTypeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.HZec6pw" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resourceType" type="service_closure" id=".errored..service_locator.HZec6pw.App\Entity\ResourceType"/>
+      </argument>
+    </service>
+    <service id=".service_locator.oXaA4.V" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="resourceType" type="service_closure" id=".errored..service_locator.oXaA4.V.App\Entity\ResourceType"/>
+        <argument key="resourceTypeRepository" type="service_closure" id="App\Repository\ResourceTypeRepository"/>
       </argument>
     </service>
     <service id=".service_locator..Ae5NXw" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -6722,14 +6913,39 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.5zdrETL" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.EwRKIPa" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Controller\ActivityController::delete" type="service_closure" id=".service_locator.SdyZWuD"/>
+        <argument key="App\Controller\ActivityController::edit" type="service_closure" id=".service_locator.SdyZWuD"/>
+        <argument key="App\Controller\ActivityController::index" type="service_closure" id=".service_locator.XkeYMKj"/>
+        <argument key="App\Controller\ActivityController::new" type="service_closure" id=".service_locator.XkeYMKj"/>
+        <argument key="App\Controller\ActivityController::show" type="service_closure" id=".service_locator.ozaOL.8"/>
+        <argument key="App\Controller\CircuitController::delete" type="service_closure" id=".service_locator.Luo071z"/>
+        <argument key="App\Controller\CircuitController::edit" type="service_closure" id=".service_locator.Luo071z"/>
+        <argument key="App\Controller\CircuitController::index" type="service_closure" id=".service_locator.gRWhDnJ"/>
+        <argument key="App\Controller\CircuitController::new" type="service_closure" id=".service_locator.gRWhDnJ"/>
+        <argument key="App\Controller\CircuitController::show" type="service_closure" id=".service_locator.98tDWxn"/>
+        <argument key="App\Controller\CircuitTypeController::delete" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController::edit" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController::index" type="service_closure" id=".service_locator.187puZt"/>
+        <argument key="App\Controller\CircuitTypeController::new" type="service_closure" id=".service_locator.187puZt"/>
+        <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.DpqeDM1"/>
         <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::index" type="service_closure" id=".service_locator.XupNM.k"/>
         <argument key="App\Controller\PatientController::new" type="service_closure" id=".service_locator.XupNM.k"/>
         <argument key="App\Controller\PatientController::show" type="service_closure" id=".service_locator.mk9shxU"/>
+        <argument key="App\Controller\ResourceController::delete" type="service_closure" id=".service_locator.pj7ZZti"/>
+        <argument key="App\Controller\ResourceController::edit" type="service_closure" id=".service_locator.pj7ZZti"/>
+        <argument key="App\Controller\ResourceController::index" type="service_closure" id=".service_locator.zWCawnN"/>
+        <argument key="App\Controller\ResourceController::new" type="service_closure" id=".service_locator.zWCawnN"/>
+        <argument key="App\Controller\ResourceController::show" type="service_closure" id=".service_locator.em6sZ1k"/>
+        <argument key="App\Controller\ResourceTypeController::delete" type="service_closure" id=".service_locator.oXaA4.V"/>
+        <argument key="App\Controller\ResourceTypeController::edit" type="service_closure" id=".service_locator.oXaA4.V"/>
+        <argument key="App\Controller\ResourceTypeController::index" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController::new" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController::show" type="service_closure" id=".service_locator.HZec6pw"/>
         <argument key="App\Controller\UserController::delete" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController::edit" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController::index" type="service_closure" id=".service_locator..Ae5NXw"/>
@@ -6741,11 +6957,36 @@
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::terminate" type="service_closure" id=".service_locator.KfwZsne"/>
+        <argument key="App\Controller\ActivityController:delete" type="service_closure" id=".service_locator.SdyZWuD"/>
+        <argument key="App\Controller\ActivityController:edit" type="service_closure" id=".service_locator.SdyZWuD"/>
+        <argument key="App\Controller\ActivityController:index" type="service_closure" id=".service_locator.XkeYMKj"/>
+        <argument key="App\Controller\ActivityController:new" type="service_closure" id=".service_locator.XkeYMKj"/>
+        <argument key="App\Controller\ActivityController:show" type="service_closure" id=".service_locator.ozaOL.8"/>
+        <argument key="App\Controller\CircuitController:delete" type="service_closure" id=".service_locator.Luo071z"/>
+        <argument key="App\Controller\CircuitController:edit" type="service_closure" id=".service_locator.Luo071z"/>
+        <argument key="App\Controller\CircuitController:index" type="service_closure" id=".service_locator.gRWhDnJ"/>
+        <argument key="App\Controller\CircuitController:new" type="service_closure" id=".service_locator.gRWhDnJ"/>
+        <argument key="App\Controller\CircuitController:show" type="service_closure" id=".service_locator.98tDWxn"/>
+        <argument key="App\Controller\CircuitTypeController:delete" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController:edit" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController:index" type="service_closure" id=".service_locator.187puZt"/>
+        <argument key="App\Controller\CircuitTypeController:new" type="service_closure" id=".service_locator.187puZt"/>
+        <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.DpqeDM1"/>
         <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:index" type="service_closure" id=".service_locator.XupNM.k"/>
         <argument key="App\Controller\PatientController:new" type="service_closure" id=".service_locator.XupNM.k"/>
         <argument key="App\Controller\PatientController:show" type="service_closure" id=".service_locator.mk9shxU"/>
+        <argument key="App\Controller\ResourceController:delete" type="service_closure" id=".service_locator.pj7ZZti"/>
+        <argument key="App\Controller\ResourceController:edit" type="service_closure" id=".service_locator.pj7ZZti"/>
+        <argument key="App\Controller\ResourceController:index" type="service_closure" id=".service_locator.zWCawnN"/>
+        <argument key="App\Controller\ResourceController:new" type="service_closure" id=".service_locator.zWCawnN"/>
+        <argument key="App\Controller\ResourceController:show" type="service_closure" id=".service_locator.em6sZ1k"/>
+        <argument key="App\Controller\ResourceTypeController:delete" type="service_closure" id=".service_locator.oXaA4.V"/>
+        <argument key="App\Controller\ResourceTypeController:edit" type="service_closure" id=".service_locator.oXaA4.V"/>
+        <argument key="App\Controller\ResourceTypeController:index" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController:new" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController:show" type="service_closure" id=".service_locator.HZec6pw"/>
         <argument key="App\Controller\UserController:delete" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController:edit" type="service_closure" id=".service_locator.4MF6DUv"/>
         <argument key="App\Controller\UserController:index" type="service_closure" id=".service_locator..Ae5NXw"/>
@@ -6815,10 +7056,16 @@
       <argument type="service" id="debug.argument_resolver.not_tagged_controller.inner"/>
       <argument type="service" id="debug.stopwatch"/>
     </service>
-    <service id=".service_locator.GVxAiMt" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.LIxftAD" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Form\ActivityType" type="service_closure" id="App\Form\ActivityType"/>
+        <argument key="App\Form\CircuitType" type="service_closure" id="App\Form\CircuitType"/>
+        <argument key="App\Form\CircuitTypeType" type="service_closure" id="App\Form\CircuitTypeType"/>
+        <argument key="App\Form\Patient1Type" type="service_closure" id="App\Form\Patient1Type"/>
         <argument key="App\Form\PatientType" type="service_closure" id="App\Form\PatientType"/>
+        <argument key="App\Form\ResourceType" type="service_closure" id="App\Form\ResourceType"/>
+        <argument key="App\Form\ResourceTypeType" type="service_closure" id="App\Form\ResourceTypeType"/>
         <argument key="App\Form\UserType" type="service_closure" id="App\Form\UserType"/>
         <argument key="Symfony\Bridge\Doctrine\Form\Type\EntityType" type="service_closure" id="form.type.entity"/>
         <argument key="Symfony\Component\Form\Extension\Core\Type\ChoiceType" type="service_closure" id="form.type.choice"/>
@@ -7188,6 +7435,30 @@
         <argument key="twig" type="service_closure" id="twig" on-invalid="ignore"/>
       </argument>
     </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ActivityController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ActivityController"/>
+      <argument>App\Controller\ActivityController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\CircuitController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\CircuitController"/>
+      <argument>App\Controller\CircuitController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\CircuitTypeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\CircuitTypeController"/>
+      <argument>App\Controller\CircuitTypeController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ConsultationPlanningController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ConsultationPlanningController"/>
+      <argument>App\Controller\ConsultationPlanningController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
     <service id=".service_locator.GNc8e5B.App\Controller\DefaultController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\DefaultController"/>
       <argument>App\Controller\DefaultController</argument>
@@ -7203,6 +7474,18 @@
     <service id=".service_locator.GNc8e5B.App\Controller\PatientController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\PatientController"/>
       <argument>App\Controller\PatientController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ResourceController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ResourceController"/>
+      <argument>App\Controller\ResourceController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ResourceTypeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ResourceTypeController"/>
+      <argument>App\Controller\ResourceTypeController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
@@ -7386,12 +7669,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.5zdrETL"/>
+      <argument type="service" id=".service_locator.EwRKIPa"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.5zdrETL"/>
+      <argument type="service" id=".service_locator.EwRKIPa"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -7420,8 +7703,18 @@
     </service>
     <service id=".errored..service_locator.KfwZsne.Symfony\Component\HttpFoundation\Response" class="Symfony\Component\HttpFoundation\Response"/>
     <service id=".errored..service_locator.KfbR3DY.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface"/>
+    <service id=".errored..service_locator.ozaOL.8.App\Entity\Activity" class="App\Entity\Activity"/>
+    <service id=".errored..service_locator.SdyZWuD.App\Entity\Activity" class="App\Entity\Activity"/>
+    <service id=".errored..service_locator.98tDWxn.App\Entity\Circuit" class="App\Entity\Circuit"/>
+    <service id=".errored..service_locator.Luo071z.App\Entity\Circuit" class="App\Entity\Circuit"/>
+    <service id=".errored..service_locator.DpqeDM1.App\Entity\CircuitType" class="App\Entity\CircuitType"/>
+    <service id=".errored..service_locator.InuE3of.App\Entity\CircuitType" class="App\Entity\CircuitType"/>
     <service id=".errored..service_locator.mk9shxU.App\Entity\Patient" class="App\Entity\Patient"/>
     <service id=".errored..service_locator.ESMXKlZ.App\Entity\Patient" class="App\Entity\Patient"/>
+    <service id=".errored..service_locator.em6sZ1k.App\Entity\Resource" class="App\Entity\Resource"/>
+    <service id=".errored..service_locator.pj7ZZti.App\Entity\Resource" class="App\Entity\Resource"/>
+    <service id=".errored..service_locator.HZec6pw.App\Entity\ResourceType" class="App\Entity\ResourceType"/>
+    <service id=".errored..service_locator.oXaA4.V.App\Entity\ResourceType" class="App\Entity\ResourceType"/>
     <service id=".errored..service_locator.ch4Jgvl.App\Entity\User" class="App\Entity\User"/>
     <service id=".errored..service_locator.4MF6DUv.App\Entity\User" class="App\Entity\User"/>
     <service id=".console.command.about.lazy" class="Symfony\Component\Console\Command\LazyCommand">
@@ -8372,7 +8665,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.5zdrETL"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.EwRKIPa"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8397,9 +8690,9 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~O1k.XnM"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.Q4mSh59" alias=".service_locator.5zdrETL"/>
+    <service id=".service_locator.ty0cS.V" alias=".service_locator.EwRKIPa"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
-    <service id=".service_locator.DzW4dDP" alias=".service_locator.GVxAiMt"/>
+    <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
     <service id=".service_locator.W9y3dzm" alias=".service_locator.GNc8e5B"/>
@@ -8426,9 +8719,24 @@
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator._5g_Wvc" alias=".service_locator.KfwZsne"/>
     <service id=".service_locator.JBAFp66" alias=".service_locator.KfbR3DY"/>
+    <service id=".service_locator._4vQcXW" alias=".service_locator.XkeYMKj"/>
+    <service id=".service_locator.7EETA.0" alias=".service_locator.ozaOL.8"/>
+    <service id=".service_locator.ull1I0L" alias=".service_locator.SdyZWuD"/>
+    <service id=".service_locator.a0z3wff" alias=".service_locator.gRWhDnJ"/>
+    <service id=".service_locator.WRZ39Us" alias=".service_locator.98tDWxn"/>
+    <service id=".service_locator.rlVL44w" alias=".service_locator.Luo071z"/>
+    <service id=".service_locator.8Y9DwoJ" alias=".service_locator.187puZt"/>
+    <service id=".service_locator.VGRL18G" alias=".service_locator.DpqeDM1"/>
+    <service id=".service_locator.UfW9lmN" alias=".service_locator.InuE3of"/>
     <service id=".service_locator.GIAnriR" alias=".service_locator.XupNM.k"/>
     <service id=".service_locator.gU1RRJi" alias=".service_locator.mk9shxU"/>
     <service id=".service_locator.Hpcjtxb" alias=".service_locator.ESMXKlZ"/>
+    <service id=".service_locator.L_Cq8K0" alias=".service_locator.zWCawnN"/>
+    <service id=".service_locator.fYU1jST" alias=".service_locator.em6sZ1k"/>
+    <service id=".service_locator.O3QILJY" alias=".service_locator.pj7ZZti"/>
+    <service id=".service_locator.m4MJFxb" alias=".service_locator.p8eToqg"/>
+    <service id=".service_locator.FjSNn3G" alias=".service_locator.HZec6pw"/>
+    <service id=".service_locator.E60Yfx3" alias=".service_locator.oXaA4.V"/>
     <service id=".service_locator.8PQa8Mp" alias=".service_locator..Ae5NXw"/>
     <service id=".service_locator.NFoOWn0" alias=".service_locator.ch4Jgvl"/>
     <service id=".service_locator.IyTIsd6" alias=".service_locator.4MF6DUv"/>

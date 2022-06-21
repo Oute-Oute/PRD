@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des patients{% endblock %}
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        {% endblock %}
+        
+{% block body %}
+    <div id = "index-users">    
+<h1 id="title">Liste des patients</h1>
+    <button class ="btn-add" onclick="window.location.href='{{ path('app_patient_new') }}'">Ajouter un nouveau patient</button>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Patient_id</th>
+                <th>Surname</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for patient in patients %}
+            <tr>
+                <td>{{ patient.id }}</td>
+                <td>{{ patient.name }}</td>
+                <td>{{ patient.patientId }}</td>
+                <td>{{ patient.surname }}</td>
+                <td>
+                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_patient_show', {'id': patient.id}) }}'">Infos</a>
+                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_patient_edit', {'id': patient.id}) }}'">Éditer</a>
+                    {{ include('patient/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Pas de patients créés !</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
