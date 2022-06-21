@@ -10,13 +10,16 @@ consult_users:
     path : /consult_users
     controller: App\Controller\UserController::index
 
-<<<<<<< Updated upstream
+
 ModificationPlanning:
   path: /ModificationPlanning
   controller: App\Controller\ModificationPlanningController::modificationPlanningGet
-=======
+
+ConsultationPlanning:
+  path: /ConsultationPlanning
+  controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
+
 get_patients:
     path : /patients
     controller: App\Controller\PatientController::index
 
->>>>>>> Stashed changes

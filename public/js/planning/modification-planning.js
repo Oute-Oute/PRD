@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function()
         editable: true,
         contentHeight: height-120,
         handleWindowResize: true,
+        eventDurationEditable: false,
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
             minute: '2-digit', //2-digit, numeric
@@ -35,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function()
             {
              id: "1", 
              resourceId: "a", 
-             start: "2022-06-17 12:00:00", 
-             end: "2022-06-17 17:30:00", 
+             start: "2022-06-21 12:00:00", 
+             end: "2022-06-21 17:30:00", 
              title: "event 1",
              color:'rgb(255,255,0)',
              textColor:'#000',
