@@ -27,7 +27,7 @@ div#edit-form div#container form {
 
 }
 
-div#edit-form div#container form div#user, div#activity, div#circuit, div#circuit-type, div#patient, div#resource, div#resource-type{
+div#edit-form div#container form div#user, div#activity, div#circuit, div#circuit-type, div#patient, div#resource, div#resource_type{
     display : flex;
     margin-right : 55px;
     flex-direction: column;
