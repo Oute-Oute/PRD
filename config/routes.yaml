@@ -30,3 +30,7 @@ index_type_circuits:
     path : /type-circuits
     controller: App\Controller\CircuitTypeController:index
 
+index_resources:
+    path: /resources
+    controller: App\Controller\ResourceController:index
+

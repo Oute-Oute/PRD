@@ -34,6 +34,7 @@ return [
         '/activities' => [[['_route' => 'index_activities', '_controller' => 'App\\Controller\\ActivityController:index'], null, null, null, false, false, null]],
         '/circuits' => [[['_route' => 'index_circuits', '_controller' => 'App\\Controller\\CircuitController:index'], null, null, null, false, false, null]],
         '/type-circuits' => [[['_route' => 'index_type_circuits', '_controller' => 'App\\Controller\\CircuitTypeController:index'], null, null, null, false, false, null]],
+        '/resources' => [[['_route' => 'index_resources', '_controller' => 'App\\Controller\\ResourceController:index'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'

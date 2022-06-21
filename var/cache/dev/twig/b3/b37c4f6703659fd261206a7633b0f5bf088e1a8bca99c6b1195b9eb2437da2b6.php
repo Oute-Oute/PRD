@@ -54,7 +54,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 </header>
                 <a href=\"#\" class=\"dashboard-nav-item\"> <i class=\"fas fa-home\"></i> Accueil </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
+                <a href=\"/ConsultationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
     
                 <div class='dashboard-nav-dropdown'><a href=\"#!\" class=\"dashboard-nav-item dashboard-nav-dropdown-toggle\"><i
@@ -111,7 +111,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 </header>
                 <a href=\"#\" class=\"dashboard-nav-item\"> <i class=\"fas fa-home\"></i> Accueil </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
+                <a href=\"/ConsultationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
     
                 <div class='dashboard-nav-dropdown'><a href=\"#!\" class=\"dashboard-nav-item dashboard-nav-dropdown-toggle\"><i

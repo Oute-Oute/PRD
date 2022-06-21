@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Patient{% endblock %}
+{% block title %}Ajouter un nouveau patient{% endblock %}
+        {% block stylesheets %}
+                <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+        {% endblock %}
 
 {% block body %}
-    <h1>Create new Patient</h1>
+<!--- FORMULAIRE -->
+<div id = "add-form">
+<div id = "container">
+    <h1>Ajouter un nouveau patient</h1>
 
     {{ include('patient/_form.html.twig') }}
-
-    <a href="{{ path('app_patient_index') }}">back to list</a>
+     <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_patient_index') }}'">Consulter les patients</button>
+</div>
+</div>
 {% endblock %}

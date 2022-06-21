@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Resource{% endblock %}
+{% block stylesheets %}
+                <link rel="stylesheet" href="{{ asset('CSS/Global/ShowCrud.css') }}">
+        {% endblock %}
+{% block title %}Informations d'une ressuorce{% endblock %}
 
 {% block body %}
-    <h1>Resource</h1>
+<div id ="show-user">
+    <h1>Informations de la ressource {{ resource.name }}</h1>
 
-    <table class="table">
+    <table class="table table-striped">
         <tbody>
             <tr>
                 <th>Id</th>
@@ -18,9 +21,10 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_resource_index') }}">back to list</a>
+    <button class = "btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_index') }}'">Consulter les ressources</a>
 
-    <a href="{{ path('app_resource_edit', {'id': resource.id}) }}">edit</a>
+    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_resource_edit', {'id': resource.id}) }}'">Éditer</a>
 
     {{ include('resource/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
