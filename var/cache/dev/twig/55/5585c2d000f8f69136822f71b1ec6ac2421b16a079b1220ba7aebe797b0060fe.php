@@ -112,7 +112,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         echo "<!--- FORMULAIRE -->
 <div id = \"add-form\">
 <div id = \"container\">
-    <h3>Ajouter un nouvel utilisateur</h3>
+    <h3>Ajouter un nouvel Utilisateur</h3>
 
     ";
         // line 15
@@ -162,13 +162,13 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 <!--- FORMULAIRE -->
 <div id = \"add-form\">
 <div id = \"container\">
-    <h3>Ajouter un nouvel utilisateur</h3>
+    <h3>Ajouter un nouvel Utilisateur</h3>
 
     {{ include('user/_form.html.twig') }}
     <button class=\"btn-consult btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
 </div>
 </div>
 {% endblock %}
-", "user/new.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
+", "user/new.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
     }
 }

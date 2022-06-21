@@ -1,6 +1,7 @@
 
-#show-user {
+div#show-user, #show-circuit-type {
     position : relative;
     width: 100%;
     padding : 20px 30px;
 }
+

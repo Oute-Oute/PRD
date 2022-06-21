@@ -85,15 +85,15 @@ class __TwigTemplate_e59050843628f315bd82d8a006e260033091f9fb132e9a4012306006d60
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
         // line 6
-        echo "    <h1>Patient index</h1>
+        echo "    <h1 id=\"title\">Patient index</h1>
 
     <table class=\"table\">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Surname</th>
                 <th>Patient_id</th>
+                <th>Surname</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -116,11 +116,11 @@ class __TwigTemplate_e59050843628f315bd82d8a006e260033091f9fb132e9a4012306006d60
             echo "</td>
                 <td>";
             // line 23
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["patient"], "surname", [], "any", false, false, false, 23), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["patient"], "patientId", [], "any", false, false, false, 23), "html", null, true);
             echo "</td>
                 <td>";
             // line 24
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["patient"], "patientId", [], "any", false, false, false, 24), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["patient"], "surname", [], "any", false, false, false, 24), "html", null, true);
             echo "</td>
                 <td>
                     <a href=\"";
@@ -185,15 +185,15 @@ class __TwigTemplate_e59050843628f315bd82d8a006e260033091f9fb132e9a4012306006d60
 {% block title %}Patient index{% endblock %}
 
 {% block body %}
-    <h1>Patient index</h1>
+    <h1 id=\"title\">Patient index</h1>
 
     <table class=\"table\">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Surname</th>
                 <th>Patient_id</th>
+                <th>Surname</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -202,8 +202,8 @@ class __TwigTemplate_e59050843628f315bd82d8a006e260033091f9fb132e9a4012306006d60
             <tr>
                 <td>{{ patient.id }}</td>
                 <td>{{ patient.name }}</td>
-                <td>{{ patient.surname }}</td>
                 <td>{{ patient.patientId }}</td>
+                <td>{{ patient.surname }}</td>
                 <td>
                     <a href=\"{{ path('app_patient_show', {'id': patient.id}) }}\">show</a>
                     <a href=\"{{ path('app_patient_edit', {'id': patient.id}) }}\">edit</a>
@@ -219,6 +219,6 @@ class __TwigTemplate_e59050843628f315bd82d8a006e260033091f9fb132e9a4012306006d60
 
     <a href=\"{{ path('app_patient_new') }}\">Create new</a>
 {% endblock %}
-", "patient/index.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\patient\\index.html.twig");
+", "patient/index.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\patient\\index.html.twig");
     }
 }

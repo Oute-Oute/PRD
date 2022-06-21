@@ -4,6 +4,10 @@ body {
     height: 100vh;
 }
 
+h1#title {
+    margin-bottom: 50px;
+}
+
 .btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult {
     border : 2px solid #34EB67;
     margin-top : 10px;

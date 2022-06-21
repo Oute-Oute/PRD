@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
-use App\Form\PatientType;
+use App\Form\Patient1Type;
 use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PatientController extends AbstractController
 {
     /**
-     * @Route("/patients", name="get_patients", methods={"GET"})
+     * @Route("/", name="app_patient_index", methods={"GET"})
      */
     public function index(PatientRepository $patientRepository): Response
     {
@@ -31,13 +31,13 @@ class PatientController extends AbstractController
     public function new(Request $request, PatientRepository $patientRepository): Response
     {
         $patient = new Patient();
-        $form = $this->createForm(PatientType::class, $patient);
+        $form = $this->createForm(Patient1Type::class, $patient);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $patientRepository->add($patient, true);
 
-            return $this->redirectToRoute('get_patients', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('patient/new.html.twig', [
@@ -61,7 +61,7 @@ class PatientController extends AbstractController
      */
     public function edit(Request $request, Patient $patient, PatientRepository $patientRepository): Response
     {
-        $form = $this->createForm(PatientType::class, $patient);
+        $form = $this->createForm(Patient1Type::class, $patient);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

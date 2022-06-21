@@ -13,7 +13,20 @@ consult_users:
 ModificationPlanning:
   path: /ModificationPlanning
   controller: App\Controller\ModificationPlanningController::modificationPlanningGet
-get_patients:
+
+index_patients:
     path : /patients
     controller: App\Controller\PatientController::index
+
+index_activities:
+    path : /activities
+    controller: App\Controller\ActivityController:index
+
+index_circuits:
+    path : /circuits
+    controller: App\Controller\CircuitController:index
+    
+index_type_circuits:
+    path : /type-circuits
+    controller: App\Controller\CircuitTypeController:index
 

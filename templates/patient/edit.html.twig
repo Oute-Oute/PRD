@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Éditer un patient{% endblock %}
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+{% endblock %}
+{% block body %}
+<div id = "edit-form">
+<div id = "container">
+    <h1>Edit Patient</h1>
+
+    {{ include('patient/_form.html.twig', {'button_label': 'Valider'}) }}
+
+    <a href="{{ path('app_patient_index') }}">back to list</a>
+
+    {{ include('patient/_delete_form.html.twig') }}
+{% endblock %}
