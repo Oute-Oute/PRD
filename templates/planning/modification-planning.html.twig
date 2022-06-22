@@ -22,19 +22,14 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">Modifier une activité</h2>
+        <h2 class="modal-title">Modifier <span id="show-title"></span></h2>
       </div>
         <form method="post" action="/ModificationPlanning">
             <div class="modal-body">
                 <input name="form" type="hidden" value="modify">
                 <input id="id" name="id" type="hidden">
                 <input id="length" name="length" type="hidden">
-                <label>Nom de l'activité : </label>
-                <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="new-title" name="title" required>
-                </div>
-
-                </br>
+                <input id="title" name="title" type="hidden">
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
@@ -68,16 +63,11 @@
             <div class="modal-body"> <!-- sépare le body de la modal -->
                 <input name="form" type="hidden" value="add">
                 <input id="length" name="length" type="hidden">
-                <label>Nom de l'activité : </label>
-                <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="title" name="title" required>
-                </div>
-                
-                </br>
+                <input id="title" name="title" type="hidden">
 
-                <label>Date de début de l'activité : </label>
+                <label>Date de début du parcours : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="start" name="start" required>
+                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="start" name="start" value="{{datetoday}}" required>
                 </div>
                 
                 {% for type in resourcestypes %}
@@ -109,7 +99,7 @@
 
 
     <!-- affichage du calendar -->
-
+    <input type='hidden' id='resources' value={{resources.content}}>
     <div id = 'calendar'>
     </div>
 </div>
