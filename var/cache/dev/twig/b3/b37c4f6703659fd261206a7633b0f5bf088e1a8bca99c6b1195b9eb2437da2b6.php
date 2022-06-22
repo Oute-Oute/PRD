@@ -52,10 +52,9 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                         <i class=\"fas fa-anchor\"></i> <span>HOPITAL</span>
                     </a>
                 </header>
-                <a href=\"/ModificationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
+                <a href=\"/ConsultationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"/activities\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Activités</a>
                 <a href=\"/circuits\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
-                <a href=\"/type-circuits\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Types de parcours</a>
                 <a href=\"/patients\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Patients</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
@@ -105,10 +104,9 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                         <i class=\"fas fa-anchor\"></i> <span>HOPITAL</span>
                     </a>
                 </header>
-                <a href=\"/ModificationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
+                <a href=\"/ConsultationPlanning\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Planning </a>
                 <a href=\"/activities\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Activités</a>
                 <a href=\"/circuits\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Parcours</a>
-                <a href=\"/type-circuits\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Types de parcours</a>
                 <a href=\"/patients\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Patients</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
