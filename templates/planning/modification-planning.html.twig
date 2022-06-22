@@ -1,41 +1,44 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Modification du Planning{% endblock %}
-{% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
-        
-        {% endblock %}
-{% block body %}
-    <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet' />
-    <script src='js/fullcalendar-scheduler/lib/main.js'></script>
-    <script src="js/planning/modification-planning.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 
+{% block stylesheets %}
+
+  <!-- insertion de bootstrap et fullcalendar-scheduler -->
+
+  <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet' />
+  <script src='js/fullcalendar-scheduler/lib/main.js'></script>
+  <script src="js/planning/modification-planning.js"></script>
+  <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
+        
+{% endblock %}
+
+{% block body %}
+  
 <!-- modify-planning-modal -->
 
-<div class="modal fade" id="modify-planning-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal" id="modify-planning-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modifier l'activité</h5>
+        <h2 class="modal-title">Modifier une activité</h2>
       </div>
         <form method="post" action="/ModificationPlanning">
             <div class="modal-body">
+                <input name="form" type="hidden" value="modify">
+                <input id="id" name="id" type="hidden">
+                <input id="length" name="length" type="hidden">
                 <label>Nom de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="new-title" name="new-title" required>
+                    <input class="input-field" type="text" placeholder="Titre de l'activité" id="new-title" name="title" required>
                 </div>
-                <div id='modalTitle'></div>
+
+                </br>
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Date de début de l'activité" id="new-start" name="new-start" required>
-                </div>
-
-                <label>Durée de l'activité : </label>
-                <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Durée de l'activité" id="new-time" name="new-time" required>
-                    <label>minutes</label>
+                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="new-start" name="start" required>
                 </div>
                 
                 {% for type in resourcestypes %}
@@ -52,31 +55,29 @@
   </div>
 </div>
 
+
 <!-- add-planning-modal -->
 
-<div class="modal fade" id="add-planning-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Ajouter une activité</h5>
+<div class="modal" id="add-planning-modal"> <!-- div qui représente la modal -->
+  <div class="modal-dialog"> <!-- permet d'afficher la modal en mode dialog -->
+    <div class="modal-content"> <!-- permet de structurer le contenu de la modal -->
+      <div class="modal-header"> <!-- sépare le header de la modal -->
+        <h2 class="modal-title">Ajouter une activité</h2>
       </div>
-        <form method="post" action="/ModificationPlanning">
-            <div class="modal-body">
+        <form method="post" action="/ModificationPlanning"> <!-- créer un form qui renvoie une méthode post au controller -->
+            <div class="modal-body"> <!-- sépare le body de la modal -->
+                <input name="form" type="hidden" value="add">
+                <input id="length" name="length" type="hidden">
                 <label>Nom de l'activité : </label>
                 <div class="input-container onWhite">
                     <input class="input-field" type="text" placeholder="Titre de l'activité" id="title" name="title" required>
                 </div>
-                <div id='modalTitle'></div>
+                
+                </br>
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Date de début de l'activité" id="start" name="start" required>
-                </div>
-
-                <label>Durée de l'activité : </label>
-                <div class="input-container onWhite">
-                    <input class="input-field" type="text" placeholder="Durée de l'activité" id="time" name="time" required>
-                    <label>minutes</label>
+                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="start" name="start" required>
                 </div>
                 
                 {% for type in resourcestypes %}
@@ -95,12 +96,20 @@
 
     <input type=hidden id="date" value="<?php eco $$_GET['date']; ?>"/>
     
-  <div class="container"><h1>Modification du Planning</h1>
+  <div class="container">
+
+    <!-- affichage du haut de la page -->
+
+    <h1>Modification du Planning</h1>
     <div class="container">
       <button type="button" class="btn-add" onclick="addEvent()">Ajouter</button>
       <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
       <button type="button" class="btn-valide btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Valider</button>
     </div>
+
+
+    <!-- affichage du calendar -->
+
     <div id = 'calendar'>
     </div>
 </div>

@@ -17,6 +17,12 @@ ConsultationPlanning:
 ModificationPlanning:
     path: /ModificationPlanning
     controller: App\Controller\ModificationPlanningController::modificationPlanningGet
+    methods: [GET]
+
+ModificationPlanningPost:
+    path: /ModificationPlanning
+    controller: App\Controller\ModificationPlanningController::modificationPlanningPost
+    methods: [POST]
 
 index_patients:
     path : /patients
