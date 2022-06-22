@@ -8,6 +8,7 @@ div#container {
    align-items : center;
    flex-direction: column;
    border-radius: 20px;
+   position: absolute;
 }
 
 
@@ -70,4 +71,27 @@ input.form-control::placeholder {
 .datepicker-days .table-condensed tfoot, .datepicker-months .table-condensed tfoot, .datepicker-years .table-condensed tfoot,
 .datepicker-decades .table-condensed tfoot, .datepicker-centuries .table-condensed tfoot {
   border-top: solid 1px rgba(0,0,0,.15);
+}
+.flex{
+  display: flow;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  position: relative;
+  z-index:0;
+}
+.filter-container {
+  order: 4;
+  
+  display: none;
+  position: absolute;
+  z-index: 10;
+  margin: 30px;
+  padding: 20px 50px 20px 50px;
+  width: fit-content;
+  height: fit-content;
+  background: white;
+  border-radius: 15px;
+  box-shadow:10px 5px 5px grey;
 }

@@ -1,49 +1,98 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Consultation du Planning{% endblock %}
+{% block title %}Consultation du Planning
+{% endblock %}
 {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
-        
-        {% endblock %}
+	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
+
+{% endblock %}
 {% block body %}
-    <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet' />
-    <script src='js/fullcalendar-scheduler/lib/main.js'></script>
-    <script src="js/planning/consultation-planning.js"></script>
-    <script src="js/jquery-3.6.0.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
-    
-    
-    <div class="container"><h1>Consultation du Planning</h1>
-    <button class ="btn-valide" onclick="modify()">Modifier le planning</button>
-    <select class ="list-edit" id="displayList" onchange="changePlanning()">
-           <option value="0" selected disabled>Changer l'affichage </option>
-           <option value="parcours">Parcours</option>
-           <option value="patients">Patients</option>
-           <option value="rh">Ressources humaines</option>
-           <option value="rm">Ressources Matérielles</option>
-    </select>
-    <button class ="list-edit" onclick="filter()" title="Filtrer l'affichage"><img src="img/filter_icon.svg" /></button>
-
-    <script>
-    
-    </script>
-
-    <div class="row">
-        <div class="col-md-6 mx-auto">
-            <div class="form-group">
-              <div class="datepicker date input-group">
-                  <input type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()"autocomplete="off" title="Choisir une date à afficher">
-              </div>
-            </div>
-        </div>
-    </div>
+	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+	<script src="js/planning/consultation-planning.js"></script>
+	<script src="js/jquery-3.6.0.js"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
 
 
+	<div class="container-xl">
+		<h1>Consultation du Planning</h1>
+		<div class="flex">
+			<button class="btn-valide" onclick="modify()">Modifier le planning</button>
+			<select class="list-edit" id="displayList" onchange="changePlanning()">
+				<option value="0" selected disabled>Changer l'affichage
+				</option>
+				<option value="parcours">Parcours</option>
+				<option value="patients">Patients</option>
+				<option value="rh">Ressources humaines</option>
+				<option value="rm">Ressources Matérielles</option>
+			</select>
+			<button id="filterbutton" onclick="filterShow()" class="list-edit" title="Filtrer l'affichage"><img src="img/filter_icon.svg"/></button>
+			<div id="filterId" class="filter-container" style="display:none">
+				<div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
 
-    <div id = 'calendar'>
-    
-    </div>
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div><div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
+
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div><div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
+
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div><div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
+
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div><div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
+
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div><div>
+					<input type="checkbox" id="scales" name="scales" checked>
+					<label for="scales">J'aime</label>
+				</div>
+
+				<div>
+					<input type="checkbox" id="horns" name="horns">
+					<label for="horns">Manger</label>
+				</div>
+			</div>
+		
+
+		<div class="row">
+			<div class="col-md-6 mx-auto">
+				<div class="form-group">
+					<div class="datepicker date input-group" style="z-index:0">
+						<input type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher">
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div id='calendar'></div>
+	</div>
 </div>
-
 {% endblock %}

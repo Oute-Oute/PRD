@@ -105,5 +105,13 @@ function modify(){
   window.location.assign("/ModificationPlanning?date="+dateStr);
 }
 
+let filter_container = document.getElementById("filterId");
+function filterShow(){
+  if(document.getElementById("filterId").style.display != "none"){
+    document.getElementById("filterId").style.display = "none";
+  } else {
+    document.getElementById("filterId").style.display = "inline-block";
+  }
+}
 
 
