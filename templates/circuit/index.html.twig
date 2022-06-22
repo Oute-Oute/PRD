@@ -16,7 +16,8 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>actions</th>
+                <th>Type </th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,8 @@
             <tr>
                 <td>{{ circuit.id }}</td>
                 <td>{{ circuit.name }}</td>
+                <td>{{ circuit.circuit }}</td>
+
                 <td>
                      <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': circuit.id}) }}'">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_circuit_edit', {'id': circuit.id}) }}'">Éditer</a>

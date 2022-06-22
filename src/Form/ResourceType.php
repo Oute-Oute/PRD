@@ -13,7 +13,7 @@ class ResourceType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('resource_type')
+            
         ;
     }
 

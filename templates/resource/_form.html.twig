@@ -1,4 +1,13 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
+    <div>
+    <fieldset>
+        <legend> Type de la ressource</legend>
+    <select id="resource_resource_type" name="resource[resource_type]">
+        <option value>Humaine</option>
+        <option>Matérielle</option>
+    </select>
+    </fieldset>
+
     <button type = "submit" class="btn-valide btn-secondary">{{ button_label|default('Valider') }}</button>
 {{ form_end(form) }}

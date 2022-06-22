@@ -6,6 +6,7 @@ use App\Repository\CircuitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use SebastianBergmann\Timer\Duration;
 
 /**
  * @ORM\Entity(repositoryClass=CircuitRepository::class)
@@ -25,7 +26,7 @@ class Circuit
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CircuitType::class, inversedBy="circuits")
+     * @ORM\Column(type="string", length=255))
      */
     private $circuit_type;
 
@@ -56,6 +57,18 @@ class Circuit
         return $this;
     }
 
+    public function getcircuit_type(): ?string
+    {
+        return $this->circuit_type;
+    }
+
+    public function setCircuitType(string $circuit_type): self
+    {
+        $this->circuit_type = $circuit_type;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Activity>
      */
@@ -81,5 +94,10 @@ class Circuit
         }
 
         return $this;
+    }
+
+    public function __toString(): ?string 
+    {
+        return $this->getName();
     }
 }
