@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function()
             {
              id: "1", 
              resourceId: "a", 
-             start: "2022-06-21 12:00:00", 
-             end: "2022-06-21 17:30:00", 
+             start: "2022-06-22 12:00:00", 
+             end: "2022-06-22 17:30:00", 
              title: "event 1",
              color:'rgb(255,255,0)',
              textColor:'#000',
