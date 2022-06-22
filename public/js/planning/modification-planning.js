@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function()
     var calendarEl = document.getElementById('calendar');
 
 
-    var resources=document.getElementById('resources').value.replace("_", " "); 
+    var resources=document.getElementById('resources').value.replaceAll("_", " "); 
     console.log(resources);
     var resourcearray=JSON.parse(resources); 
     console.log(resourcearray); 
