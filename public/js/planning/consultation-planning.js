@@ -1,5 +1,7 @@
 var calendar;
 var datepicker;
+var date=new Date();
+var dateStr=date.toDateString();
 
 document.addEventListener('DOMContentLoaded', function() 
 {
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function()
         selectable: true,
         selectHelper: true,
         editable: false,
-        contentHeight: height-120,
+        contentHeight: height*3/4,
         handleWindowResize: true,
         eventDurationEditable: false,
 
@@ -58,23 +60,21 @@ document.addEventListener('DOMContentLoaded', function()
             ]
     },
     );
+    
+    calendar.gotoDate(date);
     calendar.render();
 });
 
-$(function () {
-  // ACTIVATION DU DATEPICKER 
-  $('.form-control').datepicker({
-    language: 'fr',
-      clearBtn: true,
-      format: "dd/mm/yyyy",
-      autoclose: true,
-      todayHighlight: true,
-});
-});
 
 function changeDate(){
-  calendar.gotoDate($( ".form-control" ).datepicker( "getDate" ))
-  calendar.next()
+  console.warn(document.getElementById("Date").value)
+  var jsDate=new Date(document.getElementById("Date").value)
+  var day=jsDate.getDate()+1;
+  var month=jsDate.getMonth();
+  var year=jsDate.getFullYear();
+  date=new Date(year,month,day);
+  //2018-09-22T15:00:00
+  calendar.gotoDate(date);
 }
 
 function changePlanning(){
@@ -90,12 +90,19 @@ function changePlanning(){
     id: '2',
     title: "Parcours 2",
   });
-  console.warn(selectedVar);
   calendar.render();
 }
 
 function modify(){
-  window.location.assign("/ModificationPlanning?date="+calendar.getDate());
+  var temp = new Date
+  if(temp.getDate()==date.getDate() && temp.getMonth()==date.getMonth() && temp.getFullYear()==date.getFullYear()){var day=calendar.getDate().getDate()+1;}
+  else {var day=calendar.getDate().getDate();}
+  if (day<10){day="0"+day;}
+  var month=calendar.getDate().getMonth()+1;
+  if (month<10){month="0"+month;}
+  var year=calendar.getDate().getFullYear();
+  dateStr=year+"-"+month+"-"+day+"T00:00:00";
+  window.location.assign("/ModificationPlanning?date="+dateStr);
 }
 
 

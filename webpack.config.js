@@ -64,8 +64,8 @@ Encore
     .autoProvidejQuery()
 
     // uncomment if you use React
-    .enableReactPreset()
-    .addEntry('js/app', './assets/js/app.js');
+    //.enableReactPreset()
+    //.addEntry('js/app', './assets/js/app.js');
 
     // uncomment to get integrity="..." attributes on your script & link tags
     // requires WebpackEncoreBundle 1.4 or higher

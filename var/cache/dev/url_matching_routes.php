@@ -36,7 +36,6 @@ return [
         '/patients' => [[['_route' => 'index_patients', '_controller' => 'App\\Controller\\PatientController::index'], null, null, null, false, false, null]],
         '/activities' => [[['_route' => 'index_activities', '_controller' => 'App\\Controller\\ActivityController:index'], null, null, null, false, false, null]],
         '/circuits' => [[['_route' => 'index_circuits', '_controller' => 'App\\Controller\\CircuitController:index'], null, null, null, false, false, null]],
-        '/type-circuits' => [[['_route' => 'index_type_circuits', '_controller' => 'App\\Controller\\CircuitTypeController:index'], null, null, null, false, false, null]],
         '/resources' => [[['_route' => 'index_resources', '_controller' => 'App\\Controller\\ResourceController:index'], null, null, null, false, false, null]],
         '/resources-types' => [[['_route' => 'index_resources_types', '_controller' => 'App\\Controller\\ResourceTypeController:index'], null, null, null, false, false, null]],
     ],

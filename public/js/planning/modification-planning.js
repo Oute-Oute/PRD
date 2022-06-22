@@ -1,3 +1,22 @@
+var calendar;
+
+function $_GET(param) {
+	var vars = {};
+	window.location.href.replace( location.hash, '' ).replace( 
+		/[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+		function( m, key, value ) { // callback
+			vars[key] = value !== undefined ? value : '';
+		}
+	);
+
+	if ( param ) {
+		return vars[param] ? vars[param] : null;	
+	}
+	return vars;
+}
+var dateStr=($_GET('date'))
+//alert($_GET('date'))
+var date=new Date(dateStr);
 document.addEventListener('DOMContentLoaded', function() 
 {
     const height = document.querySelector('div').clientHeight;
@@ -19,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function()
         selectable: true,
         selectHelper: true,
         editable: true,
+        contentHeight: height*9/12,
+        handleWindowResize: true,
         eventDurationEditable: false,
 
         contentHeight: 9/12*height,
@@ -90,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function()
     );
 
     //affiche le calendar
+    calendar.gotoDate(date);
     calendar.render();
 });
 
