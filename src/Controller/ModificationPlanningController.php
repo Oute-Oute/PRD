@@ -30,7 +30,7 @@ class ModificationPlanningController extends AbstractController
         foreach($resources as $resources){
             $resourcesCollection[]=array(
                 'id' =>(str_replace(" ", "_", $resources->getId())),
-                'name'=>(str_replace(" ", "_", $resources->getName())),
+                'title'=>(str_replace(" ", "_", $resources->getName())),
             ); 
         }   
         $jsonresponse= new JsonResponse($resourcesCollection); 
