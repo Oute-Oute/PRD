@@ -65,19 +65,10 @@ document.addEventListener('DOMContentLoaded', function()
     calendar.render();
 });
 
-$(function () {
-  // ACTIVATION DU DATEPICKER 
-  $('.form-control').datepicker({
-    language: 'fr',
-      clearBtn: true,
-      format: "dd/mm/yyyy",
-      autoclose: true,
-      todayHighlight: true,
-});
-});
 
 function changeDate(){
-  var jsDate=$( ".form-control" ).datepicker( "getDate" )
+  console.warn(document.getElementById("Date").value)
+  var jsDate=new Date(document.getElementById("Date").value)
   var day=jsDate.getDate()+1;
   var month=jsDate.getMonth();
   var year=jsDate.getFullYear();
