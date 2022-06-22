@@ -19,11 +19,13 @@ class ModificationPlanningController extends AbstractController
      */
     public function modificationPlanningGet(ManagerRegistry $doctrine): Response
     {
+        $date_today = $_GET["date"];
+        
         //Récupération des données ressources de la base de données
         $repository = $doctrine->getRepository("App\Entity\ResourceType");
         $resourcestypes = $repository->findAll();
 
-        $resources = $this->getDoctrine()->getRepository("App\Entity\Resource")->findAll();  
+        $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
         foreach($resources as $resources){
             $resourcesCollection[]=array(
                 'id' =>($resources->getId()),
@@ -31,7 +33,7 @@ class ModificationPlanningController extends AbstractController
             ); 
         }   
         $jsonresponse= new JsonResponse($resourcesCollection); 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $resourcestypes,'resources'=>$jsonresponse ]);
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $resourcestypes, 'resources'=>$jsonresponse, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -62,3 +64,4 @@ class ModificationPlanningController extends AbstractController
         }
     }
 }
+
