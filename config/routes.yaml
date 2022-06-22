@@ -29,10 +29,6 @@ index_activities:
 index_circuits:
     path : /circuits
     controller: App\Controller\CircuitController:index
-    
-index_type_circuits:
-    path : /type-circuits
-    controller: App\Controller\CircuitTypeController:index
 
 index_resources:
     path: /resources

@@ -56,18 +56,6 @@ class Circuit
         return $this;
     }
 
-    public function getCircuitType(): ?CircuitType
-    {
-        return $this->circuit_type;
-    }
-
-    public function setCircuitType(?CircuitType $circuit_type): self
-    {
-        $this->circuit_type = $circuit_type;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Activity>
      */
