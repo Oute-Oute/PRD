@@ -80,3 +80,7 @@ function modifyEvent(){
     setTimeout(()=>{document.getElementById("success").style.display="none";},6000);
     
 }
+
+function addEvent(){
+    $('#add-planning-modal').modal("show");
+}
