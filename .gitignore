@@ -31,3 +31,4 @@ yarn-error.log
 *.log
 *.php-version
 .php-version
+*.sqlite
