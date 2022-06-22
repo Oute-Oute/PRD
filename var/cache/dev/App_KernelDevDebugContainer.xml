@@ -6834,26 +6834,16 @@
         <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
       </argument>
     </service>
-    <service id=".errored.Fjld16n" class="App\Entity\CircuitType"/>
-    <service id=".service_locator.1n1ymiM" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.DpqeDM1" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
-        <argument key="circuitType" type="service_closure" id=".errored.Fjld16n"/>
+        <argument key="circuitType" type="service_closure" id=".errored..service_locator.DpqeDM1.App\Entity\CircuitType"/>
       </argument>
     </service>
-    <service id=".errored.EzoU3bl" class="App\Entity\CircuitType"/>
-    <service id=".service_locator.8RsNy97" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.InuE3of" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
-        <argument key="circuitType" type="service_closure" id=".errored.EzoU3bl"/>
-        <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
-      </argument>
-    </service>
-    <service id=".errored.unRphqF" class="App\Entity\CircuitType"/>
-    <service id=".service_locator.gs.gXIj" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="circuitType" type="service_closure" id=".errored.unRphqF"/>
+        <argument key="circuitType" type="service_closure" id=".errored..service_locator.InuE3of.App\Entity\CircuitType"/>
         <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
       </argument>
     </service>
@@ -6861,6 +6851,13 @@
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="doctrine" type="service_closure" id="doctrine"/>
+      </argument>
+    </service>
+    <service id=".service_locator.ju8mKQU" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+        <argument key="entityManager" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
     </service>
     <service id=".service_locator.XupNM.k" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -6939,7 +6936,7 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.pqAjizE" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator..qcGStZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ActivityController::delete" type="service_closure" id=".service_locator.SdyZWuD"/>
@@ -6952,13 +6949,13 @@
         <argument key="App\Controller\CircuitController::index" type="service_closure" id=".service_locator.gRWhDnJ"/>
         <argument key="App\Controller\CircuitController::new" type="service_closure" id=".service_locator.gRWhDnJ"/>
         <argument key="App\Controller\CircuitController::show" type="service_closure" id=".service_locator.98tDWxn"/>
-        <argument key="App\Controller\CircuitTypeController::delete" type="service_closure" id=".service_locator.gs.gXIj"/>
-        <argument key="App\Controller\CircuitTypeController::edit" type="service_closure" id=".service_locator.8RsNy97"/>
+        <argument key="App\Controller\CircuitTypeController::delete" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController::edit" type="service_closure" id=".service_locator.InuE3of"/>
         <argument key="App\Controller\CircuitTypeController::index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController::new" type="service_closure" id=".service_locator.187puZt"/>
-        <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.1n1ymiM"/>
+        <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.DpqeDM1"/>
         <argument key="App\Controller\ModificationPlanningController::modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::modificationPlanningPost" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController::modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::index" type="service_closure" id=".service_locator.XupNM.k"/>
@@ -6995,13 +6992,13 @@
         <argument key="App\Controller\CircuitController:index" type="service_closure" id=".service_locator.gRWhDnJ"/>
         <argument key="App\Controller\CircuitController:new" type="service_closure" id=".service_locator.gRWhDnJ"/>
         <argument key="App\Controller\CircuitController:show" type="service_closure" id=".service_locator.98tDWxn"/>
-        <argument key="App\Controller\CircuitTypeController:delete" type="service_closure" id=".service_locator.gs.gXIj"/>
-        <argument key="App\Controller\CircuitTypeController:edit" type="service_closure" id=".service_locator.8RsNy97"/>
+        <argument key="App\Controller\CircuitTypeController:delete" type="service_closure" id=".service_locator.InuE3of"/>
+        <argument key="App\Controller\CircuitTypeController:edit" type="service_closure" id=".service_locator.InuE3of"/>
         <argument key="App\Controller\CircuitTypeController:index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController:new" type="service_closure" id=".service_locator.187puZt"/>
-        <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.1n1ymiM"/>
+        <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.DpqeDM1"/>
         <argument key="App\Controller\ModificationPlanningController:modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:modificationPlanningPost" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController:modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:index" type="service_closure" id=".service_locator.XupNM.k"/>
@@ -7705,12 +7702,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.pqAjizE"/>
+      <argument type="service" id=".service_locator..qcGStZ"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.pqAjizE"/>
+      <argument type="service" id=".service_locator..qcGStZ"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -7743,6 +7740,8 @@
     <service id=".errored..service_locator.SdyZWuD.App\Entity\Activity" class="App\Entity\Activity"/>
     <service id=".errored..service_locator.98tDWxn.App\Entity\Circuit" class="App\Entity\Circuit"/>
     <service id=".errored..service_locator.Luo071z.App\Entity\Circuit" class="App\Entity\Circuit"/>
+    <service id=".errored..service_locator.DpqeDM1.App\Entity\CircuitType" class="App\Entity\CircuitType"/>
+    <service id=".errored..service_locator.InuE3of.App\Entity\CircuitType" class="App\Entity\CircuitType"/>
     <service id=".errored..service_locator.mk9shxU.App\Entity\Patient" class="App\Entity\Patient"/>
     <service id=".errored..service_locator.ESMXKlZ.App\Entity\Patient" class="App\Entity\Patient"/>
     <service id=".errored..service_locator.em6sZ1k.App\Entity\Resource" class="App\Entity\Resource"/>
@@ -8699,7 +8698,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.pqAjizE"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator..qcGStZ"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8724,7 +8723,7 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~O1k.XnM"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.OfIN5iP" alias=".service_locator.pqAjizE"/>
+    <service id=".service_locator.wNiLnAx" alias=".service_locator..qcGStZ"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
@@ -8760,9 +8759,10 @@
     <service id=".service_locator.WRZ39Us" alias=".service_locator.98tDWxn"/>
     <service id=".service_locator.rlVL44w" alias=".service_locator.Luo071z"/>
     <service id=".service_locator.8Y9DwoJ" alias=".service_locator.187puZt"/>
-    <service id=".service_locator.fZz2zab" alias=".service_locator.8RsNy97"/>
-    <service id=".service_locator..g8rhga" alias=".service_locator.gs.gXIj"/>
+    <service id=".service_locator.VGRL18G" alias=".service_locator.DpqeDM1"/>
+    <service id=".service_locator.UfW9lmN" alias=".service_locator.InuE3of"/>
     <service id=".service_locator.T8.TLJR" alias=".service_locator.T7xmfzk"/>
+    <service id=".service_locator.dNJiejL" alias=".service_locator.ju8mKQU"/>
     <service id=".service_locator.GIAnriR" alias=".service_locator.XupNM.k"/>
     <service id=".service_locator.gU1RRJi" alias=".service_locator.mk9shxU"/>
     <service id=".service_locator.Hpcjtxb" alias=".service_locator.ESMXKlZ"/>
