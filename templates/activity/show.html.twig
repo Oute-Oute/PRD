@@ -22,6 +22,15 @@
                 <th>Duration</th>
                 <td>{{ activity.duration }}</td>
             </tr>
+            <tr>
+                <th>Circuits liés</th>
+                 
+                    {% for circuit in activity.circuits %}
+                    <td for="scales">{{circuit}}</td>
+                {% else %}
+                <td> Pas de circuits liés ! </td>
+                {% endfor %}
+            </tr>
         </tbody>
     </table>
 
