@@ -7,7 +7,6 @@
 {% block body %}
 <div id ="show-user">
     <h1>Informations de l'activité {{ activity.id }}</h1>
-
     <table class="table table-striped">
         <tbody>
             <tr>
@@ -28,7 +27,7 @@
                     {% for circuit in activity.circuits %}
                     <td for="scales">{{circuit}}</td>
                 {% else %}
-                <td> Pas de circuits liés ! </td>
+                <td> Pas de circuits liés ! </td    <>
                 {% endfor %}
             </tr>
         </tbody>

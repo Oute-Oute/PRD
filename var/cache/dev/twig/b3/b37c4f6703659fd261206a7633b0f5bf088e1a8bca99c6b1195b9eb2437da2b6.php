@@ -58,6 +58,8 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 <a href=\"/patients\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Patients</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
+                <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
+
 
 
             <div id='menu-bottom'>
@@ -110,6 +112,8 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 <a href=\"/patients\" class=\"dashboard-nav-item\"><i class=\"fas fa-tachometer-alt\"></i> Patients</a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
+                <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
+
 
 
             <div id='menu-bottom'>

@@ -33,8 +33,8 @@ class ResourceTypeController extends AbstractController
         $resourceType = new ResourceType();
         $form = $this->createForm(ResourceTypeType::class, $resourceType);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+
             $resourceTypeRepository->add($resourceType, true);
 
             return $this->redirectToRoute('app_resource_type_index', [], Response::HTTP_SEE_OTHER);

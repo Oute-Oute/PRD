@@ -57,7 +57,7 @@ class Circuit
         return $this;
     }
 
-    public function getcircuit_type(): ?string
+    public function getCircuitType(): ?string
     {
         return $this->circuit_type;
     }

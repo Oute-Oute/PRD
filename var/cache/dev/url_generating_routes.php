@@ -56,6 +56,7 @@ return [
     'consult_users' => [[], ['_controller' => 'App\\Controller\\UserController::index'], [], [['text', '/consult_users']], [], [], []],
     'ConsultationPlanning' => [[], ['_controller' => 'App\\Controller\\ConsultationPlanningController::consultationPlanningGet'], [], [['text', '/ConsultationPlanning']], [], [], []],
     'ModificationPlanning' => [[], ['_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningGet'], [], [['text', '/ModificationPlanning']], [], [], []],
+    'ModificationPlanningPost' => [[], ['_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningPost'], [], [['text', '/ModificationPlanning']], [], [], []],
     'index_patients' => [[], ['_controller' => 'App\\Controller\\PatientController::index'], [], [['text', '/patients']], [], [], []],
     'index_activities' => [[], ['_controller' => 'App\\Controller\\ActivityController:index'], [], [['text', '/activities']], [], [], []],
     'index_circuits' => [[], ['_controller' => 'App\\Controller\\CircuitController:index'], [], [['text', '/circuits']], [], [], []],
