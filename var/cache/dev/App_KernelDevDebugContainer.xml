@@ -362,6 +362,13 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\CircuitTypeController"/>
       </call>
     </service>
+    <service id="App\Controller\ConnexionController" class="App\Controller\ConnexionController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ConnexionController"/>
+      </call>
+    </service>
     <service id="App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -6391,6 +6398,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\CircuitTypeController" class="App\Controller\CircuitTypeController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ConnexionController" class="App\Controller\ConnexionController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ConnexionController" class="App\Controller\ConnexionController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ConnexionController" class="App\Controller\ConnexionController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\ConsultationPlanningController" class="App\Controller\ConsultationPlanningController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -6837,6 +6847,12 @@
         <argument key="circuitTypeRepository" type="service_closure" id="App\Repository\CircuitTypeRepository"/>
       </argument>
     </service>
+    <service id=".service_locator.T7xmfzk" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+      </argument>
+    </service>
     <service id=".service_locator.XupNM.k" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6913,7 +6929,7 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.EwRKIPa" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.vL.sT0e" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ActivityController::delete" type="service_closure" id=".service_locator.SdyZWuD"/>
@@ -6931,6 +6947,7 @@
         <argument key="App\Controller\CircuitTypeController::index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController::new" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.DpqeDM1"/>
+        <argument key="App\Controller\ModificationPlanningController::modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController::index" type="service_closure" id=".service_locator.XupNM.k"/>
@@ -6972,6 +6989,7 @@
         <argument key="App\Controller\CircuitTypeController:index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController:new" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.DpqeDM1"/>
+        <argument key="App\Controller\ModificationPlanningController:modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:edit" type="service_closure" id=".service_locator.ESMXKlZ"/>
         <argument key="App\Controller\PatientController:index" type="service_closure" id=".service_locator.XupNM.k"/>
@@ -7453,6 +7471,12 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ConnexionController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ConnexionController"/>
+      <argument>App\Controller\ConnexionController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
     <service id=".service_locator.GNc8e5B.App\Controller\ConsultationPlanningController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\ConsultationPlanningController"/>
       <argument>App\Controller\ConsultationPlanningController</argument>
@@ -7669,12 +7693,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.EwRKIPa"/>
+      <argument type="service" id=".service_locator.vL.sT0e"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.EwRKIPa"/>
+      <argument type="service" id=".service_locator.vL.sT0e"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -8665,7 +8689,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.EwRKIPa"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.vL.sT0e"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8690,7 +8714,7 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~O1k.XnM"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.ty0cS.V" alias=".service_locator.EwRKIPa"/>
+    <service id=".service_locator.8hj1eW5" alias=".service_locator.vL.sT0e"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
@@ -8728,6 +8752,7 @@
     <service id=".service_locator.8Y9DwoJ" alias=".service_locator.187puZt"/>
     <service id=".service_locator.VGRL18G" alias=".service_locator.DpqeDM1"/>
     <service id=".service_locator.UfW9lmN" alias=".service_locator.InuE3of"/>
+    <service id=".service_locator.T8.TLJR" alias=".service_locator.T7xmfzk"/>
     <service id=".service_locator.GIAnriR" alias=".service_locator.XupNM.k"/>
     <service id=".service_locator.gU1RRJi" alias=".service_locator.mk9shxU"/>
     <service id=".service_locator.Hpcjtxb" alias=".service_locator.ESMXKlZ"/>
