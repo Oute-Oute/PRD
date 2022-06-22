@@ -11,21 +11,10 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
-import React from 'react';
- import ReactDOM from 'react-dom';
  
  import Items from './Components/Items';
  
- 
- class App extends React.Component {
-     constructor() {
-         super();
- 
-         this.state = {
-             entries: []
-         };
-     }
- 
+
      componentDidMount() {
          fetch('https://jsonplaceholder.typicode.com/posts/')
              .then(response => response.json())
@@ -54,7 +43,6 @@ import React from 'react';
      }
  }
  
- ReactDOM.render(<App />, document.getElementById('root'));
 
  //Pour éviter l'erreur $ is not defined etc..
 import './styles/app.scss';
