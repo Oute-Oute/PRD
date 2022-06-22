@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller de la page modification du planning
@@ -21,7 +22,15 @@ class ModificationPlanningController extends AbstractController
         $repository = $doctrine->getRepository("App\Entity\ResourceType");
         $resourcestypes = $repository->findAll();
 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $resourcestypes ]);
+        $resources = $this->getDoctrine()->getRepository("App\Entity\Resource")->findAll();  
+        foreach($resources as $resources){
+            $resourcesCollection[]=array(
+                'id' =>($resources->getId()),
+                'name'=>($resources->getName()),
+            ); 
+        }   
+        $jsonresponse= new JsonResponse($resourcesCollection); 
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $resourcestypes,'resources'=>$jsonresponse ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine)
