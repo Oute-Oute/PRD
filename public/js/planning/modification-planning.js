@@ -91,12 +91,11 @@ document.addEventListener('DOMContentLoaded', function()
 
             //calcul de la durée de l'activité
             length = Math.floor((tmp/1000/60));
-            const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-            date = start.toLocaleDateString(undefined, options);
     
             //set les données à afficher par défault
-            $('#new-start').val(date);
-            $('#new-title').val(activity.title);
+            $('#new-start').val(start.toISOString().substring(0,19));
+            document.getElementById('show-title').innerHTML = activity.title;
+            $('#title').val(activity.title);
             $('#length').val(length);
             $('#id').val(id);
 
@@ -121,5 +120,6 @@ function modifyEvent(){
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent(){
+    
     $('#add-planning-modal').modal("show");
 }
