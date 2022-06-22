@@ -24,7 +24,7 @@ class ModificationPlanningController extends AbstractController
         //Récupération des données ressources de la base de données
         $repository = $doctrine->getRepository("App\Entity\ResourceType");
         $resourcestypes = $repository->findAll();
-
+        $resourcesCollection[]=array();
         $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
         foreach($resources as $resources){
             $resourcesCollection[]=array(
