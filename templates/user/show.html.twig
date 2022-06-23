@@ -2,12 +2,11 @@
 {% block stylesheets %}
                 <link rel="stylesheet" href="{{ asset('CSS/Global/ShowCrud.css') }}">
         {% endblock %}
-{% block title %}User{% endblock %}
+{% block title %}Informations d'une utilisateur{% endblock %}
 
 {% block body %}
 <div id ="show-user">
     <h1>Informations de l'utilisateur {{ user.id }}</h1>
-
     <table class="table table-striped">
         <tbody>
             <tr>
@@ -15,16 +14,12 @@
                 <td>{{ user.id }}</td>
             </tr>
             <tr>
-                <th>Login</th>
-                <td>{{ user.login }}</td>
+                <th>Username</th>
+                <td>{{ user.username }}</td>
             </tr>
             <tr>
-                <th>Password</th>
-                <td>{{ user.password }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{ user.status }}</td>
+                <th>Roles</th>
+                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
             </tr>
         </tbody>
     </table>
@@ -34,6 +29,4 @@
     <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': user.id}) }}'">Éditer</a>
 
     {{ include('user/_delete_form.html.twig') }}
-</div>
-
 {% endblock %}

@@ -84,6 +84,7 @@ class ModificationPlanningController extends AbstractController
         //$activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findBy(array('start_datetime' => $date_start)); 
         $activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findAll(); 
         $activitiesArray=array(); 
+        /*
         foreach($activities as $activity){
              $activityClass=new \stdClass(); 
              $activitiesArray[]=array(
@@ -102,6 +103,7 @@ class ModificationPlanningController extends AbstractController
            
             array_push($activitiesArray, $activityClass);
         }  
+        */
         return $activitiesArray; 
     }
 
@@ -111,12 +113,12 @@ class ModificationPlanningController extends AbstractController
 
         $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ResourceType")->findAll();
 
-
+        /*
         foreach($listeActivitiesResourceTypes as $activityResourceType)
         {
             $result = new \stdClass();
             
-            $result->idActivity = $activityResourceType->getActivityId()->getId();
+            $result->idActivity = $activityResourceType->getActivities()->getId();
             $result->idResourceType = $activityResourceType->getResourceTypeId()->getId();
             $result->categoryResourceType = $activityResourceType->getResourceTypeId()->getCategory();
 
@@ -124,6 +126,7 @@ class ModificationPlanningController extends AbstractController
         }
 
         //dd($listeResourceTypes);
+        */
         return $listeResourceTypes;
     }
 }
