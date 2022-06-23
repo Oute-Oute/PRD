@@ -6947,9 +6947,13 @@
       </argument>
     </service>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <service id=".service_locator..qcGStZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
 =======
     <service id=".service_locator.9AtR0V5" class="Symfony\Component\DependencyInjection\ServiceLocator">
+>>>>>>> Stashed changes
+=======
+    <service id=".service_locator.LUEHQln" class="Symfony\Component\DependencyInjection\ServiceLocator">
 >>>>>>> Stashed changes
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6983,6 +6987,8 @@
         <argument key="App\Controller\ResourceTypeController::delete" type="service_closure" id=".service_locator.oXaA4.V"/>
         <argument key="App\Controller\ResourceTypeController::edit" type="service_closure" id=".service_locator.oXaA4.V"/>
         <argument key="App\Controller\ResourceTypeController::index" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController::indexFilteredHumans" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController::indexFilteredMaterials" type="service_closure" id=".service_locator.p8eToqg"/>
         <argument key="App\Controller\ResourceTypeController::new" type="service_closure" id=".service_locator.p8eToqg"/>
         <argument key="App\Controller\ResourceTypeController::show" type="service_closure" id=".service_locator.HZec6pw"/>
         <argument key="App\Controller\UserController::delete" type="service_closure" id=".service_locator.4MF6DUv"/>
@@ -7026,6 +7032,8 @@
         <argument key="App\Controller\ResourceTypeController:delete" type="service_closure" id=".service_locator.oXaA4.V"/>
         <argument key="App\Controller\ResourceTypeController:edit" type="service_closure" id=".service_locator.oXaA4.V"/>
         <argument key="App\Controller\ResourceTypeController:index" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController:indexFilteredHumans" type="service_closure" id=".service_locator.p8eToqg"/>
+        <argument key="App\Controller\ResourceTypeController:indexFilteredMaterials" type="service_closure" id=".service_locator.p8eToqg"/>
         <argument key="App\Controller\ResourceTypeController:new" type="service_closure" id=".service_locator.p8eToqg"/>
         <argument key="App\Controller\ResourceTypeController:show" type="service_closure" id=".service_locator.HZec6pw"/>
         <argument key="App\Controller\UserController:delete" type="service_closure" id=".service_locator.4MF6DUv"/>
@@ -7717,18 +7725,26 @@
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <argument type="service" id=".service_locator..qcGStZ"/>
 =======
       <argument type="service" id=".service_locator.9AtR0V5"/>
+>>>>>>> Stashed changes
+=======
+      <argument type="service" id=".service_locator.LUEHQln"/>
 >>>>>>> Stashed changes
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       <argument type="service" id=".service_locator..qcGStZ"/>
 =======
       <argument type="service" id=".service_locator.9AtR0V5"/>
+>>>>>>> Stashed changes
+=======
+      <argument type="service" id=".service_locator.LUEHQln"/>
 >>>>>>> Stashed changes
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
@@ -8719,9 +8735,13 @@
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <service id="argument_resolver.controller_locator" alias=".service_locator..qcGStZ"/>
 =======
     <service id="argument_resolver.controller_locator" alias=".service_locator.9AtR0V5"/>
+>>>>>>> Stashed changes
+=======
+    <service id="argument_resolver.controller_locator" alias=".service_locator.LUEHQln"/>
 >>>>>>> Stashed changes
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
@@ -8748,9 +8768,13 @@
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~M2IyELi"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <service id=".service_locator.wNiLnAx" alias=".service_locator..qcGStZ"/>
 =======
     <service id=".service_locator.2sDslp9" alias=".service_locator.9AtR0V5"/>
+>>>>>>> Stashed changes
+=======
+    <service id=".service_locator.B26A9hu" alias=".service_locator.LUEHQln"/>
 >>>>>>> Stashed changes
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>

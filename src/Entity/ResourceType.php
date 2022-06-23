@@ -39,6 +39,11 @@ class ResourceType
      */
     private $resources;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Activity::class, inversedBy="resourcetypes")
+     */
+    private $activities;
+
     public function __construct()
     {
         $this->resources = new ArrayCollection();

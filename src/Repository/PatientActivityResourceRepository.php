@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\PatientCircuitResource;
+use App\Entity\PatientActivityResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PatientCircuitResource>
+ * @extends ServiceEntityRepository<PatientActivityResource>
  *
- * @method PatientCircuitResource|null find($id, $lockMode = null, $lockVersion = null)
- * @method PatientCircuitResource|null findOneBy(array $criteria, array $orderBy = null)
- * @method PatientCircuitResource[]    findAll()
- * @method PatientCircuitResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PatientActivityResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method PatientActivityResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PatientActivityResource[]    findAll()
+ * @method PatientActivityResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PatientCircuitResourceRepository extends ServiceEntityRepository
+class PatientActivityResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PatientCircuitResource::class);
+        parent::__construct($registry, PatientActivityResource::class);
     }
 
-    public function add(PatientCircuitResource $entity, bool $flush = false): void
+    public function add(PatientActivityResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class PatientCircuitResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(PatientCircuitResource $entity, bool $flush = false): void
+    public function remove(PatientActivityResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class PatientCircuitResourceRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return PatientCircuitResource[] Returns an array of PatientCircuitResource objects
+//     * @return PatientActivityResource[] Returns an array of PatientActivityResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class PatientCircuitResourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?PatientCircuitResource
+//    public function findOneBySomeField($value): ?PatientActivityResource
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')
