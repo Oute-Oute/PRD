@@ -29,7 +29,6 @@ class ModificationPlanningController extends AbstractController
             $resourcesCollection[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
                 'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
-                'resourceLabelText'=>("Patient"),
             ); 
         }   
         //Conversion des données ressources en json
