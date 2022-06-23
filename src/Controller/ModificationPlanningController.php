@@ -26,8 +26,8 @@ class ModificationPlanningController extends AbstractController
         $listeResourceTypes = $this->listeTypeResources($doctrine);
         foreach($resources as $resource){
             $resourcesCollection[]=array(
-                'id' =>(str_replace(" ", "_", $resource->getId())),
-                'title'=>(str_replace(" ", "_", $resource->getName())),
+                'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
+                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
             ); 
         }   
         $jsonresponse= new JsonResponse($resourcesCollection); 

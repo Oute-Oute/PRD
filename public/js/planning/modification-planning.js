@@ -22,11 +22,8 @@ document.addEventListener('DOMContentLoaded', function()
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
 
-    var resources=document.getElementById('resources').value.replaceAll("_", " "); 
-    console.log(resources);
-    
+    var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
     var resourcearray=JSON.parse(resources); 
-    //console.log(resourcearray); 
 
     //Créer le calendar sous les conditions que l'on souhaite
     var calendar = new FullCalendar.Calendar(calendarEl, 
