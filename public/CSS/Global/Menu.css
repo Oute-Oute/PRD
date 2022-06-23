@@ -42,14 +42,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-    color: #3f84fc;
+    color: #ffffff;
     text-decoration: none;
     background-color: transparent;
 }
 
 a:hover {
-    color: #0458eb;
-    text-decoration: underline;
+    color: #ffffff;
+    text-decoration: none;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {

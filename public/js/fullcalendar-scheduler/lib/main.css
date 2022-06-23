@@ -180,7 +180,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     padding: 0.4em 0.65em;
     font-size: 1em;
     line-height: 1.5;
-    border-radius: 0.25em;
+    border-radius: 10px;
   }
 .fc .fc-button:hover {
     text-decoration: none;
@@ -1566,6 +1566,8 @@ vertical slots in both the header AND the body
     display: flex;
     align-items: center; /* vertical align */
     justify-content: center; /* horizontal align */
+    border-radius: 10px;
+    box-shadow:  rgba(149, 157, 165, 0.5) 0px 8px 24px;
   }
 .fc .fc-timeline-header-row-chrono { /* a row of times */
   }

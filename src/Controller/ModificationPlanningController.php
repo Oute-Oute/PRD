@@ -25,7 +25,6 @@ class ModificationPlanningController extends AbstractController
         $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
         $listeResource=$this->listeResources($doctrine); 
 
-
         return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$listeResource, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
     }
 
@@ -97,7 +96,7 @@ class ModificationPlanningController extends AbstractController
     {
         $listeResourceTypes = array();
 
-        $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ActivityResourceType")->findAll();
+        $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ResourceType")->findAll();
 
 
         foreach($listeActivitiesResourceTypes as $activityResourceType)
@@ -111,7 +110,7 @@ class ModificationPlanningController extends AbstractController
             array_push($listeResourceTypes, $result);
         }
 
-        dd($listeResourceTypes);
+        //dd($listeResourceTypes);
         return $listeResourceTypes;
     }
 }
