@@ -23,10 +23,15 @@ class ModificationPlanningController extends AbstractController
         
         //Récupération des données ressources de la base de données
         $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
-
         $listeResourceTypes = $this->listeTypeResources($doctrine);
-
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'resources'=>$resources, 'datetoday' => $date_today ]);
+        foreach($resources as $resources){
+            $resourcesCollection[]=array(
+                'id' =>(str_replace(" ", "_", $resources->getId())),
+                'title'=>(str_replace(" ", "_", $resources->getName())),
+            ); 
+        }   
+        $jsonresponse= new JsonResponse($resourcesCollection); 
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$resources, 'resources'=>$jsonresponse, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
