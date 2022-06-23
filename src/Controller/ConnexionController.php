@@ -27,7 +27,6 @@ class ConnexionController extends AbstractController
     public function connexionPost(Request $request, ManagerRegistry $doctrine)
     {
         $userRepository = new UserRepository($this->getDoctrine());
-
         $username = $request->request->get('username');
         $password = $request->request->get('password');
         $user     = $userRepository->findOneBy(['login' => $username]);
@@ -42,11 +41,14 @@ class ConnexionController extends AbstractController
                 'Message' => $messageError,
             ]);
         } else {
+            if (password_verify($password, $user->getPassword())) {
 
-            if ($password === ($user->getPassword())) {
+
+
 
                 return $this->render("base.html.twig");
             } else {
+
                 return $this->render('connexion/connexion.html.twig', [
                     'Message' => $messageError,
                 ]);
