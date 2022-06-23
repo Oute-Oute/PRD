@@ -48,7 +48,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                     <a href=\"#!\" class=\"menu-toggle\">
                         <i class=\"fas fa-bars\"></i>
                     </a>
-                    <a href=\"#\" class=\"brand-logo\">
+                    <a href=\"/\" class=\"brand-logo\">
                         <i class=\"fas fa-anchor\"></i> <span>HOPITAL</span>
                     </a>
                 </header>
@@ -60,7 +60,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
 
-
+            </div>
 
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
@@ -102,7 +102,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                     <a href=\"#!\" class=\"menu-toggle\">
                         <i class=\"fas fa-bars\"></i>
                     </a>
-                    <a href=\"#\" class=\"brand-logo\">
+                    <a href=\"/\" class=\"brand-logo\">
                         <i class=\"fas fa-anchor\"></i> <span>HOPITAL</span>
                     </a>
                 </header>
@@ -114,7 +114,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
 
-
+            </div>
 
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>

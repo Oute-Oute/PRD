@@ -52,7 +52,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         // line 5
         $this->displayBlock('title', $context, $blocks);
         echo "</title>
-        <link rel=\"icon\" href=\"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>\">
+        <link rel=\"icon\" href=\"/img/hospital_icon.svg\">
         
         ";
         // line 9
@@ -109,7 +109,6 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
 
-        echo "Welcome!";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
 
@@ -210,7 +209,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     public function getDebugInfo()
     {
-        return array (  184 => 32,  171 => 23,  167 => 22,  160 => 18,  155 => 17,  145 => 16,  132 => 11,  122 => 10,  103 => 5,  90 => 33,  87 => 32,  85 => 31,  78 => 26,  76 => 16,  71 => 14,  67 => 13,  64 => 12,  62 => 10,  59 => 9,  53 => 5,  47 => 1,);
+        return array (  183 => 32,  170 => 23,  166 => 22,  159 => 18,  154 => 17,  144 => 16,  131 => 11,  121 => 10,  103 => 5,  90 => 33,  87 => 32,  85 => 31,  78 => 26,  76 => 16,  71 => 14,  67 => 13,  64 => 12,  62 => 10,  59 => 9,  53 => 5,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -219,8 +218,8 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 <html>
     <head>
         <meta charset=\"UTF-8\">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel=\"icon\" href=\"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>\">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel=\"icon\" href=\"/img/hospital_icon.svg\">
         
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         <link rel=\"stylesheet\" href=\"CSS/bootstrap/bootstrap.min.css\">

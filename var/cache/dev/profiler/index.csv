@@ -3222,3 +3222,16 @@ dfd4f7,127.0.0.1,GET,http://127.0.0.1:8000/resources-types/CSS/bootstrap/bootstr
 c03540,127.0.0.1,GET,http://127.0.0.1:8000/resources-types-materials,1655977824,,200
 5ebb2a,127.0.0.1,GET,http://127.0.0.1:8000/resources-types-humans,1655977827,,200
 >>>>>>> Stashed changes
+655b26,127.0.0.1,GET,http://127.0.0.1:8000/user/new,1655991203,,200
+335c62,127.0.0.1,GET,http://127.0.0.1:8000/,1655991205,,200
+d10fb9,127.0.0.1,GET,http://127.0.0.1:8000/CSS/menu.css,1655991207,799060,404
+799060,127.0.0.1,GET,http://127.0.0.1:8000/CSS/menu.css,1655991207,,404
+b0c5d4,127.0.0.1,GET,http://127.0.0.1:8000/CSS/ContextMenu.css,1655991207,beb47d,404
+beb47d,127.0.0.1,GET,http://127.0.0.1:8000/CSS/ContextMenu.css,1655991207,,404
+4cfe5b,127.0.0.1,GET,http://127.0.0.1:8000/,1655991215,,200
+b3e0df,127.0.0.1,GET,http://127.0.0.1:8000/CSS/menu.css,1655991216,f655a1,404
+f655a1,127.0.0.1,GET,http://127.0.0.1:8000/CSS/menu.css,1655991216,,404
+b5b25e,127.0.0.1,GET,http://127.0.0.1:8000/CSS/ContextMenu.css,1655991216,dd1991,404
+dd1991,127.0.0.1,GET,http://127.0.0.1:8000/CSS/ContextMenu.css,1655991216,,404
+03301f,127.0.0.1,GET,http://127.0.0.1:8000/circuits,1655991219,,200
+cf18cb,127.0.0.1,GET,http://127.0.0.1:8000/circuits,1655991293,,200
