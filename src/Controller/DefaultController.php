@@ -13,8 +13,6 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        return $this->render('calendrier/calendrier.html.twig', [
-            'controller_name' => 'DefaultController',
-        ]);
+        return $this->render('planning/consultation-planning.html.twig');
     }
 }
