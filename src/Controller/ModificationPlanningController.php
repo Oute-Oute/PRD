@@ -77,16 +77,29 @@ class ModificationPlanningController extends AbstractController
     public function PatientActivityResource(ManagerRegistry $doctrine){
         //Récupération des données Activity de la base de données
         //A tester
-        $activities=$doctrine->getRepository("App/Entity/PatientActivityResource")->findBy(); 
+        $str = str_replace("T", " ", $_GET['date']);
+        $str=substr($str,0,16); 
+        $date_start = \DateTime::createFromFormat('Y-m-d H:m', $str);
+        //dd(str_replace("T", " ", $_GET['date']), $_GET['date'], $date_start); 
+        //$activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findBy(array('start_datetime' => $date_start)); 
+        $activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findAll(); 
         $activitiesArray=array(); 
-       
         foreach($activities as $activity){
              $activityClass=new \stdClass(); 
-             $activityClass->idActivity = $activity->getActivityId()->getId();
-            $activityClass->idPatient = $activity->getPatientId()->getId();
-            $activityClass->date_debut=$activity->getDate()->getDate_debut(); 
-            $activityClass->date_fin=$activity->getDate()->getDate_fin(); 
-            $activityClass->idRessource = $activity->getResourceId()->getId();
+             $activitiesArray[]=array(
+                'idActivity' => $activity->getActivity(),
+                'idPatient' => $activity->getPatient(),
+                'idRessource' => $activity->getResource(),
+                'date_debut'=>$activity->getStartDatetime(),
+                'date_fin'=>$activity->getEndDatetime(),  
+             );
+             dd($activitiesArray);  
+             $activityClass->idActivity = $activity->getActivity()->getId();
+             $activityClass->idPatient = $activity->getPatient()->getId();
+             $activityClass->idRessource = $activity->getResource()->getId();
+             $activityClass->date_debut=$activity->getStartDatetime();  
+             $activityClass->date_fin=$activity->getDate()->getEndDatetime();  
+           
             array_push($activitiesArray, $activityClass);
         }  
         return $activitiesArray; 
