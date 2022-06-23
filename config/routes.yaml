@@ -44,3 +44,11 @@ index_resources_types:
     path: /resources-types
     controller: App\Controller\ResourceTypeController:index
 
+index_resources_types_humans:
+    path: /resources-types-humans
+    controller: App\Controller\ResourceTypeController:indexFilteredHumans
+
+index_resources_types_materials:
+    path: /resources-types-materials
+    controller: App\Controller\ResourceTypeController:indexFilteredMaterials
+
