@@ -68,6 +68,7 @@ function createCalendar(){
         contentHeight: height*3/4,
         handleWindowResize: true,
         eventDurationEditable: false,
+        nowIndicator: true,
 
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
