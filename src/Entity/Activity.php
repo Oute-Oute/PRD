@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\ActivityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,6 +41,7 @@ class Activity
     public function __construct()
     {
         $this->circuits = new ArrayCollection();
+        $this->resourcetypes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,6 +93,30 @@ class Activity
     public function removeCircuit(Circuit $circuit): self
     {
         $this->circuits->removeElement($circuit);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ResourceType>
+     */
+    public function getResourceTypes(): Collection
+    {
+        return $this->resourcetypes;
+    }
+
+    public function addResourceType(ResourceType $resourcetype): self
+    {
+        if (!$this->resourcetypes->contains($resourcetype)) {
+            $this->resourcetypes[] = $resourcetype;
+        }
+
+        return $this;
+    }
+
+    public function removeResourceType(ResourceType $resourcetype): self
+    {
+        $this->resourcetypes->removeElement($resourcetype);
 
         return $this;
     }
