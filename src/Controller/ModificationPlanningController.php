@@ -24,14 +24,33 @@ class ModificationPlanningController extends AbstractController
         //Récupération des données ressources de la base de données
         $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
         $listeResourceTypes = $this->listeTypeResources($doctrine);
+        $resourcesArray=array(); 
         foreach($resources as $resource){
             $resourcesCollection[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
                 'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
             ); 
         }   
-        $jsonresponse= new JsonResponse($resourcesCollection); 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$resources, 'resources'=>$jsonresponse, 'datetoday' => $date_today ]);
+        //Conversion des données ressources en json
+        $resourcesArrayJson= new JsonResponse($resourcesArray); 
+
+        //Récupération des données Activity de la base de données
+        //A tester
+        /*
+        $activities=$doctrine->getRepository("App/Entity/PatientActivityResource")->findBy(); 
+        $activitiesArray=array(); 
+       
+        foreach($activities as $activity){
+             $activityClass=new \stdClass(); 
+             $activityClass->idActivity = $activity->getActivityId()->getId();
+            $activityClass->idPatient = $activity->getPatientId()->getId();
+            $activityClass->date_debut=$activity->getDate()->getDate_debut(); 
+            $activityClass->date_fin=$activity->getDate()->getDate_fin(); 
+            $activityClass->idRessource = $activity->getResourceId()->getId();
+            array_push($activitiesArray, $activityClass);
+        }  */
+
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$resources, 'resources'=>$resourcesArrayJson, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
