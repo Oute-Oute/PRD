@@ -70,8 +70,8 @@
                     <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="start" name="start" value="{{datetoday}}" required>
                 </div>
                 
-                {% for type in resourcestypes %}
-                  Nom de la categorie : {{type.categoryResourceType}}
+                {% for resourcetype in resourcestypes %}
+                  Nom de la categorie : {{resourcetype.categoryResourceType}}
                 {% endfor %}
 
                 <div class="modal-footer">
@@ -99,7 +99,7 @@
 
 
     <!-- affichage du calendar -->
-    <input type='hidden' id='resources' value={{resources|json_encode()}}>
+    <input type='hidden' id='resources' value={{resources.content}}>
     <div id = 'calendar'>
     </div>
 </div>
