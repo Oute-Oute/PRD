@@ -54,7 +54,11 @@ function filterShow(){
 
 function createCalendar(){
   
+  var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
+  var resourcearray=JSON.parse(resources); 
+  console.log(resourcearray); 
   var calendarEl = document.getElementById('calendar');
+
   calendar=new FullCalendar.Calendar(calendarEl, 
     {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -79,16 +83,7 @@ function createCalendar(){
         resourceOrder: 'title',
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
-        resources: [
-        {
-            id: 'a',
-           title: 'ressource a',
-        },
-        {
-            id: 'b',
-            title: 'ressource b',
-        }
-          ],
+        resources: resourcearray,
         events:[
             {
              id: "1", 

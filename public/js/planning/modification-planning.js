@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function()
 {
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-
     var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
     var resourcearray=JSON.parse(resources); 
 
