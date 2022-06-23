@@ -71,7 +71,7 @@
                 </div>
                 
                 {% for type in resourcestypes %}
-                  Nom de la resource : {{type.name}} et nom de la categorie : {{type.category}}
+                  Nom de la categorie : {{type.categoryResourceType}}
                 {% endfor %}
 
                 <div class="modal-footer">
@@ -99,7 +99,7 @@
 
 
     <!-- affichage du calendar -->
-    <input type='hidden' id='resources' value={{resources.content}}>
+    <input type='hidden' id='resources' value={{resources|json_encode()}}>
     <div id = 'calendar'>
     </div>
 </div>

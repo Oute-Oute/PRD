@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', function()
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
 
-
     var resources=document.getElementById('resources').value.replaceAll("_", " "); 
     console.log(resources);
+    
     var resourcearray=JSON.parse(resources); 
-    console.log(resourcearray); 
+    //console.log(resourcearray); 
 
     //Créer le calendar sous les conditions que l'on souhaite
     var calendar = new FullCalendar.Calendar(calendarEl, 
@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function()
             {
              id: "1", 
              resourceId: "1", 
-             start: "2022-06-22 12:00:00", 
-             end: "2022-06-22 17:30:00", 
+             start: "2022-06-23 12:00:00", 
+             end: "2022-06-23 17:30:00", 
              title: "event 1",
              color:'rgb(255,255,0)',
              textColor:'#000',
