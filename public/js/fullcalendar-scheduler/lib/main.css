@@ -424,6 +424,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     right: 0;
     bottom: 0;
     left: 0;
+    box-shadow: rgb(149 157 165 / 50%) 0px 8px 24px;
   }
 .fc .fc-col-header-cell-cushion {
     display: inline-block; /* x-browser for when sticky (when multi-tier header) */
