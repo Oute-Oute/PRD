@@ -279,6 +279,6 @@ class __TwigTemplate_47d7d8eb6a46f3e8682c9f4f43801e01435624950c34a3573cd9e2138b5
 </div>
 
 {% endblock %}
-", "user/index.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\index.html.twig");
+", "user/index.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\user\\index.html.twig");
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Circuit;
 use App\Form\CircuitType;
 use App\Repository\CircuitRepository;
+use App\Repository\ActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,10 @@ class CircuitController extends AbstractController
         $form = $this->createForm(CircuitType::class, $circuit);
         $form->handleRequest($request);
 
+        //$activities = $this->getDoctrine()->getRepository(ActivityController::class)->findAll();
+        $activityRepository = new ActivityRepository($this->getDoctrine());
+        $activities = $activityRepository->findAll();
+
         if ($form->isSubmitted() && $form->isValid()) {
             $circuitRepository->add($circuit, true);
 
@@ -43,6 +48,7 @@ class CircuitController extends AbstractController
         return $this->renderForm('circuit/new.html.twig', [
             'circuit' => $circuit,
             'form' => $form,
+            'activities' => $activities,
         ]);
     }
 
