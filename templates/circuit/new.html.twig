@@ -1,20 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Ajouter un nouveau parcours{% endblock %}
-        {% block stylesheets %}
-                <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        {% endblock %}
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+{% endblock %}
+
 {% block body %}
-<div id = "add-form">
-<div id = "container">
-    <h1 id="title">Ajouter un nouveau Parcours</h1>
+        <div id = "add-form">
+                <div id = "container">
+        <h1 id="title">Ajouter un nouveau Parcours</h1>
 
-    {{ include('circuit/_form.html.twig') }}
+        {{ include('circuit/_form.html.twig') }}
 
-    <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_circuit_index') }}'">Consulter les circuits</button>
-    
-</div>
-</div>
+        <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_circuit_index') }}'">Consulter les circuits</button>
+        
+                </div>
+        </div>
 {% endblock %}
 
 {% block javascripts %}

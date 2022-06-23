@@ -35,13 +35,6 @@ input {
     height: 25px;
 }
 
-/* On enleve le label et le select car ils permettent de choisir les activities mais c'est pas ce qu'on veut*/
-label[for=circuit_activities] {
-    display: none;
-}
-select#circuit_activities {
-    display:none;
-}
 
 button#btn-add-activity {
     background: #404040;

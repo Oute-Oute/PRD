@@ -31,23 +31,28 @@ class CircuitController extends AbstractController
      */
     public function new(Request $request, CircuitRepository $circuitRepository): Response
     {
-        $circuit = new Circuit();
-        $form = $this->createForm(CircuitType::class, $circuit);
-        $form->handleRequest($request);
 
-        //$activities = $this->getDoctrine()->getRepository(ActivityController::class)->findAll();
+        if ($request->getMethod() === 'POST' ) {
+            dd($request);
+            
+            return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
+        }
+        /*if ($form->isSubmitted() ) {
+            dd($request);
+           // $circuit.activities
+
+            $circuitRepository->add($circuit, true);
+            //$resource
+            return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
+        }*/
+
+        $circuit = new Circuit();
+
         $activityRepository = new ActivityRepository($this->getDoctrine());
         $activities = $activityRepository->findAll();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $circuitRepository->add($circuit, true);
-
-            return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
-        }
-
         return $this->renderForm('circuit/new.html.twig', [
             'circuit' => $circuit,
-            'form' => $form,
             'activities' => $activities,
         ]);
     }
