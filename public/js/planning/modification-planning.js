@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function()
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
 
-    var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
-    var resourcearray=JSON.parse(resources); 
+    //var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
+    //var resourcearray=JSON.parse(resources); 
 
     //Créer le calendar sous les conditions que l'on souhaite
     var calendar = new FullCalendar.Calendar(calendarEl, 
@@ -41,12 +41,10 @@ document.addEventListener('DOMContentLoaded', function()
         selectable: true,
         selectHelper: true,
         editable: true,
-        contentHeight: height*9/12,
-        handleWindowResize: true,
         eventDurationEditable: false,
-
         contentHeight: 9/12*height,
         handleWindowResize: true,
+        nowIndicator: true,
 
         //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
         headerToolbar: {
@@ -64,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function()
         },
         
         //à supprimer
-        resources: resourcearray,
+        //resources: resourcearray,
         events:[
             {
              id: "1", 

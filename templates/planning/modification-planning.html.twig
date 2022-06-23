@@ -5,13 +5,13 @@
 {% block stylesheets %}
 
   <!-- insertion de bootstrap et fullcalendar-scheduler -->
-
+  <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">    
   <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet' />
   <script src='js/fullcalendar-scheduler/lib/main.js'></script>
   <script src="js/planning/modification-planning.js"></script>
   <script src="js/jquery-3.6.0.js"></script>
   <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-        
+   
 {% endblock %}
 
 {% block body %}
@@ -33,11 +33,16 @@
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="new-start" name="start" required>
+                    <input class="input-field" type="datetime-local" id="new-start" name="start" required>
                 </div>
                 
-                {% for type in resourcestypes %}
-                  Nom de la resource : {{type.name}} et nom de la categorie : {{type.category}} </br>
+                {% for resourcetype in resourcestypes %}
+
+                  <label> {{resourcetype.categoryResourceType}} </label>
+                  <div class="input-container onWhite">
+                      <input class="input-field" type="text" placeholder="" id="start" name="start" value="{{datetoday}}" required>
+                  </div>
+                  
                 {% endfor %}
 
                 <div class="modal-footer">
@@ -57,7 +62,7 @@
   <div class="modal-dialog"> <!-- permet d'afficher la modal en mode dialog -->
     <div class="modal-content"> <!-- permet de structurer le contenu de la modal -->
       <div class="modal-header"> <!-- sépare le header de la modal -->
-        <h2 class="modal-title">Ajouter une activité</h2>
+        <h2 class="modal-title">Ajouter un parcours</h2>
       </div>
         <form method="post" action="/ModificationPlanning"> <!-- créer un form qui renvoie une méthode post au controller -->
             <div class="modal-body"> <!-- sépare le body de la modal -->
@@ -65,14 +70,12 @@
                 <input id="length" name="length" type="hidden">
                 <input id="title" name="title" type="hidden">
 
+                
+
                 <label>Date de début du parcours : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" placeholder="Date de début de l'activité" id="start" name="start" value="{{datetoday}}" required>
+                    <input class="input-field" type="datetime-local" id="start" name="start" value="{{datetoday}}" required>
                 </div>
-                
-                {% for resourcetype in resourcestypes %}
-                  Nom de la categorie : {{resourcetype.categoryResourceType}}
-                {% endfor %}
 
                 <div class="modal-footer">
                     <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -92,14 +95,13 @@
 
     <h1>Modification du Planning</h1>
     <div class="container">
-      <button type="button" class="btn-add" onclick="addEvent()">Ajouter</button>
+      <button type="button" class="btn-consult btn-secondary" onclick="addEvent()">Ajouter</button>
       <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
       <button type="button" class="btn-valide btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Valider</button>
     </div>
 
 
     <!-- affichage du calendar -->
-    <input type='hidden' id='resources' value={{resources.content}}>
     <div id = 'calendar'>
     </div>
 </div>

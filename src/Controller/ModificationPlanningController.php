@@ -20,18 +20,12 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(ManagerRegistry $doctrine): Response
     {
         $date_today = $_GET["date"];
-        
         //Récupération des données ressources de la base de données
-        $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
-        $listeResourceTypes = $this->listeTypeResources($doctrine);
-        foreach($resources as $resource){
-            $resourcesCollection[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
-                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
-            ); 
-        }   
-        $jsonresponse= new JsonResponse($resourcesCollection); 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$resources, 'resources'=>$jsonresponse, 'datetoday' => $date_today ]);
+        $listeResourceTypes=$this->listeResourcesTypes($doctrine); 
+        $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
+        $listeResource=$this->listeResources($doctrine); 
+
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$listeResource, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -62,31 +56,60 @@ class ModificationPlanningController extends AbstractController
         }
     }
 
-    public function listeTypeResources(ManagerRegistry $doctrine)
-    {
-        $listeTypeResources = array();
-
-        $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ActivityResourceType")->findAll();
-
-
-        foreach($listeActivitiesResourceTypes as $activityResourceType)
-        {
-            $result = new \stdClass();
-            
-            $result->idActivity = $activityResourceType->getActivityId()->getId();
-            $result->idResourceType = $activityResourceType->getResourceTypeId()->getId();
-            $result->categoryResourceType = $activityResourceType->getResourceTypeId()->getCategory();
-
-            array_push($listeTypeResources, $result);
-        }
-        return $listeTypeResources;
+    public function listeResourcesJSON(ManagerRegistry $doctrine){
+        $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
+        $resourcesArray=array(); 
+        foreach($resources as $resource){
+            $resourcesArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
+                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $resourcesArrayJson= new JsonResponse($resourcesArray); 
+        return $resourcesArrayJson; 
     }
 
-    public function listeResourceTypes(ManagerRegistry $doctrine)
+    public function listeResources(ManagerRegistry $doctrine){
+        return $doctrine->getRepository("App\Entity\Resource")->findAll();  
+    }
+
+    public function PatientActivityResource(ManagerRegistry $doctrine){
+        //Récupération des données Activity de la base de données
+        //A tester
+        $str = str_replace("T", " ", $_GET['date']);
+        $str=substr($str,0,16); 
+        $date_start = \DateTime::createFromFormat('Y-m-d H:m', $str);
+        //dd(str_replace("T", " ", $_GET['date']), $_GET['date'], $date_start); 
+        //$activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findBy(array('start_datetime' => $date_start)); 
+        $activities=$doctrine->getRepository("App\Entity\PatientActivityResource")->findAll(); 
+        $activitiesArray=array(); 
+        foreach($activities as $activity){
+             $activityClass=new \stdClass(); 
+             $activitiesArray[]=array(
+                'idActivity' => $activity->getActivity(),
+                'idPatient' => $activity->getPatient(),
+                'idRessource' => $activity->getResource(),
+                'date_debut'=>$activity->getStartDatetime(),
+                'date_fin'=>$activity->getEndDatetime(),  
+             );
+             dd($activitiesArray);  
+             $activityClass->idActivity = $activity->getActivity()->getId();
+             $activityClass->idPatient = $activity->getPatient()->getId();
+             $activityClass->idRessource = $activity->getResource()->getId();
+             $activityClass->date_debut=$activity->getStartDatetime();  
+             $activityClass->date_fin=$activity->getDate()->getEndDatetime();  
+           
+            array_push($activitiesArray, $activityClass);
+        }  
+        return $activitiesArray; 
+    }
+
+    public function listeResourcesTypes(ManagerRegistry $doctrine)
     {
         $listeResourceTypes = array();
 
-        $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ActivityResourceType")->findAll();
+        $listeActivitiesResourceTypes = $doctrine->getRepository("App\Entity\ResourceType")->findAll();
 
 
         foreach($listeActivitiesResourceTypes as $activityResourceType)
@@ -100,7 +123,7 @@ class ModificationPlanningController extends AbstractController
             array_push($listeResourceTypes, $result);
         }
 
-        dd($listeResourceTypes);
+        //dd($listeResourceTypes);
         return $listeResourceTypes;
     }
 }
