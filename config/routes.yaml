@@ -1,54 +1,63 @@
 calendrier:
-    path: /
-    controller: App\Controller\DefaultController::index
+  path: /
+  controller: App\Controller\DefaultController::index
 
 add_user:
-    path: /add_user
-    controller: App\Controller\UserController::new
+  path: /add_user
+  controller: App\Controller\UserController::new
 
 consult_users:
-    path : /consult_users
-    controller: App\Controller\UserController::index
+  path: /consult_users
+  controller: App\Controller\UserController::index
 
 ConsultationPlanning:
   path: /ConsultationPlanning
   controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
 
+Connexion:
+  path: /connexion
+  controller: App\Controller\ConnexionController::afficherPage
+  methods: [GET]
+
+ConnexionPost:
+  path: /connexion
+  controller: App\Controller\ConnexionController::connexionPost
+  methods: [POST]
+
 ModificationPlanning:
-    path: /ModificationPlanning
-    controller: App\Controller\ModificationPlanningController::modificationPlanningGet
-    methods: [GET]
+  path: /ModificationPlanning
+  controller: App\Controller\ModificationPlanningController::modificationPlanningGet
+  methods: [GET]
 
 ModificationPlanningPost:
-    path: /ModificationPlanning
-    controller: App\Controller\ModificationPlanningController::modificationPlanningPost
-    methods: [POST]
+  path: /ModificationPlanning
+  controller: App\Controller\ModificationPlanningController::modificationPlanningPost
+  methods: [POST]
 
 index_patients:
-    path : /patients
-    controller: App\Controller\PatientController::index
+  path: /patients
+  controller: App\Controller\PatientController::index
 
 index_activities:
-    path : /activities
-    controller: App\Controller\ActivityController:index
+  path: /activities
+  controller: App\Controller\ActivityController:index
 
 index_circuits:
-    path : /circuits
-    controller: App\Controller\CircuitController:index
+  path: /circuits
+  controller: App\Controller\CircuitController:index
 
 index_resources:
-    path: /resources
-    controller: App\Controller\ResourceController:index
+  path: /resources
+  controller: App\Controller\ResourceController:index
 
 index_resources_types:
-    path: /resources-types
-    controller: App\Controller\ResourceTypeController:index
+  path: /resources-types
+  controller: App\Controller\ResourceTypeController:index
 
 index_resources_types_humans:
-    path: /resources-types-humans
-    controller: App\Controller\ResourceTypeController:indexFilteredHumans
+  path: /resources-types-humans
+  controller: App\Controller\ResourceTypeController:indexFilteredHumans
 
 index_resources_types_materials:
-    path: /resources-types-materials
-    controller: App\Controller\ResourceTypeController:indexFilteredMaterials
-
+  path: /resources-types-materials
+  controller: App\Controller\ResourceTypeController:indexFilteredMaterials
