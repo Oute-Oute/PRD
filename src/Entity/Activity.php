@@ -34,6 +34,11 @@ class Activity
      */
     private $circuits;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=ResourceType::class, inversedBy="activities")
+     */
+    private $resourcetypes;
+
     public function __construct()
     {
         $this->circuits = new ArrayCollection();

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/resource_type")
+ * @Route("/resources-types")
  */
 class ResourceTypeController extends AbstractController
 {
@@ -20,8 +20,49 @@ class ResourceTypeController extends AbstractController
      */
     public function index(ResourceTypeRepository $resourceTypeRepository): Response
     {
+        
         return $this->render('resource_type/index.html.twig', [
             'resource_types' => $resourceTypeRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("-humans", name="app_resource_type_index_humans", methods={"GET"})
+     */
+    public function indexFilteredHumans(ResourceTypeRepository $resourceTypeRepository): Response
+    {
+        $indexHumans = $resourceTypeRepository->findAll();
+        $tabHumans = [];
+        $iHumans = 0;
+        foreach ($indexHumans as $elem){
+            $iHumans = $iHumans + 1;
+            if($elem->getType() != "Matérielle"){
+                array_unshift($tabHumans, $elem);
+            }
+        }
+        return $this->render('resource_type/index.html.twig', [
+            'resource_types' => $tabHumans,
+        ]);
+
+        
+    }
+
+    /**
+     * @Route("-materials", name="app_resource_type_index_materials", methods={"GET"})
+     */
+    public function indexFilteredMaterials(ResourceTypeRepository $resourceTypeRepository): Response
+    {
+        $indexMaterials = $resourceTypeRepository->findAll();
+        $tabMaterials = [];
+        $iMaterials = 0;
+        foreach ($indexMaterials as $elem){
+            $iMaterials = $iMaterials + 1;
+            if($elem->getType() != "Humaine"){
+                array_unshift($tabMaterials, $elem);
+            }
+        }
+        return $this->render('resource_type/index.html.twig', [
+            'resource_types' => $tabMaterials,
         ]);
     }
 
