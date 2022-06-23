@@ -79,6 +79,6 @@ class __TwigTemplate_149f928dd9c4736a219bd1d9f8bffdd92a9247dacf9a2aef648dee3cde2
     <input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token('delete' ~ user.id) }}\">
     <button class=\"btn-delete btn-secondary\">Supprimer</button>
 </form>
-", "user/_delete_form.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\user\\_delete_form.html.twig");
+", "user/_delete_form.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\_delete_form.html.twig");
     }
 }
