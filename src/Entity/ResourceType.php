@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ResourceTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -46,7 +47,6 @@ class ResourceType
     public function __construct()
     {
         $this->resources = new ArrayCollection();
-        $this->activities = new ArrayCollection();
     }
 
     public function getId(): ?int
