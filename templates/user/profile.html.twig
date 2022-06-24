@@ -4,11 +4,17 @@
 
 {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/Profile.css') }}">
+{% endblock %} 
+{% block javascripts %}
+<script type="text/javascript" src="{{ asset('JS/Profile.js') }}"></script>
 {% endblock %}
 {% block body %}
 <div id = "edit-form">
 <div id = "container">
-    <h1 id="title">Éditer un utilisateur</h1>
+    <h1 id="title">Mon profil</h1>
+    {{ include('user/_form.html.twig', {'button_label': 'Valider'}) }}
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+    </div>
+    </div>
 {% endblock %}

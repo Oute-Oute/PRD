@@ -30,13 +30,6 @@ class ActivityController extends AbstractController
      */
     public function new(Request $request, ActivityRepository $activityRepository): Response
     {
-        /*$form = $this->createForm(ActivityType::class, $activity);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $activityRepository->add($activity, true);
-            return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
-        }*/
 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
@@ -44,14 +37,13 @@ class ActivityController extends AbstractController
             // On recupere toutes les données de la requete
             $param = $request->request->all();
 
-            // et le nombre d'activité
-            $name = $param['name'];
-            $duration = $param['duration'];
+            $name = $param['name'];             // le nom
+            $duration = $param['duration'];     // la durée
+
+            // Création de l'activité
             $activity = new Activity(); 
             $activity->setActivityname($name);
             $activity->setDuration($duration);
-            var_dump($activity->getDuration());
-            var_dump($activity->getActivityname());
           
             // ajout dans la bd 
             $activityRepository = new ActivityRepository($this->getDoctrine());
@@ -60,6 +52,7 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // Methode GET
         return $this->renderForm('activity/new.html.twig', [
             'activity' => $activity,
             'form' => $form,
