@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220624085507 extends AbstractMigration
+final class Version20220624133002 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -31,7 +31,7 @@ final class Version20220624085507 extends AbstractMigration
         $this->addSql('CREATE TABLE circuit_patient (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, patient_id INTEGER NOT NULL, circuit_id INTEGER NOT NULL)');
         $this->addSql('CREATE INDEX IDX_2707810E6B899279 ON circuit_patient (patient_id)');
         $this->addSql('CREATE INDEX IDX_2707810ECF2182C8 ON circuit_patient (circuit_id)');
-        $this->addSql('CREATE TABLE complete_activity (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activity_id INTEGER NOT NULL, patient_id INTEGER NOT NULL, startdate DATE NOT NULL, enddate DATE NOT NULL)');
+        $this->addSql('CREATE TABLE complete_activity (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activity_id INTEGER NOT NULL, patient_id INTEGER NOT NULL, startdate DATETIME NOT NULL, enddate DATETIME NOT NULL)');
         $this->addSql('CREATE INDEX IDX_33545D4C81C06096 ON complete_activity (activity_id)');
         $this->addSql('CREATE INDEX IDX_33545D4C6B899279 ON complete_activity (patient_id)');
         $this->addSql('CREATE TABLE complete_activity_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, completeactivity_id INTEGER NOT NULL, resource_id INTEGER NOT NULL)');

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * @Route("/user")
@@ -17,6 +18,7 @@ class UserController extends AbstractController
 {
     /**
      * @Route("/", name="app_user_index", methods={"GET"})
+     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      */
     public function index(UserRepository $userRepository): Response
     {
@@ -73,6 +75,26 @@ class UserController extends AbstractController
         }
 
         return $this->renderForm('user/edit.html.twig', [
+            'user' => $user,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/{id}", name="app_user_edit_profile", methods={"GET", "POST"})
+     */
+    public function editProfile(Request $request, User $user, UserRepository $userRepository): Response
+    {
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userRepository->add($user, true);
+
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('user/profile.html.twig', [
             'user' => $user,
             'form' => $form,
         ]);
