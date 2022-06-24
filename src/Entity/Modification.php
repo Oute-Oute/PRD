@@ -20,38 +20,56 @@ class Modification
     /**
      * @ORM\Column(type="date")
      */
-    private $date;
+    private $datemodif;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean")
      */
     private $modified;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDatemodif(): ?\DateTimeInterface
     {
-        return $this->date;
+        return $this->datemodif;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDatemodif(\DateTimeInterface $datemodif): self
     {
-        $this->date = $date;
+        $this->datemodif = $datemodif;
 
         return $this;
     }
 
-    public function getModified(): ?string
+    public function isModified(): ?bool
     {
         return $this->modified;
     }
 
-    public function setModified(string $modified): self
+    public function setModified(bool $modified): self
     {
         $this->modified = $modified;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
