@@ -8,7 +8,7 @@ h1#title {
     margin-bottom: 30px;
 }
 
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult, .list-edit {
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
     border : 2px solid #34EB67;
     margin-top : 10px;
     border: none;
@@ -29,7 +29,7 @@ h1#title {
 
 
 
-.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover, .list-edit:hover {
+.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover{
     color: #404040;
     background : none;
     border : 1px solid black;

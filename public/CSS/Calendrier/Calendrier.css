@@ -15,6 +15,7 @@ div#container {
 .form-control {
   border-radius: 50px;
   box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+  height: auto;
 }
 
 .flex{
@@ -82,4 +83,29 @@ a:hover{
 }
 .row{
   z-index:0;
+}
+
+.list-edit{
+  border : 2px solid #34EB67;
+    margin-top : 10px;
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    border : 1px solid black;
+    margin-left : 10px;
+    margin-bottom : 5px;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    fill:white;
+    border : 1px solid black;
+    height: auto;
+}
+.list-edit:hover{
+  color: #404040;
+  background : none;
+  border : 1px solid black;
 }
