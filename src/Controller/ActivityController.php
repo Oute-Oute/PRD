@@ -30,12 +30,33 @@ class ActivityController extends AbstractController
      */
     public function new(Request $request, ActivityRepository $activityRepository): Response
     {
-        $activity = new Activity();
-        $form = $this->createForm(ActivityType::class, $activity);
+        /*$form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $activityRepository->add($activity, true);
+            return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
+        }*/
+
+        // Méthode POST pour ajouter un circuit
+        if ($request->getMethod() === 'POST' ) {
+    
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+
+            // et le nombre d'activité
+            $name = $param['name'];
+            $duration = $param['duration'];
+            $activity = new Activity(); 
+            $activity->setActivityname($name);
+            $activity->setDuration($duration);
+            var_dump($activity->getDuration());
+            var_dump($activity->getActivityname());
+          
+            // ajout dans la bd 
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $activityRepository->add($activity, true);
+
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
 
