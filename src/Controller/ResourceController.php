@@ -30,12 +30,27 @@ class ResourceController extends AbstractController
      */
     public function new(Request $request, ResourceRepository $resourceRepository): Response
     {
-        $resource = new Resource();
-        $form = $this->createForm(ResourceType::class, $resource);
-        $form->handleRequest($request);
+        //$form = $this->createForm(ResourceType::class, $resource);
+        //$form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        // Méthode POST pour ajouter un circuit
+        if ($request->getMethod() === 'POST' ) {
+        
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+
+            $name = $param['resourcename'];             // le nom
+            $type = $param['resourcetype'];             // le type
+
+            // Création de l'activité
+            $resource = new Resource();
+            
+            $resource->setResourcename($name);
+            $resource->setResourcetype($type);
             $resource->setAble(true);
+            
+            // ajout dans la bd 
+            $resourceRepository = new ResourceRepository($this->getDoctrine());
             $resourceRepository->add($resource, true);
 
             return $this->redirectToRoute('app_resource_index', [], Response::HTTP_SEE_OTHER);

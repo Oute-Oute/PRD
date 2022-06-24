@@ -1,0 +1,74 @@
+<div id="container-modal" >
+    <div class="modal-form" id="form-add-activity" >
+        <h1 id="title">Ajouter une nouvelle activité</h1>
+
+        <form action="{{ path('app_activity_new') }}" method="POST">
+
+            <div>
+                <label for='name'> Nom </label>
+                <input type='text' name='name'>
+            </div>
+            <div>
+                <label for='duration'> Durée </label>
+                <input type='text' name='duration'>
+            </div>
+            <br>
+
+            <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</button>
+            <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+        </form>
+
+    </div>
+
+    <div class="modal-form" id="form-add-resource" >
+        <h1 id="title">Ajouter une nouvelle ressource</h1>
+
+        <form action="{{ path('app_resource_new') }}" method="POST">
+
+            <div>
+                <label for='resourcetype'> Type de la ressource </label>
+                <input type='text' name='resourcetype'>
+            </div>
+            <div>
+                <label for='resourcename'> Nom de la ressource </label>
+                <input type='text' name='resourcename'>
+            </div>
+                     
+            <br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_index') }}'">Consulter les ressources</button>
+            <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+        </form>
+
+    </div>
+
+
+    <div class="modal-form" id="form-add-resourcetype" >
+        <h1 id="title">Ajouter un nouveau type de ressource</h1>
+
+        <form action="{{ path('app_resource_type_new') }}" method="POST">
+
+            <div>
+                <label for='type'> Type de la ressource </label>
+                <select id="type" name="type">
+                    <option> Humaine </option>
+                    <option> Materielle </option>
+                </select>
+            </div>   
+
+            <div>
+                <label for='category'> Categorie de la ressource </label>
+                <input type='text' name='category'>
+            </div>
+                     
+            <br>
+
+            <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_type_new') }}'">Consulter les types de ressources</button>
+            <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+
+        </form>
+
+    </div>
+
+    <div id="background-shadow" onclick='hideNewModalForm()'></div>
+</div>

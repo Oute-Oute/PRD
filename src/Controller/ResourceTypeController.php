@@ -71,11 +71,26 @@ class ResourceTypeController extends AbstractController
      */
     public function new(Request $request, ResourceTypeRepository $resourceTypeRepository): Response
     {
-        $resourceType = new ResourceType();
-        $form = $this->createForm(ResourceTypeType::class, $resourceType);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        //$form = $this->createForm(ResourceTypeType::class, $resourceType);
+        //$form->handleRequest($request);
+        
+        // Méthode POST pour ajouter un circuit
+        if ($request->getMethod() === 'POST' ) {
+        
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
 
+            $category = $param['category'];     // la categorie
+            $type = $param['type'];             // le type (humaine ou materielle)
+
+            // Création du RessourceType
+            $resourceType = new ResourceType();
+            
+            $resourceType->setType($type);
+            $resourceType->setCategory($category);
+
+            // ajout dans la bd 
+            $resourceTypeRepository = new ResourceTypeRepository($this->getDoctrine());
             $resourceTypeRepository->add($resourceType, true);
 
             return $this->redirectToRoute('app_resource_type_index', [], Response::HTTP_SEE_OTHER);

@@ -1,6 +1,6 @@
 
 
-div#add-form {
+div#container-modal {
     position: absolute ;
     display:none;
     align-items: center;
@@ -17,10 +17,9 @@ div#background-shadow {
     background-color:rgba(0, 0, 0, 0.3);
 }
 
-div#add-form div#container {
+ div.modal-form {
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
     padding : 15px 40px;
-    display : flex;
     align-items : center;
     flex-direction: column;
     border-radius: 20px;
@@ -29,7 +28,7 @@ div#add-form div#container {
     z-index: 1; /* pour pouvoir cliquer a côté de la fenetre modal et la fermer */
 }
 
-div#add-form div#container form {
+div.modal-form form {
     display : flex;
     align-items : center;
     flex-direction : column;

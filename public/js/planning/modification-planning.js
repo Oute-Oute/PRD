@@ -36,10 +36,22 @@ function modifyEvent(){
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent(){
-    
+    let selectContainerCircuit = document.getElementById('select-container-circuit');
+    let selectContainerDate = document.getElementById('select-container-date');
+    selectContainerCircuit.style.display = "none";
+    selectContainerDate.style.display = "none";
     $('#add-planning-modal').modal("show");
 }
 
+function showSelectCircuit(){
+    let selectContainerCircuit = document.getElementById('select-container-circuit');
+    selectContainerCircuit.style.display = "block";
+}
+
+function showSelectDate(){
+    let selectContainerDate = document.getElementById('select-container-date');
+    selectContainerDate.style.display = "block";
+}
 
 function changePlanning(){
     var selectedItem = document.getElementById("displayList");

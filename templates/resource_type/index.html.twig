@@ -6,13 +6,17 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 {% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('JS/ResourceType/ResourceType.js') }}"> </script>
+{% endblock %}
+
 {% block body %}
 
 <div id = "index-users">
 
     <h1> Liste des Types de Ressource</h1>
     
-    <button class ="btn-add" onclick="window.location.href='{{ path('app_resource_type_new') }}'">Ajouter un nouveau type de ressource</button>
+    <button class ="btn-add" onclick="showNewModalForm()">Ajouter un nouveau type de ressource</button>
     <button class ="btn-add" onclick="window.location.href='{{ path('app_resource_type_index_humans') }}'">Filtrer (ressources humaines)</button>
     <button class ="btn-add" onclick="window.location.href='{{ path('app_resource_type_index_materials') }}'">Filtrer (ressources matérielles)</button>
 
