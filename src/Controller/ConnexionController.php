@@ -29,9 +29,9 @@ class ConnexionController extends AbstractController
         $userRepository = new UserRepository($this->getDoctrine());
         $username = $request->request->get('username');
         $password = $request->request->get('password');
-        $user     = $userRepository->findOneBy(['login' => $username]);
-
-        $messageError = "Un probleme a eu lieu, veuillez reesayer";
+        $user     = $userRepository->findOneBy(['username' => $username]);
+        $messageError1 = "Erreur";
+        $messageError2 = "Un probleme a eu lieu, veuillez réessayer";
 
         if ($user === null) {
             // user not found

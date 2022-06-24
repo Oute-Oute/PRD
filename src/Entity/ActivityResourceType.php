@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ResourceRepository;
+use App\Repository\ActivityResourceTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ResourceRepository::class)
+ * @ORM\Entity(repositoryClass=ActivityResourceTypeRepository::class)
  */
-class Resource
+class ActivityResourceType
 {
     /**
      * @ORM\Id
@@ -18,14 +18,10 @@ class Resource
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Activity::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $resourcename;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $able;
+    private $activity;
 
     /**
      * @ORM\ManyToOne(targetEntity=ResourceType::class)
@@ -38,26 +34,14 @@ class Resource
         return $this->id;
     }
 
-    public function getResourcename(): ?string
+    public function getActivity(): ?Activity
     {
-        return $this->resourcename;
+        return $this->activity;
     }
 
-    public function setResourcename(string $resourcename): self
+    public function setActivity(?Activity $activity): self
     {
-        $this->resourcename = $resourcename;
-
-        return $this;
-    }
-
-    public function isAble(): ?bool
-    {
-        return $this->able;
-    }
-
-    public function setAble(bool $able): self
-    {
-        $this->able = $able;
+        $this->activity = $activity;
 
         return $this;
     }

@@ -3,10 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CircuitRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use SebastianBergmann\Timer\Duration;
 
 /**
  * @ORM\Entity(repositoryClass=CircuitRepository::class)
@@ -21,83 +18,58 @@ class Circuit
     private $id;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $target;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $circuitname;
 
     /**
-     * @ORM\Column(type="string", length=255))
+     * @ORM\Column(type="string", length=255)
      */
-    private $circuit_type;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Activity::class, mappedBy="circuits")
-     */
-    private $activities;
-
-    public function __construct()
-    {
-        $this->activities = new ArrayCollection();
-    }
+    private $circuittype;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTarget(): ?int
     {
-        return $this->name;
+        return $this->target;
     }
 
-    public function setName(string $name): self
+    public function setTarget(?int $target): self
     {
-        $this->name = $name;
+        $this->target = $target;
 
         return $this;
     }
 
-    public function getCircuitType(): ?string
+    public function getCircuitname(): ?string
     {
-        return $this->circuit_type;
+        return $this->circuitname;
     }
 
-    public function setCircuitType(string $circuit_type): self
+    public function setCircuitname(string $circuitname): self
     {
-        $this->circuit_type = $circuit_type;
+        $this->circuitname = $circuitname;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Activity>
-     */
-    public function getActivities(): Collection
+    public function getCircuittype(): ?string
     {
-        return $this->activities;
+        return $this->circuittype;
     }
 
-    public function addActivity(Activity $activity): self
+    public function setCircuittype(string $circuittype): self
     {
-        if (!$this->activities->contains($activity)) {
-            $this->activities[] = $activity;
-            $activity->addCircuit($this);
-        }
+        $this->circuittype = $circuittype;
 
         return $this;
-    }
-
-    public function removeActivity(Activity $activity): self
-    {
-        if ($this->activities->removeElement($activity)) {
-            $activity->removeCircuit($this);
-        }
-
-        return $this;
-    }
-
-    public function __toString(): ?string 
-    {
-        return $this->getName();
     }
 }
