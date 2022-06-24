@@ -80,3 +80,10 @@ h1#title {
    border: 1px solid red;
 }
 
+div#informations {
+    position : absolute;
+    right : 0px;
+    height : 100px;
+    width : 100px;
+}
+

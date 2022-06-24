@@ -32,7 +32,7 @@
         {% for activity in activities %}
             <tr>
                 <td>{{ activity.id }}</td>
-                <td>{{ activity.name }}</td>
+                <td>{{ activity.activityname }}</td>
                 <td>{{ activity.duration }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_activity_show', {'id': activity.id}) }}'">Infos</a>

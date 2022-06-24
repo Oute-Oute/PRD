@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
-use App\Form\Patient1Type;
+use App\Form\PatientType;
 use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ class PatientController extends AbstractController
     public function new(Request $request, PatientRepository $patientRepository): Response
     {
         $patient = new Patient();
-        $form = $this->createForm(Patient1Type::class, $patient);
+        $form = $this->createForm(PatientType::class, $patient);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -61,7 +61,7 @@ class PatientController extends AbstractController
      */
     public function edit(Request $request, Patient $patient, PatientRepository $patientRepository): Response
     {
-        $form = $this->createForm(Patient1Type::class, $patient);
+        $form = $this->createForm(PatientType::class, $patient);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

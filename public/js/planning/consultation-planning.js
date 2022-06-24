@@ -24,7 +24,6 @@ function changeDate(){
 
 function changePlanning(){
   var selectedItem = document.getElementById("displayList");
-  var selectedVar = selectedItem.options [selectedItem.selectedIndex].value;
     headerResources=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
     createCalendar();
 }
@@ -42,7 +41,6 @@ function modify(){
   window.location.assign("/ModificationPlanning?date="+dateStr);
 }
 
-let filter_container = document.getElementById("filterId");
 function filterShow(){
   if(document.getElementById("filterId").style.display != "none"){
     document.getElementById("filterId").style.display = "none";

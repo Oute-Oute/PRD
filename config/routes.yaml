@@ -61,3 +61,7 @@ index_resources_types_humans:
 index_resources_types_materials:
   path: /resources-types-materials
   controller: App\Controller\ResourceTypeController:indexFilteredMaterials
+
+index_mon_profil:
+  path: /mon_profil
+  controller: App\Controller\UserController:edit

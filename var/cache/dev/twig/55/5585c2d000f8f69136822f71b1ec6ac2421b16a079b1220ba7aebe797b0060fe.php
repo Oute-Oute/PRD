@@ -26,6 +26,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
         $this->blocks = [
             'title' => [$this, 'block_title'],
+            'stylesheets' => [$this, 'block_stylesheets'],
             'body' => [$this, 'block_body'],
         ];
     }
@@ -65,7 +66,7 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
 
-        echo "New User";
+        echo "Ajouter un nouvel utilisateur";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
 
@@ -75,6 +76,29 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
     }
 
     // line 5
+    public function block_stylesheets($context, array $blocks = [])
+    {
+        $macros = $this->macros;
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->enter($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        // line 6
+        echo "                <link rel=\"stylesheet\" href=\"";
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/NewCrud.css"), "html", null, true);
+        echo "\">
+        ";
+        
+        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
+
+        
+        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->leave($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof);
+
+    }
+
+    // line 9
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -84,18 +108,23 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 6
-        echo "    <h1>Create new User</h1>
+        // line 10
+        echo "<!--- FORMULAIRE -->
+<div id=\"add-form\">
+        <div id = \"container\">
+        <h1 id=\"title\">Ajouter un nouvel utilisateur</h1>
 
     ";
-        // line 8
+        // line 15
         echo twig_include($this->env, $context, "user/_form.html.twig");
         echo "
 
-    <a href=\"";
-        // line 10
+        <button class=\"btn-consult btn-secondary\" onclick=\"window.location.href='";
+        // line 17
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
-        echo "\">back to list</a>
+        echo "'\">Consulter les utilisateurs</button>
+        </div>
+        </div>
 ";
         
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
@@ -117,21 +146,30 @@ class __TwigTemplate_b51e4eb401cd4b87d3c8651d5b8fff58359223b2d26a6ed956c0fffc2d9
 
     public function getDebugInfo()
     {
-        return array (  97 => 10,  92 => 8,  88 => 6,  78 => 5,  59 => 3,  36 => 1,);
+        return array (  124 => 17,  119 => 15,  112 => 10,  102 => 9,  89 => 6,  79 => 5,  60 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
     {
         return new Source("{% extends 'base.html.twig' %}
 
-{% block title %}New User{% endblock %}
+{% block title %}Ajouter un nouvel utilisateur{% endblock %}
+
+        {% block stylesheets %}
+                <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/NewCrud.css') }}\">
+        {% endblock %}
 
 {% block body %}
-    <h1>Create new User</h1>
+<!--- FORMULAIRE -->
+<div id=\"add-form\">
+        <div id = \"container\">
+        <h1 id=\"title\">Ajouter un nouvel utilisateur</h1>
 
     {{ include('user/_form.html.twig') }}
 
-    <a href=\"{{ path('app_user_index') }}\">back to list</a>
+        <button class=\"btn-consult btn-secondary\" onclick=\"window.location.href='{{ path('app_user_index') }}'\">Consulter les utilisateurs</button>
+        </div>
+        </div>
 {% endblock %}
 ", "user/new.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\new.html.twig");
     }

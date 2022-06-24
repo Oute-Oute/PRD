@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+{% endblock %}
+{% block body %}
+<div id = "edit-form">
+<div id = "container">
+    <h1 id="title">Éditer un utilisateur</h1>
+
+    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+{% endblock %}

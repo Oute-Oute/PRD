@@ -69,4 +69,5 @@ return [
     'index_resources_types' => [[], ['_controller' => 'App\\Controller\\ResourceTypeController:index'], [], [['text', '/resources-types']], [], [], []],
     'index_resources_types_humans' => [[], ['_controller' => 'App\\Controller\\ResourceTypeController:indexFilteredHumans'], [], [['text', '/resources-types-humans']], [], [], []],
     'index_resources_types_materials' => [[], ['_controller' => 'App\\Controller\\ResourceTypeController:indexFilteredMaterials'], [], [['text', '/resources-types-materials']], [], [], []],
+    'index_mon_profil' => [[], ['_controller' => 'App\\Controller\\UserController:edit'], [], [['text', '/mon_profil']], [], [], []],
 ];

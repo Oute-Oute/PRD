@@ -23,8 +23,8 @@
         {% for resource in resources %}
             <tr>
                 <td>{{ resource.id }}</td>
-                <td>{{ resource.name }}</td>
-                <td>{{ resource.ResourceType }}
+                <td>{{ resource.resourcename }}</td>
+                <td>{{ resource.resourcetype }}
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_resource_show', {'id': resource.id}) }}'">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_resource_edit', {'id': resource.id}) }}'">Éditer</a>
