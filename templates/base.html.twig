@@ -12,6 +12,7 @@
         {% endblock %}             
         <link rel="stylesheet" href="{{ asset('CSS/Global/Menu.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
@@ -28,8 +29,12 @@
 
 
     <body>
+
         {% include 'Global/Menu.html' %}
+
         {% block body %}{% endblock %}
+
+        {{ include('activity/modal_new.html.twig') }}
     </body>
 
 </html>

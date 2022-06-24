@@ -5,7 +5,6 @@ var SELECT_ID = 0;
  * Appelée au chargement de la page de création d'un parcours (circuit)
  */
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("bonjour");
     SELECT_ID = 0;
 })
 
