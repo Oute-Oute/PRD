@@ -2,7 +2,7 @@
 
 div#add-form {
     position: absolute ;
-    display: none;
+    display:none;
     align-items: center;
     flex-direction : column;
     justify-content : center;

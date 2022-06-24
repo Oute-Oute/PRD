@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Circuit;
+use App\Entity\ActivityCircuit;
 use App\Form\CircuitType;
 use App\Repository\CircuitRepository;
 use App\Repository\ActivityRepository;
@@ -10,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
 /**
  * @Route("/circuit")
@@ -38,9 +41,27 @@ class CircuitController extends AbstractController
             // On recupere toutes les données de la requete
             $param = $request->request->all();
             // et le nombre d'activité
-            $nbActivity = count($param) - 1;
+            $nbActivity = count($param) - 2;
+            $circuit = new Circuit();
+            $circuit->setCircuitname($param['name']);
+            $circuit->setCircuittype($param['type']);
 
-            // pour accéder a toutes les activités : $param['activity-0']);
+            $activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
+            $activityCircuitRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ActivityCircuit");
+
+            $circuitRepository->add($circuit, true);
+
+            for($i = 0; $i < $nbActivity; $i++)
+            {
+                $str = 'activity-';
+                $activityCircuit = new ActivityCircuit();
+                $str .= $i;
+                $numListe = $param[$str]-1;
+                $activityCircuit->setActivity($activities[$numListe]);
+                $activityCircuit->setCircuit($circuit);
+                $activityCircuitRepository->add($activityCircuit, true);
+                dd($activityCircuit);
+            }
             
             return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
         }
