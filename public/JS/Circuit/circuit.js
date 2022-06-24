@@ -1,4 +1,3 @@
-
 var SELECT_ID = 0;
 
 /**
@@ -48,4 +47,6 @@ function handleAddActivity() {
     divAddActivity.appendChild(div)
 } 
 
-
+function addCircuit(){
+    $('#add-circuit-modal').modal("show");
+}

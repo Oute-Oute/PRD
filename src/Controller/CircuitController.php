@@ -24,8 +24,11 @@ class CircuitController extends AbstractController
      */
     public function index(CircuitRepository $circuitRepository): Response
     {
+        $activityRepository = new ActivityRepository($this->getDoctrine());
+        $activities = $activityRepository->findAll();
         return $this->render('circuit/index.html.twig', [
             'circuits' => $circuitRepository->findAll(),
+            'activities' => $activities,
         ]);
     }
 
@@ -43,8 +46,8 @@ class CircuitController extends AbstractController
             // et le nombre d'activité
             $nbActivity = count($param) - 2;
             $circuit = new Circuit();
-            $circuit->setCircuitname($param['name']);
-            $circuit->setCircuittype($param['type']);
+            $circuit->setCircuitname($param['circuitname']);
+            $circuit->setCircuittype($param['circuittype']);
 
             $activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
             $activityCircuitRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ActivityCircuit");
@@ -66,15 +69,7 @@ class CircuitController extends AbstractController
             return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
         }
         
-        $circuit = new Circuit();
-
-        $activityRepository = new ActivityRepository($this->getDoctrine());
-        $activities = $activityRepository->findAll();
-
-        return $this->renderForm('circuit/new.html.twig', [
-            'circuit' => $circuit,
-            'activities' => $activities,
-        ]);
+        
     }
 
     /**

@@ -30,7 +30,27 @@ class PatientController extends AbstractController
      */
     public function new(Request $request, PatientRepository $patientRepository): Response
     {
-        $patient = new Patient();
+        // Méthode POST pour ajouter un circuit
+        if ($request->getMethod() === 'POST' ) {
+    
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+
+            $lastname = $param['lastname'];             // le nom
+            $firstname = $param['firstname'];     // le prenom
+
+            // Création de l'activité
+            $patient = new Patient(); 
+            $patient->setLastname($lastname);
+            $patient->setFirstname($firstname);
+          
+            // ajout dans la bd 
+            $patientsRepository = new PatientRepository($this->getDoctrine());
+            $patientsRepository->add($patient, true);
+
+            return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
+        }
+        /*$patient = new Patient();
         $form = $this->createForm(PatientType::class, $patient);
         $form->handleRequest($request);
 
@@ -43,7 +63,7 @@ class PatientController extends AbstractController
         return $this->renderForm('patient/new.html.twig', [
             'patient' => $patient,
             'form' => $form,
-        ]);
+        ]);*/
     }
 
     /**

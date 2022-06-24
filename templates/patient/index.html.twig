@@ -3,12 +3,16 @@
 {% block title %}Liste des patients{% endblock %}
 {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <script src="js/Patients/patients.js"></script>
+        <script src="js/jquery-3.6.0.js"></script>
+        <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+  
         {% endblock %}
         
 {% block body %}
     <div id = "index-users">    
 <h1 id="title">Liste des patients</h1>
-    <button class ="btn-add" onclick="window.location.href='{{ path('app_patient_new') }}'">Ajouter un nouveau patient</button>
+    <button type="button" class ="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
     <table class="table table-striped">
         <thead>
@@ -38,5 +42,33 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <!-- add-patient-modal -->
+
+<div class="modal" id="add-patient-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter un patient</h2>
+      </div>
+      <form action="{{ path('app_patient_new') }}" method="post">
+        <div class="modal-body">
+            <div>
+                <label for='name'> Nom </label>
+                <input type='text' name='lastname'>
+            </div>
+            <div>
+                <label for='duration'> Prenom </label>
+                <input type='text' name='firstname'>
+            </div>
+            <br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('index_patients') }}'">Consulter les activités</button>
+            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
