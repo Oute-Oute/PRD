@@ -73,7 +73,6 @@ function createCalendar(){
     
             //permet de modifier les events dans le calendar
             selectable: true,
-            selectHelper: true,
             editable: true,
             eventDurationEditable: false,
             contentHeight: 9/12*height,

@@ -22,7 +22,7 @@ class ConsultationPlanningController extends AbstractController
         }
         //Récupération des données ressources de la base de données
         $listeResourceTypes=$this->listeResourcesTypes($doctrine); 
-        $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
+        $listeResourcesMateriellesJSON=$this->listeResourcesMateriellesJSON($doctrine); 
         $listeResource=$this->listeResources($doctrine); 
         $listePatientsJSON=$this->listePatientsJSON($doctrine);
         $listeCircuitsJSON=$this->listeCircuitsJSON($doctrine);
@@ -34,7 +34,7 @@ class ConsultationPlanningController extends AbstractController
         return $this->render('planning/consultation-planning.html.twig', 
             ['resourcestypes' => $listeResourceTypes, 
             'listeresources'=>$listeResource, 
-            'listeResourcesJSON'=>$listeResourceJSON, 
+            'listeResourcesMateriellesJSON'=>$listeResourcesMateriellesJSON, 
             'datetoday' => $date_today 
             ,'listePatientsJSON'=>$listePatientsJSON
             ,'listeCircuitsJSON'=>$listeCircuitsJSON
@@ -51,8 +51,13 @@ class ConsultationPlanningController extends AbstractController
         return $doctrine->getRepository("App\Entity\Resource")->findBy(['able'=>True]);  
     }
 
-    public function listeResourcesJSON(ManagerRegistry $doctrine){
-        $resources = $doctrine->getRepository("App\Entity\Resource")->findBy(['able'=>True]);  
+    public function listeResourcesMateriellesJSON(ManagerRegistry $doctrine){
+        /*$resources = $doctrine->getEntityManager()->createQueryBuilder();
+        $resources  ->select('r')
+                    ->from('App\Entity\Resource', 'r')
+                    ->leftJoin('r.resourcetype', 'rt')
+                    ->where('r.type = :"rm"')
+                    ->setParameter('resourcetype', '1');   
         $resourcesArray=array(); 
         foreach($resources as $resource){
             $resourcesArray[]=array(
@@ -63,7 +68,7 @@ class ConsultationPlanningController extends AbstractController
         }   
         //Conversion des données ressources en json
         $resourcesArrayJSON= new JsonResponse($resourcesArray); 
-        return $resourcesArrayJSON; 
+        return $resourcesArrayJSON; */
     }
 
     public function listeResourcesTypes(ManagerRegistry $doctrine)
@@ -93,10 +98,14 @@ class ConsultationPlanningController extends AbstractController
         $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();  
         $patientArray=array(); 
         foreach($patients as $patient){
+            $lastname=$patient->getLastname();
+            $firstname=$patient->getFirstname();
+            $title=$lastname." ".$firstname;
             $patientArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $patient->getId())),
-                'lastname'=>(str_replace(" ", "3aZt3r", $patient->getLastname())),
-                'firstname' =>(str_replace(" ", "3aZt3r", $patient->getFirstname())),
+                'lastname'=>(str_replace(" ", "3aZt3r", $lastname)),
+                'firstname' =>(str_replace(" ", "3aZt3r", $firstname)),
+                'title'=>$title
             ); 
         }   
         //Conversion des données ressources en json
@@ -111,7 +120,7 @@ class ConsultationPlanningController extends AbstractController
             $circuitArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $circuit->getId())),
                 'target' =>(str_replace(" ", "3aZt3r", $circuit->getTarget())),
-                'circuitname'=>(str_replace(" ", "3aZt3r", $circuit->getCircuitname())),
+                'title'=>(str_replace(" ", "3aZt3r", $circuit->getCircuitname())),
                 'circuittype' =>(str_replace(" ", "3aZt3r", $circuit->getCircuittype())),
             ); 
         }   
