@@ -14,7 +14,6 @@ class CircuitType extends AbstractType
         $builder
             ->add('name')
             ->add('circuit_type')
-            ->add('activities')
         ;
     }
 

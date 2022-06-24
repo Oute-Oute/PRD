@@ -1,8 +1,14 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
 
     
+<form action='new' method="POST" > 
+
+
     <div> 
+        <label for="name"> Name </label>
+        <input type="text" name="name"> 
+
+    <!-- input circuit type  -->
+
 
         <fieldset id="fs-add-activity">
             <legend>Choisissez les activités de votre parcours</legend>
@@ -21,12 +27,14 @@
 
 
             </div>
-                <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
+
+            <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
 
         </fieldset>
 
     </div>
     
-    <button type = "submit" class="btn-valide btn-secondary">{{ button_label|default('Valider') }}</button>
-
-{{ form_end(form) }}
+    <!--<button onclick="sendPostRequest()" type = "submit" class="btn-valide btn-secondary">Valider</button>-->
+    <button onclick="sendPostRequest()" type = "submit" class="btn-valide btn-secondary">Valider</button>
+    
+</form>

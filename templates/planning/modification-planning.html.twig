@@ -88,21 +88,30 @@
 </div>
 
     <input type=hidden id="date" value="<?php eco $$_GET['date']; ?>"/>
-    
-  <div class="container">
+    <input type=hidden id="resources" value='{{listeResourcesJSON.content}}'/>
+  
 
     <!-- affichage du haut de la page -->
 
+    
+    <div class="calendar-container">
     <h1>Modification du Planning</h1>
-    <div class="container">
+    <div>
+    <div class="CRUD-div">
       <button type="button" class="btn-consult btn-secondary" onclick="addEvent()">Ajouter</button>
-      <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
+      </div>
+      <div class="CRUD-right">
+      <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
       <button type="button" class="btn-valide btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Valider</button>
-    </div>
-
+      </div>
+      </div>
+</br>
+</br>
+<div class="calendar-container">
 
     <!-- affichage du calendar -->
     <div id = 'calendar'>
     </div>
 </div>
+</div
 {% endblock %}
