@@ -40,9 +40,8 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "Global/Menu.html.twig"));
 
         // line 1
-        if (twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 1, $this->source); })()), "user", [], "any", false, false, false, 1)) {
-            // line 2
-            echo "    <div class=\"dashboard-nav\">
+        echo "
+    <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
                 <header>
@@ -67,20 +66,10 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
                     <a onclick=\"window.location.href='";
-            // line 26
-            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit_profile", ["id" => twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 26, $this->source); })()), "user", [], "any", false, false, false, 26), "id", [], "any", false, false, false, 26)]), "html", null, true);
-            echo "'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
-                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
-                    ";
-        }
-        // line 29
-        echo "                    ";
-        if ((0 !== twig_compare(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 29, $this->source); })()), "user", [], "any", false, false, false, 29), null))) {
-            echo " 
-                ";
-        }
-        // line 30
-        echo "          
+        // line 26
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit_profile", ["id" => twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 26, $this->source); })()), "user", [], "any", false, false, false, 26), "id", [], "any", false, false, false, 26)]), "html", null, true);
+        echo "'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
+                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>      
         </nav>
     </div>
 
@@ -105,12 +94,12 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
 
     public function getDebugInfo()
     {
-        return array (  83 => 30,  77 => 29,  71 => 26,  45 => 2,  43 => 1,);
+        return array (  70 => 26,  43 => 1,);
     }
 
     public function getSourceContext()
     {
-        return new Source("{% if  app.user %}
+        return new Source("
     <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
@@ -136,10 +125,7 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
                     <a onclick=\"window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
-                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
-                    {% endif %}
-                    {% if  app.user != null %} 
-                {% endif %}          
+                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>      
         </nav>
     </div>
 

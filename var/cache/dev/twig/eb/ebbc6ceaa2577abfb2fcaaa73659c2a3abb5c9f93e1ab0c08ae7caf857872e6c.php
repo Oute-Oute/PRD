@@ -77,38 +77,46 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         // line 18
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/Main.css"), "html", null, true);
         echo "\">
+        <link rel=\"stylesheet\" href=\"";
+        // line 19
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("CSS/Global/NewCrud.css"), "html", null, true);
+        echo "\">
 
         ";
-        // line 20
+        // line 21
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 30
+        // line 31
         echo "
     </head>
 
     <body>
         ";
-        // line 34
-        $this->loadTemplate("Global/Menu.html.twig", "base.html.twig", 34)->display($context);
         // line 35
-        echo "        ";
-        $this->displayBlock('body', $context, $blocks);
+        $this->loadTemplate("Global/Menu.html.twig", "base.html.twig", 35)->display($context);
         // line 36
         echo "        ";
-        if ((0 !== twig_compare(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 36, $this->source); })()), "user", [], "any", false, false, false, 36), null))) {
+        $this->displayBlock('body', $context, $blocks);
+        // line 37
+        echo "        ";
+        if ((0 !== twig_compare(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 37, $this->source); })()), "user", [], "any", false, false, false, 37), null))) {
             echo " 
         <div id=\"informations\">ID : ";
-            // line 37
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 37, $this->source); })()), "user", [], "any", false, false, false, 37), "userIdentifier", [], "any", false, false, false, 37), "html", null, true);
+            // line 38
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 38, $this->source); })()), "user", [], "any", false, false, false, 38), "userIdentifier", [], "any", false, false, false, 38), "html", null, true);
             echo "<br>
         Rôle : ";
-            // line 38
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 38, $this->source); })()), "user", [], "any", false, false, false, 38), "roles", [], "any", false, false, false, 38), 0, [], "array", false, false, false, 38), "html", null, true);
+            // line 39
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 39, $this->source); })()), "user", [], "any", false, false, false, 39), "roles", [], "any", false, false, false, 39), 0, [], "array", false, false, false, 39), "html", null, true);
             echo "
         </div>
         ";
         }
-        // line 41
-        echo "    </body>
+        // line 42
+        echo "        ";
+        echo twig_include($this->env, $context, "activity/modal_new.html.twig");
+        echo "
+
+    </body>
 </html>
 
 ";
@@ -161,7 +169,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 20
+    // line 21
     public function block_javascripts($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -171,23 +179,23 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 21
+        // line 22
         echo "            ";
         echo $this->extensions['Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension']->renderWebpackScriptTags("app");
         echo "
             ";
-        // line 22
+        // line 23
         echo $this->extensions['Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension']->renderWebpackScriptTags("Menu");
         echo "
 
              <!-- Include the compiled script-->
              <script src=\"https://code.jquery.com/jquery-1.9.1.js\"></script>
              <script type=\"text/javascript\" src=\"";
-        // line 26
+        // line 27
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/JS/app.js"), "html", null, true);
         echo "\"></script>
              <script type=\"text/javascript\" src=\"";
-        // line 27
+        // line 28
         echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/JS/Menu.js"), "html", null, true);
         echo "\"></script>
 
@@ -200,7 +208,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 35
+    // line 36
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -230,7 +238,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     public function getDebugInfo()
     {
-        return array (  204 => 35,  191 => 27,  187 => 26,  180 => 22,  175 => 21,  165 => 20,  152 => 15,  142 => 14,  124 => 9,  111 => 41,  105 => 38,  101 => 37,  96 => 36,  93 => 35,  91 => 34,  85 => 30,  83 => 20,  78 => 18,  74 => 17,  71 => 16,  69 => 14,  66 => 13,  60 => 9,  52 => 3,  47 => 1,);
+        return array (  212 => 36,  199 => 28,  195 => 27,  188 => 23,  183 => 22,  173 => 21,  160 => 15,  150 => 14,  132 => 9,  115 => 42,  109 => 39,  105 => 38,  100 => 37,  97 => 36,  95 => 35,  89 => 31,  87 => 21,  82 => 19,  78 => 18,  74 => 17,  71 => 16,  69 => 14,  66 => 13,  60 => 9,  52 => 3,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -253,6 +261,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         {% endblock %}             
         <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/Menu.css') }}\">
         <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/Main.css') }}\">
+        <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/NewCrud.css') }}\">
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
@@ -275,6 +284,8 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         Rôle : {{ app.user.roles[0] }}
         </div>
         {% endif %}
+        {{ include('activity/modal_new.html.twig') }}
+
     </body>
 </html>
 

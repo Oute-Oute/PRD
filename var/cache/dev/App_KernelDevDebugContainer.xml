@@ -431,12 +431,6 @@
     <service id="App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" autoconfigure="true">
       <tag name="form.type"/>
     </service>
-    <service id="App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" autoconfigure="true">
-      <tag name="form.type"/>
-    </service>
-    <service id="App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" autoconfigure="true">
-      <tag name="form.type"/>
-    </service>
     <service id="App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true">
       <tag name="form.type"/>
     </service>
@@ -1294,8 +1288,6 @@
       <argument type="collection">
         <argument>App\Form\ActivityType</argument>
         <argument>App\Form\CircuitType</argument>
-        <argument>App\Form\CircuitTypeType</argument>
-        <argument>App\Form\Patient1Type</argument>
         <argument>App\Form\PatientType</argument>
         <argument>App\Form\ResourceType</argument>
         <argument>App\Form\ResourceTypeType</argument>
@@ -3460,7 +3452,7 @@
       <argument type="service" id="form.registry"/>
     </service>
     <service id="form.extension" class="Symfony\Component\Form\Extension\DependencyInjection\DependencyInjectionExtension">
-      <argument type="service" id=".service_locator.LIxftAD"/>
+      <argument type="service" id=".service_locator.klBsaHK"/>
       <argument type="collection">
         <argument key="Symfony\Component\Form\Extension\Core\Type\FormType" type="iterator">
           <argument type="service" id="form.type_extension.form.transformation_failure_handling"/>
@@ -6490,10 +6482,6 @@
     <service id=".abstract.instanceof.App\Form\ActivityType" class="App\Form\ActivityType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\CircuitType" class="App\Form\CircuitType" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Form\CircuitTypeType" class="App\Form\CircuitTypeType" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Form\Patient1Type" class="App\Form\Patient1Type" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\PatientType" class="App\Form\PatientType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\PatientType" class="App\Form\PatientType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\ResourceType" class="App\Form\ResourceType" autowire="true" abstract="true"/>
@@ -7026,7 +7014,7 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.u4i6vlO" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.5hlN83x" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ActivityController::delete" type="service_closure" id=".service_locator.SdyZWuD"/>
@@ -7046,11 +7034,18 @@
         <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.1n1ymiM"/>
         <argument key="App\Controller\ConnexionController::connexionPost" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController::consultationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeActivitiesCircuitsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeActivitiesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeActivitiesResourceTypeJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeCompleteActivitiesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeCompleteActivitiesResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listePatientsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController::listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::PatientActivityResource" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listecircuitsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listecircuitsPatientsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController::listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController::modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController::modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
@@ -7100,11 +7095,18 @@
         <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.1n1ymiM"/>
         <argument key="App\Controller\ConnexionController:connexionPost" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController:consultationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeActivitiesCircuitsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeActivitiesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeActivitiesResourceTypeJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeCompleteActivitiesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeCompleteActivitiesResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listePatientsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController:listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:PatientActivityResource" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listecircuitsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listecircuitsPatientsJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController:listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController:modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController:modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
@@ -7195,13 +7197,11 @@
       <argument type="service" id="debug.argument_resolver.not_tagged_controller.inner"/>
       <argument type="service" id="debug.stopwatch"/>
     </service>
-    <service id=".service_locator.LIxftAD" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.klBsaHK" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Form\ActivityType" type="service_closure" id="App\Form\ActivityType"/>
         <argument key="App\Form\CircuitType" type="service_closure" id="App\Form\CircuitType"/>
-        <argument key="App\Form\CircuitTypeType" type="service_closure" id="App\Form\CircuitTypeType"/>
-        <argument key="App\Form\Patient1Type" type="service_closure" id="App\Form\Patient1Type"/>
         <argument key="App\Form\PatientType" type="service_closure" id="App\Form\PatientType"/>
         <argument key="App\Form\ResourceType" type="service_closure" id="App\Form\ResourceType"/>
         <argument key="App\Form\ResourceTypeType" type="service_closure" id="App\Form\ResourceTypeType"/>
@@ -7820,12 +7820,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.u4i6vlO"/>
+      <argument type="service" id=".service_locator.5hlN83x"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.u4i6vlO"/>
+      <argument type="service" id=".service_locator.5hlN83x"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -8814,7 +8814,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.u4i6vlO"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.5hlN83x"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8839,9 +8839,9 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~O1k.XnM"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.BOLpYnr" alias=".service_locator.u4i6vlO"/>
+    <service id=".service_locator.ccfEZ.L" alias=".service_locator.5hlN83x"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
-    <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>
+    <service id=".service_locator.MFldfuG" alias=".service_locator.klBsaHK"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
     <service id=".service_locator.W9y3dzm" alias=".service_locator.GNc8e5B"/>

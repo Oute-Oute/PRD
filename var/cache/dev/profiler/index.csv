@@ -3823,3 +3823,6 @@ a603f6,127.0.0.1,POST,http://127.0.0.1:8000/login,1656076939,,302
 f8569f,127.0.0.1,GET,http://127.0.0.1:8000/user/profile/3,1656076979,,200
 a54128,127.0.0.1,GET,http://127.0.0.1:8000/user/profile/CSS/bootstrap/bootstrap.min.css,1656076981,8a12c1,404
 8a12c1,127.0.0.1,GET,http://127.0.0.1:8000/user/profile/CSS/bootstrap/bootstrap.min.css,1656076981,,404
+63cf4d,127.0.0.1,GET,http://127.0.0.1:8000/logout,1656078266,,302
+1760ec,127.0.0.1,GET,http://127.0.0.1:8000/login,1656078270,a8d810,500
+a8d810,127.0.0.1,GET,http://127.0.0.1:8000/login,1656078270,,500
