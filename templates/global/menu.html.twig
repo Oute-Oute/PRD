@@ -1,4 +1,5 @@
-
+{#  {% if  app.user != null %}     ON ENLEVE PR L'INSTANT PDT LE DEV #}
+                 
     <div class="dashboard-nav">
         <nav class="dashboard-nav-list">
             <div id="menu-top"> 
@@ -23,10 +24,11 @@
             <div id='menu-bottom'>
                 <div class="nav-item-divider"></div>
                     <a href="/consult_users" class="dashboard-nav-item"><i class="fas fa-user"></i> Utilisateurs </a>
-                <a href="#" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Se déconnecter </a>
-                {% if  app.user != null %} 
-                <div <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': app.user.id}) }}'">Mon profil</a></div>
-                {% endif %}          
+                 {#   <a onclick="window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'" class="dashboard-nav-item"><i class="fas fa-user"></i> Mon profil </a>  #}
+                    <a href = "/logout" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Se déconnecter </a>   
+
+                    {#  {% endif %}     ON ENLEVE PR L'INSTANT PDT LE DEV #}
+     
         </nav>
     </div>
 
