@@ -15,7 +15,7 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
 
 
-	<div class="calendar-container">
+	<div class="all-container">
 		<h1>Consultation du Planning</h1>
 		<div class="flex">
 			<button class="btn-valide" onclick="modify()">Modifier le planning</button>
@@ -38,48 +38,8 @@
 				<div>
 					<input type="checkbox" id="horns" name="horns">
 					<label for="horns">Manger</label>
-				</div><div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
 				</div>
-
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div><div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
 				</div>
-
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div><div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
-				</div>
-
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div><div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
-				</div>
-
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div><div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
-				</div>
-
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div>
-			</div>
 		
 
 		<div class="row">
@@ -93,7 +53,9 @@
 		</div>
 
 		<input type=hidden id="resources" value='{{listeResourcesJSON.content}}'/>
+		<div class="calendar-container">
 		<div id='calendar'></div>
+		</div>
 	</div>
 </div>
 {% endblock %}

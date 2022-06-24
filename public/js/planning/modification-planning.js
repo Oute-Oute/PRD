@@ -1,5 +1,5 @@
 var calendar;
-
+var headerResources="Ressources Matérielles";
 function $_GET(param) {
 	var vars = {};
 	window.location.href.replace( location.hash, '' ).replace( 
@@ -19,90 +19,12 @@ var dateStr=($_GET('date'))
 var date=new Date(dateStr);
 document.addEventListener('DOMContentLoaded', function() 
 {
-    const height = document.querySelector('div').clientHeight;
-    var calendarEl = document.getElementById('calendar');
-    var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
-    var resourcearray=JSON.parse(resources); 
+    
 
     //Créer le calendar sous les conditions que l'on souhaite
-    var calendar = new FullCalendar.Calendar(calendarEl, 
-    {
-        //clé de la license pour utiliser la librairie à des fin non commerciale
-        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+    createCalendar()
 
-        //initialise la vue en colonne par ressource par jour en horaire française
-        initialView: 'resourceTimelineDay',
-        slotDuration: '00:20:00',
-        locale: 'fr',
-        timeZone: 'Europe/Paris',
-
-        //permet de modifier les events dans le calendar
-        selectable: true,
-        selectHelper: true,
-        editable: true,
-        eventDurationEditable: false,
-        contentHeight: 9/12*height,
-        handleWindowResize: true,
-        nowIndicator: true,
-
-        //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
-        headerToolbar: {
-            start: null,
-            center: 'title',
-            end: null
-        },
-
-        //modifie l'affichage des heures de la journée
-        slotLabelFormat: { 
-            hour: '2-digit',
-            minute: '2-digit',
-            meridiem: false,
-            hour12: false
-        },
-        
-        //à supprimer
-        resources: resourcearray,
-        events:[
-            {
-             id: "1", 
-             resourceId: "1", 
-             start: "2022-06-23 12:00:00", 
-             end: "2022-06-23 17:30:00", 
-             title: "event 1",
-             color:'rgb(255,255,0)',
-             textColor:'#000',
-             textFont:'Trebuchet MS'
-            }
-        ],
-        //à supprimer
-
-        //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
-        eventClick: function(event, element) {
-            //récupération des données
-            var id = event.event._def.publicId;
-            var activity = calendar.getEventById(id);
-            var start = activity.start;
-            var tmp = activity.end - start;
-
-            //calcul de la durée de l'activité
-            length = Math.floor((tmp/1000/60));
     
-            //set les données à afficher par défault
-            $('#new-start').val(start.toISOString().substring(0,19));
-            document.getElementById('show-title').innerHTML = activity.title;
-            $('#title').val(activity.title);
-            $('#length').val(length);
-            $('#id').val(id);
-
-            //ouvre la modal
-            $('#modify-planning-modal').modal("show");
-        },
-    },
-    );
-
-    //affiche le calendar
-    calendar.gotoDate(date);
-    calendar.render();
 });
 
 //function permettant la modification de l'activité
@@ -117,4 +39,106 @@ function modifyEvent(){
 function addEvent(){
     
     $('#add-planning-modal').modal("show");
+}
+
+
+function changePlanning(){
+    var selectedItem = document.getElementById("displayList");
+      headerResources=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
+      createCalendar();
+  }
+  
+  function filterShow(){
+    if(document.getElementById("filterId").style.display != "none"){
+      document.getElementById("filterId").style.display = "none";
+    } else {
+      document.getElementById("filterId").style.display = "inline-block";
+    }
+  }
+
+function createCalendar(){
+    const height = document.querySelector('div').clientHeight;
+    var calendarEl = document.getElementById('calendar');
+    var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
+    var resourcearray=JSON.parse(resources); 
+    calendar = new FullCalendar.Calendar(calendarEl, 
+        {
+            //clé de la license pour utiliser la librairie à des fin non commerciale
+            schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+    
+            //initialise la vue en colonne par ressource par jour en horaire française
+            initialView: 'resourceTimelineDay',
+            slotDuration: '00:20:00',
+            locale: 'fr',
+            timeZone: 'Europe/Paris',
+    
+            //permet de modifier les events dans le calendar
+            selectable: true,
+            selectHelper: true,
+            editable: true,
+            eventDurationEditable: false,
+            contentHeight: 9/12*height,
+            handleWindowResize: true,
+            nowIndicator: true,
+    
+            //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
+            headerToolbar: {
+                start: null,
+                center: 'title',
+                end: null
+            },
+    
+            //modifie l'affichage des heures de la journée
+            slotLabelFormat: { 
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+            },
+            
+            //à supprimer
+            resourceOrder: 'title',
+            resourceAreaWidth: '20%',
+            resourceAreaHeaderContent: headerResources,
+            resources: resourcearray,
+            events:[
+                {
+                 id: "1", 
+                 resourceId: "1", 
+                 start: "2022-06-23 12:00:00", 
+                 end: "2022-06-23 17:30:00", 
+                 title: "event 1",
+                 color:'rgb(255,255,0)',
+                 textColor:'#000',
+                 textFont:'Trebuchet MS'
+                }
+            ],
+            //à supprimer
+    
+            //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
+            eventClick: function(event, element) {
+                //récupération des données
+                var id = event.event._def.publicId;
+                var activity = calendar.getEventById(id);
+                var start = activity.start;
+                var tmp = activity.end - start;
+    
+                //calcul de la durée de l'activité
+                length = Math.floor((tmp/1000/60));
+        
+                //set les données à afficher par défault
+                $('#new-start').val(start.toISOString().substring(0,19));
+                document.getElementById('show-title').innerHTML = activity.title;
+                $('#title').val(activity.title);
+                $('#length').val(length);
+                $('#id').val(id);
+    
+                //ouvre la modal
+                $('#modify-planning-modal').modal("show");
+            },
+        },
+        );
+        //affiche le calendar
+    calendar.gotoDate(date);
+    calendar.render();
 }
