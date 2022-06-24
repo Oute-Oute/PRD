@@ -46,9 +46,9 @@ class __TwigTemplate_fcd23eedfa7d2e5c3a2c423ca8238ffdb1151afcc7baabef884937706ef
         // line 2
         echo $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 2, $this->source); })()), 'widget');
         echo "
-    <button type = \"submit\" class=\"btn-valide btn-secondary\">";
+    <button class=\"btn\">";
         // line 3
-        echo twig_escape_filter($this->env, (((isset($context["button_label"]) || array_key_exists("button_label", $context))) ? (_twig_default_filter((isset($context["button_label"]) || array_key_exists("button_label", $context) ? $context["button_label"] : (function () { throw new RuntimeError('Variable "button_label" does not exist.', 3, $this->source); })()), "Valider")) : ("Valider")), "html", null, true);
+        echo twig_escape_filter($this->env, (((isset($context["button_label"]) || array_key_exists("button_label", $context))) ? (_twig_default_filter((isset($context["button_label"]) || array_key_exists("button_label", $context) ? $context["button_label"] : (function () { throw new RuntimeError('Variable "button_label" does not exist.', 3, $this->source); })()), "Save")) : ("Save")), "html", null, true);
         echo "</button>
 ";
         // line 4
@@ -82,8 +82,8 @@ class __TwigTemplate_fcd23eedfa7d2e5c3a2c423ca8238ffdb1151afcc7baabef884937706ef
     {
         return new Source("{{ form_start(form) }}
     {{ form_widget(form) }}
-    <button type = \"submit\" class=\"btn-valide btn-secondary\">{{ button_label|default('Valider') }}</button>
+    <button class=\"btn\">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
-", "user/_form.html.twig", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\user\\_form.html.twig");
+", "user/_form.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\user\\_form.html.twig");
     }
 }
