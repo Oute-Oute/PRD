@@ -5,6 +5,23 @@ var dateStr=date.toDateString();
 var headerResources="Patients";
 const height = document.querySelector('div').clientHeight
 
+function $_GET(param) {
+	var vars = {};
+	window.location.href.replace( location.hash, '' ).replace( 
+		/[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+		function( m, key, value ) { // callback
+			vars[key] = value !== undefined ? value : '';
+		}
+	);
+
+	if ( param ) {
+		return vars[param] ? vars[param] : null;	
+	}
+	return vars;
+}
+var dateStr=($_GET('date'))
+var date=new Date(dateStr);
+
 document.addEventListener('DOMContentLoaded', function() 
 {
   createCalendar();
@@ -14,12 +31,13 @@ document.addEventListener('DOMContentLoaded', function()
 function changeDate(){
   console.warn(document.getElementById("Date").value)
   var jsDate=new Date(document.getElementById("Date").value)
-  var day=jsDate.getDate();
-  var month=jsDate.getMonth();
+  if (day<10){day="0"+day;}
+  var month=calendar.getDate().getMonth()+1;
+  if (month<10){month="0"+month;}
   var year=jsDate.getFullYear();
   date=new Date(year,month,day);
-  calendar.gotoDate(date);
-  calendar.next();
+  dateStr=year+"-"+month+"-"+day+"T12:00:00";
+  window.location.assign("/ConsultationPlanning?date="+dateStr);
 }
 
 function changePlanning(){
@@ -51,7 +69,12 @@ function filterShow(){
 
 
 function createCalendar(){
-  
+  console.log("test")
+  console.log(document.getElementById("date").value)
+  if(document.getElementById("date").value!=null){
+    dateStr=document.getElementById("date").value
+  }
+  date=new Date(dateStr)
   var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
   var resourcearray=JSON.parse(resources); 
   console.log(resourcearray); 

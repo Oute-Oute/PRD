@@ -8,12 +8,9 @@
 {% block body %}
         <div id = "add-form">
                 <div id = "container">
-        <h1 id="title">Ajouter un nouveau Parcours</h1>
-
-        {{ include('circuit/_form.html.twig') }}
-
-        <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_circuit_index') }}'">Consulter les circuits</button>
-        
+                        <h1 id="title">Ajouter un nouveau Parcours</h1>
+                        {{ include('circuit/_form.html.twig') }}
+                        <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_circuit_index') }}'">Consulter les circuits</button>
                 </div>
         </div>
 {% endblock %}

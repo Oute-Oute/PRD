@@ -15,7 +15,6 @@ function $_GET(param) {
 	return vars;
 }
 var dateStr=($_GET('date'))
-//alert($_GET('date'))
 var date=new Date(dateStr);
 document.addEventListener('DOMContentLoaded', function() 
 {

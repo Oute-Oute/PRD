@@ -1,0 +1,20 @@
+<div id="add-form" >
+
+
+        <div id = "container" >
+            <h1 id="title">Ajouter une nouvelle activité</h1>
+
+            <form >
+                <div>
+                    <label for='name'> Name </label>
+                    <input type='text' name='name'>
+                </div>
+        
+            </form>
+
+            <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</button>
+
+        </div>
+
+        <div id="background-shadow" onclick='hideModalForm()'></div>
+</div>

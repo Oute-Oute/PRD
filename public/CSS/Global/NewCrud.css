@@ -1,12 +1,20 @@
 
 
 div#add-form {
-    display:flex;
+    position: absolute ;
+    display: none;
     align-items: center;
     flex-direction : column;
     justify-content : center;
     height : 100vh;
     width : 100%;
+}
+
+div#background-shadow {
+    position: absolute;
+    height : 100vh;
+    width : 100%;
+    background-color:rgba(0, 0, 0, 0.3);
 }
 
 div#add-form div#container {
@@ -16,6 +24,9 @@ div#add-form div#container {
     align-items : center;
     flex-direction: column;
     border-radius: 20px;
+    background-color: white;
+    border: 1px solid black;
+    z-index: 1; /* pour pouvoir cliquer a côté de la fenetre modal et la fermer */
 }
 
 div#add-form div#container form {
