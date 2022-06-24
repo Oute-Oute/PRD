@@ -3,14 +3,23 @@
 {% block title %}Listing des activités{% endblock %}
 
 {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-        {% endblock %}
+    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('JS/Activity/Activity.js') }}"> </script>
+{% endblock %}
+
 {% block body %}
+
+
     <div id = "index-users">
-    <h1>Listing des activités</h1>
-<button class ="btn-add" onclick="window.location.href='{{ path('app_activity_new') }}'">Ajouter une nouvelle activité</button>
-    <br>
-    <table class="table table-striped table-index-users">
+        <h1>Listing des activités</h1>
+        <!-- btn new -->
+        <button class ="btn-add" onclick="showModalForm()"> Ajouter une nouvelle activité </button>
+
+        <br>
+        <table class="table table-striped table-index-users">
         <thead>
             <tr>
                 <th>Id</th>
@@ -23,7 +32,7 @@
         {% for activity in activities %}
             <tr>
                 <td>{{ activity.id }}</td>
-                <td>{{ activity.name }}</td>
+                <td>{{ activity.activityname }}</td>
                 <td>{{ activity.duration }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_activity_show', {'id': activity.id}) }}'">Infos</a>
@@ -38,5 +47,8 @@
         {% endfor %}
         </tbody>
     </table>
+
+    </div>
+
 
 {% endblock %}

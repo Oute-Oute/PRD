@@ -12,6 +12,7 @@
         {% endblock %}             
         <link rel="stylesheet" href="{{ asset('CSS/Global/Menu.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
@@ -26,10 +27,17 @@
 
     </head>
 
-
     <body>
-        {% include 'Global/Menu.html' %}
+        {% include 'Global/Menu.html.twig' %}
         {% block body %}{% endblock %}
+        {% if  app.user != null %} 
+        <div id="informations">ID : {{ app.user.userIdentifier }}<br>
+        Rôle : {{ app.user.roles[0] }}
+        </div>
+        {% endif %}
+        {{ include('activity/modal_new.html.twig') }}
+
     </body>
 
 </html>
+

@@ -14,7 +14,6 @@ class ResourceTypeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
             ->add('category')
             ->add('type', ChoiceType::class, [
                 'choices'  => [
