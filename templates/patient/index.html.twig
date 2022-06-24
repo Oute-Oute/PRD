@@ -14,9 +14,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
-                <th>Patient_id</th>
-                <th>Surname</th>
+                <th>Nom</th>
+                <th>Prénom</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -24,9 +23,8 @@
         {% for patient in patients %}
             <tr>
                 <td>{{ patient.id }}</td>
-                <td>{{ patient.name }}</td>
-                <td>{{ patient.patientId }}</td>
-                <td>{{ patient.surname }}</td>
+                <td>{{ patient.lastname }}</td>
+                <td>{{ patient.firstname }}</td>
                 <td>
                      <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_patient_show', {'id': patient.id}) }}'">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_patient_edit', {'id': patient.id}) }}'">Éditer</a>

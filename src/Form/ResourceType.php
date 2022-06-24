@@ -12,8 +12,8 @@ class ResourceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('resource_type')
+            ->add('resourcename')
+            ->add('resourcetype')
         ;
     }
 
