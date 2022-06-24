@@ -105,8 +105,8 @@ function createCalendar(){
                 {
                  id: "1", 
                  resourceId: "1", 
-                 start: "2022-06-23 12:00:00", 
-                 end: "2022-06-23 17:30:00", 
+                 start: "2022-06-24 12:00:00", 
+                 end: "2022-06-24 17:30:00", 
                  title: "event 1",
                  color:'rgb(255,255,0)',
                  textColor:'#000',

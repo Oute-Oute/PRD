@@ -35,6 +35,7 @@ class ResourceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $resource->setAble(true);
             $resourceRepository->add($resource, true);
 
             return $this->redirectToRoute('app_resource_index', [], Response::HTTP_SEE_OTHER);

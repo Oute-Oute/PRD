@@ -20,12 +20,13 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(ManagerRegistry $doctrine): Response
     {
         $date_today = $_GET["date"];
-        //Récupération des données ressources de la base de données
-        $listeResourceTypes=$this->listeResourcesTypes($doctrine); 
+        //Récupération des données nécessaires
+        $listeResourceTypes = $doctrine->getRepository("App\Entity\ResourceType")->findAll(); 
+        $listeResources = $doctrine->getRepository("App\Entity\Resource")->findAll();
+        
         $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
-        $listeResource=$this->listeResources($doctrine); 
 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$listeResource, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
+        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$listeResources, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
