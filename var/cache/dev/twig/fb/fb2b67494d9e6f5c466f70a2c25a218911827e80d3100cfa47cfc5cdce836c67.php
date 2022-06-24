@@ -27,7 +27,6 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         $this->blocks = [
             'title' => [$this, 'block_title'],
             'stylesheets' => [$this, 'block_stylesheets'],
-            'javascripts' => [$this, 'block_javascripts'],
             'body' => [$this, 'block_body'],
         ];
     }
@@ -100,29 +99,6 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
     }
 
     // line 8
-    public function block_javascripts($context, array $blocks = [])
-    {
-        $macros = $this->macros;
-        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
-        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->enter($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
-
-        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
-        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
-
-        // line 9
-        echo "<script type=\"text/javascript\" src=\"";
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("JS/Profile.js"), "html", null, true);
-        echo "\"></script>
-";
-        
-        $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->leave($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof);
-
-        
-        $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->leave($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof);
-
-    }
-
-    // line 11
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -132,23 +108,23 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 12
+        // line 9
         echo "<div id = \"edit-form\">
 <div id = \"container\">
     <h1 id=\"title\">Éditer un utilisateur</h1>
 
     ";
-        // line 16
+        // line 13
         echo twig_include($this->env, $context, "user/_form.html.twig", ["button_label" => "Update"]);
         echo "
 
     <button class = \"btn-consult btn-secondary\" onclick=\"window.location.href='";
-        // line 18
+        // line 15
         echo $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_index");
         echo "'\">Consulter les utilisateurs</a>
 
     ";
-        // line 20
+        // line 17
         echo twig_include($this->env, $context, "user/_delete_form.html.twig");
         echo "
 ";
@@ -172,7 +148,7 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
     public function getDebugInfo()
     {
-        return array (  152 => 20,  147 => 18,  142 => 16,  136 => 12,  126 => 11,  113 => 9,  103 => 8,  90 => 6,  80 => 5,  61 => 3,  38 => 1,);
+        return array (  128 => 17,  123 => 15,  118 => 13,  112 => 9,  102 => 8,  89 => 6,  79 => 5,  60 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
@@ -183,9 +159,6 @@ class __TwigTemplate_498a4dd5150448636f89babbb26e1e38d848ab482ae559d233bca1e7282
 
 {% block stylesheets %}
         <link rel=\"stylesheet\" href=\"{{ asset('CSS/Global/EditCrud.css') }}\">
-{% endblock %}
-{% block javascripts %}
-<script type=\"text/javascript\" src=\"{{ asset('JS/Profile.js') }}\"></script>
 {% endblock %}
 {% block body %}
 <div id = \"edit-form\">

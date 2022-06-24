@@ -61,35 +61,34 @@
           <input id="length" name="length" type="hidden">
           <input id="title" name="title" type="hidden">
 
-          <label>Choisissez le patient</label>
-            <div id="select-container"> 
-              <select onchange="" id="select-patient" name="select-patient"> 
+          <div id="select-container-patient"> 
+            <label>Choisissez le patient</label>
+              <select onchange="showSelectCircuit()" id="select-patient" name="select-patient"> 
 
-                <option value="null"> Selection patient </option>
+                <option value="" selected hidden> Selection patient </option>
                 {% for patient in listepatients %} 
                   <option value="{{ patient.id }}"> {{ patient.lastname }} {{ patient.firstname }} </option>
                 {% endfor %}
 
               </select>
-            </div>
+          </div>
 
-            <div id="select-container"
-            style="display:flex; flex-direction:column;"> 
+          <div id="select-container-circuit">
             <label>Choisissez le parcours</label>
-              <select id="select-circuit" name="select-circuit"> 
+              <select onchange="showSelectDate()" id="select-circuit" name="select-circuit"> 
 
-                <option value="null"> Selection circuit </option>
+                <option value="" selected hidden> Selection circuit </option>
                 {% for circuitpatient in listecircuitpatients %} 
                   <option value="{{ circuitpatient.circuit.id }}"> {{ circuitpatient.circuit.circuitname }} </option>
                 {% endfor %}
 
               </select>
-            </div>
+          </div>
 
-          <label>Date de début du parcours : </label>
-            <div class="input-container onWhite">
+          <div id="select-container-date" class="input-container onWhite">
+            <label>Date de début du parcours : </label>
               <input class="input-field" type="datetime-local" id="start" name="start" value="{{datetoday}}" required>
-            </div>
+          </div>
 
             <div class="modal-footer">
               <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
