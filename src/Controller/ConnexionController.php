@@ -18,9 +18,10 @@ class ConnexionController extends AbstractController
 
     public function afficherPage()
     {
-        $message = '';
+        $message = ' ';
+        $Paserror = '';
         return $this->render('connexion/connexion.html.twig', [
-            'Message' => $message,
+            'Message' => $message, "Error" => $Paserror
         ]);
     }
 
@@ -30,27 +31,24 @@ class ConnexionController extends AbstractController
         $username = $request->request->get('username');
         $password = $request->request->get('password');
         $user     = $userRepository->findOneBy(['login' => $username]);
-
-        $messageError = "Un probleme a eu lieu, veuillez reesayer";
+        $messageError1 = "Erreur";
+        $messageError2 = "Un probleme a eu lieu, veuillez réessayer";
 
         if ($user === null) {
             // user not found
             // throw exception or return error or however you handle it
 
             return $this->render('connexion/connexion.html.twig', [
-                'Message' => $messageError,
+                'Error' => $messageError1, 'Message' => $messageError2
             ]);
         } else {
             if (password_verify($password, $user->getPassword())) {
-
-
-
 
                 return $this->render("base.html.twig");
             } else {
 
                 return $this->render('connexion/connexion.html.twig', [
-                    'Message' => $messageError,
+                    'Error' => $messageError1, 'Message' => $messageError2
                 ]);
             }
         }

@@ -35,8 +35,6 @@ return [
     'app_resource_type_show' => [['id'], ['_controller' => 'App\\Controller\\ResourceTypeController::show'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/resources-types']], [], [], []],
     'app_resource_type_edit' => [['id'], ['_controller' => 'App\\Controller\\ResourceTypeController::edit'], [], [['text', '/edit'], ['variable', '/', '[^/]++', 'id', true], ['text', '/resources-types']], [], [], []],
     'app_resource_type_delete' => [['id'], ['_controller' => 'App\\Controller\\ResourceTypeController::delete'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/resources-types']], [], [], []],
-    'app_login' => [[], ['_controller' => 'App\\Controller\\SecurityController::login'], [], [['text', '/login']], [], [], []],
-    'app_logout' => [[], ['_controller' => 'App\\Controller\\SecurityController::logout'], [], [['text', '/logout']], [], [], []],
     'app_user_index' => [[], ['_controller' => 'App\\Controller\\UserController::index'], [], [['text', '/user/']], [], [], []],
     'app_user_new' => [[], ['_controller' => 'App\\Controller\\UserController::new'], [], [['text', '/user/new']], [], [], []],
     'app_user_show' => [['id'], ['_controller' => 'App\\Controller\\UserController::show'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/user']], [], [], []],
