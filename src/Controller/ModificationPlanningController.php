@@ -21,13 +21,13 @@ class ModificationPlanningController extends AbstractController
     {
         $date_today = $_GET["date"];
         //Récupération des données nécessaires
-        $listeResourceTypes = $doctrine->getRepository("App\Entity\ResourceType")->findAll(); 
         $listeResources = $doctrine->getRepository("App\Entity\Resource")->findBy(['able' => true]);
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
+        $listeCircuitPatients = $doctrine->getRepository("App\Entity\CircuitPatient")->findAll();
         
         $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
 
-        return $this->render('planning/modification-planning.html.twig', ['resourcestypes' => $listeResourceTypes, 'listeresources'=>$listeResources, 'listepatients'=>$listePatients, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
+        return $this->render('planning/modification-planning.html.twig', ['listeresources'=>$listeResources, 'listepatients'=>$listePatients, 'listecircuitpatients' => $listeCircuitPatients, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)

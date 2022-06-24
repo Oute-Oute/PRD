@@ -1,6 +1,6 @@
 calendrier:
   path: /
-  controller: App\Controller\DefaultController::index
+  controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
 
 add_user:
   path: /add_user
