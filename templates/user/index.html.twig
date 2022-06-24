@@ -8,7 +8,7 @@
 {% block body %}
     <div id = "index-users">
     <h1>Listing des utilisateurs</h1>
-<button class ="btn-add" onclick="window.location.href='{{ path('app_activity_new') }}'">Ajouter un nouvel utilisateur</button>
+<button class ="btn-add" onclick="window.location.href='{{ path('app_user_new') }}'">Ajouter un nouvel utilisateur</button>
     <br>
     <table class="table table-striped table-index-users">
         <thead>
@@ -16,7 +16,6 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Roles</th>
-                <th>Password</th>
                 <th>actions</th>
             </tr>
         </thead>
