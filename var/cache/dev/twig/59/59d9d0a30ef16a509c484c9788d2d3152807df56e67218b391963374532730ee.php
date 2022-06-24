@@ -39,8 +39,8 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "Global/Menu.html.twig"));
 
-        // line 1
-        echo "
+        // line 2
+        echo "                 
     <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
@@ -59,25 +59,17 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
-
             </div>
-
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
-                ";
+                 ";
+        // line 26
+        echo "                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>   
+                     ";
         // line 27
-        if ((0 !== twig_compare(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 27, $this->source); })()), "user", [], "any", false, false, false, 27), null))) {
-            echo " 
-                <div <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='";
-            // line 28
-            echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 28, $this->source); })()), "user", [], "any", false, false, false, 28), "id", [], "any", false, false, false, 28)]), "html", null, true);
-            echo "'\">Mon profil</a></div>
-                ";
-        }
-        // line 29
-        echo "          
+        echo "  
+     
         </nav>
     </div>
 
@@ -95,19 +87,15 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
         return "Global/Menu.html.twig";
     }
 
-    public function isTraitable()
-    {
-        return false;
-    }
-
     public function getDebugInfo()
     {
-        return array (  80 => 29,  75 => 28,  71 => 27,  43 => 1,);
+        return array (  71 => 27,  68 => 26,  43 => 2,);
     }
 
     public function getSourceContext()
     {
-        return new Source("
+        return new Source("{#{% if  app.user != null %}#}
+                 
     <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
@@ -126,16 +114,14 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
-
             </div>
-
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
-                {% if  app.user != null %} 
-                <div <button class = \"btn-edit btn-secondary\" onclick=\"window.location.href='{{ path('app_user_edit', {'id': app.user.id}) }}'\">Mon profil</a></div>
-                {% endif %}          
+                 {#   <a onclick=\"window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>  #}
+                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>   
+                     {# {% endif %}   #}  
+     
         </nav>
     </div>
 

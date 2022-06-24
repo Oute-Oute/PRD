@@ -1,4 +1,4 @@
-{#  {% if  app.user != null %}     ON ENLEVE PR L'INSTANT PDT LE DEV #}
+{#{% if  app.user != null %}#}
                  
     <div class="dashboard-nav">
         <nav class="dashboard-nav-list">
@@ -18,16 +18,13 @@
                 <a href="#" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Éthique </a>
                 <a href="/resources" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Ressources </a>
                 <a href="/resources-types" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Types de Ressource </a>
-
             </div>
-
             <div id='menu-bottom'>
                 <div class="nav-item-divider"></div>
                     <a href="/consult_users" class="dashboard-nav-item"><i class="fas fa-user"></i> Utilisateurs </a>
                  {#   <a onclick="window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'" class="dashboard-nav-item"><i class="fas fa-user"></i> Mon profil </a>  #}
                     <a href = "/logout" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Se déconnecter </a>   
-
-                    {#  {% endif %}     ON ENLEVE PR L'INSTANT PDT LE DEV #}
+                     {# {% endif %}   #}  
      
         </nav>
     </div>

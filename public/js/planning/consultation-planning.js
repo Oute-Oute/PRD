@@ -23,7 +23,7 @@ var dateStr=($_GET('date'))
 date=new Date(dateStr)
 document.addEventListener('DOMContentLoaded', function() 
 {
-  createCalendar();
+  createCalendar("Patients");
 
 });
 
@@ -42,9 +42,9 @@ function changeDate(){
 }
 
 function changePlanning(){
-  var selectedItem = document.getElementById("displayList");
-    headerResources=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
-    createCalendar();
+  var header=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
+    headerResources=header;
+    createCalendar(header);
 }
     
 
@@ -69,13 +69,30 @@ function filterShow(){
 }
 
 
-function createCalendar(){
+function createCalendar(resources){
+  switch(resources){
+    case "Patients":
+      var resourcesArray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
+      break;
+    case "Parcours":
+      var resourcesArray=JSON.parse(document.getElementById('parcours').value.replaceAll("3aZt3r", " "));
+      break;
+      case "Ressources Humaines":
+      var resourcesArray=JSON.parse(document.getElementById('rh').value.replaceAll("3aZt3r", " "));
+      break;
+      case "Ressources Matérielles":
+      var resourcesArray=JSON.parse(document.getElementById('rm').value.replaceAll("3aZt3r", " "));
+      console.log(resourcesArray);
+      break;
+    }
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
   date=new Date(dateStr)
-  var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
-  var resourcearray=JSON.parse(resources); 
+  //var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
+  //var resourcearray=JSON.parse(resources); 
+  var patientsarray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
+  console.log(patientsarray)
   var calendarEl = document.getElementById('calendar');
 
   calendar=new FullCalendar.Calendar(calendarEl, 
@@ -86,7 +103,6 @@ function createCalendar(){
         locale: 'fr',
         timeZone: 'Europe/Paris',
         selectable: true,
-        selectHelper: true,
         editable: false,
         contentHeight: height*3/4,
         handleWindowResize: true,
@@ -102,7 +118,7 @@ function createCalendar(){
         resourceOrder: 'title',
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
-        resources: resourcearray,
+        resources: resourcesArray,
         events:[
             {
              id: "1", 
