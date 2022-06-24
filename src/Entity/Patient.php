@@ -20,55 +20,38 @@ class Patient
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $patient_id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $surname;
+    private $firstname;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getLastname(): ?string
     {
-        return $this->name;
+        return $this->lastname;
     }
 
-    public function setName(string $name): self
+    public function setLastname(string $lastname): self
     {
-        $this->name = $name;
+        $this->lastname = $lastname;
 
         return $this;
     }
 
-    public function getPatientId(): ?string
+    public function getFirstname(): ?string
     {
-        return $this->patient_id;
+        return $this->firstname;
     }
 
-    public function setPatientId(string $patient_id): self
+    public function setFirstname(string $firstname): self
     {
-        $this->patient_id = $patient_id;
-
-        return $this;
-    }
-
-    public function getSurname(): ?string
-    {
-        return $this->surname;
-    }
-
-    public function setSurname(string $surname): self
-    {
-        $this->surname = $surname;
+        $this->firstname = $firstname;
 
         return $this;
     }

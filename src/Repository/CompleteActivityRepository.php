@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CircuitType;
+use App\Entity\CompleteActivity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CircuitType>
+ * @extends ServiceEntityRepository<CompleteActivity>
  *
- * @method CircuitType|null find($id, $lockMode = null, $lockVersion = null)
- * @method CircuitType|null findOneBy(array $criteria, array $orderBy = null)
- * @method CircuitType[]    findAll()
- * @method CircuitType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CompleteActivity|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CompleteActivity|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CompleteActivity[]    findAll()
+ * @method CompleteActivity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CircuitTypeRepository extends ServiceEntityRepository
+class CompleteActivityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CircuitType::class);
+        parent::__construct($registry, CompleteActivity::class);
     }
 
-    public function add(CircuitType $entity, bool $flush = false): void
+    public function add(CompleteActivity $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CircuitTypeRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CircuitType $entity, bool $flush = false): void
+    public function remove(CompleteActivity $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CircuitTypeRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CircuitType[] Returns an array of CircuitType objects
+//     * @return CompleteActivity[] Returns an array of CompleteActivity objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CircuitTypeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CircuitType
+//    public function findOneBySomeField($value): ?CompleteActivity
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

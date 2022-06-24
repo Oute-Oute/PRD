@@ -23,6 +23,7 @@ function handleAddActivity() {
     pActivityNumber.setAttribute('id', 'activity-number')
     pActivityNumber.style.marginRight = '10px'
     pActivityNumber.innerText = 'Activité ' + (SELECT_ID+1) 
+    
     // Création d'une div pour afficher le numero de l'activité, le select et le bouton de suppression a côté
     var div = document.createElement("div")
     div.style.display = 'flex'
@@ -39,16 +40,13 @@ function handleAddActivity() {
     // On ajoute les options du bon select dans celui que l'on vient de créer
     let len = selectSample.options.length
     for (let i = 0; i < len; i++) {
-        //console.log(s.options[i])
         select.options[select.options.length] = new Option (selectSample.options[i].text, selectSample.options[i].value);
     }
 
-    // on l'affiche et on l'ajoute a la fin de la balise div select-container
+    // On l'affiche et on l'ajoute a la fin de la balise div select-container
     select.style.display = "block";
     let divAddActivity = document.getElementById('select-container')
     divAddActivity.appendChild(div)
 } 
 
-/**
- * Recupere les informations dans les input/select et envoie la requete POST au serveur
- */
+

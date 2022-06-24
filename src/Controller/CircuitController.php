@@ -32,20 +32,19 @@ class CircuitController extends AbstractController
     public function new(Request $request, CircuitRepository $circuitRepository): Response
     {
 
+        // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
-            dd($request);
+            
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+            // et le nombre d'activité
+            $nbActivity = count($param) - 1;
+
+            // pour accéder a toutes les activités : $param['activity-0']);
             
             return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
         }
-        /*if ($form->isSubmitted() ) {
-            dd($request);
-           // $circuit.activities
-
-            $circuitRepository->add($circuit, true);
-            //$resource
-            return $this->redirectToRoute('app_circuit_index', [], Response::HTTP_SEE_OTHER);
-        }*/
-
+        
         $circuit = new Circuit();
 
         $activityRepository = new ActivityRepository($this->getDoctrine());
