@@ -64,7 +64,10 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
 
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
+                <a href=\"";
+        // line 25
+        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit", ["id" => twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 25, $this->source); })()), "user", [], "any", false, false, false, 25), "id", [], "any", false, false, false, 25)]), "html", null, true);
+        echo "\"></a>\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
                 <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
             </div>
@@ -87,9 +90,14 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
         return "Global/Menu.html";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  43 => 1,);
+        return array (  69 => 25,  43 => 1,);
     }
 
     public function getSourceContext()
@@ -118,7 +126,7 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
 
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
-                <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
+                <a href=\"{{ path('app_user_edit', {'id': app.user.id}) }}\"></a>\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
                 <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>
             </div>
@@ -127,6 +135,6 @@ class __TwigTemplate_c0afc5d386180ac846d970363b7bd4c48a9c804a8f6d11955c4209669be
         </nav>
     </div>
 
-", "Global/Menu.html", "C:\\Users\\mdpVirgile\\Documents\\GitHub\\Projet_Stage_DI4\\templates\\global\\menu.html");
+", "Global/Menu.html", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\global\\menu.html");
     }
 }

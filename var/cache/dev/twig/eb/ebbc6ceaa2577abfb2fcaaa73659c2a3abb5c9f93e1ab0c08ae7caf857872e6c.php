@@ -52,7 +52,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         // line 5
         $this->displayBlock('title', $context, $blocks);
         echo "</title>
-        <link rel=\"icon\" href=\"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>\">
+        <link rel=\"icon\" href=\"/img/hospital_icon.svg\">
         
         ";
         // line 9
@@ -78,18 +78,33 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
         echo "
     </head>
 
-
     <body>
         ";
+        // line 30
+        $this->loadTemplate("Global/Menu.html.twig", "base.html.twig", 30)->display($context);
         // line 31
-        $this->loadTemplate("Global/Menu.html", "base.html.twig", 31)->display($context);
-        // line 32
         echo "        ";
         $this->displayBlock('body', $context, $blocks);
-        // line 33
+        // line 32
+        echo "        ";
+        if ((0 !== twig_compare(twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 32, $this->source); })()), "user", [], "any", false, false, false, 32), null))) {
+            echo " 
+        <div id=\"informations\">ID : ";
+            // line 33
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 33, $this->source); })()), "user", [], "any", false, false, false, 33), "userIdentifier", [], "any", false, false, false, 33), "html", null, true);
+            echo "<br>
+        Rôle : ";
+            // line 34
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 34, $this->source); })()), "user", [], "any", false, false, false, 34), "roles", [], "any", false, false, false, 34), 0, [], "array", false, false, false, 34), "html", null, true);
+            echo "
+        </div>
+        ";
+        }
+        // line 37
         echo "    </body>
 
 </html>
+
 ";
         
         $__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e->leave($__internal_085b0142806202599c7fe3b329164a92397d8978207a37e79d70b8c52599e33e_prof);
@@ -179,7 +194,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     }
 
-    // line 32
+    // line 31
     public function block_body($context, array $blocks = [])
     {
         $macros = $this->macros;
@@ -209,7 +224,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     public function getDebugInfo()
     {
-        return array (  183 => 32,  170 => 23,  166 => 22,  159 => 18,  154 => 17,  144 => 16,  131 => 11,  121 => 10,  103 => 5,  90 => 33,  87 => 32,  85 => 31,  78 => 26,  76 => 16,  71 => 14,  67 => 13,  64 => 12,  62 => 10,  59 => 9,  53 => 5,  47 => 1,);
+        return array (  198 => 31,  185 => 23,  181 => 22,  174 => 18,  169 => 17,  159 => 16,  146 => 11,  136 => 10,  118 => 5,  104 => 37,  98 => 34,  94 => 33,  89 => 32,  86 => 31,  84 => 30,  78 => 26,  76 => 16,  71 => 14,  67 => 13,  64 => 12,  62 => 10,  59 => 9,  53 => 5,  47 => 1,);
     }
 
     public function getSourceContext()
@@ -219,7 +234,7 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
     <head>
         <meta charset=\"UTF-8\">
         <title>{% block title %}{% endblock %}</title>
-        <link rel=\"icon\" href=\"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>\">
+        <link rel=\"icon\" href=\"/img/hospital_icon.svg\">
         
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         <link rel=\"stylesheet\" href=\"CSS/bootstrap/bootstrap.min.css\">
@@ -242,13 +257,18 @@ class __TwigTemplate_e0dd6ab78a76963c5000e3163ce6810f2481d8b3e0bbdffa985218fad24
 
     </head>
 
-
     <body>
-        {% include 'Global/Menu.html' %}
+        {% include 'Global/Menu.html.twig' %}
         {% block body %}{% endblock %}
+        {% if  app.user != null %} 
+        <div id=\"informations\">ID : {{ app.user.userIdentifier }}<br>
+        Rôle : {{ app.user.roles[0] }}
+        </div>
+        {% endif %}
     </body>
 
 </html>
+
 ", "base.html.twig", "C:\\Users\\Clement\\Desktop\\Projet Stage DI4\\Projet_Stage_DI4\\templates\\base.html.twig");
     }
 }

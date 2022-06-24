@@ -6994,7 +6994,7 @@
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.TTMXx4v" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.J98tBSZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ActivityController::delete" type="service_closure" id=".service_locator.SdyZWuD"/>
@@ -7012,9 +7012,13 @@
         <argument key="App\Controller\CircuitTypeController::index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController::new" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController::show" type="service_closure" id=".service_locator.DpqeDM1"/>
+        <argument key="App\Controller\ConnexionController::connexionPost" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController::consultationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::listeResourceTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController::listeTypeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController::listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController::PatientActivityResource" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController::listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController::listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController::listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController::modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController::modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController::delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
@@ -7061,9 +7065,13 @@
         <argument key="App\Controller\CircuitTypeController:index" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController:new" type="service_closure" id=".service_locator.187puZt"/>
         <argument key="App\Controller\CircuitTypeController:show" type="service_closure" id=".service_locator.DpqeDM1"/>
+        <argument key="App\Controller\ConnexionController:connexionPost" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ConsultationPlanningController:consultationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:listeResourceTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\ModificationPlanningController:listeTypeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ConsultationPlanningController:listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController:PatientActivityResource" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController:listeResources" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController:listeResourcesJSON" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\ModificationPlanningController:listeResourcesTypes" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController:modificationPlanningGet" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ModificationPlanningController:modificationPlanningPost" type="service_closure" id=".service_locator.ju8mKQU"/>
         <argument key="App\Controller\PatientController:delete" type="service_closure" id=".service_locator.ESMXKlZ"/>
@@ -7776,12 +7784,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.TTMXx4v"/>
+      <argument type="service" id=".service_locator.J98tBSZ"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.TTMXx4v"/>
+      <argument type="service" id=".service_locator.J98tBSZ"/>
     </service>
     <service id="debug.traced.messenger.bus.default.inner" class="Symfony\Component\Messenger\MessageBus">
       <argument type="iterator">
@@ -8772,7 +8780,7 @@
     <service id="sensio_framework_extra.security.expression_language" alias="sensio_framework_extra.security.expression_language.default"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.TTMXx4v"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.J98tBSZ"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -8797,7 +8805,7 @@
     <service id=".service_locator.h8Jkkd2" alias="messenger.retry_strategy_locator"/>
     <service id=".service_locator.XDGmiR3" alias=".1_ServiceLocator~O1k.XnM"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.kxHAw4u" alias=".service_locator.TTMXx4v"/>
+    <service id=".service_locator.OnpgWri" alias=".service_locator.J98tBSZ"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.3HRm8zD" alias=".service_locator.LIxftAD"/>
     <service id=".service_locator.nk0lT0X" alias=".service_locator.1kmbKC8"/>
