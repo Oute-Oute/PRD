@@ -1,49 +1,39 @@
+<!DOCTYPE html>
+
+
 {% block body %}
 	<head>
 		<title>Connexion
 		</title>
-		<link rel="stylesheet" href="{{ asset('CSS/Global/Menu.css') }}">
-		<link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
-		<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+		<!--<script type="text/javascript" src="{{ asset('js/connexion/connexion.js') }}" defer></script>-->
 	</head>
 
-
-	<div id="add-form">
-		<div id="container">
-			<form id="add-form" method="post">
-
-				<h1>
-					Connexion
-				</h1>
-
-				<!-- Email input -->
-
-				<div>
-					<input type="text" name="username" id="username" class="form-control"/>
-					<label>Identifiant</label>
-				</div>
-
-				<!-- Password input -->
-				<div>
-					<input type="password" name="password" id="password" class="form-control"/>
-					<label>Mot de passe</label>
-				</div>
-
-				<!-- Submit button -->
-				<button type="submit" id="submit_button" class="btn-valide btn-secondary">Connexion</button>
-			</form>
+	<h1>
+		Connexion
+	</h1>
 
 
+	<form
+		id="login-form" method="post">
+		<!-- Email input -->
+		<div>
+			<input type="text" name="username" id="username" class="form-control"/>
+			<label>Identifiant</label>
 		</div>
 
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			<strong>{{Error}}</strong>
-			{{Message}}
-
+		<!-- Password input -->
+		<div>
+			<input type="password" name="password" id="password" class="form-control"/>
+			<label>Mot de passe</label>
 		</div>
 
+		<!-- Submit button -->
+		<button type="submit" id="submit_button" class="btn btn-primary btn-block mb-4">Connexion</button>
+	</form>
 
-	</div>
+	<p>
+		{{Message}}
+	</p>
 
 
 {% endblock %}

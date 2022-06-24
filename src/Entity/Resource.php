@@ -20,44 +20,57 @@ class Resource
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $resourcename;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ResourceType::class, inversedBy="resources")
+     * @ORM\Column(type="boolean")
      */
-    private $resource_type;
+    private $able;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ResourceType::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $resourcetype;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getResourcename(): ?string
     {
-        return $this->name;
+        return $this->resourcename;
     }
 
-    public function setName(string $name): self
+    public function setResourcename(string $resourcename): self
     {
-        $this->name = $name;
+        $this->resourcename = $resourcename;
 
         return $this;
     }
 
-    public function getResourceType(): ?ResourceType
+    public function isAble(): ?bool
     {
-        return $this->resource_type;
+        return $this->able;
     }
 
-    public function setResourceType(?ResourceType $resource_type): self
+    public function setAble(bool $able): self
     {
-        $this->resource_type = $resource_type;
+        $this->able = $able;
 
         return $this;
     }
 
-    public function __toString(): ?string 
+    public function getResourcetype(): ?ResourceType
     {
-        return $this->getName();
+        return $this->resourcetype;
+    }
+
+    public function setResourcetype(?ResourceType $resourcetype): self
+    {
+        $this->resourcetype = $resourcetype;
+
+        return $this;
     }
 }
