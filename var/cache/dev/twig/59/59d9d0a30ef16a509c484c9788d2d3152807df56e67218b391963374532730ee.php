@@ -39,8 +39,8 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02 = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02->enter($__internal_319393461309892924ff6e74d6d6e64287df64b63545b994e100d4ab223aed02_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "Global/Menu.html.twig"));
 
-        // line 1
-        echo "
+        // line 2
+        echo "                 
     <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
@@ -59,17 +59,17 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
-
             </div>
-
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
-                    <a onclick=\"window.location.href='";
+                 ";
         // line 26
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_user_edit_profile", ["id" => twig_get_attribute($this->env, $this->source, twig_get_attribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 26, $this->source); })()), "user", [], "any", false, false, false, 26), "id", [], "any", false, false, false, 26)]), "html", null, true);
-        echo "'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
-                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>      
+        echo "                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>   
+                     ";
+        // line 27
+        echo "  
+     
         </nav>
     </div>
 
@@ -87,19 +87,15 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
         return "Global/Menu.html.twig";
     }
 
-    public function isTraitable()
-    {
-        return false;
-    }
-
     public function getDebugInfo()
     {
-        return array (  70 => 26,  43 => 1,);
+        return array (  71 => 27,  68 => 26,  43 => 2,);
     }
 
     public function getSourceContext()
     {
-        return new Source("
+        return new Source("{#{% if  app.user != null %}#}
+                 
     <div class=\"dashboard-nav\">
         <nav class=\"dashboard-nav-list\">
             <div id=\"menu-top\"> 
@@ -118,14 +114,14 @@ class __TwigTemplate_8c61cb8434b47d827fa93a72459f505f9b00fa8f0732d61757f0a86b92e
                 <a href=\"#\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Éthique </a>
                 <a href=\"/resources\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Ressources </a>
                 <a href=\"/resources-types\" class=\"dashboard-nav-item\"><i class=\"fas fa-file-upload\"></i> Types de Ressource </a>
-
             </div>
-
             <div id='menu-bottom'>
                 <div class=\"nav-item-divider\"></div>
                     <a href=\"/consult_users\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Utilisateurs </a>
-                    <a onclick=\"window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>
-                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>      
+                 {#   <a onclick=\"window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'\" class=\"dashboard-nav-item\"><i class=\"fas fa-user\"></i> Mon profil </a>  #}
+                    <a href = \"/logout\" class=\"dashboard-nav-item\"><i class=\"fas fa-sign-out-alt\"></i> Se déconnecter </a>   
+                     {# {% endif %}   #}  
+     
         </nav>
     </div>
 
