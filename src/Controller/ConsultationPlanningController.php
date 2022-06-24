@@ -18,6 +18,7 @@ class ConsultationPlanningController extends AbstractController
         $date_today=date(('Y-m-d'));
         if(isset($_GET["date"])){
             $date_today = $_GET["date"];
+            $date_today = str_replace('T12:00:00', '', $date_today);
         }
         //Récupération des données ressources de la base de données
         $listeResourceTypes=$this->listeResourcesTypes($doctrine); 
