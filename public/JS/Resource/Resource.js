@@ -26,7 +26,12 @@ function hideNewModalForm() {
     formAddResourcetype.style.display = "none";
 }
 
-
+function showNewModalFormInfos(resourceId, resourceName, resourceType) {
+    document.getElementById('resource-id').innerText = resourceId
+    document.getElementById('resource-name').innerText = resourceName
+    document.getElementById('resource-type').innerText = resourceType
+    $('#infos-resource-modal').modal("show");
+}
 
 // #container-modal 
 // .modal-form             #form-add-activity

@@ -22,10 +22,7 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
-.php-version
-/var/cache/
-/var/log/
-/var/cache/dev/
+
 
 *.csv
 *.log

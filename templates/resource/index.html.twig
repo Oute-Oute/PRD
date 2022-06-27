@@ -8,7 +8,10 @@
 
 {% block javascripts %}
     <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
+    <script src="js/jquery-3.6.0.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 {% endblock %}
+
 
 {% block body %}
     <div id = "index-users">
@@ -32,7 +35,7 @@
                 <td>{{ resource.resourcename }}</td>
                 <td>{{ resource.resourcetype }}
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_resource_show', {'id': resource.id}) }}'">Infos</a>
+                    <button class = "btn-infos btn-secondary" onclick="showNewModalFormInfos('{{resource.id}}', '{{resource.resourcename}}', '{{resource.resourcetype}}')">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_resource_edit', {'id': resource.id}) }}'">Éditer</a>
                     {{ include('resource/_delete_form.html.twig') }}
                 </td>
@@ -45,4 +48,5 @@
         </tbody>
     </table>
     </div>
+{{ include ('resource/show.html') }}
 {% endblock %}
