@@ -3,32 +3,29 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
+use App\Entity\PP;
 use App\Form\PatientType;
 use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @Route("/patient")
  */
 class PatientController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_patient_index", methods={"GET"})
-     */
-    public function index(PatientRepository $patientRepository): Response
+    public function patientGet(PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
         return $this->render('patient/index.html.twig', [
             'patients' => $patientRepository->findAll(),
+            'pathways' => $doctrine->getRepository("App\Entity\Pathway")->findAll()
         ]);
     }
 
-    /**
-     * @Route("/new", name="app_patient_new", methods={"GET", "POST"})
-     */
-    public function new(Request $request, PatientRepository $patientRepository): Response
+    public function patientPost(Request $request, PatientRepository $patientRepository): Response
     {
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
@@ -45,25 +42,26 @@ class PatientController extends AbstractController
             $patient->setFirstname($firstname);
           
             // ajout dans la bd 
-            $patientsRepository = new PatientRepository($this->getDoctrine());
-            $patientsRepository->add($patient, true);
+            $patientRepository->add($patient, false);
 
-            return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
+            $pathways = $this->getDoctrine()->getManager()->getRepository("App\Entity\Pathway")->findAll();
+            $pathwayPatientRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\PP");
+
+            $nbParcours = count($param) - 2;
+
+            for($numParcours = 0; $numParcours < $nbParcours; $numParcours++)
+            {
+                $str = 'parcours-';
+                $pathwayPatient = new PP();
+                $str .= $numParcours;
+                $numListe = $param[$str]-1;
+                $pathwayPatient->setPatient($patient);
+                $pathwayPatient->setPathway($pathways[$numListe]);
+                $pathwayPatientRepository->add($pathwayPatient, true);
+            }
+
+            return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
         }
-        /*$patient = new Patient();
-        $form = $this->createForm(PatientType::class, $patient);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $patientRepository->add($patient, true);
-
-            return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('patient/new.html.twig', [
-            'patient' => $patient,
-            'form' => $form,
-        ]);*/
     }
 
     /**
@@ -87,7 +85,7 @@ class PatientController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $patientRepository->add($patient, true);
 
-            return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('patient/edit.html.twig', [
@@ -105,6 +103,6 @@ class PatientController extends AbstractController
             $patientRepository->remove($patient, true);
         }
 
-        return $this->redirectToRoute('app_patient_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 }

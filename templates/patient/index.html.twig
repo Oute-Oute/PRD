@@ -3,7 +3,7 @@
 {% block title %}Liste des patients{% endblock %}
 {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-        <script src="js/Patients/patients.js"></script>
+        <script src="js/Patient/patient.js"></script>
         <script src="js/jquery-3.6.0.js"></script>
         <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
@@ -31,7 +31,7 @@
                 <td>{{ patient.firstname }}</td>
                 <td>
                      <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_patient_show', {'id': patient.id}) }}'">Infos</a>
-                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_patient_edit', {'id': patient.id}) }}'">Éditer</a>
+                    <button class = "btn-edit btn-secondary" onclick="editPatient({{ patient.lastname }}, {{ patient.firstname }})">Éditer</a>
                     {{ include('patient/_delete_form.html.twig') }}
                 </td>
             </tr>
@@ -43,6 +43,7 @@
         </tbody>
     </table>
 
+
     <!-- add-patient-modal -->
 
 <div class="modal" id="add-patient-modal">
@@ -51,19 +52,66 @@
       <div class="modal-header">
         <h2 class="modal-title">Ajouter un patient</h2>
       </div>
-      <form action="{{ path('app_patient_new') }}" method="post">
+      <form action="{{ path('Patients') }}" method="post">
         <div class="modal-body">
             <div>
-                <label for='name'> Nom </label>
+                <label for='lastname'> Nom </label>
                 <input type='text' name='lastname'>
             </div>
             <div>
-                <label for='duration'> Prenom </label>
+                <label for='firstname'> Prenom </label>
                 <input type='text' name='firstname'>
+            </div>
+
+            <fieldset id="fs-add-pathway">
+                <label>Choisissez les parcours que votre patient peut suivre</label>
+                <div id="select-container"> 
+                    <select style="display:none;" class="select-pathway-sample" class="slct-add-pathway" > 
+
+                        {% for pathway in pathways %} 
+                            <option value="{{ pathway.id }}"> {{ pathway }} </option>
+                        {% else %}
+                            <p> Pas de parcours de créé ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <button type="button" id='btn-add-activity' onclick="handleAddPathway()"> <b> Ajouter </b> </button> 
+
+            </fieldset>
+            <br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
+            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- edit-patient-modal -->
+
+<div class="modal" id="edit-patient-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier un patient</h2>
+      </div>
+      <form action="{{ path('Patients') }}" method="post">
+        <div class="modal-body">
+            <div>
+                <label for='lastname'> Nom </label>
+                <input type='text' name='lastname' id='lastname'>
+            </div>
+            <div>
+                <label for='firstname'> Prenom </label>
+                <input type='text' name='firstname' id='firstname'>
             </div>
             <br>
 
-            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('index_patients') }}'">Consulter les activités</button>
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
             <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
         </div>
 	    </form>
