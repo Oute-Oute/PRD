@@ -26,12 +26,26 @@ function hideNewModalForm() {
     formAddResourcetype.style.display = "none";
 }
 
-function showNewModalFormInfos(resourceId, resourceName, resourceType) {
-    document.getElementById('resource-id').innerText = resourceId
-    document.getElementById('resource-name').innerText = resourceName
-    document.getElementById('resource-type').innerText = resourceType
-    $('#infos-resource-modal').modal("show");
+function showInfosModalHuman(resourceId, resourceName, resourceType) {
+    document.getElementById('human-resource-id').innerText = resourceId
+    document.getElementById('human-resource-name').innerText = resourceName
+    document.getElementById('human-resource-available').innerText = resourceType
+    $('#infos-human-resource-modal').modal("show");
 }
 
+function showInfosModalMaterial(resourceId, resourceName, resourceType) {
+    document.getElementById('material-resource-id').innerText = resourceId
+    document.getElementById('material-resource-name').innerText = resourceName
+    document.getElementById('material-resource-available').innerText = resourceType
+    $('#infos-material-resource-modal').modal("show");
+}
+
+function showNewHumanModalForm(){
+    $('#new-human-resource-modal').modal("show");
+}
+
+function showNewMaterialModalForm(){
+    $('#new-material-resource-modal').modal("show");
+}
 // #container-modal 
 // .modal-form             #form-add-activity

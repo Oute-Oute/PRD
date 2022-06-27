@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit HumanResource{% endblock %}
+
+{% block body %}
+    <h1>Edit HumanResource</h1>
+
+    {{ include('human_resource/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_human_resource_index') }}">back to list</a>
+
+    {{ include('human_resource/_delete_form.html.twig') }}
+{% endblock %}
