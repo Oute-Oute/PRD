@@ -1,0 +1,51 @@
+    <!-- add-patient-modal -->
+
+<div class="modal" id="add-pathway-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajouter un parcours</h2>
+            </div>
+            <form action="{{ path('PathwaysPost') }}" method="post">
+                <div class="modal-body">
+                    <div class="form-field">
+                        <label for='name'> Nom du parcours </label>
+                        <input type='text' name='pathwayname'>
+                    </div>
+                    <div class="form-field">
+                        <label for='duration'> Type du parcours </label>
+                        <input type='text' name='pathwaytype'>
+                    </div>
+                    <div class="form-field">
+                        <label for='duration'> Nombre de fois par jour ciblé </label>
+                        <input type='text' name='target'>
+                    </div>
+
+                    <fieldset id="fs-add-activity">
+                        <legend>Choisissez les activités de votre parcours</legend>
+                
+                        <div id="select-container"> 
+                            <select style="display:none;" class="select-activity-sample" class="slct-add-activity" > 
+
+                                {% for activity in activities %} 
+                                    <option value="{{ activity.id }}"> {{ activity }} </option>
+                                {% else %}
+                                    <p> Pas d'activités créées ! </p>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
+
+                    </fieldset>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <button type="button" class="btn-consult btn-secondary" onclick="hideNewModalForm()">Consulter les activités</button>
+                    <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+                </div>
+    	    </form>
+        </div>
+    </div>
+</div>

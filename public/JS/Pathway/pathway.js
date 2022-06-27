@@ -24,11 +24,17 @@ function handleAddActivity() {
     
     // Création d'une div pour afficher le numero de l'activité, le select et le bouton de suppression a côté
     var div = document.createElement("div")
-    div.style.display = 'flex'
-    div.style.flexDirection = 'row'
-    div.style.alignItems = 'center'
+    div.setAttribute('class', 'form-field')
+
+
     div.appendChild(pActivityNumber)
     div.appendChild(select)
+    var img = new Image();
+    img.src = 'img/delete.svg'
+    img.setAttribute('id','img-'+SELECT_ID)
+    img.setAttribute('onclick', 'deleteSelect(this.id)')
+    div.appendChild(img)
+
 
     // On definit son id : select-1, select-2...
     select.setAttribute('id', 'select-'+SELECT_ID);
@@ -49,4 +55,12 @@ function handleAddActivity() {
 
 function addPathway(){
     $('#add-pathway-modal').modal("show");
+}
+
+function hideNewModalForm() {
+    $('#add-pathway-modal').modal("hide");
+}
+
+function deleteSelect(id) {
+    console.log(id)
 }
