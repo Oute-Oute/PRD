@@ -44,6 +44,16 @@ PatientsPost:
   controller: App\Controller\PatientController::patientPost
   methods: [POST]
 
+PatientDelete:
+  path: /patient/{id}/delete
+  controller: App\Controller\PatientController::patientDelete
+  methods: [POST]
+
+PatientEdit:
+  path: /patient/edit
+  controller: App\Controller\PatientController::patientEdit
+  methods: [POST]
+
 app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index

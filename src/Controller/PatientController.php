@@ -64,20 +64,7 @@ class PatientController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/{id}", name="app_patient_show", methods={"GET"})
-     */
-    public function show(Patient $patient): Response
-    {
-        return $this->render('patient/show.html.twig', [
-            'patient' => $patient,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}/edit", name="app_patient_edit", methods={"GET", "POST"})
-     */
-    public function edit(Request $request, Patient $patient, PatientRepository $patientRepository): Response
+    public function patientEdit(Request $request, Patient $patient, PatientRepository $patientRepository): Response
     {
         $form = $this->createForm(PatientType::class, $patient);
         $form->handleRequest($request);
@@ -94,15 +81,19 @@ class PatientController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="app_patient_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Patient $patient, PatientRepository $patientRepository): Response
+    public function patientDelete(Patient $patient, PatientRepository $patientRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$patient->getId(), $request->request->get('_token'))) {
-            $patientRepository->remove($patient, true);
+        $pathwayPatientRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\PP");
+        $pathwayPatients = $pathwayPatientRepository->findAll();
+        foreach($pathwayPatients as $pathwayPatient)
+        {
+            if($pathwayPatient->getPatient() == $patient)
+            {
+                $pathwayPatientRepository->remove($pathwayPatient, true);
+            }
         }
 
+        $patientRepository->remove($patient, true);
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 }

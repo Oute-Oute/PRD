@@ -2,10 +2,16 @@ function addPatient(){
     $('#add-patient-modal').modal("show");
 }
 
-function editPatient() {
-    //document.getElementById('lastname').value = lastname
-    //document.getElementById('firstname').value = firstname
+function editPatient(lastname, firstname) {
+    console.log("oui");
+    //document.getElementById('edit-patient-modal').getElementById('lastname').value = lastname;
+    //document.getElementById('edit-patient-modal').getElementById('firstname').value = firstname;
     $('#edit-patient-modal').modal("show");
+}
+
+function showPatient(id) {
+    console.log(id);
+    $('#show-patient-modal').modal("show");
 }
 
 var SELECT_ID = 0;

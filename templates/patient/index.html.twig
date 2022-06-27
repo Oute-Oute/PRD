@@ -30,9 +30,12 @@
                 <td>{{ patient.lastname }}</td>
                 <td>{{ patient.firstname }}</td>
                 <td>
-                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_patient_show', {'id': patient.id}) }}'">Infos</a>
-                    <button class = "btn-edit btn-secondary" onclick="editPatient({{ patient.lastname }}, {{ patient.firstname }})">Éditer</a>
-                    {{ include('patient/_delete_form.html.twig') }}
+                    <button type="button" class = "btn-infos btn-secondary" onclick="showPatient({{ patient.id }})">Infos</a>
+                    <button type="button" class = "btn-edit btn-secondary" onclick="editPatient({{ patient.lastname }}, {{ patient.firstname }})">Éditer</a>
+                    <form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
+                        <input type="hidden" name="patient" value="{{ patient.id }}">
+                        <button class="btn-delete btn-secondary">Supprimer</button>
+                    </form>
                 </td>
             </tr>
         {% else %}
@@ -44,7 +47,7 @@
     </table>
 
 
-    <!-- add-patient-modal -->
+<!-- add-patient-modal -->
 
 <div class="modal" id="add-patient-modal">
   <div class="modal-dialog">
@@ -83,7 +86,7 @@
             <br>
 
             <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
-            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
+            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
         </div>
 	    </form>
     </div>
@@ -99,7 +102,7 @@
       <div class="modal-header">
         <h2 class="modal-title">Modifier un patient</h2>
       </div>
-      <form action="{{ path('Patients') }}" method="post">
+      <form action="{{ path('PatientEdit') }}" method="post">
         <div class="modal-body">
             <div>
                 <label for='lastname'> Nom </label>
@@ -112,9 +115,35 @@
             <br>
 
             <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
-            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
         </div>
 	    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- show-patient-modal -->
+
+<div class="modal" id="show-patient-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier un patient</h2>
+      </div>
+        <div class="modal-body">
+            <div>
+                <label for='lastname'> Nom </label>
+                <input type='text' name='lastname' id='lastname'>
+            </div>
+            <div>
+                <label for='firstname'> Prenom </label>
+                <input type='text' name='firstname' id='firstname'>
+            </div>
+            <br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
+        </div>
     </div>
   </div>
 </div>
