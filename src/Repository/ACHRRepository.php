@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ActivityCircuit;
+use App\Entity\ACHR;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ActivityCircuit>
+ * @extends ServiceEntityRepository<ACHR>
  *
- * @method ActivityCircuit|null find($id, $lockMode = null, $lockVersion = null)
- * @method ActivityCircuit|null findOneBy(array $criteria, array $orderBy = null)
- * @method ActivityCircuit[]    findAll()
- * @method ActivityCircuit[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ACHR|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ACHR|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ACHR[]    findAll()
+ * @method ACHR[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ActivityCircuitRepository extends ServiceEntityRepository
+class ACHRRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ActivityCircuit::class);
+        parent::__construct($registry, ACHR::class);
     }
 
-    public function add(ActivityCircuit $entity, bool $flush = false): void
+    public function add(ACHR $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ActivityCircuitRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ActivityCircuit $entity, bool $flush = false): void
+    public function remove(ACHR $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ActivityCircuitRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ActivityCircuit[] Returns an array of ActivityCircuit objects
+//     * @return ACHR[] Returns an array of ACHR objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ActivityCircuitRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ActivityCircuit
+//    public function findOneBySomeField($value): ?ACHR
 //    {
 //        return $this->createQueryBuilder('a')
 //            ->andWhere('a.exampleField = :val')

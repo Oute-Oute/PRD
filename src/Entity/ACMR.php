@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ActivityCircuitRepository;
+use App\Repository\ACMRRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ActivityCircuitRepository::class)
+ * @ORM\Entity(repositoryClass=ACMRRepository::class)
  */
-class ActivityCircuit
+class ACMR
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class ActivityCircuit
     private $activity;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Circuit::class)
+     * @ORM\ManyToOne(targetEntity=CategoryMaterialResource::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $circuit;
+    private $categorymaterialresource;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class ActivityCircuit
         return $this;
     }
 
-    public function getCircuit(): ?Circuit
+    public function getCategorymaterialresource(): ?CategoryMaterialResource
     {
-        return $this->circuit;
+        return $this->categorymaterialresource;
     }
 
-    public function setCircuit(?Circuit $circuit): self
+    public function setCategorymaterialresource(?CategoryMaterialResource $categorymaterialresource): self
     {
-        $this->circuit = $circuit;
+        $this->categorymaterialresource = $categorymaterialresource;
 
         return $this;
     }

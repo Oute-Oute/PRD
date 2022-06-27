@@ -7,7 +7,10 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('JS/Activity/Activity.js') }}"> </script>
+    <script src="./JS/jquery-3.6.0.js"></script>
+    <script src="./JS/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+      <script src="{{ asset('JS/Activity/Activity.js') }}"> </script>
+
 {% endblock %}
 
 {% block body %}
@@ -48,6 +51,42 @@
         </table>
 
     </div>
+
+<!-- modify-planning-modal -->
+
+<div class="modal" id="new-activity-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter l'activité <span id="show-title"></span></h2>
+      </div>
+
+  <form action="{{ path('app_activity_new') }}" method="POST">
+            <div class="modal-body">
+                <div>
+                    <label for='name'> Nom </label>
+                    <input type='text' name='name'>
+                </div>
+                <div>
+                    <label for='duration'> Durée </label>
+                    <input type='text' name='duration'>
+                </div>
+            </div>
+            <br>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</button>
+                <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+            </div>
+
+   
+        </form>
+
+       
+    </div>
+  </div>
+</div>
+
 
 
 {% endblock %}

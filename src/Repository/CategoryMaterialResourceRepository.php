@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CircuitPatient;
+use App\Entity\CategoryMaterialResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CircuitPatient>
+ * @extends ServiceEntityRepository<CategoryMaterialResource>
  *
- * @method CircuitPatient|null find($id, $lockMode = null, $lockVersion = null)
- * @method CircuitPatient|null findOneBy(array $criteria, array $orderBy = null)
- * @method CircuitPatient[]    findAll()
- * @method CircuitPatient[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CategoryMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CategoryMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CategoryMaterialResource[]    findAll()
+ * @method CategoryMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CircuitPatientRepository extends ServiceEntityRepository
+class CategoryMaterialResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CircuitPatient::class);
+        parent::__construct($registry, CategoryMaterialResource::class);
     }
 
-    public function add(CircuitPatient $entity, bool $flush = false): void
+    public function add(CategoryMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CircuitPatientRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CircuitPatient $entity, bool $flush = false): void
+    public function remove(CategoryMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CircuitPatientRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CircuitPatient[] Returns an array of CircuitPatient objects
+//     * @return CategoryMaterialResource[] Returns an array of CategoryMaterialResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CircuitPatientRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CircuitPatient
+//    public function findOneBySomeField($value): ?CategoryMaterialResource
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

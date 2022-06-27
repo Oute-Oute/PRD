@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CircuitPatientRepository;
+use App\Repository\PPRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CircuitPatientRepository::class)
+ * @ORM\Entity(repositoryClass=PPRepository::class)
  */
-class CircuitPatient
+class PP
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class CircuitPatient
     private $patient;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Circuit::class)
+     * @ORM\ManyToOne(targetEntity=Pathway::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $circuit;
+    private $pathway;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class CircuitPatient
         return $this;
     }
 
-    public function getCircuit(): ?Circuit
+    public function getPathway(): ?Pathway
     {
-        return $this->circuit;
+        return $this->pathway;
     }
 
-    public function setCircuit(?Circuit $circuit): self
+    public function setPathway(?Pathway $pathway): self
     {
-        $this->circuit = $circuit;
+        $this->pathway = $pathway;
 
         return $this;
     }

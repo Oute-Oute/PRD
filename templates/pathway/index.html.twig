@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listing des circuits{% endblock %}
+{% block title %}Listing des parcours{% endblock %}
 
 {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        <script src="js/Circuit/circuit.js"></script>
+        <script src="js/Pathway/pathway.js"></script>
         <script src="js/jquery-3.6.0.js"></script>
         <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
@@ -13,8 +13,8 @@
 
 {% block body %}
     <div id = "index-users">
-    <h1>Listing des circuits</h1>
-    <button type="button" class ="btn-add" onclick="addCircuit()">Ajouter un nouveau parcours</button>
+    <h1>Listing des parcours</h1>
+    <button type="button" class ="btn-add" onclick="addPathway()">Ajouter un nouveau parcours</button>
     <br>
     <table class="table table-striped table-index-users">
     <table class="table">
@@ -27,16 +27,16 @@
             </tr>
         </thead>
         <tbody>
-        {% for circuit in circuits %}
+        {% for pathway in pathways %}
             <tr>
-                <td>{{ circuit.id }}</td>
-                <td>{{ circuit.circuitname }}</td>
+                <td>{{ pathway.id }}</td>
+                <td>{{ pathway.pathwayname }}</td>
 
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': circuit.id}) }}'">Infos</a>
+                    <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': pathway.id}) }}'">Infos</a>
                     
-                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_circuit_edit', {'id': circuit.id}) }}'">Éditer</a>
-                        {{ include('circuit/_delete_form.html.twig') }}
+                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_circuit_edit', {'id': pathway.id}) }}'">Éditer</a>
+                        {{ include('pathway/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -49,21 +49,21 @@
 
     <!-- add-patient-modal -->
 
-<div class="modal" id="add-circuit-modal">
+<div class="modal" id="add-pathway-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title">Ajouter un parcours</h2>
       </div>
-      <form action="{{ path('app_circuit_new') }}" method="post">
+      <form action="{{ path('PathwaysPost') }}" method="post">
         <div class="modal-body">
             <div>
                 <label for='name'> Nom du parcours </label>
-                <input type='text' name='circuitname'>
+                <input type='text' name='pathwayname'>
             </div>
             <div>
                 <label for='duration'> Type du parcours </label>
-                <input type='text' name='circuittype'>
+                <input type='text' name='pathwaytype'>
             </div>
             <div>
                 <label for='duration'> Nombre de fois par jour ciblé </label>
@@ -94,7 +94,7 @@
 
             <br>
 
-            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('index_circuits') }}'">Consulter les activités</button>
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Pathways') }}'">Consulter les activités</button>
             <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
         </div>
 	    </form>
