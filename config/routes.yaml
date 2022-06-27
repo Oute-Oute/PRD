@@ -44,9 +44,15 @@ app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index
 
-index_circuits:
-  path: /circuits
-  controller: App\Controller\CircuitController:index
+Pathways:
+  path: /pathways
+  controller: App\Controller\PathwayController:index
+  methods: [GET]
+
+PathwaysPost:
+  path: /pathways
+  controller: App\Controller\PathwayController:new
+  methods: [POST]
 
 index_resources:
   path: /resources

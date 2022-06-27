@@ -47,6 +47,6 @@ function handleAddActivity() {
     divAddActivity.appendChild(div)
 } 
 
-function addCircuit(){
-    $('#add-circuit-modal').modal("show");
+function addPathway(){
+    $('#add-pathway-modal').modal("show");
 }
