@@ -1500,6 +1500,7 @@ A VERTICAL event
   .fc .fc-scrollgrid table tr {
     -moz-column-break-inside: avoid;
          break-inside: avoid;
+         border-radius: 15px;
   }
 
 .fc-media-print {

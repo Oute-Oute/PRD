@@ -122,9 +122,31 @@ function createCalendar(resources){
         resourceAreaHeaderContent: headerResources,
         resources: resourcesArray,
         events: events,
+        eventClick: function(event) {
+          //récupération des données
+          var id = event.event._def.publicId;
+          var activity = calendar.getEventById(id);
+          var start = activity.start;
+          var end = activity.end;
+        
+          //set les données à afficher par défault
+          $('#start').val(start.toISOString().substring(0,19));
+          $('#end').val(end.toISOString().substring(0,19));
+          document.getElementById('show-title').innerHTML = activity.title;
+          $('#id').val(id);
+          console.log(activity.resourceId);
+          $('#patient').val(activity.extendedProps.patient);
+
+        
+          //ouvre la modal
+          $('#modify-planning-modal').modal("show");
+        },
     },
     );
+
     
     calendar.gotoDate(date);
     calendar.render();
 }
+
+
