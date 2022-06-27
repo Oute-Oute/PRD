@@ -39,20 +39,15 @@ class ScheduledActivityRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return ScheduledActivity[] Returns an array of ScheduledActivity objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByschedulerActivitiesByDate($TodayDate): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere($this->expr()->like('s.startdatetime = :date'))
+            ->setParameter('date', $TodayDate)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?ScheduledActivity
 //    {
