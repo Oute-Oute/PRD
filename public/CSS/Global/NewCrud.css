@@ -17,7 +17,16 @@ div#background-shadow {
     background-color:rgba(0, 0, 0, 0.3);
 }
 
- div.modal-form {
+div.form-field {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+div.modal-form {
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
     padding : 15px 40px;
     align-items : center;
@@ -40,10 +49,7 @@ div#user, div#activity, div#patient1, div#resource_type, div#circuit{
     margin-right : 55px;
 }
 
-input {
-    margin: 10px 10px;
-    height: 25px;
-}
+
 
 
 button#btn-add-activity {
@@ -71,11 +77,24 @@ fieldset#fs-add-activity {
     margin-bottom: 15px; 
 }
 
+
+div.form-field p {
+    margin: 0;
+}
+
+img{
+    width:20px;
+    cursor: pointer;
+}
+input {
+    height: 25px;
+}
+
 select {
     height: 25px;
     border-radius: 15px; 
     min-width: 100px;
-    margin: 10px 0px; 
+    margin: 10px 15px; 
 }
 
 
