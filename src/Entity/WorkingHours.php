@@ -33,10 +33,10 @@ class WorkingHours
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity=WorkingHours::class)
+     * @ORM\ManyToOne(targetEntity=HumanResource::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $workinghours;
+    private $humanresource;
 
     public function getStartdatetime(): ?\DateTimeInterface
     {
@@ -62,14 +62,14 @@ class WorkingHours
         return $this;
     }
 
-    public function getWorkinghours(): ?WorkingHours
+    public function getHumanresource(): ?HumanResource
     {
-        return $this->workinghours;
+        return $this->humanresource;
     }
 
-    public function setWorkinghours(?WorkingHours $workinghours): self
+    public function setHumanresource(?HumanResource $humanresource): self
     {
-        $this->workinghours = $workinghours;
+        $this->humanresource = $humanresource;
 
         return $this;
     }

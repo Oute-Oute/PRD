@@ -72,4 +72,9 @@ class Pathway
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getPathwayname();
+    }
 }

@@ -34,11 +34,15 @@ ModificationPlanningPost:
   controller: App\Controller\ModificationPlanningController::modificationPlanningPost
   methods: [POST]
 
-index_patients:
+Patients:
   path: /patients
-  controller: App\Controller\PatientController::index
+  controller: App\Controller\PatientController::patientGet
+  methods: [GET]
 
-
+PatientsPost:
+  path: /patients
+  controller: App\Controller\PatientController::patientPost
+  methods: [POST]
 
 app_activity_index:
   path: /activities
