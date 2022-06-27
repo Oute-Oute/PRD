@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MaterialResource index{% endblock %}
+
+{% block body %}
+    <h1>MaterialResource index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Materialresourcename</th>
+                <th>Available</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for material_resource in material_resources %}
+            <tr>
+                <td>{{ material_resource.id }}</td>
+                <td>{{ material_resource.materialresourcename }}</td>
+                <td>{{ material_resource.available ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_material_resource_show', {'id': material_resource.id}) }}">show</a>
+                    <a href="{{ path('app_material_resource_edit', {'id': material_resource.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_material_resource_new') }}">Create new</a>
+
+ <h1>MaterialResource index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Materialresourcename</th>
+                <th>Available</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for material_resource in material_resources %}
+            <tr>
+                <td>{{ material_resource.id }}</td>
+                <td>{{ material_resource.materialresourcename }}</td>
+                <td>{{ material_resource.available ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_material_resource_show', {'id': material_resource.id}) }}">show</a>
+                    <a href="{{ path('app_material_resource_edit', {'id': material_resource.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_material_resource_new') }}">Create new</a>
+{% endblock %}

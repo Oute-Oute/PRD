@@ -15,13 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ResourceController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_resource_index", methods={"GET"})
+        /**
+     * @Route("/", name="app_human_resource_index", methods={"GET"})
      */
-    public function index(ResourceRepository $resourceRepository): Response
+    public function index(HumanResourceRepository $humanResourceRepository): Response
     {
-        return $this->render('resource/index.html.twig', [
-            'resources' => $resourceRepository->findAll(),
+        $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
+        return $this->render('human_resource/index.html.twig', [
+            'human_resources' => $humanResourceRepository->findAll(),
+            'material_resources' => $materialResourceRepository->findAll()
         ]);
     }
 

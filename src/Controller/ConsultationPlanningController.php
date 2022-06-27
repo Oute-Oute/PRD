@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConsultationPlanningController extends AbstractController
@@ -21,7 +22,7 @@ class ConsultationPlanningController extends AbstractController
             $date_today = str_replace('T12:00:00', '', $date_today);
         }
         //Récupération des données ressources de la base de données
-        $listeCategoryMRJSON=$this->listeCategoryMRJSON($doctrine); //Récupération des données ressources matérielles de la base de données
+        $listeCategoryMRJSON=$this->listeCategoriesMRJSON($doctrine); //Récupération des données ressources matérielles de la base de données
         $listePatientsJSON=$this->listePatientsJSON($doctrine); //Récupération des données patients de la base de données
         $listePathwaysJSON=$this->listePathwaysJSON($doctrine); //Récupération des données parcours de la base de données
         $listeActivitiesJSON=$this->listeActivitiesJSON($doctrine); //Récupération des données activités de la base de données
@@ -69,29 +70,7 @@ class ConsultationPlanningController extends AbstractController
             ]);
                     
     }
-
-
-    public function listeCategoryMRJSON(ManagerRegistry $doctrine){
-        /*$resources = $doctrine->getEntityManager()->createQueryBuilder();
-        $resources  ->select('r')
-                    ->from('App\Entity\Resource', 'r')
-                    ->leftJoin('r.resourcetype', 'rt')
-                    ->where('r.type = :"rm"')
-                    ->setParameter('resourcetype', '1');   
-        $resourcesArray=array(); 
-        foreach($resources as $resource){
-            $resourcesArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
-                'title'=>(str_replace(" ", "3aZt3r", $resource->getResourcename())),
-                'able' =>(str_replace(" ", "3aZt3r", $resource->isAble())),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $resourcesArrayJSON= new JsonResponse($resourcesArray); 
-        return $resourcesArrayJSON; */
-    }
-
-    
+   
 
     public function listePatientsJSON(ManagerRegistry $doctrine){
         $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();  
@@ -100,8 +79,10 @@ class ConsultationPlanningController extends AbstractController
             $lastname=$patient->getLastname();
             $firstname=$patient->getFirstname();
             $title=$lastname." ".$firstname;
+            $id=$patient->getId();
+            $id="patient_".$id;
             $patientArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $patient->getId())),
+                'id' =>$id,
                 'lastname'=>(str_replace(" ", "3aZt3r", $lastname)),
                 'firstname' =>(str_replace(" ", "3aZt3r", $firstname)),
                 'title'=>$title
@@ -116,8 +97,10 @@ class ConsultationPlanningController extends AbstractController
         $pathways = $doctrine->getRepository("App\Entity\Pathway")->findAll();  
         $pathwayArray=array(); 
         foreach($pathways as $pathway){
+            $idpath=$pathway->getId();
+            $idpath="pathway_".$idpath;
             $pathwayArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $pathway->getId())),
+                'id' =>$idpath,
                 'target' =>(str_replace(" ", "3aZt3r", $pathway->getTarget())),
                 'title'=>(str_replace(" ", "3aZt3r", $pathway->getPathwayname())),
                 'type' =>(str_replace(" ", "3aZt3r", $pathway->getPathwaytype())),
@@ -233,12 +216,20 @@ class ConsultationPlanningController extends AbstractController
         $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
         $scheduledActivitiesArray=array(); 
         foreach($scheduledActivities as $scheduledActivity){
+            $id=$scheduledActivity->getId();
+            $id="patient_".$id;
+            $start=$scheduledActivity->getStartDate();
+            $start=$start->format('Y-m-d H:i:s');
+            $start=str_replace(" ", "T", $start);
+            $end=$scheduledActivity->getEndDate();
+            $end=$end->format('Y-m-d H:i:s');
+            $end=str_replace(" ", "T", $end);
             $scheduledActivitiesArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
-                'startdatetime'=>($scheduledActivity->getStartdatetime()),
-                'enddatetime'=>($scheduledActivity->getEnddatetime()),
-                'activity'=>($scheduledActivity->getActivity()),
-                'patient'=>($scheduledActivity->getPatient()),
+                'start'=>$start,
+                'end'=>$end,
+                'title'=>($scheduledActivity->getActivity()->getActivityname()),
+                'resourceId'=>$id,
                 
             ); 
         }   
@@ -251,10 +242,12 @@ class ConsultationPlanningController extends AbstractController
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();  
         $materialResourceArray=array(); 
         foreach($materialResources as $materialResource){
+            $idmr=$materialResource->getId();
+            $idmr="mr_".$idmr;
             $materialResourceArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $materialResource->getId())),
-                'materialResource'=>($materialResource->getMaterialResource()),
-                'available'=>($materialResource->getAvailable()),
+                'id' =>$idmr,
+                'title'=>($materialResource->getMaterialResourcename()),
+                'available'=>($materialResource->isAvailable()),
                 'categoryMaterialResource'=>($materialResource->getCategorymaterialresource())
                 
             ); 
@@ -268,10 +261,12 @@ class ConsultationPlanningController extends AbstractController
         $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();  
         $humanResourceArray=array(); 
         foreach($humanResources as $humanResource){
+            $idhr=$humanResource->getId();
+            $idhr="hr_".$idhr;
             $humanResourceArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $humanResource->getId())),
-                'humanResource'=>($humanResource->getHumanResource()),
-                'available'=>($humanResource->getAvailable())
+                'id' =>$idhr,
+                'title'=>($humanResource->getHumanResourcename()),
+                'available'=>($humanResource->isAvailable())
                 
             ); 
         }   

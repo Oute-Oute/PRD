@@ -13,3 +13,14 @@
     width : 100%;
 }
 
+#both-tables {
+    display : flex;
+    flex-direction : column;
+    padding : 20px;
+}
+
+#modal-dialog {
+    display : flex;
+    flex-direction:  column;
+}
+
