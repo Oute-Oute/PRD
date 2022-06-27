@@ -43,6 +43,8 @@ function addEvent(){
     $('#add-planning-modal').modal("show");
 }
 
+
+
 function showSelectCircuit(){
     let selectContainerCircuit = document.getElementById('select-container-circuit');
     selectContainerCircuit.style.display = "block";
