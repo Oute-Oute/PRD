@@ -38,7 +38,9 @@ index_patients:
   path: /patients
   controller: App\Controller\PatientController::index
 
-index_activities:
+
+
+app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index
 
@@ -65,3 +67,8 @@ index_resources_types_materials:
 index_mon_profil:
   path: /mon_profil
   controller: App\Controller\UserController:edit
+
+app_activity_new:
+  path: /activities/new
+  controller: App\Controller\ActivityController:new
+  methods: [POST]
