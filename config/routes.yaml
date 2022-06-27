@@ -56,7 +56,7 @@ PathwaysPost:
 
 index_resources:
   path: /resources
-  controller: App\Controller\ResourceController:index
+  controller: App\Controller\HumanResourceController:index
 
 index_resources_types:
   path: /resources-types
