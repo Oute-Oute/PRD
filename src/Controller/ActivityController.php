@@ -9,7 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 /**
  * @Route("/activity")
  */
@@ -31,7 +33,7 @@ class ActivityController extends AbstractController
     public function new(Request $request, ActivityRepository $activityRepository): Response
     {
 
-        // Méthode POST pour ajouter un circuit
+        // Méthode POST pour ajouter une activité
         if ($request->getMethod() === 'POST' ) {
     
             // On recupere toutes les données de la requete
@@ -70,15 +72,36 @@ class ActivityController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="app_activity_edit", methods={"GET", "POST"})
+     * @Route("/edit", name="app_activity_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, Activity $activity, ActivityRepository $activityRepository): Response
+    public function edit(Request $request): Response
     {
-        $form = $this->createForm(ActivityType::class, $activity);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $activityRepository->add($activity, true);
+        // Méthode POST pour ajouter une activité
+        if ($request->getMethod() === 'POST' ) {
+    
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+                        
+            $id = $param['id'];                 // l'id
+            $name = $param['name'];             // le nom
+            $duration = $param['duration'];     // la durée
+
+        
+          
+            // Création du repository pour avoir accès aux requetes
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $activity = $activityRepository->find($id);
+
+            // Création de l'activité
+           // $activity = new Activity();
+            $activity->setActivityname($name);
+            $activity->setDuration($duration);
+
+            // ajout dans la bd 
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($activity);
+            $em->flush();
 
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
