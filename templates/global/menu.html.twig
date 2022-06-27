@@ -1,31 +1,58 @@
-{#{% if  app.user != null %}#}
-                 
-    <div class="dashboard-nav">
-        <nav class="dashboard-nav-list">
-            <div id="menu-top"> 
-                <header>
-                    <a href="#!" class="menu-toggle">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                    <a href="/" class="brand-logo">
-                        <i class="fas fa-anchor"></i> <span>HOPITAL</span>
-                    </a>
-                </header>
-                <a href="/ConsultationPlanning" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Planning </a>
-                <a href="/activities" class="dashboard-nav-item"><i class="fas fa-tachometer-alt"></i> Activités</a>
-                <a href="/circuits" class="dashboard-nav-item"><i class="fas fa-tachometer-alt"></i> Parcours</a>
-                <a href="/patients" class="dashboard-nav-item"><i class="fas fa-tachometer-alt"></i> Patients</a>
-                <a href="#" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Éthique </a>
-                <a href="/resources" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Ressources </a>
-                <a href="/resources-types" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Types de Ressource </a>
-            </div>
-            <div id='menu-bottom'>
-                <div class="nav-item-divider"></div>
-                    <a href="/consult_users" class="dashboard-nav-item"><i class="fas fa-user"></i> Utilisateurs </a>
-                 {#   <a onclick="window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'" class="dashboard-nav-item"><i class="fas fa-user"></i> Mon profil </a>  #}
-                    <a href = "/logout" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Se déconnecter </a>   
-                     {# {% endif %}   #}  
-     
-        </nav>
-    </div>
+{% if  app.user != null %}
 
+	<div class="dashboard-nav">
+		<nav class="dashboard-nav-list">
+			<div id="menu-top">
+				<header>
+					<a href="#!" class="menu-toggle">
+						<i class="fas fa-bars"></i>
+					</a>
+					<a href="/" class="brand-logo">
+						<i class="fas fa-anchor"></i>
+						<span>HOPITAL</span>
+					</a>
+				</header>
+				<a href="/ConsultationPlanning" class="dashboard-nav-item">
+					<i class="fas fa-file-upload"></i>
+					Planning
+				</a>
+				<a href="/activities" class="dashboard-nav-item">
+					<i class="fas fa-tachometer-alt"></i>
+					Activités</a>
+				<a href="/circuits" class="dashboard-nav-item">
+					<i class="fas fa-tachometer-alt"></i>
+					Parcours</a>
+				<a href="/patients" class="dashboard-nav-item">
+					<i class="fas fa-tachometer-alt"></i>
+					Patients</a>
+				<a href="#" class="dashboard-nav-item">
+					<i class="fas fa-file-upload"></i>
+					Éthique
+				</a>
+				<a href="/resources" class="dashboard-nav-item">
+					<i class="fas fa-file-upload"></i>
+					Ressources
+				</a>
+				<a href="/resources-types" class="dashboard-nav-item">
+					<i class="fas fa-file-upload"></i>
+					Types de Ressource
+				</a>
+			</div>
+			<div id='menu-bottom'>
+				<div class="nav-item-divider"></div>
+				<a href="/consult_users" class="dashboard-nav-item">
+					<i class="fas fa-user"></i>
+					Utilisateurs
+				</a>
+				<a onclick="window.location.href='{{ path('app_user_edit_profile', {'id': app.user.id}) }}'" class="dashboard-nav-item">
+					<i class="fas fa-user"></i>
+					Mon profil
+				</a>
+				<a href="/logout" class="dashboard-nav-item">
+					<i class="fas fa-sign-out-alt"></i>
+					Se déconnecter
+				</a>
+			{% endif %}
+
+		</nav>
+	</div>

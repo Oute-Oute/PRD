@@ -1,6 +1,6 @@
     document.addEventListener('DOMContentLoaded', (event) => {
         console.log("hel");
-        document.getElementById('user_password').value = '';
+       // document.getElementById('old_password').value = '';
     });
 
 function mabite(){

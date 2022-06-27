@@ -85,20 +85,37 @@ class UserController extends AbstractController
      */
     public function editProfile(Request $request, User $user, UserRepository $userRepository): Response
     {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->add($user, true);
 
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        $password1 = $request->request->get('old_password');
+        $password2 = $request->request->get('new_password');
+        $password3 = $request->request->get('confirm_password');
+
+        if ($password1 == null) {
+            return $this->renderForm('user/profile.html.twig');
+        } else {
+            //dd($user);
+            //dd($password1, $password2, $password3);
+            if (password_verify($password1, $user->getPassword())) {
+                if ($password2 === $password3) {
+                    //dd("ca marche plus ou moins");
+
+                    $user->setPassword(password_hash($password2, PASSWORD_DEFAULT));
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($user);
+                    $em->flush();
+
+                    return $this->renderForm('user/profile.html.twig');
+                } else {
+                    dd("je suis complement stupide");
+                    return $this->renderForm('user/profile.html.twig');
+                }
+            } else {
+                return $this->renderForm('user/profile.html.twig');
+            }
         }
-
-        return $this->renderForm('user/profile.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
     }
+
 
     /**
      * @Route("/{id}", name="app_user_delete", methods={"POST"})
