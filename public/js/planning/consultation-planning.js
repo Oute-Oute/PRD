@@ -78,13 +78,15 @@ function createCalendar(resources){
       var resourcesArray=JSON.parse(document.getElementById('parcours').value.replaceAll("3aZt3r", " "));
       break;
       case "Ressources Humaines":
-      var resourcesArray=JSON.parse(document.getElementById('rh').value.replaceAll("3aZt3r", " "));
+      var resourcesArray=JSON.parse(document.getElementById('hr').value.replaceAll("3aZt3r", " "));
       break;
       case "Ressources Matérielles":
-      var resourcesArray=JSON.parse(document.getElementById('rm').value.replaceAll("3aZt3r", " "));
+      var resourcesArray=JSON.parse(document.getElementById('mr').value.replaceAll("3aZt3r", " "));
       console.log(resourcesArray);
       break;
     }
+    var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
+    console.log(events);
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
@@ -119,18 +121,7 @@ function createCalendar(resources){
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
         resources: resourcesArray,
-        events:[
-            {
-             id: "1", 
-             resourceId: "a", 
-             start: "2022-06-21 12:00:00", 
-             end: "2022-06-21 17:30:00", 
-             title: "event 1",
-             color:'rgb(255,255,0)',
-             textColor:'#000',
-             textFont:'Trebuchet MS'
-            }
-            ]
+        events: events,
     },
     );
     
