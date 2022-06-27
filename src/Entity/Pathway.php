@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CircuitRepository;
+use App\Repository\PathwayRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CircuitRepository::class)
+ * @ORM\Entity(repositoryClass=PathwayRepository::class)
  */
-class Circuit
+class Pathway
 {
     /**
      * @ORM\Id
@@ -25,12 +25,12 @@ class Circuit
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $circuitname;
+    private $pathwayname;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $circuittype;
+    private $pathwaytype;
 
     public function getId(): ?int
     {
@@ -49,26 +49,26 @@ class Circuit
         return $this;
     }
 
-    public function getCircuitname(): ?string
+    public function getPathwayname(): ?string
     {
-        return $this->circuitname;
+        return $this->pathwayname;
     }
 
-    public function setCircuitname(string $circuitname): self
+    public function setPathwayname(string $pathwayname): self
     {
-        $this->circuitname = $circuitname;
+        $this->pathwayname = $pathwayname;
 
         return $this;
     }
 
-    public function getCircuittype(): ?string
+    public function getPathwaytype(): ?string
     {
-        return $this->circuittype;
+        return $this->pathwaytype;
     }
 
-    public function setCircuittype(string $circuittype): self
+    public function setPathwaytype(string $pathwaytype): self
     {
-        $this->circuittype = $circuittype;
+        $this->pathwaytype = $pathwaytype;
 
         return $this;
     }

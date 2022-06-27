@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ActivityResourceType;
+use App\Entity\AP;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ActivityResourceType>
+ * @extends ServiceEntityRepository<AP>
  *
- * @method ActivityResourceType|null find($id, $lockMode = null, $lockVersion = null)
- * @method ActivityResourceType|null findOneBy(array $criteria, array $orderBy = null)
- * @method ActivityResourceType[]    findAll()
- * @method ActivityResourceType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AP|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AP|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AP[]    findAll()
+ * @method AP[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ActivityResourceTypeRepository extends ServiceEntityRepository
+class APRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ActivityResourceType::class);
+        parent::__construct($registry, AP::class);
     }
 
-    public function add(ActivityResourceType $entity, bool $flush = false): void
+    public function add(AP $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ActivityResourceTypeRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ActivityResourceType $entity, bool $flush = false): void
+    public function remove(AP $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ActivityResourceTypeRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ActivityResourceType[] Returns an array of ActivityResourceType objects
+//     * @return AP[] Returns an array of AP objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ActivityResourceTypeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ActivityResourceType
+//    public function findOneBySomeField($value): ?AP
 //    {
 //        return $this->createQueryBuilder('a')
 //            ->andWhere('a.exampleField = :val')

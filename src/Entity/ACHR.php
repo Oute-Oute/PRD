@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ActivityResourceTypeRepository;
+use App\Repository\ACHRRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ActivityResourceTypeRepository::class)
+ * @ORM\Entity(repositoryClass=ACHRRepository::class)
  */
-class ActivityResourceType
+class ACHR
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class ActivityResourceType
     private $activity;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ResourceType::class)
+     * @ORM\ManyToOne(targetEntity=CategoryHumanResource::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $resourcetype;
+    private $categoryhumanresource;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class ActivityResourceType
         return $this;
     }
 
-    public function getResourcetype(): ?ResourceType
+    public function getCategoryhumanresource(): ?CategoryHumanResource
     {
-        return $this->resourcetype;
+        return $this->categoryhumanresource;
     }
 
-    public function setResourcetype(?ResourceType $resourcetype): self
+    public function setCategoryhumanresource(?CategoryHumanResource $categoryhumanresource): self
     {
-        $this->resourcetype = $resourcetype;
+        $this->categoryhumanresource = $categoryhumanresource;
 
         return $this;
     }

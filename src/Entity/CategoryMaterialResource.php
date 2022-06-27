@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ResourceTypeRepository;
+use App\Repository\CategoryMaterialResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ResourceTypeRepository::class)
+ * @ORM\Entity(repositoryClass=CategoryMaterialResourceRepository::class)
  */
-class ResourceType
+class CategoryMaterialResource
 {
     /**
      * @ORM\Id
@@ -20,28 +20,11 @@ class ResourceType
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $type;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $category;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     public function getCategory(): ?string
@@ -54,10 +37,5 @@ class ResourceType
         $this->category = $category;
 
         return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->getCategory();
     }
 }

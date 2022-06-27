@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Circuit;
+use App\Entity\CHR;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Circuit>
+ * @extends ServiceEntityRepository<CHR>
  *
- * @method Circuit|null find($id, $lockMode = null, $lockVersion = null)
- * @method Circuit|null findOneBy(array $criteria, array $orderBy = null)
- * @method Circuit[]    findAll()
- * @method Circuit[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CHR|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CHR|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CHR[]    findAll()
+ * @method CHR[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CircuitRepository extends ServiceEntityRepository
+class CHRRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Circuit::class);
+        parent::__construct($registry, CHR::class);
     }
 
-    public function add(Circuit $entity, bool $flush = false): void
+    public function add(CHR $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CircuitRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Circuit $entity, bool $flush = false): void
+    public function remove(CHR $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CircuitRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Circuit[] Returns an array of Circuit objects
+//     * @return CHR[] Returns an array of CHR objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CircuitRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Circuit
+//    public function findOneBySomeField($value): ?CHR
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

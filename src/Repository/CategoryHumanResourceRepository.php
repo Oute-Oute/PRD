@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CompleteActivity;
+use App\Entity\CategoryHumanResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CompleteActivity>
+ * @extends ServiceEntityRepository<CategoryHumanResource>
  *
- * @method CompleteActivity|null find($id, $lockMode = null, $lockVersion = null)
- * @method CompleteActivity|null findOneBy(array $criteria, array $orderBy = null)
- * @method CompleteActivity[]    findAll()
- * @method CompleteActivity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CategoryHumanResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CategoryHumanResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CategoryHumanResource[]    findAll()
+ * @method CategoryHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CompleteActivityRepository extends ServiceEntityRepository
+class CategoryHumanResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CompleteActivity::class);
+        parent::__construct($registry, CategoryHumanResource::class);
     }
 
-    public function add(CompleteActivity $entity, bool $flush = false): void
+    public function add(CategoryHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CompleteActivityRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CompleteActivity $entity, bool $flush = false): void
+    public function remove(CategoryHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CompleteActivityRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CompleteActivity[] Returns an array of CompleteActivity objects
+//     * @return CategoryHumanResource[] Returns an array of CategoryHumanResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CompleteActivityRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CompleteActivity
+//    public function findOneBySomeField($value): ?CategoryHumanResource
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
