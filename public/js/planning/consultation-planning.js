@@ -23,7 +23,7 @@ var dateStr=($_GET('date'))
 date=new Date(dateStr)
 document.addEventListener('DOMContentLoaded', function() 
 {
-  createCalendar();
+  createCalendar("Patients");
 
 });
 
@@ -42,9 +42,9 @@ function changeDate(){
 }
 
 function changePlanning(){
-  var selectedItem = document.getElementById("displayList");
-    headerResources=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
-    createCalendar();
+  var header=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
+    headerResources=header;
+    createCalendar(header);
 }
     
 
@@ -69,13 +69,32 @@ function filterShow(){
 }
 
 
-function createCalendar(){
+function createCalendar(resources){
+  switch(resources){
+    case "Patients":
+      var resourcesArray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
+      break;
+    case "Parcours":
+      var resourcesArray=JSON.parse(document.getElementById('parcours').value.replaceAll("3aZt3r", " "));
+      break;
+      case "Ressources Humaines":
+      var resourcesArray=JSON.parse(document.getElementById('hr').value.replaceAll("3aZt3r", " "));
+      break;
+      case "Ressources Matérielles":
+      var resourcesArray=JSON.parse(document.getElementById('mr').value.replaceAll("3aZt3r", " "));
+      console.log(resourcesArray);
+      break;
+    }
+    var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
+    console.log(events);
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
   date=new Date(dateStr)
-  var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
-  var resourcearray=JSON.parse(resources); 
+  //var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
+  //var resourcearray=JSON.parse(resources); 
+  var patientsarray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
+  console.log(patientsarray)
   var calendarEl = document.getElementById('calendar');
 
   calendar=new FullCalendar.Calendar(calendarEl, 
@@ -86,7 +105,6 @@ function createCalendar(){
         locale: 'fr',
         timeZone: 'Europe/Paris',
         selectable: true,
-        selectHelper: true,
         editable: false,
         contentHeight: height*3/4,
         handleWindowResize: true,
@@ -102,19 +120,8 @@ function createCalendar(){
         resourceOrder: 'title',
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
-        resources: resourcearray,
-        events:[
-            {
-             id: "1", 
-             resourceId: "a", 
-             start: "2022-06-21 12:00:00", 
-             end: "2022-06-21 17:30:00", 
-             title: "event 1",
-             color:'rgb(255,255,0)',
-             textColor:'#000',
-             textFont:'Trebuchet MS'
-            }
-            ]
+        resources: resourcesArray,
+        events: events,
     },
     );
     

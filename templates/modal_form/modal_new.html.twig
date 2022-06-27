@@ -1,4 +1,7 @@
 <div id="container-modal" >
+
+    <!-- Modal add activity -->
+
     <div class="modal-form" id="form-add-activity" >
         <h1 id="title">Ajouter une nouvelle activité</h1>
 
@@ -14,11 +17,14 @@
             </div>
             <br>
 
-            <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</button>
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_activity_index') }}'">Consulter les activités</button>
             <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
         </form>
 
     </div>
+
+
+    <!-- Modal add resource -->
 
     <div class="modal-form" id="form-add-resource" >
         <h1 id="title">Ajouter une nouvelle ressource</h1>
@@ -43,6 +49,8 @@
     </div>
 
 
+    <!-- Modal add resource type -->
+
     <div class="modal-form" id="form-add-resourcetype" >
         <h1 id="title">Ajouter un nouveau type de ressource</h1>
 
@@ -63,7 +71,7 @@
                      
             <br>
 
-            <button class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_type_new') }}'">Consulter les types de ressources</button>
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('app_resource_type_index') }}'">Consulter les types de ressources</button>
             <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
 
         </form>

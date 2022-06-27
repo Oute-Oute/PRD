@@ -63,7 +63,7 @@
 
           <div id="select-container-patient"> 
             <label>Choisissez le patient</label>
-              <select onchange="showSelectCircuit()" id="select-patient" name="select-patient"> 
+              <select onchange="showSelectPathWay()" id="select-patient" name="select-patient"> 
 
                 <option value="" selected hidden> Selection patient </option>
                 {% for patient in listepatients %} 
@@ -73,13 +73,13 @@
               </select>
           </div>
 
-          <div id="select-container-circuit">
+          <div id="select-container-PathWay">
             <label>Choisissez le parcours</label>
-              <select onchange="showSelectDate()" id="select-circuit" name="select-circuit"> 
+              <select onchange="showSelectDate()" id="select-PathWay" name="select-PathWay"> 
 
-                <option value="" selected hidden> Selection circuit </option>
-                {% for circuitpatient in listecircuitpatients %} 
-                  <option value="{{ circuitpatient.circuit.id }}"> {{ circuitpatient.circuit.circuitname }} </option>
+                <option value="" selected hidden> Selection PathWay </option>
+                {% for PathWaypatient in listePathWaypatients %} 
+                  <option value="{{ PathWaypatient.PathWay.id }}"> {{ PathWaypatient.PathWay.PathWayname }} </option>
                 {% endfor %}
 
               </select>

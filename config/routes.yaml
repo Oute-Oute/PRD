@@ -34,21 +34,43 @@ ModificationPlanningPost:
   controller: App\Controller\ModificationPlanningController::modificationPlanningPost
   methods: [POST]
 
-index_patients:
+Patients:
   path: /patients
-  controller: App\Controller\PatientController::index
+  controller: App\Controller\PatientController::patientGet
+  methods: [GET]
 
-index_activities:
+PatientsPost:
+  path: /patients
+  controller: App\Controller\PatientController::patientPost
+  methods: [POST]
+
+PatientDelete:
+  path: /patient/{id}/delete
+  controller: App\Controller\PatientController::patientDelete
+  methods: [POST]
+
+PatientEdit:
+  path: /patient/edit
+  controller: App\Controller\PatientController::patientEdit
+  methods: [POST]
+
+app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index
 
-index_circuits:
-  path: /circuits
-  controller: App\Controller\CircuitController:index
+Pathways:
+  path: /pathways
+  controller: App\Controller\PathwayController:index
+  methods: [GET]
+
+PathwaysPost:
+  path: /pathways
+  controller: App\Controller\PathwayController:new
+  methods: [POST]
 
 index_resources:
   path: /resources
-  controller: App\Controller\ResourceController:index
+  controller: App\Controller\HumanResourceController:index
 
 index_resources_types:
   path: /resources-types
@@ -65,3 +87,8 @@ index_resources_types_materials:
 index_mon_profil:
   path: /mon_profil
   controller: App\Controller\UserController:edit
+
+app_activity_new:
+  path: /activities/new
+  controller: App\Controller\ActivityController:new
+  methods: [POST]

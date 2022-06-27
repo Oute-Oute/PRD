@@ -18,7 +18,6 @@ class UserController extends AbstractController
 {
     /**
      * @Route("/", name="app_user_index", methods={"GET"})
-     * @Security("has_role('IS_AUTHENTICATED_FULLY')")
      */
     public function index(UserRepository $userRepository): Response
     {

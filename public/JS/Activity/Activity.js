@@ -1,40 +1,17 @@
-function showNewModalForm() {
-    containerModal = document.getElementById('container-modal')
-    containerModal.style.display = "flex";
-    console.log("container flex")
 
-    formAddActivity = document.getElementById('form-add-activity');
-    formAddActivity.style.display = "flex";
-    console.log("act flex")
-
-    formAddResource = document.getElementById('form-add-resource');
-    formAddResource.style.display = "none";
-    console.log("res none")
-
-    formAddResourcetype = document.getElementById('form-add-resourcetype');
-    formAddResourcetype.style.display = "none";
-    console.log("restype none")
+//function permettant l'ouverture de la modal d'ajout d'un parcours
+function showNewModalForm(){
+    $('#new-activity-modal').modal("show");
 }
 
-function hideNewModalForm() {
-    containerModal = document.getElementById('container-modal')
-    containerModal.style.display = "none";
-    console.log("container none")
-
-    formAddActivity = document.getElementById('form-add-activity');
-    formAddActivity.style.display = "none";
-    console.log("act none")
-
-    formAddResource = document.getElementById('form-add-resource');
-    formAddResource.style.display = "none";
-    console.log("res none")
-
-    formAddResourcetype = document.getElementById('form-add-resourcetype');
-    formAddResourcetype.style.display = "none";
-    console.log("restype none")
+function showEditModalForm(id, name, duration) {
+    let iid = document.getElementById('activityid').value = id
+    console.log(iid)
+    document.getElementById('name').value = name
+    document.getElementById('duration').value = duration
+    $('#edit-activity-modal').modal("show");
 }
 
-
-
-// #container-modal 
-// .modal-form             #form-add-activity
+function hideEditModalForm() {
+    $('#edit-activity-modal').modal("hide");
+}

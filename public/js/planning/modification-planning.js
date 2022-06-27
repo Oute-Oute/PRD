@@ -43,6 +43,8 @@ function addEvent(){
     $('#add-planning-modal').modal("show");
 }
 
+
+
 function showSelectCircuit(){
     let selectContainerCircuit = document.getElementById('select-container-circuit');
     selectContainerCircuit.style.display = "block";
@@ -85,7 +87,6 @@ function createCalendar(){
     
             //permet de modifier les events dans le calendar
             selectable: true,
-            selectHelper: true,
             editable: true,
             eventDurationEditable: false,
             contentHeight: 9/12*height,

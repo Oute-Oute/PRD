@@ -21,13 +21,16 @@ class ModificationPlanningController extends AbstractController
     {
         $date_today = $_GET["date"];
         //Récupération des données nécessaires
-        $listeResources = $doctrine->getRepository("App\Entity\Resource")->findBy(['able' => true]);
+        $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
+        $listMaterialResources=$doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available'=>true]); 
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $listeCircuitPatients = $doctrine->getRepository("App\Entity\CircuitPatient")->findAll();
-        
-        $listeResourceJSON=$this->listeResourcesJSON($doctrine); 
+        $listePathWayPatients = $doctrine->getRepository("App\Entity\PP")->findAll();
 
-        return $this->render('planning/modification-planning.html.twig', ['listeresources'=>$listeResources, 'listepatients'=>$listePatients, 'listecircuitpatients' => $listeCircuitPatients, 'listeResourcesJSON'=>$listeResourceJSON, 'datetoday' => $date_today ]);
+        $listescheduledActivity=$this->listScehduledActivity($doctrine);  
+        
+        $listeResourceJSON=$this->listHumanResourcesJSON($doctrine); 
+
+        return $this->render('planning/modification-planning.html.twig', ['listepatients'=>$listePatients, 'listePathWaypatients' => $listePathWayPatients, 'listeResourcesJSON'=>$listeResourceJSON,'listHumanResources'=>$listHumanResources,'listMaterialResources'=>$listMaterialResources, 'datetoday' => $date_today ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -43,7 +46,7 @@ class ModificationPlanningController extends AbstractController
             $length = $request->request->get('length');
             $id = $request->request->get('id');
 
-            $repositoryPCR = $doctrine->getRepository('\App\Entity\PatientCircuitResource');
+            $repositoryPCR = $doctrine->getRepository('\App\Entity\PatientPathWayResource');
             
             if(isset($title) && isset($start) && isset($length) && isset($id)){
                 $PCR = $repositoryPCR->find($id);
@@ -58,8 +61,8 @@ class ModificationPlanningController extends AbstractController
         }
     }
 
-    public function listeResourcesJSON(ManagerRegistry $doctrine){
-        $resources = $doctrine->getRepository("App\Entity\Resource")->findAll();  
+    public function listHumanResourcesJSON(ManagerRegistry $doctrine){
+        $resources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();  
         $resourcesArray=array(); 
         foreach($resources as $resource){
             $resourcesArray[]=array(
@@ -72,4 +75,48 @@ class ModificationPlanningController extends AbstractController
         return $resourcesArrayJson; 
     }
 
+    public function listMaterialResourcesJSON(ManagerRegistry $doctrine){
+        $resources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();  
+        $resourcesArray=array(); 
+        foreach($resources as $resource){
+            $resourcesArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
+                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
+            ); 
+        }   
+
+
+        //Conversion des données ressources en json
+        $resourcesArrayJson= new JsonResponse($resourcesArray); 
+        return $resourcesArrayJson; 
+    }
+
+    public function listScehduledActivity(ManagerRegistry $doctrine){
+        $TodayDate='%';
+        $TodayDate .=(substr($_GET['date'],0,10)); 
+        $TodayDate=$TodayDate; 
+        $TodayDate .='%';
+        
+        //$doctrine->getRepository('App\Entity\ScheduledActivity')->findByschedulerActivitiesByDate($TodayDate);  
+        $scheduledActivities=array();
+        $scheduledActivitiesArray=array();  
+        foreach($scheduledActivities as $scheduledActivity){
+            $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HRSA")->findBy(array('idHumanresource',$scheduledActivity->getId())); 
+            $scheduledActivitiesHumanResourcesArray=array(); 
+            foreach($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource){
+                array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource); 
+            }
+            
+            $scheduledActivitiesArray[]=array(
+                'id'=>$scheduledActivity->getId(), 
+                'title'=>$scheduledActivity->Activity->GetActivityName(),
+                'startDate'=>$scheduledActivity->getStartDDate(),
+                'endDate'=>$scheduledActivity->getEndDate(),
+                'resourceIds'=>$scheduledActivitiesHumanResourcesArray,
+                'PatientName'=>$scheduledActivity->Patient->getName()
+            );
+        }
+        $scheduledActivitiesArrayJson= new JsonResponse($scheduledActivitiesArray); 
+        return $scheduledActivitiesArrayJson; 
+    }
 }
