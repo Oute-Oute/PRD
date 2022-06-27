@@ -37,7 +37,7 @@ class HumanResourceController extends AbstractController
         $humanResource = new HumanResource();
         $form = $this->createForm(HumanResourceType::class, $humanResource);
         $form->handleRequest($request);
-
+        $param = $request->request->all();
         if ($form->isSubmitted() && $form->isValid()) {
             $humanResourceRepository->add($humanResource, true);
 
