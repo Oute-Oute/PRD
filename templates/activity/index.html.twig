@@ -9,7 +9,7 @@
 {% block javascripts %}
     <script src="./JS/jquery-3.6.0.js"></script>
     <script src="./JS/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-      <script src="{{ asset('JS/Activity/Activity.js') }}"> </script>
+    <script src="{{ asset('JS/Activity/Activity.js') }}"> </script>
 
 {% endblock %}
 
@@ -24,21 +24,20 @@
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Name</th>
-                    <th>Duration</th>
+                    <th>Nom</th>
+                    <th>Durée</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-
                 {% for activity in activities %}
                     <tr>
                         <td>{{ activity.id }}</td>
                         <td>{{ activity.activityname }}</td>
                         <td>{{ activity.duration }}</td>
                         <td>
-                        <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_activity_show', {'id': activity.id}) }}'">Infos</a>
-                            <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_activity_edit', {'id': activity.id}) }}'">Éditer</a>
+                            <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_activity_show', {'id': activity.id}) }}'">Infos</a>
+                            <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{ activity.id }}', '{{activity.activityname}}', '{{activity.duration}}')">Éditer</a>
                             {{ include('activity/_delete_form.html.twig') }}
                         </td>
                     </tr>
@@ -52,7 +51,8 @@
 
     </div>
 
-{{include ('activity/modal_new.html.twig')}}
-{{include ('activity/modal_new.html.twig')}}
-
+    {# Fenêtre modale d'ajout #}
+    {{ include ('activity/modal_new.html.twig') }}
+    {# Fenêtre modale d'édition #}
+    {{ include ('activity/modal_edit.html.twig') }}
 {% endblock %}
