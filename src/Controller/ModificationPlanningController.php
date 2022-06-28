@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\ScheduledActivity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ScheduledActivityRepository; 
 
 /**
  * Controller de la page modification du planning
@@ -17,7 +19,7 @@ class ModificationPlanningController extends AbstractController
     /**
      * Fonction pour l'affichage de la page modification planning par la méthode GET
      */
-    public function modificationPlanningGet(ManagerRegistry $doctrine): Response
+    public function modificationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
     {
         $date_today = $_GET["date"];
         //Récupération des données nécessaires
@@ -26,7 +28,7 @@ class ModificationPlanningController extends AbstractController
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listePathWayPatients = $doctrine->getRepository("App\Entity\PP")->findAll();
 
-        $listescheduledActivity=$this->listScehduledActivity($doctrine);  
+        $listescheduledActivity=$this->listScehduledActivity($doctrine,$SAR);  
         
         $listeResourceJSON=$this->listHumanResourcesJSON($doctrine); 
 
@@ -91,14 +93,18 @@ class ModificationPlanningController extends AbstractController
         return $resourcesArrayJson; 
     }
 
-    public function listScehduledActivity(ManagerRegistry $doctrine){
-        $TodayDate='%';
+    public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR){
+        $TodayDate="'%";
         $TodayDate .=(substr($_GET['date'],0,10)); 
         $TodayDate=$TodayDate; 
-        $TodayDate .='%';
+        $TodayDate .="%'";
         
-        //$doctrine->getRepository('App\Entity\ScheduledActivity')->findByschedulerActivitiesByDate($TodayDate);  
-        $scheduledActivities=array();
+        
+        $scheduledActivities=$SAR->findSchedulerActivitiesByDate($TodayDate); 
+            foreach($scheduledActivities as $sc){
+                echo 'alo'; 
+            }
+        dd($scheduledActivities); 
         $scheduledActivitiesArray=array();  
         foreach($scheduledActivities as $scheduledActivity){
             $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HRSA")->findBy(array('idHumanresource',$scheduledActivity->getId())); 
