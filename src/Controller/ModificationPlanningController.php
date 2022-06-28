@@ -67,7 +67,7 @@ class ModificationPlanningController extends AbstractController
         foreach($resources as $resource){
             $resourcesArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
-                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
+                'title'=>(str_replace(" ", "3aZt3r", $resource->getHumanresourcename())),
             ); 
         }   
         //Conversion des données ressources en json
