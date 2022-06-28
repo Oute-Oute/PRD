@@ -3,14 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
-use App\Entity\PP;
-use App\Form\PatientType;
 use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @Route("/patient")
@@ -46,28 +45,27 @@ class PatientController extends AbstractController
         }
     }
 
-    public function patientEdit(Request $request, Patient $patient, PatientRepository $patientRepository): Response
+    public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(PatientType::class, $patient);
-        $form->handleRequest($request);
+        $idpatient = $request->request->get("idpatient");
+        $lastname = $request->request->get("lastname");
+        $firstname = $request->request->get("firstname");
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $patientRepository->add($patient, true);
+        $patient = $patientRepository->findOneBy(['id' => $idpatient]);
+        $patient->setLastname($lastname);
+        $patient->setFirstname($firstname);
 
-            return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
-        }
+        $entityManager->persist($patient);
+        $entityManager->flush();
 
-        return $this->renderForm('patient/edit.html.twig', [
-            'patient' => $patient,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
     public function patientDelete(Patient $patient, PatientRepository $patientRepository): Response
     {
         //suppression des données associées au patient de la table Appointment
         $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Appointment");
-        $appointments = $appointmentRepository->findBy(['patient_id' => $patient->getId()]);
+        $appointments = $appointmentRepository->findBy(['patient' => $patient]);
 
         foreach($appointments as $appointment)
         {
@@ -77,13 +75,13 @@ class PatientController extends AbstractController
 
         //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
         $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
-        $scheduledActivities = $scheduledActivityRepository->findBy(['patient_id' => $patient->getId()]);
+        $scheduledActivities = $scheduledActivityRepository->findBy(['patient' => $patient]);
 
         foreach($scheduledActivities as $scheduledActivity)
         {
             //suppression des données associées au patient de la table MaterialResourceScheduled
             $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
-            $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity_id' => $scheduledActivity->getId()]);
+            $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
             foreach($allMaterialResourceScheduled as $materialResourceScheduled)
             {
@@ -93,7 +91,7 @@ class PatientController extends AbstractController
 
             //suppression des données associées au patient de la table HumanResourceScheduled
             $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
-            $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity_id' => $scheduledActivity->getId()]);
+            $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
             foreach($allHumanResourceScheduled as $humanResourceScheduled)
             {
