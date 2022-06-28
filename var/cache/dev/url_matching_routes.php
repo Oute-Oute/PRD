@@ -8,15 +8,12 @@
 return [
     false, // $matchHost
     [ // $staticRoutes
-        '/activity' => [[['_route' => 'app_activity_index', '_controller' => 'App\\Controller\\ActivityController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/activity/new' => [[['_route' => 'app_activity_new', '_controller' => 'App\\Controller\\ActivityController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/circuit' => [[['_route' => 'app_circuit_index', '_controller' => 'App\\Controller\\CircuitController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/circuit/new' => [[['_route' => 'app_circuit_new', '_controller' => 'App\\Controller\\CircuitController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/circuit-type' => [[['_route' => 'app_circuit_type_index', '_controller' => 'App\\Controller\\CircuitTypeController::index'], null, ['GET' => 0], null, true, false, null]],
         '/circuit-type/new' => [[['_route' => 'app_circuit_type_new', '_controller' => 'App\\Controller\\CircuitTypeController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/patient' => [[['_route' => 'app_patient_index', '_controller' => 'App\\Controller\\PatientController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/patient/new' => [[['_route' => 'app_patient_new', '_controller' => 'App\\Controller\\PatientController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/resource' => [[['_route' => 'app_resource_index', '_controller' => 'App\\Controller\\ResourceController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/human/resource/new' => [[['_route' => 'app_human_resource_new', '_controller' => 'App\\Controller\\HumanResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/material/resource' => [[['_route' => 'app_material_resource_index', '_controller' => 'App\\Controller\\MaterialResourceController::index'], null, ['GET' => 0], null, true, false, null]],
+        '/material/resource/new' => [[['_route' => 'app_material_resource_new', '_controller' => 'App\\Controller\\MaterialResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/resource' => [[['_route' => 'app_human_resource_index', '_controller' => 'App\\Controller\\ResourceController::index'], null, ['GET' => 0], null, true, false, null]],
         '/resource/new' => [[['_route' => 'app_resource_new', '_controller' => 'App\\Controller\\ResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/resources-types' => [
             [['_route' => 'app_resource_type_index', '_controller' => 'App\\Controller\\ResourceTypeController::index'], null, ['GET' => 0], null, true, false, null],
@@ -52,104 +49,122 @@ return [
             [['_route' => 'ModificationPlanning', '_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningGet'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'ModificationPlanningPost', '_controller' => 'App\\Controller\\ModificationPlanningController::modificationPlanningPost'], null, ['POST' => 0], null, false, false, null],
         ],
-        '/patients' => [[['_route' => 'index_patients', '_controller' => 'App\\Controller\\PatientController::index'], null, null, null, false, false, null]],
-        '/activities' => [[['_route' => 'index_activities', '_controller' => 'App\\Controller\\ActivityController:index'], null, null, null, false, false, null]],
-        '/circuits' => [[['_route' => 'index_circuits', '_controller' => 'App\\Controller\\CircuitController:index'], null, null, null, false, false, null]],
-        '/resources' => [[['_route' => 'index_resources', '_controller' => 'App\\Controller\\ResourceController:index'], null, null, null, false, false, null]],
+        '/patients' => [
+            [['_route' => 'Patients', '_controller' => 'App\\Controller\\PatientController::patientGet'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'PatientsPost', '_controller' => 'App\\Controller\\PatientController::patientPost'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/patient/edit' => [[['_route' => 'PatientEdit', '_controller' => 'App\\Controller\\PatientController::patientEdit'], null, ['POST' => 0], null, false, false, null]],
+        '/activities' => [[['_route' => 'app_activity_index', '_controller' => 'App\\Controller\\ActivityController:index'], null, null, null, false, false, null]],
+        '/pathways' => [
+            [['_route' => 'Pathways', '_controller' => 'App\\Controller\\PathwayController:index'], null, ['GET' => 0], null, false, false, null],
+            [['_route' => 'PathwaysPost', '_controller' => 'App\\Controller\\PathwayController:new'], null, ['POST' => 0], null, false, false, null],
+        ],
+        '/resources' => [[['_route' => 'index_resources', '_controller' => 'App\\Controller\\HumanResourceController:index'], null, null, null, false, false, null]],
         '/mon_profil' => [[['_route' => 'index_mon_profil', '_controller' => 'App\\Controller\\UserController:edit'], null, null, null, false, false, null]],
+        '/activities/new' => [[['_route' => 'app_activity_new', '_controller' => 'App\\Controller\\ActivityController:new'], null, ['POST' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
-                .'|/activity/([^/]++)(?'
-                    .'|(*:28)'
-                    .'|/edit(*:40)'
-                    .'|(*:47)'
+                .'|/activity/(?'
+                    .'|([^/]++)(*:28)'
+                    .'|edit(*:39)'
+                    .'|([^/]++)(*:54)'
                 .')'
                 .'|/circuit(?'
-                    .'|/([^/]++)(?'
-                        .'|(*:78)'
-                        .'|/edit(*:90)'
-                        .'|(*:97)'
-                    .')'
                     .'|\\-type/([^/]++)(?'
-                        .'|(*:123)'
-                        .'|/edit(*:136)'
-                        .'|(*:144)'
+                        .'|(*:91)'
+                        .'|/edit(*:103)'
+                        .'|(*:111)'
+                    .')'
+                    .'|/([^/]++)(?'
+                        .'|(*:132)'
+                        .'|/edit(*:145)'
+                        .'|(*:153)'
                     .')'
                 .')'
-                .'|/patient/([^/]++)(?'
-                    .'|(*:174)'
-                    .'|/edit(*:187)'
-                    .'|(*:195)'
+                .'|/human/resource/([^/]++)(?'
+                    .'|(*:190)'
+                    .'|/edit(*:203)'
+                    .'|(*:211)'
+                .')'
+                .'|/material/resource/([^/]++)(?'
+                    .'|(*:250)'
+                    .'|/edit(*:263)'
+                    .'|(*:271)'
                 .')'
                 .'|/resource(?'
                     .'|/([^/]++)(?'
-                        .'|(*:228)'
-                        .'|/edit(*:241)'
-                        .'|(*:249)'
+                        .'|(*:304)'
+                        .'|/edit(*:317)'
+                        .'|(*:325)'
                     .')'
                     .'|s\\-types/([^/]++)(?'
-                        .'|(*:278)'
-                        .'|/edit(*:291)'
-                        .'|(*:299)'
+                        .'|(*:354)'
+                        .'|/edit(*:367)'
+                        .'|(*:375)'
                     .')'
                 .')'
                 .'|/user/(?'
                     .'|([^/]++)(?'
-                        .'|(*:329)'
-                        .'|/edit(*:342)'
+                        .'|(*:405)'
+                        .'|/edit(*:418)'
                     .')'
-                    .'|profile/([^/]++)(*:367)'
-                    .'|([^/]++)(*:383)'
+                    .'|profile/([^/]++)(*:443)'
+                    .'|([^/]++)(*:459)'
                 .')'
                 .'|/_(?'
-                    .'|error/(\\d+)(?:\\.([^/]++))?(*:423)'
-                    .'|wdt/([^/]++)(*:443)'
+                    .'|error/(\\d+)(?:\\.([^/]++))?(*:499)'
+                    .'|wdt/([^/]++)(*:519)'
                     .'|profiler/([^/]++)(?'
                         .'|/(?'
-                            .'|search/results(*:489)'
-                            .'|router(*:503)'
+                            .'|search/results(*:565)'
+                            .'|router(*:579)'
                             .'|exception(?'
-                                .'|(*:523)'
-                                .'|\\.css(*:536)'
+                                .'|(*:599)'
+                                .'|\\.css(*:612)'
                             .')'
                         .')'
-                        .'|(*:546)'
+                        .'|(*:622)'
                     .')'
                 .')'
+                .'|/patient/([^/]++)/delete(*:656)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
         28 => [[['_route' => 'app_activity_show', '_controller' => 'App\\Controller\\ActivityController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        40 => [[['_route' => 'app_activity_edit', '_controller' => 'App\\Controller\\ActivityController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        47 => [[['_route' => 'app_activity_delete', '_controller' => 'App\\Controller\\ActivityController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        78 => [[['_route' => 'app_circuit_show', '_controller' => 'App\\Controller\\CircuitController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        90 => [[['_route' => 'app_circuit_edit', '_controller' => 'App\\Controller\\CircuitController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        97 => [[['_route' => 'app_circuit_delete', '_controller' => 'App\\Controller\\CircuitController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        123 => [[['_route' => 'app_circuit_type_show', '_controller' => 'App\\Controller\\CircuitTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        136 => [[['_route' => 'app_circuit_type_edit', '_controller' => 'App\\Controller\\CircuitTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        144 => [[['_route' => 'app_circuit_type_delete', '_controller' => 'App\\Controller\\CircuitTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        174 => [[['_route' => 'app_patient_show', '_controller' => 'App\\Controller\\PatientController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        187 => [[['_route' => 'app_patient_edit', '_controller' => 'App\\Controller\\PatientController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        195 => [[['_route' => 'app_patient_delete', '_controller' => 'App\\Controller\\PatientController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        228 => [[['_route' => 'app_resource_show', '_controller' => 'App\\Controller\\ResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        241 => [[['_route' => 'app_resource_edit', '_controller' => 'App\\Controller\\ResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        249 => [[['_route' => 'app_resource_delete', '_controller' => 'App\\Controller\\ResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        278 => [[['_route' => 'app_resource_type_show', '_controller' => 'App\\Controller\\ResourceTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        291 => [[['_route' => 'app_resource_type_edit', '_controller' => 'App\\Controller\\ResourceTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        299 => [[['_route' => 'app_resource_type_delete', '_controller' => 'App\\Controller\\ResourceTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        329 => [[['_route' => 'app_user_show', '_controller' => 'App\\Controller\\UserController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        342 => [[['_route' => 'app_user_edit', '_controller' => 'App\\Controller\\UserController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        367 => [[['_route' => 'app_user_edit_profile', '_controller' => 'App\\Controller\\UserController::editProfile'], ['id'], ['GET' => 0, 'POST' => 1], null, false, true, null]],
-        383 => [[['_route' => 'app_user_delete', '_controller' => 'App\\Controller\\UserController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        423 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
-        443 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
-        489 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
-        503 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
-        523 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
-        536 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        546 => [
-            [['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null],
+        39 => [[['_route' => 'app_activity_edit', '_controller' => 'App\\Controller\\ActivityController::edit'], [], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        54 => [[['_route' => 'app_activity_delete', '_controller' => 'App\\Controller\\ActivityController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        91 => [[['_route' => 'app_circuit_type_show', '_controller' => 'App\\Controller\\CircuitTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        103 => [[['_route' => 'app_circuit_type_edit', '_controller' => 'App\\Controller\\CircuitTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        111 => [[['_route' => 'app_circuit_type_delete', '_controller' => 'App\\Controller\\CircuitTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        132 => [[['_route' => 'app_circuit_show', '_controller' => 'App\\Controller\\PathwayController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        145 => [[['_route' => 'app_circuit_edit', '_controller' => 'App\\Controller\\PathwayController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        153 => [[['_route' => 'app_circuit_delete', '_controller' => 'App\\Controller\\PathwayController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        190 => [[['_route' => 'app_human_resource_show', '_controller' => 'App\\Controller\\HumanResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        203 => [[['_route' => 'app_human_resource_edit', '_controller' => 'App\\Controller\\HumanResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        211 => [[['_route' => 'app_human_resource_delete', '_controller' => 'App\\Controller\\HumanResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        250 => [[['_route' => 'app_material_resource_show', '_controller' => 'App\\Controller\\MaterialResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        263 => [[['_route' => 'app_material_resource_edit', '_controller' => 'App\\Controller\\MaterialResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        271 => [[['_route' => 'app_material_resource_delete', '_controller' => 'App\\Controller\\MaterialResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        304 => [[['_route' => 'app_resource_show', '_controller' => 'App\\Controller\\ResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        317 => [[['_route' => 'app_resource_edit', '_controller' => 'App\\Controller\\ResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        325 => [[['_route' => 'app_resource_delete', '_controller' => 'App\\Controller\\ResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        354 => [[['_route' => 'app_resource_type_show', '_controller' => 'App\\Controller\\ResourceTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        367 => [[['_route' => 'app_resource_type_edit', '_controller' => 'App\\Controller\\ResourceTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        375 => [[['_route' => 'app_resource_type_delete', '_controller' => 'App\\Controller\\ResourceTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        405 => [[['_route' => 'app_user_show', '_controller' => 'App\\Controller\\UserController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        418 => [[['_route' => 'app_user_edit', '_controller' => 'App\\Controller\\UserController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        443 => [[['_route' => 'app_user_edit_profile', '_controller' => 'App\\Controller\\UserController::editProfile'], ['id'], ['GET' => 0, 'POST' => 1], null, false, true, null]],
+        459 => [[['_route' => 'app_user_delete', '_controller' => 'App\\Controller\\UserController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        499 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
+        519 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
+        565 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
+        579 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
+        599 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
+        612 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
+        622 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
+        656 => [
+            [['_route' => 'PatientDelete', '_controller' => 'App\\Controller\\PatientController::patientDelete'], ['id'], ['POST' => 0], null, false, false, null],
             [null, null, null, null, false, false, 0],
         ],
     ],
