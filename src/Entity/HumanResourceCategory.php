@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryMaterialResourceRepository;
+use App\Repository\HumanResourceCategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CategoryMaterialResourceRepository::class)
+ * @ORM\Entity(repositoryClass=HumanResourceCategoryRepository::class)
  */
-class CategoryMaterialResource
+class HumanResourceCategory
 {
     /**
      * @ORM\Id
@@ -20,21 +20,21 @@ class CategoryMaterialResource
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $category;
+    private $categoryname;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCategory(): ?string
+    public function getCategoryname(): ?string
     {
-        return $this->category;
+        return $this->categoryname;
     }
 
-    public function setCategory(string $category): self
+    public function setCategoryname(string $categoryname): self
     {
-        $this->category = $category;
+        $this->categoryname = $categoryname;
 
         return $this;
     }

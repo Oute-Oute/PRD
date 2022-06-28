@@ -20,12 +20,12 @@ class Modification
     /**
      * @ORM\Column(type="date")
      */
-    private $datemodif;
+    private $datemodified;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetime")
      */
-    private $modified;
+    private $datetimemodification;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
@@ -38,26 +38,26 @@ class Modification
         return $this->id;
     }
 
-    public function getDatemodif(): ?\DateTimeInterface
+    public function getDatemodified(): ?\DateTimeInterface
     {
-        return $this->datemodif;
+        return $this->datemodified;
     }
 
-    public function setDatemodif(\DateTimeInterface $datemodif): self
+    public function setDatemodif(\DateTimeInterface $datemodified): self
     {
-        $this->datemodif = $datemodif;
+        $this->datemodified = $datemodified;
 
         return $this;
     }
 
-    public function isModified(): ?bool
+    public function getDatetimemodification(): ?\DateTimeInterface
     {
-        return $this->modified;
+        return $this->datetimemodification;
     }
 
-    public function setModified(bool $modified): self
+    public function setDatetimemodification(\DateTimeInterface $datetimemodification): self
     {
-        $this->modified = $modified;
+        $this->datetimemodification = $datetimemodification;
 
         return $this;
     }

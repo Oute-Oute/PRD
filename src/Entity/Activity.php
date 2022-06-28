@@ -27,6 +27,12 @@ class Activity
      */
     private $duration;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Pathway::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $pathway;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +58,18 @@ class Activity
     public function setDuration(int $duration): self
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getPathway(): ?Pathway
+    {
+        return $this->pathway;
+    }
+
+    public function setPathway(?Pathway $pathway): self
+    {
+        $this->pathway = $pathway;
 
         return $this;
     }

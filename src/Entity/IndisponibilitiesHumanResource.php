@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\HRSARepository;
+use App\Repository\IndisponibilitiesHumanResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=HRSARepository::class)
+ * @ORM\Entity(repositoryClass=IndisponibilitiesHumanResourceRepository::class)
  */
-class HRSA
+class IndisponibilitiesHumanResource
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class HRSA
     private $humanresource;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
+     * @ORM\ManyToOne(targetEntity=Indisponibilities::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $scheduledactivity;
+    private $indisponibilities;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class HRSA
         return $this;
     }
 
-    public function getScheduledactivity(): ?ScheduledActivity
+    public function getIndisponibilities(): ?Indisponibilities
     {
-        return $this->scheduledactivity;
+        return $this->indisponibilities;
     }
 
-    public function setScheduledactivity(?ScheduledActivity $scheduledactivity): self
+    public function setIndisponibilities(?Indisponibilities $indisponibilities): self
     {
-        $this->scheduledactivity = $scheduledactivity;
+        $this->indisponibilities = $indisponibilities;
 
         return $this;
     }

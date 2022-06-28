@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ACMR;
+use App\Entity\Appointment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ACMR>
+ * @extends ServiceEntityRepository<Appointment>
  *
- * @method ACMR|null find($id, $lockMode = null, $lockVersion = null)
- * @method ACMR|null findOneBy(array $criteria, array $orderBy = null)
- * @method ACMR[]    findAll()
- * @method ACMR[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Appointment|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Appointment|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Appointment[]    findAll()
+ * @method Appointment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ACMRRepository extends ServiceEntityRepository
+class AppointmentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ACMR::class);
+        parent::__construct($registry, Appointment::class);
     }
 
-    public function add(ACMR $entity, bool $flush = false): void
+    public function add(Appointment $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ACMRRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ACMR $entity, bool $flush = false): void
+    public function remove(Appointment $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ACMRRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ACMR[] Returns an array of ACMR objects
+//     * @return Appointment[] Returns an array of Appointment objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ACMRRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ACMR
+//    public function findOneBySomeField($value): ?Appointment
 //    {
 //        return $this->createQueryBuilder('a')
 //            ->andWhere('a.exampleField = :val')

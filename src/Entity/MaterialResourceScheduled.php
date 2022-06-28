@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\IMRRepository;
+use App\Repository\MaterialResourceScheduledRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=IMRRepository::class)
+ * @ORM\Entity(repositoryClass=MaterialResourceScheduledRepository::class)
  */
-class IMR
+class MaterialResourceScheduled
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class IMR
     private $materialresource;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Indisponibilities::class)
+     * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $indisponibility;
+    private $scheduledactivity;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class IMR
         return $this;
     }
 
-    public function getIndisponibility(): ?Indisponibilities
+    public function getScheduledactivity(): ?ScheduledActivity
     {
-        return $this->indisponibility;
+        return $this->scheduledactivity;
     }
 
-    public function setIndisponibility(?Indisponibilities $indisponibility): self
+    public function setScheduledactivity(?ScheduledActivity $scheduledactivity): self
     {
-        $this->indisponibility = $indisponibility;
+        $this->scheduledactivity = $scheduledactivity;
 
         return $this;
     }
