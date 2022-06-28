@@ -37,27 +37,51 @@ class PathwayController extends AbstractController
             
             // On recupere toutes les données de la requete
             $param = $request->request->all();
-            // et le nombre d'activité
-            $nbActivity = count($param) - 2;
+
+
+            // Premierement on s'occupe d'ajouter le parcours dans la bd :
+            // On crée l'objet parcours
             $pathway = new Pathway();
-            $pathway->setPathwayname($param['circuitname']);
-            $pathway->setPathwaytype($param['circuittype']);
+            $pathway->setPathwayname($param['pathwayname']);
+            $pathway->setPathwaytype($param['pathwaytype']);
+            $pathway->setTarget($param['target']);
 
-            $activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
-            $activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
-
+            // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
+
+            // On s'occupe ensuite ds liens entre le parcours et les activités :
+
+            // On récupère toutes les activités
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $activities = $activityRepository->findAll();
+            //$activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
+            $activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
+            
+
+            // On récupère le nombre d'activité
+            $nbActivity = $param['nbActivity'];
+
+
+            //$activityArray = array();
 
             for($i = 0; $i < $nbActivity; $i++)
             {
+                // On récupère l'objet activity 
                 $str = 'activity-';
-                $activityPathway = new AP();
                 $str .= $i;
-                $numListe = $param[$str]-1;
-                $activityPathway->setActivity($activities[$numListe]);
+                $id = $param[$str];
+                $activity = $activityRepository->find($id);
+
+                $activityPathway = new AP();
+                 
+                $activityPathway->setActivity($activity);
                 $activityPathway->setPathway($pathway);
+                $activityPathway->setActivityorder($i);
+                $activityPathway->setDelayminafter(0);
+                $activityPathway->setDelaymaxafter(0);
                 $activityPathwayRepository->add($activityPathway, true);
-                dd($activityPathway);
+
+                //dd($activityPathway);
             }
             
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);

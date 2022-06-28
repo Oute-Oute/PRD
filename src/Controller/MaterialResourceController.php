@@ -30,22 +30,25 @@ class MaterialResourceController extends AbstractController
      */
     public function new(Request $request, MaterialResourceRepository $materialResourceRepository): Response
     {
-        $materialResource = new MaterialResource();
-        $form = $this->createForm(MaterialResourceType::class, $materialResource);
-        $form->handleRequest($request);
+        if ($request->getMethod() === 'POST') {
+            $materialResource = new MaterialResource();
+            $param = $request->request->all();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            $name = $param['name'];
+            $availability = $param['availability'];
+            if($param['availability'] == 'dispo') {
+                $materialResource->setAvailable(true);
+            }
+            else {
+                $materialResource->setAvailable(false);
+            }
+            $materialResource->setMaterialresourcename($name);
+            $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
             $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
         }
-
-        return $this->renderForm('material_resource/new.html.twig', [
-            'material_resource' => $materialResource,
-            'form' => $form,
-        ]);
     }
-
     /**
      * @Route("/{id}", name="app_material_resource_show", methods={"GET"})
      */
@@ -67,7 +70,7 @@ class MaterialResourceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('material_resource/edit.html.twig', [
@@ -85,6 +88,6 @@ class MaterialResourceController extends AbstractController
             $materialResourceRepository->remove($materialResource, true);
         }
 
-        return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
     }
 }

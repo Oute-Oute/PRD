@@ -33,6 +33,7 @@
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_human_resource_edit', {'id': human_resource.id}) }}'">Éditer</a>
+                    {{ include('human_resource/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -63,6 +64,8 @@
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}', '{{material_resource.available}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_edit', {'id': material_resource.id}) }}'">Éditer</a>
+                    {{ include('material_resource/_delete_form.html.twig') }}
+
                 </td>
             </tr>
         {% else %}

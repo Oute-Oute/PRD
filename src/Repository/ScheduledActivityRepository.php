@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\ScheduledActivity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Doctrine_Core; 
 
 /**
  * @extends ServiceEntityRepository<ScheduledActivity>
@@ -39,14 +40,16 @@ class ScheduledActivityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByschedulerActivitiesByDate($TodayDate): array
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere($this->expr()->like('s.startdatetime = :date'))
-            ->setParameter('date', $TodayDate)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function findSchedulerActivitiesByDate($TodayDate)
+    {   
+        $qb= $this->createQueryBuilder('s'); 
+        $qb->select('s'); 
+        $qb->where(
+                 $qb->expr()->like('s.startdatetime', ':date')
+             )
+             ->setParameter('date',$TodayDate);
+             $query=$qb->getQuery()->getResult(); 
+             return $query;
     }
 
 //    public function findOneBySomeField($value): ?ScheduledActivity

@@ -1,5 +1,73 @@
 
+/* surcharge de la classe de bootstrap */
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
+}
 
+/* classe représentant un champ de formulaire*/
+div.form-field {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+
+fieldset#fs-add-activity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 400px;
+    overflow-y: scroll;
+    margin: 15px 0px; 
+    padding: 5px;
+}
+/* bouton pour ajouter des activités au parcours */
+fieldset#fs-add-activity button#btn-add-activity {
+    background: #404040;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+    margin-top: 5px;
+}
+fieldset#fs-add-activity button#btn-add-activity:hover {
+    box-shadow: 0px 0px 5px black;
+}
+
+
+
+/* texte dans un champ de formulaire */
+div.form-field p {
+    margin: 0;
+}
+ /* image (delete) */
+div.form-field img{
+    width:20px;
+    cursor: pointer;
+}
+div.form-field input {
+    height: 25px;
+}
+
+div.form-field select {
+    height: 35px;
+    border-radius: 15px; 
+    min-width: 300px;
+    margin-right: 15px;
+    margin-left: 15px; 
+    padding-left: 15px;
+}
+
+
+
+/*
 div#container-modal {
     position: absolute ;
     display:none;
@@ -16,16 +84,6 @@ div#background-shadow {
     width : 100%;
     background-color:rgba(0, 0, 0, 0.3);
 }
-
-div.form-field {
-    display : flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-
-
 div.modal-form {
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
     padding : 15px 40px;
@@ -34,7 +92,7 @@ div.modal-form {
     border-radius: 20px;
     background-color: white;
     border: 1px solid black;
-    z-index: 1; /* pour pouvoir cliquer a côté de la fenetre modal et la fermer */
+    z-index: 1; //commentaire : pour pouvoir cliquer a côté de la fenetre modal et la fermer 
 }
 
 div.modal-form form {
@@ -42,59 +100,4 @@ div.modal-form form {
     align-items : center;
     flex-direction : column;
 }
-
-div#user, div#activity, div#patient1, div#resource_type, div#circuit{
-    display : grid;
-    justify-items : end;
-    margin-right : 55px;
-}
-
-
-
-
-button#btn-add-activity {
-    background: #404040;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease 0s;
-    color: #404040;
-    background : none;
-    border : 1px solid black;
-}
-button#btn-add-activity:hover {
-
-    box-shadow: 0px 0px 5px black;
-}
-
-fieldset#fs-add-activity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: 400px;
-    overflow-y: scroll;
-    margin-bottom: 15px; 
-}
-
-
-div.form-field p {
-    margin: 0;
-}
-
-img{
-    width:20px;
-    cursor: pointer;
-}
-input {
-    height: 25px;
-}
-
-select {
-    height: 25px;
-    border-radius: 15px; 
-    min-width: 100px;
-    margin: 10px 15px; 
-}
-
-
+*/
