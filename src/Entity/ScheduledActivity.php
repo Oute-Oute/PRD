@@ -30,14 +30,19 @@ class ScheduledActivity
     private $patient;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="time")
      */
-    private $startdatetime;
+    private $starttime;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="time")
      */
-    private $enddatetime;
+    private $endtime;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dayscheduled;
 
     public function getId(): ?int
     {
@@ -68,26 +73,38 @@ class ScheduledActivity
         return $this;
     }
 
-    public function getStartdate(): ?\DateTimeInterface
+    public function getStarttime(): ?\DateTimeInterface
     {
-        return $this->startdatetime;
+        return $this->starttime;
     }
 
-    public function setStartdate(\DateTimeInterface $startdatetime): self
+    public function setStarttime(\DateTimeInterface $starttime): self
     {
-        $this->startdatetime = $startdatetime;
+        $this->starttime = $starttime;
 
         return $this;
     }
 
-    public function getEnddate(): ?\DateTimeInterface
+    public function getEndtime(): ?\DateTimeInterface
     {
-        return $this->enddatetime;
+        return $this->endtime;
     }
 
-    public function setEnddate(\DateTimeInterface $enddatetime): self
+    public function setEndtime(\DateTimeInterface $endtime): self
     {
-        $this->enddatetime = $enddatetime;
+        $this->endtime = $endtime;
+
+        return $this;
+    }
+
+    public function getDayscheduled(): ?\DateTimeInterface
+    {
+        return $this->dayscheduled;
+    }
+
+    public function setDayscheduled(\DateTimeInterface $dayscheduled): self
+    {
+        $this->dayscheduled = $dayscheduled;
 
         return $this;
     }

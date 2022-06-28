@@ -8,13 +8,16 @@
             </div>
 
             <form action="{{ path('app_activity_new') }}" method="POST">
+
+
               <div class="modal-body">
-                  <div>
+                  <div class='form-field-label'>
                       <label for='name'> Nom </label>
-                      <input type='text' name='name'>
-                  </div>
-                  <div>
                       <label for='duration'> Durée </label>
+
+                  </div>
+                  <div class='form-field-input'>
+                      <input type='text' name='name'>
                       <input type='text' name='duration'>
                   </div>
               </div>

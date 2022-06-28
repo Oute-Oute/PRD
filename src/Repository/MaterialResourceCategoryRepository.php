@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\MRSA;
+use App\Entity\MaterialResourceCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MRSA>
+ * @extends ServiceEntityRepository<MaterialResourceCategory>
  *
- * @method MRSA|null find($id, $lockMode = null, $lockVersion = null)
- * @method MRSA|null findOneBy(array $criteria, array $orderBy = null)
- * @method MRSA[]    findAll()
- * @method MRSA[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method MaterialResourceCategory|null find($id, $lockMode = null, $lockVersion = null)
+ * @method MaterialResourceCategory|null findOneBy(array $criteria, array $orderBy = null)
+ * @method MaterialResourceCategory[]    findAll()
+ * @method MaterialResourceCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MRSARepository extends ServiceEntityRepository
+class MaterialResourceCategoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MRSA::class);
+        parent::__construct($registry, MaterialResourceCategory::class);
     }
 
-    public function add(MRSA $entity, bool $flush = false): void
+    public function add(MaterialResourceCategory $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class MRSARepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(MRSA $entity, bool $flush = false): void
+    public function remove(MaterialResourceCategory $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class MRSARepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return MRSA[] Returns an array of MRSA objects
+//     * @return MaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class MRSARepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?MRSA
+//    public function findOneBySomeField($value): ?MaterialResourceCategory
 //    {
 //        return $this->createQueryBuilder('m')
 //            ->andWhere('m.exampleField = :val')
