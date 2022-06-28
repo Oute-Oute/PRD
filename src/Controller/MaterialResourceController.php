@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\MaterialResource;
 use App\Form\MaterialResource1Type;
 use App\Repository\MaterialResourceRepository;
+use App\Repository\MaterialResourceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +21,11 @@ class MaterialResourceController extends AbstractController
      */
     public function index(MaterialResourceRepository $materialResourceRepository): Response
     {
+        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $materialResourceCategories = $materialResourceCategoryRepository->findAll();
         return $this->render('material_resource/index.html.twig', [
-            'material_resources' => $materialResourceRepository->findAll(),
+            'material_resources' => $materialResourceRepository->findBy(['available' => true]),
+            'material_resource_categories' => $materialResourceCategories
         ]);
     }
 
@@ -30,20 +34,17 @@ class MaterialResourceController extends AbstractController
      */
     public function new(Request $request, MaterialResourceRepository $materialResourceRepository): Response
     {
-        $materialResource = new MaterialResource();
-        $form = $this->createForm(MaterialResource1Type::class, $materialResource);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->getMethod() === 'POST') {
+            $materialResource = new MaterialResource();
+            $param = $request->request->all();
+            $name = $param['name'];
+            $materialResource->setAvailable(true);
+            $materialResource->setMaterialresourcename($name);
+            $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
             $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources_humans', [], Response::HTTP_SEE_OTHER);
         }
-
-        return $this->renderForm('material_resource/new.html.twig', [
-            'material_resource' => $materialResource,
-            'form' => $form,
-        ]);
     }
 
     /**

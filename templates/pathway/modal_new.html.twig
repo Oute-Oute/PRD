@@ -14,16 +14,15 @@
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
                             <label for='name'> Nom du parcours </label>
-                            <label for='duration'> Type du parcours </label>
                             <label for='target'> Nombre de fois par jour ciblé </label>
                         </div>
 
                         <div class="form-field-input flex-col">
                             <input type='text' name='pathwayname'>
-                            <input type='text' name='pathwaytype'>
                             <input type='text' name='target'>
                         </div>
                     </div> 
+
                     <fieldset id="fs-add-activity">
                         <legend>Choisissez les activités de votre parcours</legend>
                 
@@ -38,7 +37,6 @@
 
                             </select>
                         </div>
-
                         <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
 
                     </fieldset>

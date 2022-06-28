@@ -30,20 +30,17 @@ class MaterialResourceCategoryController extends AbstractController
      */
     public function new(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
     {
-        $materialResourceCategory = new MaterialResourceCategory();
-        $form = $this->createForm(MaterialResourceCategoryType::class, $materialResourceCategory);
-        $form->handleRequest($request);
+        if ($request->getMethod() === 'POST') {
+            $materialResourceCateg = new MaterialResourceCategory();
+            $param = $request->request->all();
+            $name = $param['name'];
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $materialResourceCategoryRepository->add($materialResourceCategory, true);
+            $materialResourceCateg->setCategoryname($name);
+            $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $materialResourceCategoryRepository->add($materialResourceCateg, true);
 
-            return $this->redirectToRoute('app_material_resource_category_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
         }
-
-        return $this->renderForm('material_resource_category/new.html.twig', [
-            'material_resource_category' => $materialResourceCategory,
-            'form' => $form,
-        ]);
     }
 
     /**

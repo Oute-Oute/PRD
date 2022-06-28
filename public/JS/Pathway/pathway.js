@@ -41,8 +41,7 @@ function handleAddActivity() {
     
     div.appendChild(inputName)
     div.appendChild(inputDuration)
-    //div.appendChild(pActivityNumber)
-    //div.appendChild(select)
+
     let img = new Image();
     img.src = 'img/delete.svg'
     img.setAttribute('id','img-'+SELECT_ID)
@@ -63,12 +62,20 @@ function handleAddActivity() {
     // On l'affiche et on l'ajoute a la fin de la balise div select-container
     select.style.display = "block";
     let divAddActivity = document.getElementById('select-container')
-    var divclass = div.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
-    div.setAttribute('class', divclass + ' div-activity-'+SELECT_ID)
-    divAddActivity.appendChild(div)
+
+    let divcontainer = document.createElement('div')
+    //divcontainer.setAttribute('class', "title-container")
+    divcontainer.setAttribute('class', 'flex-row')
+    divcontainer.style.justifyContent = "center"
+    let pTitle = document.createElement("p")
+    pTitle.innerHTML = "Activité " + (SELECT_ID+1) + " : "
+    let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
+    divcontainer.setAttribute('class', divclass + ' div-activity-'+SELECT_ID)
+    divcontainer.appendChild(pTitle)
+    divcontainer.appendChild(div)
+    divAddActivity.appendChild(divcontainer)
 
     SELECT_ID++
-
 } 
 
 /** Permet de supprimer un select dans la liste déroulante */

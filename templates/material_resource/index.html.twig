@@ -2,10 +2,21 @@
 
 {% block title %}MaterialResource index{% endblock %}
 
-{% block body %}
-    <h1>MaterialResource index</h1>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+{% endblock %}
 
-    <table class="table">
+{% block javascripts %}
+    <script src="js/jquery-3.6.0.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+      <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
+{% endblock %}
+{% block body %}
+<div id="both-tables">
+
+    <h1>Liste des ressources matérielles</h1>
+    <button class ="btn-add" onclick="showNewMaterialModalForm()"> Ajouter une nouvelle ressource matérielle </button>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
@@ -21,8 +32,9 @@
                 <td>{{ material_resource.materialresourcename }}</td>
                 <td>{{ material_resource.available ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('app_material_resource_show', {'id': material_resource.id}) }}">show</a>
-                    <a href="{{ path('app_material_resource_edit', {'id': material_resource.id}) }}">edit</a>
+                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Infos</a>
+                   <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_edit', {'id': material_resource.id}) }}'">Éditer</a>
+                    {{ include('material_resource/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -33,5 +45,38 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_material_resource_new') }}">Create new</a>
+    <h1>Liste des catégories des ressources matérielles</h1>
+        <button class ="btn-add" onclick="showNewMaterialCategModalForm()"> Ajouter une nouvelle catégorie de ressource matérielle </button>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Categoryname</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for material_resource_category in material_resource_categories %}
+            <tr>
+                <td>{{ material_resource_category.id }}</td>
+                <td>{{ material_resource_category.categoryname }}</td>
+                <td>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Infos</a>
+                   <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_category_edit', {'id': material_resource_category.id}) }}'">Éditer</a>
+                    {{ include('material_resource_category/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Pas de catégorie de ressources matérielles créées !</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{ include ('material_resource/show.html') }}
+{{ include ('material_resource/new.html.twig') }}
+{{ include ('material_resource_category/new.html.twig') }}
+{{ include ('material_resource_category/show.html') }}
 {% endblock %}

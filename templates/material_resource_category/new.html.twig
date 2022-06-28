@@ -1,11 +1,24 @@
-{% extends 'base.html.twig' %}
+<!-- new-activity-modal -->
 
-{% block title %}New MaterialResourceCategory{% endblock %}
+<div class="modal" id="new-material-resource-category-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajouter la catégorie de la ressource matérielle <span id="show-title"></span></h2>
+            </div>
 
-{% block body %}
-    <h1>Create new MaterialResourceCategory</h1>
+            <form action="{{ path('app_material_resource_category_new') }}" method="POST">
+              <div class="modal-body">
+                  <div>
+                      <label for='name'> Nom </label>
+                      <input type='text' name='name'>
+                  </div>
+              <br>
+              <div class="modal-footer">
+                  <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+              </div>
+          </form>
+        </div>
+    </div>
+</div>
 
-    {{ include('material_resource_category/_form.html.twig') }}
-
-    <a href="{{ path('app_material_resource_category_index') }}">back to list</a>
-{% endblock %}
