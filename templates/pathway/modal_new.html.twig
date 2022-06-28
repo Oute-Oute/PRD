@@ -8,6 +8,8 @@
             </div>
             <form action="{{ path('PathwaysPost') }}" method="post">
                 <div class="modal-body">
+                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+                    <input style="display:none;" name="nbActivity" id="nbActivity">
                     <div class="form-field">
                         <label for='name'> Nom du parcours </label>
                         <input type='text' name='pathwayname'>
@@ -40,9 +42,8 @@
 
                     </fieldset>
                 </div>
-                <br>
                 <div class="modal-footer">
-                    <button type="button" class="btn-consult btn-secondary" onclick="hideNewModalForm()">Consulter les activités</button>
+                    <button type="button" class="btn-consult btn-secondary" onclick="hideNewModalForm()">Annuler</button>
                     <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
                 </div>
     	    </form>

@@ -1,20 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}Mon profil
+
+{% endblock %}
 
 {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/Profile.css') }}">
-{% endblock %} 
+	<link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/Profile.css') }}">
+{% endblock %}
 {% block javascripts %}
-<script type="text/javascript" src="{{ asset('JS/Profile.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('JS/Profile.js') }}"></script>
 {% endblock %}
 {% block body %}
-<div id = "edit-form">
-<div id = "container">
-    <h1 id="title">Mon profil</h1>
-    {{ include('user/_form.html.twig', {'button_label': 'Valider'}) }}
+	<form id="edit-form" method="post">
+		<div id="container">
+			<h1 id="title">Mon profil</h1>
 
-    </div>
-    </div>
-{% endblock %}
+			<div>
+				<input type="password" name="old_password" id="old_password" class="form-control"/>
+				<label>Ancien mot de passe</label>
+			</div>
+
+			<!-- Nouveau mot de passe -->
+			<div>
+				<input type="password" name="new_password" id="new_password" class="form-control"/>
+				<label>Nouveau mot de passe</label>
+			</div>
+
+			<!-- Confirmation mot de passe  -->
+			<div>
+				<input type="password" name="confirm_password" id="confirm_password" class="form-control"/>
+				<label>Confirmation mot de passe</label>
+			</div>
+
+			<!-- Submit button -->
+			<button type="submit" id="submit_button" class="btn btn-primary btn-block mb-4">Appliquer le changement</button>
+		</form>
+	</div>
+</div></div>{% endblock %}
