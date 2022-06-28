@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MaterialResource;
-use App\Form\MaterialResourceType;
+use App\Form\MaterialResource1Type;
 use App\Repository\MaterialResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,25 +30,22 @@ class MaterialResourceController extends AbstractController
      */
     public function new(Request $request, MaterialResourceRepository $materialResourceRepository): Response
     {
-        if ($request->getMethod() === 'POST') {
-            $materialResource = new MaterialResource();
-            $param = $request->request->all();
+        $materialResource = new MaterialResource();
+        $form = $this->createForm(MaterialResource1Type::class, $materialResource);
+        $form->handleRequest($request);
 
-            $name = $param['name'];
-            $availability = $param['availability'];
-            if($param['availability'] == 'dispo') {
-                $materialResource->setAvailable(true);
-            }
-            else {
-                $materialResource->setAvailable(false);
-            }
-            $materialResource->setMaterialresourcename($name);
-            $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
+        if ($form->isSubmitted() && $form->isValid()) {
             $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        return $this->renderForm('material_resource/new.html.twig', [
+            'material_resource' => $materialResource,
+            'form' => $form,
+        ]);
     }
+
     /**
      * @Route("/{id}", name="app_material_resource_show", methods={"GET"})
      */
@@ -64,13 +61,13 @@ class MaterialResourceController extends AbstractController
      */
     public function edit(Request $request, MaterialResource $materialResource, MaterialResourceRepository $materialResourceRepository): Response
     {
-        $form = $this->createForm(MaterialResourceType::class, $materialResource);
+        $form = $this->createForm(MaterialResource1Type::class, $materialResource);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('material_resource/edit.html.twig', [
@@ -84,15 +81,10 @@ class MaterialResourceController extends AbstractController
      */
     public function delete(Request $request, MaterialResource $materialResource, MaterialResourceRepository $materialResourceRepository): Response
     {
-        if($materialResource->isAvailable() == true) {
-            $materialResource->setAvailable(false);
-        }
-        else {
-            $materialResource->setAvailable(true);
+        if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
+            $materialResourceRepository->remove($materialResource, true);
         }
 
-    $materialResourceRepository->add($materialResource, true);
-    return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
-
+        return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
     }
 }

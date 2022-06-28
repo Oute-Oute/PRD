@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Form\HumanResourceType;
+use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\MaterialResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,13 +22,11 @@ class HumanResourceController extends AbstractController
      */
     public function index(HumanResourceRepository $humanResourceRepository): Response
     {
-        $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
-        $materialResources = $materialResourceRepository->findBy(['available' => true]);
-        //$materialResources = $materialResourceRepository->findBy(['available' => true]);
-        //dd($materialResources);
+        $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+        $humanResourceCategories = $humanResourceCategoryRepository->findAll();
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
-            'material_resources' => $materialResources
+            'human_resources_categories' => $humanResourceCategories
         ]);
     }
 

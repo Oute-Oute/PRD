@@ -1,33 +1,11 @@
-<!-- new-activity-modal -->
+{% extends 'base.html.twig' %}
 
-<div class="modal" id="new-material-resource-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Ajouter la ressource matérielle <span id="show-title"></span></h2>
-            </div>
+{% block title %}New MaterialResource{% endblock %}
 
-            <form action="{{ path('app_material_resource_new') }}" method="POST">
-              <div class="modal-body">
-                  <div>
-                      <label for='name'> Nom </label>
-                      <input type='text' name='name'>
-                  </div>
-                  <div>
-                     <input type="radio" id="dispo" name="availability" value="dispo" checked>
-                    <label for="dispo">Disponible</label>
-                    </div>
+{% block body %}
+    <h1>Create new MaterialResource</h1>
 
-                     <div>
-                    <input type="radio" id="indispo" name="availability" value="indispo">
-                    <label for="indispo">Indisponible</label>
-                    </div>
-              </div>
-              <br>
-              <div class="modal-footer">
-                  <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
-              </div>
-          </form>
-        </div>
-    </div>
-</div>
+    {{ include('material_resource/_form.html.twig') }}
+
+    <a href="{{ path('app_material_resource_index') }}">back to list</a>
+{% endblock %}

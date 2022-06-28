@@ -33,11 +33,16 @@ function showInfosModalHuman(resourceId, resourceName, resourceType) {
     $('#infos-human-resource-modal').modal("show");
 }
 
-function showInfosModalMaterial(resourceId, resourceName, resourceType) {
+function showInfosModalMaterial(resourceId, resourceName) {
     document.getElementById('material-resource-id').innerText = resourceId
     document.getElementById('material-resource-name').innerText = resourceName
-    document.getElementById('material-resource-available').innerText = resourceType
     $('#infos-material-resource-modal').modal("show");
+}
+
+function showInfosModalHumanCateg(humanResourceCategId, humaneResourceCategName) {
+    document.getElementById('human-resource-category-id').innerText = humanResourceCategId
+    document.getElementById('human-resource-category-name').innerText = humaneResourceCategName
+    $('#infos-human-resource-category-modal').modal("show");
 }
 
 function showNewHumanModalForm(){
@@ -46,6 +51,14 @@ function showNewHumanModalForm(){
 
 function showNewMaterialModalForm(){
     $('#new-material-resource-modal').modal("show");
+}
+
+function showNewHumanCategModalForm() {
+    $('#new-human-resource-category-modal').modal("show");
+}
+
+function showNewMaterialCategModalForm() {
+    $('#new-material-resource-category-modal').modal("show");
 }
 // #container-modal 
 // .modal-form             #form-add-activity
