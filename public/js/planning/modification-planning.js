@@ -72,8 +72,12 @@ function changePlanning(){
 function createCalendar(){
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " "); 
-    var resourcearray=JSON.parse(resources); 
+    var resourcearray=JSON.parse(document.getElementById('Humanresources').value.replaceAll("3aZt3r", " "));
+    var eventsarray=JSON.parse(document.getElementById('listeScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
+    console.log(eventsarray); 
+
+
+
     calendar = new FullCalendar.Calendar(calendarEl, 
         {
             //clé de la license pour utiliser la librairie à des fin non commerciale
@@ -113,19 +117,7 @@ function createCalendar(){
             resourceAreaWidth: '20%',
             resourceAreaHeaderContent: headerResources,
             resources: resourcearray,
-            events:[
-                {
-                 id: "1", 
-                 resourceId: "1", 
-                 start: "2022-06-24 12:00:00", 
-                 end: "2022-06-24 17:30:00", 
-                 title: "event 1",
-                 color:'rgb(255,255,0)',
-                 textColor:'#000',
-                 textFont:'Trebuchet MS'
-                }
-            ],
-            //à supprimer
+            events:eventsarray,
     
             //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
             eventClick: function(event, element) {
