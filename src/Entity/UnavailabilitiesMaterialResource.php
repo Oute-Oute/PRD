@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\IndisponibilitiesMaterialResourceRepository;
+use App\Repository\UnavailabilitiesMaterialResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=IndisponibilitiesMaterialResourceRepository::class)
+ * @ORM\Entity(repositoryClass=UnavailabilitiesMaterialResourceRepository::class)
  */
-class IndisponibilitiesMaterialResource
+class UnavailabilitiesMaterialResource
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class IndisponibilitiesMaterialResource
     private $materialresource;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Indisponibilities::class)
+     * @ORM\ManyToOne(targetEntity=Unavailabilities::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $indisponibilities;
+    private $unavailabilities;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class IndisponibilitiesMaterialResource
         return $this;
     }
 
-    public function getIndisponibilities(): ?Indisponibilities
+    public function getUnavailabilities(): ?Unavailabilities
     {
-        return $this->indisponibilities;
+        return $this->unavailabilities;
     }
 
-    public function setIndisponibilities(?Indisponibilities $indisponibilities): self
+    public function setUnavailabilities(?Unavailabilities $unavailabilities): self
     {
-        $this->indisponibilities = $indisponibilities;
+        $this->unavailabilities = $unavailabilities;
 
         return $this;
     }

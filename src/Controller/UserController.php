@@ -84,33 +84,38 @@ class UserController extends AbstractController
      */
     public function editProfile(Request $request, User $user, UserRepository $userRepository): Response
     {
+        // Temporaire 
+        $messageError = '';
+        $messageSucces = '';
 
-
+        //Récuperation des differents élements rentré dans le formulaire
         $password1 = $request->request->get('old_password');
         $password2 = $request->request->get('new_password');
         $password3 = $request->request->get('confirm_password');
 
+        //Affichage de la page 
         if ($password1 == null) {
-            return $this->renderForm('user/profile.html.twig');
-        } else {
-            //dd($user);
-            //dd($password1, $password2, $password3);
+            return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
+        }
+        // Si des information on été rentré, on test si le mot de passe 
+        // Puis si les nouveau mot de passe coincident
+        else {
             if (password_verify($password1, $user->getPassword())) {
                 if ($password2 === $password3) {
-                    //dd("ca marche plus ou moins");
 
                     $user->setPassword(password_hash($password2, PASSWORD_DEFAULT));
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($user);
                     $em->flush();
-
-                    return $this->renderForm('user/profile.html.twig');
+                    $messageSucces = "Modification effectué avec succès";
+                    return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
                 } else {
-                    dd("je suis complement stupide");
-                    return $this->renderForm('user/profile.html.twig');
+                    $messageError = "Les mot de passe ne sont pas identiques";
+                    return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
                 }
             } else {
-                return $this->renderForm('user/profile.html.twig');
+                $messageError = "Erreur mot de passe original";
+                return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
             }
         }
     }
