@@ -39,20 +39,13 @@ class HumanResourceController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
             $param = $request->request->all();
-
             $name = $param['name'];
-            $availability = $param['availability'];
-            if($param['availability'] == 'dispo') {
-                $humanResource->setAvailable(true);
-            }
-            else {
-                $humanResource->setAvailable(false);
-            }
+            $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
 
-            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources_humans', [], Response::HTTP_SEE_OTHER);
         }
     }
 
