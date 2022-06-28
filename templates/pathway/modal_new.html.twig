@@ -10,19 +10,20 @@
                 <div class="modal-body">
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
                     <input style="display:none;" name="nbActivity" id="nbActivity">
-                    <div class="form-field">
-                        <label for='name'> Nom du parcours </label>
-                        <input type='text' name='pathwayname'>
-                    </div>
-                    <div class="form-field">
-                        <label for='duration'> Type du parcours </label>
-                        <input type='text' name='pathwaytype'>
-                    </div>
-                    <div class="form-field">
-                        <label for='duration'> Nombre de fois par jour ciblé </label>
-                        <input type='text' name='target'>
-                    </div>
 
+                    <div class='flex-row'>
+                        <div class="form-field-label flex-col">
+                            <label for='name'> Nom du parcours </label>
+                            <label for='duration'> Type du parcours </label>
+                            <label for='target'> Nombre de fois par jour ciblé </label>
+                        </div>
+
+                        <div class="form-field-input flex-col">
+                            <input type='text' name='pathwayname'>
+                            <input type='text' name='pathwaytype'>
+                            <input type='text' name='target'>
+                        </div>
+                    </div> 
                     <fieldset id="fs-add-activity">
                         <legend>Choisissez les activités de votre parcours</legend>
                 

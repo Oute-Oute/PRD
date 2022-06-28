@@ -27,13 +27,23 @@ function handleAddActivity() {
     pActivityNumber.innerText =  (SELECT_ID+1) +' : ' 
     
     // Création d'une div pour afficher le numero de l'activité, le select et le bouton de suppression a côté
-    var div = document.createElement("div")
+    let div = document.createElement("div")
     div.setAttribute('class', 'form-field')
 
-
-    div.appendChild(pActivityNumber)
-    div.appendChild(select)
-    var img = new Image();
+    let inputName = document.createElement('input')
+    inputName.setAttribute('class', 'input-name')
+    inputName.setAttribute('placeholder', 'Nom')
+    let inputDuration = document.createElement('input')
+    inputDuration.setAttribute('class', 'input-duration')
+    inputDuration.setAttribute('placeholder', 'Durée (min)')
+    inputDuration.setAttribute('type', 'number')
+    inputDuration.setAttribute('min', '0')
+    
+    div.appendChild(inputName)
+    div.appendChild(inputDuration)
+    //div.appendChild(pActivityNumber)
+    //div.appendChild(select)
+    let img = new Image();
     img.src = 'img/delete.svg'
     img.setAttribute('id','img-'+SELECT_ID)
     img.setAttribute('onclick', 'deleteSelect(this.id)')
@@ -43,7 +53,6 @@ function handleAddActivity() {
     // On definit son id : select-1, select-2...
     select.setAttribute('id', 'select-'+SELECT_ID);
     select.setAttribute('name', 'activity-'+SELECT_ID);
-    SELECT_ID++
 
     // On ajoute les options du bon select dans celui que l'on vient de créer
     let len = selectSample.options.length
@@ -54,14 +63,27 @@ function handleAddActivity() {
     // On l'affiche et on l'ajoute a la fin de la balise div select-container
     select.style.display = "block";
     let divAddActivity = document.getElementById('select-container')
+    var divclass = div.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
+    div.setAttribute('class', divclass + ' div-activity-'+SELECT_ID)
     divAddActivity.appendChild(div)
+
+    SELECT_ID++
+
 } 
 
 /** Permet de supprimer un select dans la liste déroulante */
 function deleteSelect(id) {
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbActivity').value = NB_ACTIVITY
-    console.log(id)
+
+    // On récupère le numero de la div a supprimer  
+    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
+    id = id[id.length - 1] 
+    // On peut donc recuperer la div
+    let divToDelete = document.getElementsByClassName('div-activity-'+id)[0]
+    // puis la supprimer
+    let divAddActivity = document.getElementById('select-container')
+    divAddActivity.removeChild(divToDelete)
 }
 
 

@@ -8,7 +8,16 @@ body {
 h1#title {
     margin-bottom: 30px;
 }
-
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 .btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
     border : 2px solid #34EB67;
     margin-top : 10px;
@@ -115,18 +124,6 @@ div#conn-form div#container form {
     flex-direction : column;
 }
 
-
-input {
-    margin: 10px 10px;
-    height: 25px;
-}
-
-select {
-    height: 25px;
-    border-radius: 15px; 
-    min-width: 100px;
-    margin: 10px 0px; 
-}
 
 
 
