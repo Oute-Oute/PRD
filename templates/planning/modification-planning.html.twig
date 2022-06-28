@@ -24,7 +24,7 @@
       <div class="modal-header">
         <h2 class="modal-title">Modifier <span id="show-title"></span></h2>
       </div>
-        <form method="post" action="/ModificationPlanning">
+        <form method="get" action="/ModificationPlanning">
             <div class="modal-body">
                 <input name="form" type="hidden" value="modify">
                 <input id="id" name="id" type="hidden">
@@ -33,7 +33,7 @@
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" id="new-start" name="start" required>
+                    <input class="input-field" type="datetime-local" id="new-start" name="date" required>
                 </div>
 
                 <div class="modal-footer">
@@ -101,8 +101,9 @@
 </div>
 
     <input type=hidden id="date" value="<?php echo $$_GET['date']; ?>"/>
-    <input type=hidden id="resources" value='{{listeResourcesJSON.content}}'/>
-  
+    <input type=hidden id="Humanresources" value='{{listeHumanResourcesJSON.content}}'/>
+    <input type=hidden id="listeScheduledActivitiesJSON" value='{{listeScheduledActivitiesJSON.content}}'/>
+
 
     <!-- affichage du haut de la page -->
 
