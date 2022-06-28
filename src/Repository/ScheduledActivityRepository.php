@@ -41,7 +41,7 @@ class ScheduledActivityRepository extends ServiceEntityRepository
     }
 
     public function findSchedulerActivitiesByDate($TodayDate)
-    {   echo $TodayDate; 
+    {   
         $qb= $this->createQueryBuilder('s'); 
         $qb->select('s'); 
         $qb->where(
