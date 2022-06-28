@@ -69,7 +69,7 @@ class ModificationPlanningController extends AbstractController
         foreach($resources as $resource){
             $resourcesArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $resource->getId())),
-                'title'=>(str_replace(" ", "3aZt3r", $resource->getName())),
+                'title'=>(str_replace(" ", "3aZt3r", $resource->getHumanresourcename())),
             ); 
         }   
         //Conversion des données ressources en json
@@ -94,20 +94,16 @@ class ModificationPlanningController extends AbstractController
     }
 
     public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR){
-        $TodayDate="'%";
+        $TodayDate="%";
         $TodayDate .=(substr($_GET['date'],0,10)); 
         $TodayDate=$TodayDate; 
-        $TodayDate .="%'";
+        $TodayDate .="%";
         
         
         $scheduledActivities=$SAR->findSchedulerActivitiesByDate($TodayDate); 
-            foreach($scheduledActivities as $sc){
-                echo 'alo'; 
-            }
-        dd($scheduledActivities); 
         $scheduledActivitiesArray=array();  
         foreach($scheduledActivities as $scheduledActivity){
-            $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HRSA")->findBy(array('idHumanresource',$scheduledActivity->getId())); 
+            $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HRSA")->findBy((['id'=>$scheduledActivity->getId()])); 
             $scheduledActivitiesHumanResourcesArray=array(); 
             foreach($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource){
                 array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource); 
@@ -115,11 +111,11 @@ class ModificationPlanningController extends AbstractController
             
             $scheduledActivitiesArray[]=array(
                 'id'=>$scheduledActivity->getId(), 
-                'title'=>$scheduledActivity->Activity->GetActivityName(),
-                'startDate'=>$scheduledActivity->getStartDDate(),
+                'title'=>$scheduledActivity->getActivity()->GetActivityName(),
+                'startDate'=>$scheduledActivity->getStartDate(),
                 'endDate'=>$scheduledActivity->getEndDate(),
                 'resourceIds'=>$scheduledActivitiesHumanResourcesArray,
-                'PatientName'=>$scheduledActivity->Patient->getName()
+                'PatientLastName'=>$scheduledActivity->getPatient()->getLastname()
             );
         }
         $scheduledActivitiesArrayJson= new JsonResponse($scheduledActivitiesArray); 

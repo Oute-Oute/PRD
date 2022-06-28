@@ -54,11 +54,7 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        // Methode GET
-        return $this->renderForm('activity/new.html.twig', [
-            'activity' => $activity,
-            'form' => $form,
-        ]);
+        ;
     }
 
     /**
@@ -106,10 +102,7 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('app_activity_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('activity/edit.html.twig', [
-            'activity' => $activity,
-            'form' => $form,
-        ]);
+        ;
     }
 
     /**

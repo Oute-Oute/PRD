@@ -34,20 +34,27 @@ class HumanResourceController extends AbstractController
      */
     public function new(Request $request, HumanResourceRepository $humanResourceRepository): Response
     {
-        $humanResource = new HumanResource();
-        $form = $this->createForm(HumanResourceType::class, $humanResource);
-        $form->handleRequest($request);
-        $param = $request->request->all();
-        if ($form->isSubmitted() && $form->isValid()) {
+        
+        if ($request->getMethod() === 'POST') {
+            $humanResource = new HumanResource();
+            $param = $request->request->all();
+
+            $name = $param['name'];
+            $availability = $param['availability'];
+            if($param['availability'] == 'dispo') {
+                $humanResource->setAvailable(true);
+            }
+            else {
+                $humanResource->setAvailable(false);
+            }
+            $humanResource->setHumanresourcename($name);
+            $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
 
-            return $this->redirectToRoute('app_human_resource_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('human_resource/new.html.twig', [
-            'human_resource' => $humanResource,
-            'form' => $form,
-        ]);
+       
     }
 
     /**
@@ -71,7 +78,7 @@ class HumanResourceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $humanResourceRepository->add($humanResource, true);
 
-            return $this->redirectToRoute('app_human_resource_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('human_resource/edit.html.twig', [
@@ -89,6 +96,6 @@ class HumanResourceController extends AbstractController
             $humanResourceRepository->remove($humanResource, true);
         }
 
-        return $this->redirectToRoute('app_human_resource_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
     }
 }
