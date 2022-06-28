@@ -8,13 +8,14 @@ function $_GET(param) {
 			vars[key] = value !== undefined ? value : '';
 		}
 	);
-
+    
 	if ( param ) {
 		return vars[param] ? vars[param] : null;	
 	}
 	return vars;
 }
-var dateStr=($_GET('date'))
+var dateStr=($_GET('date')).replaceAll('%3A',':'); 
+console.log(dateStr); 
 var date=new Date(dateStr);
 document.addEventListener('DOMContentLoaded', function() 
 {

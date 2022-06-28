@@ -15,7 +15,6 @@
 {% endblock %}
 
 {% block body %}
-  
 <!-- modify-planning-modal -->
 
 <div class="modal" id="modify-planning-modal">
@@ -87,7 +86,8 @@
 
           <div id="select-container-date" class="input-container onWhite">
             <label>Date de début du parcours : </label>
-              <input class="input-field" type="datetime-local" id="start" name="start" value="{{datetoday}}" required>
+              echo '{{datetoday}}'; 
+              <input class="input-field" type="date" id="start" name="start" value={{datetoday}} required>
           </div>
 
             <div class="modal-footer">
