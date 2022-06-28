@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ACHR;
+use App\Entity\ActivityMaterialResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ACHR>
+ * @extends ServiceEntityRepository<ActivityMaterialResource>
  *
- * @method ACHR|null find($id, $lockMode = null, $lockVersion = null)
- * @method ACHR|null findOneBy(array $criteria, array $orderBy = null)
- * @method ACHR[]    findAll()
- * @method ACHR[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ActivityMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ActivityMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ActivityMaterialResource[]    findAll()
+ * @method ActivityMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ACHRRepository extends ServiceEntityRepository
+class ActivityMaterialResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ACHR::class);
+        parent::__construct($registry, ActivityMaterialResource::class);
     }
 
-    public function add(ACHR $entity, bool $flush = false): void
+    public function add(ActivityMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ACHRRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ACHR $entity, bool $flush = false): void
+    public function remove(ActivityMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ACHRRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ACHR[] Returns an array of ACHR objects
+//     * @return ActivityMaterialResource[] Returns an array of ActivityMaterialResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ACHRRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ACHR
+//    public function findOneBySomeField($value): ?ActivityMaterialResource
 //    {
 //        return $this->createQueryBuilder('a')
 //            ->andWhere('a.exampleField = :val')

@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\IMR;
+use App\Entity\IndisponibilitiesHumanResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<IMR>
+ * @extends ServiceEntityRepository<IndisponibilitiesHumanResource>
  *
- * @method IMR|null find($id, $lockMode = null, $lockVersion = null)
- * @method IMR|null findOneBy(array $criteria, array $orderBy = null)
- * @method IMR[]    findAll()
- * @method IMR[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method IndisponibilitiesHumanResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method IndisponibilitiesHumanResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method IndisponibilitiesHumanResource[]    findAll()
+ * @method IndisponibilitiesHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IMRRepository extends ServiceEntityRepository
+class IndisponibilitiesHumanResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, IMR::class);
+        parent::__construct($registry, IndisponibilitiesHumanResource::class);
     }
 
-    public function add(IMR $entity, bool $flush = false): void
+    public function add(IndisponibilitiesHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class IMRRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(IMR $entity, bool $flush = false): void
+    public function remove(IndisponibilitiesHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class IMRRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return IMR[] Returns an array of IMR objects
+//     * @return IndisponibilitiesHumanResource[] Returns an array of IndisponibilitiesHumanResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class IMRRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?IMR
+//    public function findOneBySomeField($value): ?IndisponibilitiesHumanResource
 //    {
 //        return $this->createQueryBuilder('i')
 //            ->andWhere('i.exampleField = :val')

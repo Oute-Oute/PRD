@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CategoryHumanResource;
+use App\Entity\CategoryOfHumanResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CategoryHumanResource>
+ * @extends ServiceEntityRepository<CategoryOfHumanResource>
  *
- * @method CategoryHumanResource|null find($id, $lockMode = null, $lockVersion = null)
- * @method CategoryHumanResource|null findOneBy(array $criteria, array $orderBy = null)
- * @method CategoryHumanResource[]    findAll()
- * @method CategoryHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CategoryOfHumanResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CategoryOfHumanResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CategoryOfHumanResource[]    findAll()
+ * @method CategoryOfHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CategoryHumanResourceRepository extends ServiceEntityRepository
+class CategoryOfHumanResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CategoryHumanResource::class);
+        parent::__construct($registry, CategoryOfHumanResource::class);
     }
 
-    public function add(CategoryHumanResource $entity, bool $flush = false): void
+    public function add(CategoryOfHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CategoryHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CategoryHumanResource $entity, bool $flush = false): void
+    public function remove(CategoryOfHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CategoryHumanResourceRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CategoryHumanResource[] Returns an array of CategoryHumanResource objects
+//     * @return CategoryOfHumanResource[] Returns an array of CategoryOfHumanResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CategoryHumanResourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CategoryHumanResource
+//    public function findOneBySomeField($value): ?CategoryOfHumanResource
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

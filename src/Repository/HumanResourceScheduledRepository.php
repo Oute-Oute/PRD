@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\HRSA;
+use App\Entity\HumanResourceScheduled;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<HRSA>
+ * @extends ServiceEntityRepository<HumanResourceScheduled>
  *
- * @method HRSA|null find($id, $lockMode = null, $lockVersion = null)
- * @method HRSA|null findOneBy(array $criteria, array $orderBy = null)
- * @method HRSA[]    findAll()
- * @method HRSA[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method HumanResourceScheduled|null find($id, $lockMode = null, $lockVersion = null)
+ * @method HumanResourceScheduled|null findOneBy(array $criteria, array $orderBy = null)
+ * @method HumanResourceScheduled[]    findAll()
+ * @method HumanResourceScheduled[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class HRSARepository extends ServiceEntityRepository
+class HumanResourceScheduledRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, HRSA::class);
+        parent::__construct($registry, HumanResourceScheduled::class);
     }
 
-    public function add(HRSA $entity, bool $flush = false): void
+    public function add(HumanResourceScheduled $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class HRSARepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(HRSA $entity, bool $flush = false): void
+    public function remove(HumanResourceScheduled $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class HRSARepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return HRSA[] Returns an array of HRSA objects
+//     * @return HumanResourceScheduled[] Returns an array of HumanResourceScheduled objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class HRSARepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?HRSA
+//    public function findOneBySomeField($value): ?HumanResourceScheduled
 //    {
 //        return $this->createQueryBuilder('h')
 //            ->andWhere('h.exampleField = :val')

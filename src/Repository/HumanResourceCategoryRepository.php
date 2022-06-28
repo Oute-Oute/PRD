@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\HRI;
+use App\Entity\HumanResourceCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<HRI>
+ * @extends ServiceEntityRepository<HumanResourceCategory>
  *
- * @method HRI|null find($id, $lockMode = null, $lockVersion = null)
- * @method HRI|null findOneBy(array $criteria, array $orderBy = null)
- * @method HRI[]    findAll()
- * @method HRI[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method HumanResourceCategory|null find($id, $lockMode = null, $lockVersion = null)
+ * @method HumanResourceCategory|null findOneBy(array $criteria, array $orderBy = null)
+ * @method HumanResourceCategory[]    findAll()
+ * @method HumanResourceCategory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class HRIRepository extends ServiceEntityRepository
+class HumanResourceCategoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, HRI::class);
+        parent::__construct($registry, HumanResourceCategory::class);
     }
 
-    public function add(HRI $entity, bool $flush = false): void
+    public function add(HumanResourceCategory $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class HRIRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(HRI $entity, bool $flush = false): void
+    public function remove(HumanResourceCategory $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class HRIRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return HRI[] Returns an array of HRI objects
+//     * @return HumanResourceCategory[] Returns an array of HumanResourceCategory objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class HRIRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?HRI
+//    public function findOneBySomeField($value): ?HumanResourceCategory
 //    {
 //        return $this->createQueryBuilder('h')
 //            ->andWhere('h.exampleField = :val')

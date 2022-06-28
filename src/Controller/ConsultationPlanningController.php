@@ -214,10 +214,13 @@ class ConsultationPlanningController extends AbstractController
 
     public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine){
         $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
+        $activities=$doctrine->getRepository("App\Entity\Activity")->findAll();
+        $activityArray=array();
         $scheduledActivitiesArray=array(); 
         foreach($scheduledActivities as $scheduledActivity){
-            $id=$scheduledActivity->getId();
-            $id="patient_".$id;
+            $patientId=$scheduledActivity->getPatient()->getId();
+            $patientId="patient_".$patientId;
+            $patientName=$scheduledActivity->getPatient()->getLastname();
             $start=$scheduledActivity->getStartDate();
             $start=$start->format('Y-m-d H:i:s');
             $start=str_replace(" ", "T", $start);
@@ -229,7 +232,8 @@ class ConsultationPlanningController extends AbstractController
                 'start'=>$start,
                 'end'=>$end,
                 'title'=>($scheduledActivity->getActivity()->getActivityname()),
-                'resourceId'=>$id,
+                'resourceId'=>$patientId,
+                'patient'=>$patientName,
                 
             ); 
         }   
@@ -243,7 +247,7 @@ class ConsultationPlanningController extends AbstractController
         $materialResourceArray=array(); 
         foreach($materialResources as $materialResource){
             $idmr=$materialResource->getId();
-            $idmr="mr_".$idmr;
+            $idmr="material_".$idmr;
             $materialResourceArray[]=array(
                 'id' =>$idmr,
                 'title'=>($materialResource->getMaterialResourcename()),
@@ -262,7 +266,7 @@ class ConsultationPlanningController extends AbstractController
         $humanResourceArray=array(); 
         foreach($humanResources as $humanResource){
             $idhr=$humanResource->getId();
-            $idhr="hr_".$idhr;
+            $idhr="human_".$idhr;
             $humanResourceArray[]=array(
                 'id' =>$idhr,
                 'title'=>($humanResource->getHumanResourcename()),

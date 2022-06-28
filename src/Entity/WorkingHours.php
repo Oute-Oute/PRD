@@ -18,14 +18,19 @@ class WorkingHours
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="time")
      */
-    private $startdatetime;
+    private $starttime;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="time")
      */
-    private $enddatetime;
+    private $endtime;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $dayweek;
 
     public function getId(): ?int
     {
@@ -38,26 +43,26 @@ class WorkingHours
      */
     private $humanresource;
 
-    public function getStartdatetime(): ?\DateTimeInterface
+    public function getStarttime(): ?\DateTimeInterface
     {
-        return $this->startdatetime;
+        return $this->starttime;
     }
 
-    public function setStartdatetime(\DateTimeInterface $startdatetime): self
+    public function setStarttime(\DateTimeInterface $starttime): self
     {
-        $this->startdatetime = $startdatetime;
+        $this->starttime = $starttime;
 
         return $this;
     }
 
-    public function getEnddatetime(): ?\DateTimeInterface
+    public function getEndtime(): ?\DateTimeInterface
     {
-        return $this->enddatetime;
+        return $this->endtime;
     }
 
-    public function setEnddatetime(\DateTimeInterface $enddatetime): self
+    public function setEndtime(\DateTimeInterface $endtime): self
     {
-        $this->enddatetime = $enddatetime;
+        $this->endtime = $endtime;
 
         return $this;
     }
@@ -70,6 +75,18 @@ class WorkingHours
     public function setHumanresource(?HumanResource $humanresource): self
     {
         $this->humanresource = $humanresource;
+
+        return $this;
+    }
+
+    public function getDayweek(): ?int
+    {
+        return $this->dayweek;
+    }
+
+    public function setDayweek(int $dayweek): self
+    {
+        $this->dayweek = $dayweek;
 
         return $this;
     }

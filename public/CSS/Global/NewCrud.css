@@ -1,20 +1,4 @@
 
-/* surcharge de la classe de bootstrap */
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    align-items: self-start;
-}
-
-/* classe représentant un champ de formulaire*/
-div.form-field {
-    display : flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-
 fieldset#fs-add-activity {
     display: flex;
     flex-direction: column;
@@ -23,6 +7,7 @@ fieldset#fs-add-activity {
     overflow-y: scroll;
     margin: 15px 0px; 
     padding: 5px;
+    width: 100%;
 }
 /* bouton pour ajouter des activités au parcours */
 fieldset#fs-add-activity button#btn-add-activity {
@@ -41,10 +26,61 @@ fieldset#fs-add-activity button#btn-add-activity:hover {
     box-shadow: 0px 0px 5px black;
 }
 
+fieldset#fs-add-pathway {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 400px;
+    overflow-y: scroll;
+    margin: 15px 0px; 
+    padding: 5px;
+}
 
+fieldset#fs-add-pathway button#btn-add-pathway {
+    background: #404040;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+    margin-top: 5px;
+}
+fieldset#fs-add-pathway button#btn-add-pathway:hover {
+    box-shadow: 0px 0px 5px black;
+}
+/* classe représentant un champ de formulaire*/
+div.form-field {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    margin: 10px 10px; 
+}
+
+div.form-field .input-name {
+    height:35px;
+    margin: 0;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border: transparent;
+    border-right: 1px lightgray solid;
+}
+
+div.form-field .input-duration {
+    height:35px;
+    border: transparent;
+    margin-left: 1px;
+    border-right: 1px lightgray solid;
+}
 
 /* texte dans un champ de formulaire */
 div.form-field p {
+    border-right: 1px solid lightgray;
     margin: 0;
 }
  /* image (delete) */
@@ -52,18 +88,25 @@ div.form-field img{
     width:20px;
     cursor: pointer;
 }
-div.form-field input {
+div.form-field-input input {
     height: 25px;
+    margin: 10px 10px;
+}
+div.form-field-input {
+    justify-content: space-evenly;
+}
+div.form-field-label {
+    justify-content: space-evenly;
 }
 
 div.form-field select {
     height: 35px;
     border-radius: 15px; 
     min-width: 300px;
-    margin-right: 15px;
-    margin-left: 15px; 
+   /* margin: 10px 15px;*/
     padding-left: 15px;
 }
+
 
 
 

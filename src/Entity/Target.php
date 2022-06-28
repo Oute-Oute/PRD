@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\PPRepository;
+use App\Repository\TargetRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=PPRepository::class)
+ * @ORM\Entity(repositoryClass=TargetRepository::class)
  */
-class PP
+class Target
 {
     /**
      * @ORM\Id
@@ -18,10 +18,14 @@ class PP
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Patient::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $patient;
+    private $target;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $dayweek;
 
     /**
      * @ORM\ManyToOne(targetEntity=Pathway::class)
@@ -34,14 +38,26 @@ class PP
         return $this->id;
     }
 
-    public function getPatient(): ?Patient
+    public function getTarget(): ?int
     {
-        return $this->patient;
+        return $this->target;
     }
 
-    public function setPatient(?Patient $patient): self
+    public function setTarget(int $target): self
     {
-        $this->patient = $patient;
+        $this->target = $target;
+
+        return $this;
+    }
+
+    public function getDayweek(): ?int
+    {
+        return $this->dayweek;
+    }
+
+    public function setDayweek(int $dayweek): self
+    {
+        $this->dayweek = $dayweek;
 
         return $this;
     }

@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\MRSARepository;
+use App\Repository\CategoryOfMaterialResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=MRSARepository::class)
+ * @ORM\Entity(repositoryClass=CategoryOfMaterialResourceRepository::class)
  */
-class MRSA
+class CategoryOfMaterialResource
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class MRSA
     private $materialresource;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
+     * @ORM\ManyToOne(targetEntity=MaterialResourceCategory::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $scheduledactivity;
+    private $materialresourcecategory;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class MRSA
         return $this;
     }
 
-    public function getScheduledactivity(): ?ScheduledActivity
+    public function getMaterialresourcecategory(): ?MaterialResourceCategory
     {
-        return $this->scheduledactivity;
+        return $this->materialresourcecategory;
     }
 
-    public function setScheduledactivity(?ScheduledActivity $scheduledactivity): self
+    public function setMaterialresourcecategory(?MaterialResourceCategory $materialresourcecategory): self
     {
-        $this->scheduledactivity = $scheduledactivity;
+        $this->materialresourcecategory = $materialresourcecategory;
 
         return $this;
     }

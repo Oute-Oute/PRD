@@ -27,12 +27,6 @@ class MaterialResource
      */
     private $available;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CategoryMaterialResource::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $categorymaterialresource;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -58,18 +52,6 @@ class MaterialResource
     public function setAvailable(bool $available): self
     {
         $this->available = $available;
-
-        return $this;
-    }
-
-    public function getCategorymaterialresource(): ?CategoryMaterialResource
-    {
-        return $this->categorymaterialresource;
-    }
-
-    public function setCategorymaterialresource(?CategoryMaterialResource $categorymaterialresource): self
-    {
-        $this->categorymaterialresource = $categorymaterialresource;
 
         return $this;
     }

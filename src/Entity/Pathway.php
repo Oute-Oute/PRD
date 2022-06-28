@@ -18,35 +18,18 @@ class Pathway
     private $id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $target;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $pathwayname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean")
      */
-    private $pathwaytype;
+    private $available;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTarget(): ?int
-    {
-        return $this->target;
-    }
-
-    public function setTarget(?int $target): self
-    {
-        $this->target = $target;
-
-        return $this;
     }
 
     public function getPathwayname(): ?string
@@ -61,14 +44,26 @@ class Pathway
         return $this;
     }
 
-    public function getPathwaytype(): ?string
+    public function isAvailable(): ?bool
     {
-        return $this->pathwaytype;
+        return $this->available;
     }
 
-    public function setPathwaytype(string $pathwaytype): self
+    public function setAvailable(bool $available): self
     {
-        $this->pathwaytype = $pathwaytype;
+        $this->available = $available;
+
+        return $this;
+    }
+
+    public function getPathway(): ?Pathway
+    {
+        return $this->pathway;
+    }
+
+    public function setPathway(?Pathway $pathway): self
+    {
+        $this->pathway = $pathway;
 
         return $this;
     }

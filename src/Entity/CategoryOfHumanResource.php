@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CHRRepository;
+use App\Repository\CategoryOfHumanResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CHRRepository::class)
+ * @ORM\Entity(repositoryClass=CategoryOfHumanResourceRepository::class)
  */
-class CHR
+class CategoryOfHumanResource
 {
     /**
      * @ORM\Id
@@ -24,10 +24,10 @@ class CHR
     private $humanresource;
 
     /**
-     * @ORM\ManyToOne(targetEntity=CategoryHumanResource::class)
+     * @ORM\ManyToOne(targetEntity=HumanResourceCategory::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $categoryhumanresource;
+    private $humanresourcecategory;
 
     public function getId(): ?int
     {
@@ -46,14 +46,14 @@ class CHR
         return $this;
     }
 
-    public function getCategoryhumanresource(): ?CategoryHumanResource
+    public function getHumanresourcecategory(): ?HumanResourceCategory
     {
-        return $this->categoryhumanresource;
+        return $this->humanresourcecategory;
     }
 
-    public function setCategoryhumanresource(?CategoryHumanResource $categoryhumanresource): self
+    public function setHumanresourcecategory(?HumanResourceCategory $humanresourcecategory): self
     {
-        $this->categoryhumanresource = $categoryhumanresource;
+        $this->humanresourcecategory = $humanresourcecategory;
 
         return $this;
     }

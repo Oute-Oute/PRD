@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CategoryMaterialResource;
+use App\Entity\CategoryOfMaterialResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CategoryMaterialResource>
+ * @extends ServiceEntityRepository<CategoryOfMaterialResource>
  *
- * @method CategoryMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
- * @method CategoryMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
- * @method CategoryMaterialResource[]    findAll()
- * @method CategoryMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CategoryOfMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CategoryOfMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CategoryOfMaterialResource[]    findAll()
+ * @method CategoryOfMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CategoryMaterialResourceRepository extends ServiceEntityRepository
+class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CategoryMaterialResource::class);
+        parent::__construct($registry, CategoryOfMaterialResource::class);
     }
 
-    public function add(CategoryMaterialResource $entity, bool $flush = false): void
+    public function add(CategoryOfMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CategoryMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CategoryMaterialResource $entity, bool $flush = false): void
+    public function remove(CategoryOfMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CategoryMaterialResourceRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CategoryMaterialResource[] Returns an array of CategoryMaterialResource objects
+//     * @return CategoryOfMaterialResource[] Returns an array of CategoryOfMaterialResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CategoryMaterialResourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CategoryMaterialResource
+//    public function findOneBySomeField($value): ?CategoryOfMaterialResource
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
