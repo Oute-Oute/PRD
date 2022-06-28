@@ -60,4 +60,35 @@
 		</div>
 	</div>
 </div>
+
+
+
+<div class="modal" id="modify-planning-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Evenement <span id="show-title"></span></h2>
+      </div>
+        <form method="post" action="/ModificationPlanning">
+            <div class="modal-body">
+                <input name="form" type="hidden" value="modify">
+                <input id="id" name="id" type="hidden">
+                <input id="length" name="length" type="hidden">
+                <input id="title" name="title" type="hidden">
+
+                <label>Horaires de l'activité : </label>
+                <div class="input-container onWhite">
+                    <input class="input-field" type="datetime-local" id="start" name="start" disabled>
+					<input class="input-field" type="datetime-local" id="end" name="end" disabled>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    
+                </div>
+            </div>
+	    </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

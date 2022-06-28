@@ -94,7 +94,6 @@ function createCalendar(resources){
   //var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
   //var resourcearray=JSON.parse(resources); 
   var patientsarray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
-  console.log(patientsarray)
   var calendarEl = document.getElementById('calendar');
 
   calendar=new FullCalendar.Calendar(calendarEl, 
