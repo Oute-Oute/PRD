@@ -107,7 +107,9 @@ div.form-field select {
     padding-left: 15px;
 }
 
-
+p {
+    margin-top: auto;
+}
 
 
 /*

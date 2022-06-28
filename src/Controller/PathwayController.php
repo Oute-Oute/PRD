@@ -43,8 +43,8 @@ class PathwayController extends AbstractController
             // On crée l'objet parcours
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
-            $pathway->setPathwaytype($param['pathwaytype']);
-            $pathway->setTarget($param['target']);
+            //$pathway->setPathwaytype($param['pathwaytype']);
+            //$pathway->setTarget($param['target']);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
