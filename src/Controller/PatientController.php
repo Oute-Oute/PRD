@@ -7,16 +7,11 @@ use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * @Route("/patient")
- */
 class PatientController extends AbstractController
 {
-    public function patientGet(PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
+    public function patientGet(PatientRepository $patientRepository): Response
     {
         return $this->render('patient/index.html.twig', [
             'patients' => $patientRepository->findAll()
@@ -25,7 +20,7 @@ class PatientController extends AbstractController
 
     public function patientPost(Request $request, PatientRepository $patientRepository): Response
     {
-        // Méthode POST pour ajouter un circuit
+        // Méthode POST pour ajouter un patient
         if ($request->getMethod() === 'POST' ) {
             // On recupere toutes les données de la requete
             $param = $request->request->all();

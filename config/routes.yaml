@@ -54,6 +54,16 @@ PatientEdit:
   controller: App\Controller\PatientController::patientEdit
   methods: [POST]
 
+Appointment:
+  path: /appointments
+  controller: App\Controller\AppointmentController::appointmentGet
+  methods: [GET]
+
+AppointmentPost:
+  path: /appointments
+  controller: App\Controller\AppointmentController::appointmentPost
+  methods: [POST]
+
 app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index
