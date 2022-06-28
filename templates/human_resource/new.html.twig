@@ -6,7 +6,6 @@
             <div class="modal-header">
                 <h2 class="modal-title">Ajouter la ressource humaine <span id="show-title"></span></h2>
             </div>
-
             <form action="{{ path('app_human_resource_new') }}" method="POST">
               <div class="modal-body">
                   <div>
@@ -14,12 +13,16 @@
                       <input type='text' name='name'>
                   </div>
                   <div>
-                      <input type="checkbox" id="availability" name="availability" value="availability">
-                      <label for="availability">La ressource est-elle disponible actuellement ?</label>
-                  </div>
+                     <input type="radio" id="dispo" name="availability" value="dispo" checked>
+                    <label for="dispo">Disponible</label>
+                    </div>
+
+                     <div>
+                    <input type="radio" id="indispo" name="availability" value="indispo">
+                    <label for="indispo">Indisponible</label>
+                    </div>
               </div>
               <br>
-
               <div class="modal-footer">
                   <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
               </div>
