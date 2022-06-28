@@ -45,6 +45,13 @@ function showInfosModalHumanCateg(humanResourceCategId, humaneResourceCategName)
     $('#infos-human-resource-category-modal').modal("show");
 }
 
+function showInfosModalMaterialCateg(materialResourceCategId, materialResourceCategName) {
+
+    document.getElementById('material-resource-category-id').innerText = materialResourceCategId
+    document.getElementById('material-resource-category-name').innerText = materialResourceCategName
+    $('#infos-material-resource-category-modal').modal("show");
+}
+
 function showNewHumanModalForm(){
     $('#new-human-resource-modal').modal("show");
 }
