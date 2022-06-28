@@ -44,22 +44,6 @@ class PatientController extends AbstractController
             // ajout dans la bd 
             $patientRepository->add($patient, false);
 
-            $pathways = $this->getDoctrine()->getManager()->getRepository("App\Entity\Pathway")->findAll();
-            $pathwayPatientRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\PP");
-
-            $nbParcours = count($param) - 2;
-
-            for($numParcours = 0; $numParcours < $nbParcours; $numParcours++)
-            {
-                $str = 'parcours-';
-                $pathwayPatient = new PP();
-                $str .= $numParcours;
-                $numListe = $param[$str]-1;
-                $pathwayPatient->setPatient($patient);
-                $pathwayPatient->setPathway($pathways[$numListe]);
-                $pathwayPatientRepository->add($pathwayPatient, true);
-            }
-
             return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
         }
     }
@@ -83,13 +67,23 @@ class PatientController extends AbstractController
 
     public function patientDelete(Patient $patient, PatientRepository $patientRepository): Response
     {
-        $pathwayPatientRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\PP");
-        $pathwayPatients = $pathwayPatientRepository->findAll();
-        foreach($pathwayPatients as $pathwayPatient)
+        $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Appointment");
+        $appointments = $appointmentRepository->findAll();
+        foreach($appointments as $appointment)
         {
-            if($pathwayPatient->getPatient() == $patient)
+            if($appointment->getPatient() == $patient)
             {
-                $pathwayPatientRepository->remove($pathwayPatient, true);
+                $appointmentRepository->remove($appointment, true);
+            }
+        }
+
+        $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+        $appointments = $appointmentRepository->findAll();
+        foreach($appointments as $appointment)
+        {
+            if($appointment->getPatient() == $patient)
+            {
+                $appointmentRepository->remove($appointment, true);
             }
         }
 

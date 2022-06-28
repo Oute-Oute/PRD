@@ -66,24 +66,6 @@
                 <label for='firstname'> Prenom </label>
                 <input type='text' name='firstname'>
             </div>
-
-            <fieldset id="fs-add-pathway">
-                <label>Choisissez les parcours que votre patient peut suivre</label>
-                <div id="select-container"> 
-                    <select style="display:none;" class="select-pathway-sample" class="slct-add-pathway" > 
-
-                        {% for pathway in pathways %} 
-                            <option value="{{ pathway.id }}"> {{ pathway }} </option>
-                        {% else %}
-                            <p> Pas de parcours de créé ! </p>
-                        {% endfor %}
-
-                    </select>
-                </div>
-
-                <button type="button" id='btn-add-pathway' onclick="handleAddPathway()"> <b> Ajouter </b> </button> 
-
-            </fieldset>
             <br>
 
             <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
