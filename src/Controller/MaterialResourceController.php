@@ -84,10 +84,15 @@ class MaterialResourceController extends AbstractController
      */
     public function delete(Request $request, MaterialResource $materialResource, MaterialResourceRepository $materialResourceRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
-            $materialResourceRepository->remove($materialResource, true);
+        if($materialResource->isAvailable() == true) {
+            $materialResource->setAvailable(false);
+        }
+        else {
+            $materialResource->setAvailable(true);
         }
 
-        return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+    $materialResourceRepository->add($materialResource, true);
+    return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+
     }
 }

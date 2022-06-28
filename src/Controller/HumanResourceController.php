@@ -22,9 +22,11 @@ class HumanResourceController extends AbstractController
     public function index(HumanResourceRepository $humanResourceRepository): Response
     {
         $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
-        $materialResources = $materialResourceRepository->findAll();
+        $materialResources = $materialResourceRepository->findBy(['available' => true]);
+        //$materialResources = $materialResourceRepository->findBy(['available' => true]);
+        //dd($materialResources);
         return $this->render('human_resource/index.html.twig', [
-            'human_resources' => $humanResourceRepository->findAll(),
+            'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'material_resources' => $materialResources
         ]);
     }
@@ -53,8 +55,6 @@ class HumanResourceController extends AbstractController
 
             return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
         }
-
-       
     }
 
     /**
@@ -92,10 +92,14 @@ class HumanResourceController extends AbstractController
      */
     public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$humanResource->getId(), $request->request->get('_token'))) {
-            $humanResourceRepository->remove($humanResource, true);
-        }
+            if($humanResource->isAvailable() == true) {
+                $humanResource->setAvailable(false);
+            }
+            else {
+                $humanResource->setAvailable(true);
+            }
 
+        $humanResourceRepository->add($humanResource, true);
         return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
     }
 }
