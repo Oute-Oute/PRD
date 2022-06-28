@@ -35,25 +35,28 @@ class ModificationPlanningController extends AbstractController
         return $this->render('planning/modification-planning.html.twig', ['listepatients'=>$listePatients, 'listePathWaypatients' => $listePathWayPatients, 'listeHumanResourcesJSON'=>$listeHumanResourceJSON,'listHumanResources'=>$listHumanResources,'listMaterialResources'=>$listMaterialResources, 'datetoday' => $date_today,'listeScheduledActivitiesJSON'=>$listescheduledActivity ]);
     }
 
-    public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,ScheduledActivityRepository $SAR)
     {
+        echo 'alo'; 
         $form = $request->request->get('form');
         
-        dd($request);
+        
 
         if($form == 'modify')
         {
             $title = $request->request->get('title');
-            $start = $request->request->get('start');
+            $start = $request->request->get('date');
             $length = $request->request->get('length');
             $id = $request->request->get('id');
 
-            $repositoryPCR = $doctrine->getRepository('\App\Entity\PatientPathWayResource');
-            
+            $repositoryPCR = $doctrine->getRepository('\App\Entity\ScheduledActivity');
+            dd($title,$start,$length,$id); 
             if(isset($title) && isset($start) && isset($length) && isset($id)){
-                $PCR = $repositoryPCR->find($id);
+                $SA = $repositoryPCR->find($id);
                 $date_start = \DateTime::createFromFormat('Y-m-d H:i', str_replace("T", "", $start));
-                $PCR->setStartDateTime($date_start);
+                $SA->setStartdate($date_start);
+                $SA->setEnddate(strtotime($date_start)+$length*60); 
+                dd($SA->getendDate()); 
                 $entityManager->flush();
             }
         }
@@ -61,6 +64,10 @@ class ModificationPlanningController extends AbstractController
         {
             echo "</br>" . "j'ajoute" . "</br>";
         }
+
+        return $this->modificationPlanningGet($doctrine, $SAR); 
+
+
     }
 
     public function listHumanResourcesJSON(ManagerRegistry $doctrine){
