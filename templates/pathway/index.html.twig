@@ -30,7 +30,7 @@
             <tr>
                 <td>{{ pathway.id }}</td>
                 <td>{{ pathway.pathwayname }}</td>
-                <td>{{ pathway.pathwaytype }}</td>
+                {#<td>{{ pathway.pathwaytype }}</td>#}
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': pathway.id}) }}'">Infos</a>
                     

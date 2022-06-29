@@ -14,20 +14,18 @@
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
                             <label for='name'> Nom du parcours </label>
-                            <label for='target'> Nombre de fois par jour ciblé </label>
                         </div>
 
                         <div class="form-field-input flex-col">
-                            <input type='text' name='pathwayname'>
-                            <input type='text' name='target'>
+                            <input id='pathwayname' type='text' name='pathwayname'>
                         </div>
                     </div> 
 
                     <fieldset id="fs-add-activity">
                         <legend>Choisissez les activités de votre parcours</legend>
                 
-                        <div id="select-container"> 
-                            <select style="display:none;" class="select-activity-sample" class="slct-add-activity" > 
+                        <div id="activities-container"> 
+                            {#<select style="display:none;" class="select-activity-sample" class="slct-add-activity" > 
 
                                 {% for activity in activities %} 
                                     <option value="{{ activity.id }}"> {{ activity }} </option>
@@ -35,15 +33,17 @@
                                     <p> Pas d'activités créées ! </p>
                                 {% endfor %}
 
-                            </select>
+                            </select>#}
                         </div>
                         <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
 
                     </fieldset>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-consult btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+                    <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+                    <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+
                 </div>
     	    </form>
         </div>

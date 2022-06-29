@@ -15,6 +15,11 @@
 {% endblock %}
 
 {% block body %}
+<div class="container" id="divPopup" style="display: none;">
+  <p style="text-align:center;">Etes vous toujours en train d'effectuer des modifications ?<br><br></p>
+  <input type="button" value="Oui" onclick="closePopup()" class="btn-valide btn-secondary" style="float:right; margin-right:10px;" />
+</div>
+
 <!-- modify-planning-modal -->
 
 <div class="modal" id="modify-planning-modal">

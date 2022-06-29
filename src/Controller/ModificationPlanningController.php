@@ -123,9 +123,9 @@ class ModificationPlanningController extends AbstractController
             foreach($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource){
                 array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource->getHumanresource()->getId()); 
             }
-            $patientId=$scheduledActivity->getPatient()->getId();
+            $patientId=$scheduledActivity->getAppointment()->getPatient()->getId();
             $patientId="patient_".$patientId;
-            $patientName=$scheduledActivity->getPatient()->getLastname();
+            $patientName=$scheduledActivity->getAppointment()->getPatient()->getLastname();
             $start=$scheduledActivity->getStarttime();
             $day=$scheduledActivity->getDayscheduled();
             $day=$day->format('Y-m-d');
@@ -147,4 +147,21 @@ class ModificationPlanningController extends AbstractController
         $scheduledActivitiesArrayJson= new JsonResponse($scheduledActivitiesArray); 
         return $scheduledActivitiesArrayJson; 
     }
+
+    /*public function writeModifDB(Modification $modification, ModificationRepository $modificationRepository, ManagerRegistry $doctrine)
+    {
+       
+    }*/
+    
+
+    // A faire quand l'écriture dans la BDD de la modification sera implémentée
+    /*
+    public function ModificationDelete(Patient $patient, PatientRepository $patientRepository): Response
+    {
+        //suppression du patient dans la table Patient
+        $patientRepository->remove($patient, true);
+
+        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
+    }
+    */
 }
