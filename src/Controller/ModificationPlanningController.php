@@ -187,4 +187,21 @@ class ModificationPlanningController extends AbstractController
         }
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
+
+    /*public function writeModifDB(Modification $modification, ModificationRepository $modificationRepository, ManagerRegistry $doctrine)
+    {
+       
+    }*/
+    
+
+    // A faire quand l'écriture dans la BDD de la modification sera implémentée
+    /*
+    public function ModificationDelete(Patient $patient, PatientRepository $patientRepository): Response
+    {
+        //suppression du patient dans la table Patient
+        $patientRepository->remove($patient, true);
+
+        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
+    }
+    */
 }

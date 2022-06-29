@@ -27,7 +27,10 @@
 				<option value="rm">Ressources Matérielles</option>
 			</select>
 			<button id="filterbutton" onclick="filterShow()" class="btn-edit" title="Filtrer l'affichage">
-			<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg></button>
+				<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewbox="0 0 24 24" width="24px">
+					<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
+				</svg>
+			</button>
 			<div id="filterId" class="filter-container" style="display:none">
 				<div>
 					<input type="checkbox" id="scales" name="scales" checked>
@@ -38,55 +41,53 @@
 					<input type="checkbox" id="horns" name="horns">
 					<label for="horns">Manger</label>
 				</div>
-				</div>
-		
-
-		<div class="row">
-			<div class="col-md-6 mx-auto">
-				<div class="form-group">
-					<div class="datepicker date input-group" style="z-index:0">
-						<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{datetoday}}".str_replace('T12:00:00','')>
-					</div>
-				</div>
 			</div>
+			<div class="datepicker">
+				<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{datetoday}}" .str_replace('t12:00:00','')></input>
 		</div>
-    	<input type=hidden id="appointment" value='{{listeAppointmentJSON.content}}'/>
-		
-		<input type=hidden id="events" value='{{listeScheduledActivitiesJSON.content}}'/>
-		<div class="calendar-container">
-		<div id='calendar'></div>
+		<div class="date-button">
+			<button id="previousButton" class="btn-edit" onclick="PreviousDay()" title="Aller au jour d'avant">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+			</button>
+			<button class="btn-edit" onclick="Today()" title="Aller à aujourd'hui">Aujourd'hui</button>
+			<button id="previousButton" class="btn-edit" onclick="NextDay()" title="Aller au jour d'après">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+			</button>
+			<input type="hidden" id="appointment" value='{{listeAppointmentJSON.content}}'/>
+			<input type="hidden" id="events" value='{{listeScheduledActivitiesJSON.content}}'/>
+			<input type="hidden" id="material" value='{{listeMaterialResourceScheduledJSON.content}}'/>
+			<input type="hidden" id="human" value='{{listeHumanResourceScheduledJSON.content}}'/>
 		</div>
 	</div>
-</div>
 
 
+<div class="calendar-container">
+	<div id='calendar'></div>
+</div></div></div><div class="modal" id="modify-planning-modal"><div class="modal-dialog">
+<div class="modal-content">
+	<div class="modal-header">
+		<h2 class="modal-title">Evenement
+			<span id="show-title"></span>
+		</h2>
+	</div>
+	<form method="post" action="/ModificationPlanning">
+		<div class="modal-body">
+			<input name="form" type="hidden" value="modify">
+			<input id="id" name="id" type="hidden">
+			<input id="length" name="length" type="hidden">
+			<input id="title" name="title" type="hidden">
 
-<div class="modal" id="modify-planning-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Evenement <span id="show-title"></span></h2>
-      </div>
-        <form method="post" action="/ModificationPlanning">
-            <div class="modal-body">
-                <input name="form" type="hidden" value="modify">
-                <input id="id" name="id" type="hidden">
-                <input id="length" name="length" type="hidden">
-                <input id="title" name="title" type="hidden">
+			<label>Horaires de l'activité :
+			</label>
+			<div class="input-container onWhite">
+				<input class="input-field" type="datetime-local" id="start" name="start" disabled>
+				<input class="input-field" type="datetime-local" id="end" name="end" disabled>
+			</div>
 
-                <label>Horaires de l'activité : </label>
-                <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" id="start" name="start" disabled>
-					<input class="input-field" type="datetime-local" id="end" name="end" disabled>
-                </div>
+			<div class="modal-footer">
+				<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    
-                </div>
-            </div>
-	    </form>
-    </div>
-  </div>
-</div>
-{% endblock %}
+			</div>
+		</div>
+	</form>
+</div></div></div>{% endblock %}

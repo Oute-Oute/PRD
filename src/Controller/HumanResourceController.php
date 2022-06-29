@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\HumanResource;
+use App\Entity\CategoryOfHumanResource;
 use App\Form\HumanResourceType;
 use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
-use App\Repository\MaterialResourceRepository;
+use App\Repository\CategoryOfHumanResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +28,7 @@ class HumanResourceController extends AbstractController
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'human_resources_categories' => $humanResourceCategories
-        ]);
+        ]); 
     }
 
     /**
@@ -39,15 +40,37 @@ class HumanResourceController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
             $param = $request->request->all();
-            $name = $param['name'];
+            $name = $param['categoryname'];
             $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
+            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
 
-            return $this->redirectToRoute('index_resources_humans', [], Response::HTTP_SEE_OTHER);
+
+            // On récupère toutes les catégories
+            $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+            $categories = $categoryOfHumanResourceRepository->findAll();            
+
+            // On récupère le nombre de catégories
+            $nbCategory = $param['nbCategory'];
+
+
+            //$activityArray = array();
+
+
+            for($i = 0; $i < $nbCategory; $i++)
+            {
+                $linkCategRes = new CategoryOfHumanResource();      
+
+                $linkCategRes->setHumanresource($humanResource);
+                $linkCategRes->setHumanResourcecategory($humanResourceCategoryRepository->findById($param['select-'.$i])[0]);
+                $categoryOfHumanResourceRepository->add($linkCategRes, true);
+            }
+            return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
         }
-    }
+    
+}
 
     /**
      * @Route("/{id}", name="app_human_resource_show", methods={"GET"})

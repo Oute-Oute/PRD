@@ -1,3 +1,9 @@
+// Timeout pour afficher le popup (pour éviter une modif trop longue)
+var popupClicked = false;
+var modifAlertTime = 5000; // En millisecondes
+setTimeout(showPopup, modifAlertTime);
+setTimeout(deleteModifInDB, modifAlertTime+60000);
+
 var calendar;
 var headerResources="Ressources Matérielles";
 var dateStr=($_GET('date')).replaceAll('%3A',':'); 
@@ -160,4 +166,30 @@ function createCalendar(){
         //affiche le calendar
     calendar.gotoDate(date);
     calendar.render();
+}
+
+function showPopup() {
+    $("#divPopup").show();
+}
+
+function closePopup() {
+    $("#divPopup").hide();
+    popupClicked = true;
+    setTimeout(showPopup, modifAlertTime);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var userData = document.querySelector('.js-data');
+    var userId = userData.dataset.userId;
+});
+
+function deleteModifInDB(popupClicked){
+    if(popupClicked){
+        popupClicked = false;
+        setTimeout(deleteModifInDB, modifAlertTime);
+    }
+    else{
+        // Supprimer modif sur la BDD
+        
+    }
 }
