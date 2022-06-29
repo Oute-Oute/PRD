@@ -4,19 +4,48 @@
 
 {% endblock %}
 
+
 {% block stylesheets %}
 	<link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Profile.css') }}">
 {% endblock %}
 {% block javascripts %}
-	<script type="text/javascript" src="{{ asset('JS/Profile.js') }}"></script>
+	<script>
+
+		function handleChange1(e) {
+let pw1 = document.getElementById('new_password').value;
+let pw2 = document.getElementById('confirm_password').value;
+if (pw1 === pw2) {
+document.getElementById('MdpDifferent').style.display = 'none';
+document.getElementById('submit_button1').style.display = 'none';
+document.getElementById('submit_button2').style.display = 'flex';
+
+} else {
+document.getElementById('MdpDifferent').style.display = 'flex';
+document.getElementById('submit_button2').style.display = 'none';
+document.getElementById('submit_button1').style.display = 'flex';
+}
+}
+function handleChange2(e) {
+let pw1 = document.getElementById('new_password').value;
+let pw2 = document.getElementById('confirm_password').value;
+if (pw1 === pw2) {
+document.getElementById('MdpDifferent').style.display = 'none';
+document.getElementById('submit_button1').style.display = 'none';
+document.getElementById('submit_button2').style.display = 'flex';
+} else {
+document.getElementById('MdpDifferent').style.display = 'flex';
+document.getElementById('submit_button2').style.display = 'none';
+document.getElementById('submit_button1').style.display = 'flex';
+}
+
+}
+	</script>
 {% endblock %}
+
 {% block body %}
 	<form id="edit-form" method="post">
-
-
 		<div id="container">
-
 			<h1 id="title">Mon identifiant :
 				{{ app.user.userIdentifier }}</h1>
 			<div id="bloc">
@@ -24,31 +53,25 @@
 					<input type="password" name="old_password" id="old_password" class="form-control"/>
 					<label>Ancien mot de passe</label>
 				</div>
-
 				<!-- Nouveau mot de passe -->
 				<div>
-					<input type="password" name="new_password" id="new_password" class="form-control"/>
+					<input type="password" oninput="handleChange1()" name="new_password" id="new_password" class="form-control"/>
 					<label>Nouveau mot de passe</label>
 				</div>
 
 				<!-- Confirmation mot de passe  -->
 				<div>
-					<input type="password" name="confirm_password" id="confirm_password" class="form-control"/>
+					<input type="password" oninput="handleChange2()" name="confirm_password" id="confirm_password" class="form-control"/>
 					<label>Confirmation mot de passe</label>
 				</div>
 
-
-				<P1>{{messageError}}
-				</P1>
-				<P2>{{messageSucces}}
-				</P2>
-
-
 			</div>
 			<!-- Submit button -->
-			<button type="submit" id="submit_button" class="btn btn-primary btn-block mb-4">Appliquer le changement</button>
+			<button type="submit" id="submit_button1" disabled>Appliquer le changement</button>
+			<button type="submit" id="submit_button2">Appliquer le changement</button>
 
-		</div>
-	</form>
+			<p1 id="MdpDifferent">Vos nouveau mot de passe sont differents
+				<p1></div>
+			</form>
 
-</div></div>{% endblock %}
+		{% endblock %}

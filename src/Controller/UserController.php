@@ -84,7 +84,7 @@ class UserController extends AbstractController
      */
     public function editProfile(Request $request, User $user, UserRepository $userRepository): Response
     {
-        // Temporaire 
+        // Variable message  
         $messageError = '';
         $messageSucces = '';
 
@@ -103,6 +103,8 @@ class UserController extends AbstractController
             if (password_verify($password1, $user->getPassword())) {
                 if ($password2 === $password3) {
 
+
+                    //Succes et MAJ de la base de donnée
                     $user->setPassword(password_hash($password2, PASSWORD_DEFAULT));
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($user);
@@ -110,10 +112,13 @@ class UserController extends AbstractController
                     $messageSucces = "Modification effectué avec succès";
                     return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
                 } else {
+
+                    //Bon mot de passe mais les 2 suivant sont differents 
                     $messageError = "Les mot de passe ne sont pas identiques";
                     return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
                 }
             } else {
+                // Pas le bon mot de passe 
                 $messageError = "Erreur mot de passe original";
                 return $this->renderForm('user/profile.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
             }
