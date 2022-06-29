@@ -61,9 +61,9 @@
                 <td>{{ material_resource_category.id }}</td>
                 <td>{{ material_resource_category.categoryname }}</td>
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Infos</a>
+                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_category_edit', {'id': material_resource_category.id}) }}'">Éditer</a>
-                    {{ include('material_resource_category/_delete_form.html.twig') }}
+                   {{ include('material_resource_category/_delete_form.html.twig') }}
                 </td>
             </tr>
         {% else %}

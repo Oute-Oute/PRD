@@ -67,5 +67,23 @@ function showNewHumanCategModalForm() {
 function showNewMaterialCategModalForm() {
     $('#new-material-resource-category-modal').modal("show");
 }
+
+function handleAddHumanCategory() {
+
+    var select = document.createElement("SELECT");
+    select.setAttribute("id", "mySelect");
+    let categoriesContainer = document.getElementById('categories-container')
+    categoriesContainer.appendChild(select);
+
+    var items = ["Foo","Bar","Zoo"];
+    for(var i = 0;i<items.length;i++) {
+      var item = items[i];
+      var newOption = document.createElement("option");
+      newOption.setAttribute("value", item);
+      var textNode = document.createTextNode(item);
+      newOption.appendChild(textNode);
+      select.appendChild(newOption);
+    }
+}
 // #container-modal 
 // .modal-form             #form-add-activity
