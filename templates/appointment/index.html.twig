@@ -1,0 +1,187 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des rendez-vous{% endblock %}
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+        <script src="js/Appointment/appointment.js"></script>
+        <script src="js/jquery-3.6.0.js"></script>
+        <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+  
+        {% endblock %}
+        
+{% block body %}
+    <div id = "index-users">    
+    <h1 id="title">Liste des rendez-vous</h1>
+    <button type="button" class ="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Patient</th>
+                <th>Parcours</th>
+                <th>Jour du rendez-vous</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.id }}</td>
+                <td>{{ appointment.patient.lastname }} {{ appointment.patient.firstname }}</td>
+                <td>{{ appointment.pathway.pathwayname }}</td>
+                <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
+                <td>
+                    <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
+                    <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.id }}', '{{ appointment.pathway.id }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+                    <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
+                        <input type="hidden" name="appointment" value="{{ appointment.id }}">
+                        <button class="btn-delete btn-secondary">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Pas de rendez-vous créés !</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+<!-- add-appointment-modal -->
+
+<div class="modal" id="add-appointment-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter un rendez-vous</h2>
+      </div>
+      <form action="{{ path('AppointmentAdd') }}" method="post">
+        <div class="modal-body">
+            <div>
+                <label for='idpatient'> Patient </label>
+                <div id="select-container"> 
+                    <select class="select-patient-sample" name='idpatient'> 
+
+                        <option value="" selected disabled hidden> Selectionner le patient </option>
+                        {% for patient in patients %} 
+                            <option value="{{ patient.id }}"> {{ patient }} </option>
+                        {% else %}
+                            <p> Pas de patient créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='idpathway'> Parcours </label>
+                <div id="select-container"> 
+                    <select class="select-pathway-sample" name='idpathway'> 
+
+                        <option value="" selected disabled hidden> Selectionner le parcours </option>
+                        {% for pathway in pathways %} 
+                            <option value="{{ pathway.id }}"> {{ pathway }} </option>
+                        {% else %}
+                            <p> Pas de parcours créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='dayappointment'> Jour du rendez-vous </label>
+                <input type='date' name='dayappointment'>
+            </div>
+            </br>
+            <div>
+                <label for='earliestappointmenttime'> Heure d'arrivé au plus tôt </label>
+                <input type='time' name='earliestappointmenttime'>
+            </div>
+            </br>
+            <div>
+                <label for='latestappointmenttime'> Heure d'arrivé au plus tard </label>
+                <input type='time' name='latestappointmenttime'>
+            </div>
+            </br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Appointment') }}'">Consulter les patients</button>
+            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- edit-appointment-modal -->
+
+<div class="modal" id="edit-appointment-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier un rendez-vous</h2>
+      </div>
+      <form action="{{ path('AppointmentEdit') }}" method="post">
+        <div class="modal-body">
+            <div>
+                <input type="hidden" name="idappointment" id="idappointment">
+                <label for='idpatient'> Patient </label>
+                <div id="select-container"> 
+                    <select class="select-patient-sample" name='idpatient' id='idpatient'> 
+
+                        <option value="" selected disabled hidden> Selectionner le patient </option>
+                        {% for patient in patients %} 
+                            <option value="{{ patient.id }}"> {{ patient }} </option>
+                        {% else %}
+                            <p> Pas de patient créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='idpathway'> Parcours </label>
+                <div id="select-container"> 
+                    <select class="select-pathway-sample" name='idpathway' id='idpathway'> 
+
+                        <option value="" selected disabled hidden> Selectionner le parcours </option>
+                        {% for pathway in pathways %} 
+                            <option value="{{ pathway.id }}"> {{ pathway }} </option>
+                        {% else %}
+                            <p> Pas de parcours créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='dayappointment'> Jour du rendez-vous </label>
+                <input type='date' name='dayappointment' id='dayappointment'>
+            </div>
+            </br>
+            <div>
+                <label for='earliestappointmenttime'> Heure d'arrivé au plus tôt </label>
+                <input type='time' name='earliestappointmenttime' id='earliestappointmenttime'>
+            </div>
+            </br>
+            <div>
+                <label for='latestappointmenttime'> Heure d'arrivé au plus tard </label>
+                <input type='time' name='latestappointmenttime' id='latestappointmenttime'>
+            </div>
+            </br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Appointment') }}'">Consulter les patients</button>
+            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

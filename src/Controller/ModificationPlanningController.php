@@ -9,7 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ScheduledActivityRepository; 
+use App\Repository\ScheduledActivityRepository;
+use DateInterval;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Controller de la page modification du planning
@@ -19,44 +21,54 @@ class ModificationPlanningController extends AbstractController
     /**
      * Fonction pour l'affichage de la page modification planning par la méthode GET
      */
-    public function modificationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
+    public function modificationPlanningGet(Request $request,ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
+        if(isset($_GET['form'])){
+            $this->modificationPlanninEventsgGet($request,$doctrine,$entityManager); 
+        }
         $date_today = $_GET["date"];
         //Récupération des données nécessaires
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
         $listMaterialResources=$doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available'=>true]); 
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $listePathWayPatients = $doctrine->getRepository("App\Entity\PP")->findAll();
+        $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
 
-        $listescheduledActivity=$this->listScehduledActivity($doctrine,$SAR);  
+        $listescheduledActivity= $this->listScehduledActivity($doctrine,$SAR);  
         
         $listeHumanResourceJSON=$this->listHumanResourcesJSON($doctrine); 
 
-        return $this->render('planning/modification-planning.html.twig', ['listepatients'=>$listePatients, 'listePathWaypatients' => $listePathWayPatients, 'listeHumanResourcesJSON'=>$listeHumanResourceJSON,'listHumanResources'=>$listHumanResources,'listMaterialResources'=>$listMaterialResources, 'datetoday' => $date_today,'listeScheduledActivitiesJSON'=>$listescheduledActivity ]);
+    return $this->render('planning/modification-planning.html.twig', ['listepatients'=>$listePatients, 'listePathWaypatients' => $listePathWayPatients, 'listeHumanResourcesJSON'=>$listeHumanResourceJSON,'listHumanResources'=>$listHumanResources,'listMaterialResources'=>$listMaterialResources, 'datetoday' => $date_today,'listeScheduledActivitiesJSON'=>$listescheduledActivity ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,ScheduledActivityRepository $SAR)
     {
-        echo 'alo'; 
-        $form = $request->request->get('form');
-        
         
 
+    }
+
+    public function modificationPlanninEventsgGet(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    {
+        $form = $request->get('form'); 
+        
         if($form == 'modify')
         {
-            $title = $request->request->get('title');
-            $start = $request->request->get('date');
-            $length = $request->request->get('length');
-            $id = $request->request->get('id');
+            $title = $request->get('title');
+            $start = $request->get('date');
+            $start .=':00'; 
+            $length='PT'; 
+            $length .= $request->get('length');
+            $length .='M'; 
+            $id = $request->get('id');
 
             $repositoryPCR = $doctrine->getRepository('\App\Entity\ScheduledActivity');
-            dd($title,$start,$length,$id); 
             if(isset($title) && isset($start) && isset($length) && isset($id)){
-                $SA = $repositoryPCR->find($id);
-                $date_start = \DateTime::createFromFormat('Y-m-d H:i', str_replace("T", "", $start));
-                $SA->setStartdate($date_start);
-                $SA->setEnddate(strtotime($date_start)+$length*60); 
-                dd($SA->getendDate()); 
+                $SA = $repositoryPCR->find($id);    
+                $start_time = \DateTime::createFromFormat('H:i:s',substr($start,11));
+                $SA->setStarttime($start_time);
+                $length=new DateInterval($length); 
+                $end_time= \DateTime::createFromFormat('H:i:s', substr($start,11));
+                $end_time=date_add($end_time,$length); 
+                $SA->setEndtime($end_time);
                 $entityManager->flush();
             }
         }
@@ -65,10 +77,8 @@ class ModificationPlanningController extends AbstractController
             echo "</br>" . "j'ajoute" . "</br>";
         }
 
-        return $this->modificationPlanningGet($doctrine, $SAR); 
-
-
     }
+
 
     public function listHumanResourcesJSON(ManagerRegistry $doctrine){
         $resources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();  
@@ -101,35 +111,38 @@ class ModificationPlanningController extends AbstractController
     }
 
     public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR){
-        $TodayDate="%";
-        $TodayDate .=(substr($_GET['date'],0,10)); 
+        $TodayDate=substr($_GET['date'],0,10); 
         $TodayDate=$TodayDate; 
-        $TodayDate .="%";
         
         
         $scheduledActivities=$SAR->findSchedulerActivitiesByDate($TodayDate); 
         $scheduledActivitiesArray=array();  
         foreach($scheduledActivities as $scheduledActivity){
-            $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HRSA")->findBy((['scheduledactivity'=>$scheduledActivity->getId()]));  
+            $scheduledActivitiesHumanResources=$doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity'=>$scheduledActivity->getId()]));  
             $scheduledActivitiesHumanResourcesArray=array(); 
             foreach($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource){
                 array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource->getHumanresource()->getId()); 
             }
-                $id=$scheduledActivity->getId();
-                $id="patient_".$id;
-                $start=$scheduledActivity->getStartDate();
-                $start=$start->format('Y-m-d H:i:s');
-                $start=str_replace(" ", "T", $start);
-                $end=$scheduledActivity->getEndDate();
-                $end=$end->format('Y-m-d H:i:s');
-                $end=str_replace(" ", "T", $end);
-                $scheduledActivitiesArray[]=array(
-                    'id' =>(str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
-                    'start'=>$start,
-                    'end'=>$end,
-                    'title'=>($scheduledActivity->getActivity()->getActivityname()),
-                    'resourceIds'=>$scheduledActivitiesHumanResourcesArray,
-            );
+            $patientId=$scheduledActivity->getAppointment()->getPatient()->getId();
+            $patientId="patient_".$patientId;
+            $patientName=$scheduledActivity->getAppointment()->getPatient()->getLastname();
+            $start=$scheduledActivity->getStarttime();
+            $day=$scheduledActivity->getDayscheduled();
+            $day=$day->format('Y-m-d');
+            $start=$start->format('H:i:s');
+            $start=$day."T".$start;
+            $end=$scheduledActivity->getEndtime();
+            $end=$end->format('H:i:s');
+            $end=$day."T".$end;
+            $scheduledActivitiesArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
+                'start'=>$start,
+                'end'=>$end,
+                'title'=>($scheduledActivity->getActivity()->getActivityname()),
+                'resourceIds'=>$scheduledActivitiesHumanResourcesArray,
+                'patient'=>$patientName,
+                
+            ); 
         }
         $scheduledActivitiesArrayJson= new JsonResponse($scheduledActivitiesArray); 
         return $scheduledActivitiesArrayJson; 

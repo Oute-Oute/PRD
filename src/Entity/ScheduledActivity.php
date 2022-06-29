@@ -24,10 +24,10 @@ class ScheduledActivity
     private $activity;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Patient::class)
+     * @ORM\ManyToOne(targetEntity=Appointment::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $patient;
+    private $appointment;
 
     /**
      * @ORM\Column(type="time")
@@ -61,14 +61,14 @@ class ScheduledActivity
         return $this;
     }
 
-    public function getPatient(): ?Patient
+    public function getAppointment(): ?Appointment
     {
-        return $this->patient;
+        return $this->appointment;
     }
 
-    public function setPatient(?Patient $patient): self
+    public function setAppointment(?Appointment $appointment): self
     {
-        $this->patient = $patient;
+        $this->appointment = $appointment;
 
         return $this;
     }

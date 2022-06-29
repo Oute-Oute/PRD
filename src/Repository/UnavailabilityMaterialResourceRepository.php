@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\UnavailabilitiesHumanResource;
+use App\Entity\UnavailabilityMaterialResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UnavailabilitiesHumanResource>
+ * @extends ServiceEntityRepository<UnavailabilityMaterialResource>
  *
- * @method UnavailabilitiesHumanResource|null find($id, $lockMode = null, $lockVersion = null)
- * @method UnavailabilitiesHumanResource|null findOneBy(array $criteria, array $orderBy = null)
- * @method UnavailabilitiesHumanResource[]    findAll()
- * @method UnavailabilitiesHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UnavailabilityMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method UnavailabilityMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UnavailabilityMaterialResource[]    findAll()
+ * @method UnavailabilityMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UnavailabilitiesHumanResourceRepository extends ServiceEntityRepository
+class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UnavailabilitiesHumanResource::class);
+        parent::__construct($registry, UnavailabilityMaterialResource::class);
     }
 
-    public function add(UnavailabilitiesHumanResource $entity, bool $flush = false): void
+    public function add(UnavailabilityMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class UnavailabilitiesHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(UnavailabilitiesHumanResource $entity, bool $flush = false): void
+    public function remove(UnavailabilityMaterialResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class UnavailabilitiesHumanResourceRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return UnavailabilitiesHumanResource[] Returns an array of UnavailabilitiesHumanResource objects
+//     * @return UnavailabilityMaterialResource[] Returns an array of UnavailabilityMaterialResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class UnavailabilitiesHumanResourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?UnavailabilitiesHumanResource
+//    public function findOneBySomeField($value): ?UnavailabilityMaterialResource
 //    {
 //        return $this->createQueryBuilder('u')
 //            ->andWhere('u.exampleField = :val')
