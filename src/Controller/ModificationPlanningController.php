@@ -124,8 +124,6 @@ class ModificationPlanningController extends AbstractController
                 array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource->getHumanresource()->getId()); 
             }
             $patientId=$scheduledActivity->getAppointment()->getPatient()->getId();
-            $patientId="patient_".$patientId;
-            $patientName=$scheduledActivity->getAppointment()->getPatient()->getLastname();
             $start=$scheduledActivity->getStarttime();
             $day=$scheduledActivity->getDayscheduled();
             $day=$day->format('Y-m-d');
@@ -134,17 +132,59 @@ class ModificationPlanningController extends AbstractController
             $end=$scheduledActivity->getEndtime();
             $end=$end->format('H:i:s');
             $end=$day."T".$end;
+            $idAppointment = $scheduledActivity->getAppointment()->getId();
+            $idActivity = $scheduledActivity->getActivity()->getId();
             $scheduledActivitiesArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
                 'start'=>$start,
                 'end'=>$end,
                 'title'=>($scheduledActivity->getActivity()->getActivityname()),
                 'resourceIds'=>$scheduledActivitiesHumanResourcesArray,
-                'patient'=>$patientName,
-                
+                'patient'=>$patientId,
+                'appointment'=>$idAppointment,
+                'activity'=>$idActivity,
             ); 
         }
         $scheduledActivitiesArrayJson= new JsonResponse($scheduledActivitiesArray); 
         return $scheduledActivitiesArrayJson; 
+    }
+
+    public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository)
+    {
+        $listeEvent = json_decode($request->request->get("events"));
+        $date = $request->request->get("validation-date");
+
+        $listeScheduledActivity = $scheduledActivityRepository->findBy(['dayscheduled' => \DateTime::createFromFormat('Y-m-d', substr($date,0,10))]);
+        foreach($listeEvent as $event)
+        {
+            $scheduledActivityExist = false;
+
+            foreach($listeScheduledActivity as $scheduledActivity)
+            {
+                if($scheduledActivity->getId() == $event->id)
+                {
+                    $scheduledActivityExist = true;
+
+                    $scheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event->start,11,16)));
+                    $scheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event->end,11,16)));
+                    $scheduledActivity->setDayscheduled(\DateTime::createFromFormat('Y-m-d', substr($event->start,0,10)));
+
+                    $scheduledActivityRepository->add($scheduledActivity, true);
+                }
+            }
+
+            if($scheduledActivityExist == false)
+            {
+                $scheduledActivity = new ScheduledActivity();
+                $scheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event->start,11,16)));
+                $scheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event->end,11,16)));
+                $scheduledActivity->setDayscheduled(\DateTime::createFromFormat('Y-m-d', substr($event->start,0,10)));
+                $scheduledActivity->setActivity($event->extendedProps->activity);
+                $scheduledActivity->setAppointment($event->extendedProps->appointment);
+
+                $scheduledActivityRepository->add($scheduledActivity, true);
+            }
+        }
+        return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
 }

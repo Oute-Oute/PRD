@@ -15,6 +15,8 @@
 {% endblock %}
 
 {% block body %}
+
+
 <!-- modify-planning-modal -->
 
 <div class="modal" id="modify-planning-modal">
@@ -23,7 +25,6 @@
       <div class="modal-header">
         <h2 class="modal-title">Modifier <span id="show-title"></span></h2>
       </div>
-        <form method="get" action="/ModificationPlanning">
             <div class="modal-body">
                 <input name="form" type="hidden" value="modify">
                 <input id="id" name="id" type="hidden">
@@ -32,7 +33,7 @@
 
                 <label>Date de début de l'activité : </label>
                 <div class="input-container onWhite">
-                    <input class="input-field" type="datetime-local" id="new-start" name="date" required>
+                    <input class="input-field" type="datetime-local" id="new-start" name="new-start" required>
                 </div>
 
                 <div class="modal-footer">
@@ -40,7 +41,6 @@
                     <button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
                 </div>
             </div>
-	    </form>
     </div>
   </div>
 </div>
@@ -137,7 +137,13 @@
       </div>
       <div class="CRUD-right">
       <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
-      <button type="button" class="btn-valide btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Valider</button>
+      <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
+      <form method="post" action="{{ path('ModificationPlanningValidation') }}">
+        <input type=hidden id='events' name="events"/>
+        <input type=hidden id='validation-date' name="validation-date"/>
+        <input type=hidden id='listscheduled' name="listscheduled"/>
+        <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
+      </form>
       </div>
       </div>
 <div class="calendar-container">

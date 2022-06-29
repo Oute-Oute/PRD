@@ -34,6 +34,11 @@ ModificationPlanningPost:
   controller: App\Controller\ModificationPlanningController::modificationPlanningPost
   methods: [POST]
 
+ModificationPlanningValidation:
+  path: /ModificationPlanningValidation
+  controller: App\Controller\ModificationPlanningController::modificationPlanningValidation
+  methods: [POST]
+
 Patients:
   path: /patients
   controller: App\Controller\PatientController::patientGet

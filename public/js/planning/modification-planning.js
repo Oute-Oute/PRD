@@ -1,5 +1,7 @@
 var calendar;
 var headerResources="Ressources Matérielles";
+var dateStr=($_GET('date')).replaceAll('%3A',':'); 
+var date=new Date(dateStr);
 function $_GET(param) {
 	var vars = {};
 	window.location.href.replace( location.hash, '' ).replace( 
@@ -14,9 +16,9 @@ function $_GET(param) {
 	}
 	return vars;
 }
-var dateStr=($_GET('date')).replaceAll('%3A',':'); 
+
 console.log(dateStr); 
-var date=new Date(dateStr);
+
 document.addEventListener('DOMContentLoaded', function() 
 {
     
@@ -27,12 +29,24 @@ document.addEventListener('DOMContentLoaded', function()
     
 });
 
+function unshowDiv(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
 //function permettant la modification de l'activité
 function modifyEvent(){
-    document.getElementById("succ").innerHTML="Modification de l'activité réussie";
-    document.getElementById("success").style.display="block";
-    unshowDiv('modify-planning-modal');
-    setTimeout(()=>{document.getElementById("success").style.display="none";},6000);
+    var id = document.getElementById('id').value;
+    var event = calendar.getEventById(id)
+    console.log(event.start);
+    var start = document.getElementById('new-start').value;
+    event.setStart(start);
+    console.log(event);
+    $('#modify-planning-modal').modal('toggle');
+}
+
+function setEvents(){
+    document.getElementById('events').value = JSON.stringify(calendar.getEvents());
+    document.getElementById('validation-date').value = $_GET('date');
 }
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours

@@ -60,6 +60,7 @@ class AppointmentController extends AbstractController
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['id' => $param['idpatient']]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
+        dd($param['earliestappointmenttime']);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
