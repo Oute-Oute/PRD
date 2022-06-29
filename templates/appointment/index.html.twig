@@ -31,9 +31,14 @@
                 <td>{{ appointment.id }}</td>
                 <td>{{ appointment.patient.lastname }} {{ appointment.patient.firstname }}</td>
                 <td>{{ appointment.pathway.pathwayname }}</td>
-                <td>{{ appointment.dayappointment|date("Y/m/d") }}</td>
+                <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
                 <td>
-                    
+                    <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
+                    <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.id }}', '{{ appointment.pathway.id }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+                    <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
+                        <input type="hidden" name="appointment" value="{{ appointment.id }}">
+                        <button class="btn-delete btn-secondary">Supprimer</button>
+                    </form>
                 </td>
             </tr>
             {% else %}
@@ -44,6 +49,7 @@
         </tbody>
     </table>
 
+
 <!-- add-appointment-modal -->
 
 <div class="modal" id="add-appointment-modal">
@@ -52,13 +58,82 @@
       <div class="modal-header">
         <h2 class="modal-title">Ajouter un rendez-vous</h2>
       </div>
-      <form action="{{ path('AppointmentPost') }}" method="post">
+      <form action="{{ path('AppointmentAdd') }}" method="post">
         <div class="modal-body">
             <div>
                 <label for='idpatient'> Patient </label>
                 <div id="select-container"> 
+                    <select class="select-patient-sample" name='idpatient'> 
+
+                        <option value="" selected disabled hidden> Selectionner le patient </option>
+                        {% for patient in patients %} 
+                            <option value="{{ patient.id }}"> {{ patient }} </option>
+                        {% else %}
+                            <p> Pas de patient créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='idpathway'> Parcours </label>
+                <div id="select-container"> 
+                    <select class="select-pathway-sample" name='idpathway'> 
+
+                        <option value="" selected disabled hidden> Selectionner le parcours </option>
+                        {% for pathway in pathways %} 
+                            <option value="{{ pathway.id }}"> {{ pathway }} </option>
+                        {% else %}
+                            <p> Pas de parcours créées ! </p>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div>
+                <label for='dayappointment'> Jour du rendez-vous </label>
+                <input type='date' name='dayappointment'>
+            </div>
+            </br>
+            <div>
+                <label for='earliestappointmenttime'> Heure d'arrivé au plus tôt </label>
+                <input type='time' name='earliestappointmenttime'>
+            </div>
+            </br>
+            <div>
+                <label for='latestappointmenttime'> Heure d'arrivé au plus tard </label>
+                <input type='time' name='latestappointmenttime'>
+            </div>
+            </br>
+
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Appointment') }}'">Consulter les patients</button>
+            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- edit-appointment-modal -->
+
+<div class="modal" id="edit-appointment-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier un rendez-vous</h2>
+      </div>
+      <form action="{{ path('AppointmentEdit') }}" method="post">
+        <div class="modal-body">
+            <div>
+                <input type="hidden" name="idappointment" id="idappointment">
+                <label for='idpatient'> Patient </label>
+                <div id="select-container"> 
                     <select class="select-patient-sample" name='idpatient' id='idpatient'> 
 
+                        <option value="" selected disabled hidden> Selectionner le patient </option>
                         {% for patient in patients %} 
                             <option value="{{ patient.id }}"> {{ patient }} </option>
                         {% else %}
@@ -74,6 +149,7 @@
                 <div id="select-container"> 
                     <select class="select-pathway-sample" name='idpathway' id='idpathway'> 
 
+                        <option value="" selected disabled hidden> Selectionner le parcours </option>
                         {% for pathway in pathways %} 
                             <option value="{{ pathway.id }}"> {{ pathway }} </option>
                         {% else %}
@@ -101,7 +177,7 @@
             </br>
 
             <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Appointment') }}'">Consulter les patients</button>
-            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
         </div>
 	    </form>
     </div>

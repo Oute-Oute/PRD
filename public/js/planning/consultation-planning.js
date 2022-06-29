@@ -73,7 +73,7 @@ function filterShow(){
 
 function createCalendar(resources){
   
-    var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
+    //var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
@@ -107,7 +107,6 @@ function createCalendar(resources){
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
         resources: resourcesArray,
-        events: events,
 
 
         eventClick: function(event) {
