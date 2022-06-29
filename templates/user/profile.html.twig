@@ -12,24 +12,20 @@
 {% block javascripts %}
 	<script>
 
-		function handleChange1(e) {
-let pw1 = document.getElementById('new_password').value;
-let pw2 = document.getElementById('confirm_password').value;
-if (pw1 === pw2) {
-document.getElementById('MdpDifferent').style.display = 'none';
-document.getElementById('submit_button1').style.display = 'none';
-document.getElementById('submit_button2').style.display = 'flex';
 
-} else {
-document.getElementById('MdpDifferent').style.display = 'flex';
+		function inputGestion(e) {
+let oldpassword = document.getElementById('old_password').value;
+let newPassword1 = document.getElementById('new_password').value;
+let newPassword2 = document.getElementById('confirm_password').value;
+
+if (oldpassword == "" || newPassword1 == "" || newPassword2 == "") {
+document.getElementById('MdpDifferent').style.display = 'none';
+document.getElementById('Pasdemotdepasse').style.display = 'flex';
 document.getElementById('submit_button2').style.display = 'none';
 document.getElementById('submit_button1').style.display = 'flex';
-}
-}
-function handleChange2(e) {
-let pw1 = document.getElementById('new_password').value;
-let pw2 = document.getElementById('confirm_password').value;
-if (pw1 === pw2) {
+} else {
+document.getElementById('Pasdemotdepasse').style.display = 'none';
+if (newPassword1 === newPassword2) {
 document.getElementById('MdpDifferent').style.display = 'none';
 document.getElementById('submit_button1').style.display = 'none';
 document.getElementById('submit_button2').style.display = 'flex';
@@ -38,7 +34,7 @@ document.getElementById('MdpDifferent').style.display = 'flex';
 document.getElementById('submit_button2').style.display = 'none';
 document.getElementById('submit_button1').style.display = 'flex';
 }
-
+}
 }
 	</script>
 {% endblock %}
@@ -48,20 +44,30 @@ document.getElementById('submit_button1').style.display = 'flex';
 		<div id="container">
 			<h1 id="title">Mon identifiant :
 				{{ app.user.userIdentifier }}</h1>
+			<p2 id="MessageSucces">
+				{{messageSucces}}
+			</p2>
+			<p3 id="MessageError">
+				{{messageError}}
+			</p3>
+
 			<div id="bloc">
+				<p4 id="Pasdemotdepasse">Veuillez renseignez les differents champs
+				</p4>
+
 				<div>
-					<input type="password" name="old_password" id="old_password" class="form-control"/>
+					<input type="password" oninput="inputGestion()" name="old_password" id="old_password" class="form-control"/>
 					<label>Ancien mot de passe</label>
 				</div>
 				<!-- Nouveau mot de passe -->
 				<div>
-					<input type="password" oninput="handleChange1()" name="new_password" id="new_password" class="form-control"/>
+					<input type="password" oninput="inputGestion()" name="new_password" id="new_password" class="form-control"/>
 					<label>Nouveau mot de passe</label>
 				</div>
 
 				<!-- Confirmation mot de passe  -->
 				<div>
-					<input type="password" oninput="handleChange2()" name="confirm_password" id="confirm_password" class="form-control"/>
+					<input type="password" oninput="inputGestion()" name="confirm_password" id="confirm_password" class="form-control"/>
 					<label>Confirmation mot de passe</label>
 				</div>
 
@@ -70,8 +76,13 @@ document.getElementById('submit_button1').style.display = 'flex';
 			<button type="submit" id="submit_button1" disabled>Appliquer le changement</button>
 			<button type="submit" id="submit_button2">Appliquer le changement</button>
 
-			<p1 id="MdpDifferent">Vos nouveau mot de passe sont differents
-				<p1></div>
-			</form>
 
-		{% endblock %}
+			<p1 id="MdpDifferent">Vos nouveau mot de passe sont differents
+			</p1>
+
+		</div>
+
+
+	</form>
+
+{% endblock %}

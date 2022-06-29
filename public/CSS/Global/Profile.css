@@ -33,6 +33,13 @@ P1{
 P2{
     color: green;
 }
+P3{
+    color: red;
+}
+P4{
+    color: red;
+    display: none;
+}
 
 button#submit_button1 {
     height : 10vh;
@@ -47,8 +54,7 @@ button#submit_button2 {
     width : 100%;
     font-size: larger; 
     align-items: center;
-    justify-content: center;
-    
+    justify-content: center;    
     display: none;    
     
 }
