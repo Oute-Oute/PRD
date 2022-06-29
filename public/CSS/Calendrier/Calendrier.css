@@ -19,7 +19,9 @@ div#container {
 }
 
 .flex{
-  display: flow;
+  margin-left : 5%;
+  width: 100%;
+  display: block;
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
@@ -75,15 +77,15 @@ a:hover{
 .calendar-container{
   z-index:-1;
 }
-
+.all-container{
+  padding: 30px;
+}
 #calendar{
   width: 100%;
   height: 100%;
   z-index:0;
 }
-.row{
-  z-index:0;
-}
+
 
 .list-edit{
   border : 2px solid #34EB67;
@@ -108,4 +110,15 @@ a:hover{
   color: #404040;
   background : none;
   border : 1px solid black;
+}
+
+.datepicker{
+  width: 25%;
+  margin-left: 5%;
+  margin-right: 5%;
+  display: inline-block;
+  
+}
+.date-button{
+  display: inline-block;
 }

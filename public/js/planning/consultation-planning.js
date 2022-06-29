@@ -33,8 +33,6 @@ function changeDate(){
   var day=jsDate.getDate();
   var month=jsDate.getMonth()+1;
   var year=jsDate.getFullYear();
-  date=new Date(year,month,day);
-  var temp = new Date
   if (day<10){day="0"+day;}
   if (month<10){month="0"+month;}
   dateStr=year+"-"+month+"-"+day+"T12:00:00";
@@ -73,7 +71,8 @@ function filterShow(){
 
 function createCalendar(resources){
   
-    //var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
+    var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
+    console.log(events);
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
@@ -92,10 +91,15 @@ function createCalendar(resources){
         timeZone: 'Europe/Paris',
         selectable: true,
         editable: false,
-        contentHeight: height*3/4,
+        contentHeight: height*13/16,
         handleWindowResize: true,
         eventDurationEditable: false,
         nowIndicator: true,
+        headerToolbar: {
+          start: null,
+          center: null,
+          end: null
+      },
 
         slotLabelFormat: { //modifie l'affichage des heures de la journée
             hour: '2-digit', //2-digit, numeric
@@ -107,6 +111,7 @@ function createCalendar(resources){
         resourceAreaWidth: '20%',
         resourceAreaHeaderContent: headerResources,
         resources: resourcesArray,
+        events: events,
 
 
         eventClick: function(event) {
@@ -152,11 +157,23 @@ function createCalendar(resources){
         }
         break;
         case "Ressources Humaines":
-        var resourcesArray=JSON.parse(document.getElementById('hr').value.replaceAll("3aZt3r", " "));
-        break;
+          var resourcesArray=JSON.parse(document.getElementById('human').value.replaceAll("3aZt3r", " "));
+
+          for(var i=0;i<resourcesArray.length;i++){
+            var temp=resourcesArray[i];
+            calendar.addResource({
+              id: temp['id'],
+              title: temp['title']});
+          }
+          break;
         case "Ressources Matérielles":
-        var resourcesArray=JSON.parse(document.getElementById('mr').value.replaceAll("3aZt3r", " "));
-        console.log(resourcesArray);
+        var resourcesArray=JSON.parse(document.getElementById('material').value.replaceAll("3aZt3r", " "));
+        for(var i=0;i<resourcesArray.length;i++){
+          var temp=resourcesArray[i];
+          calendar.addResource({
+            id: temp['id'],
+            title: temp['title']});
+        }
         break;
       }
     
@@ -165,3 +182,37 @@ function createCalendar(resources){
 }
 
 
+function PreviousDay(){
+  var oldDate=new Date(document.getElementById("Date").value)
+  var newDate=new Date(oldDate.getFullYear(),oldDate.getMonth(),oldDate.getDate()-1)
+  var day=newDate.getDate();
+  var month=newDate.getMonth()+1;
+  var year=newDate.getFullYear();
+  if (day<10){day="0"+day;}
+  if (month<10){month="0"+month;}
+  dateStr=year+"-"+month+"-"+day+"T12:00:00";
+  window.location.assign("/ConsultationPlanning?date="+dateStr);
+
+}
+function NextDay(){
+  var oldDate=new Date(document.getElementById("Date").value)
+  var newDate=new Date(oldDate.getFullYear(),oldDate.getMonth(),oldDate.getDate()+1)
+  var day=newDate.getDate();
+  var month=newDate.getMonth()+1;
+  var year=newDate.getFullYear();
+  if (day<10){day="0"+day;}
+  if (month<10){month="0"+month;}
+  dateStr=year+"-"+month+"-"+day+"T12:00:00";
+  window.location.assign("/ConsultationPlanning?date="+dateStr);
+}
+
+function Today(){
+  var today=new Date();
+  var day=today.getDate();
+  var month=today.getMonth()+1;
+  var year=today.getFullYear();
+  if (day<10){day="0"+day;}
+  if (month<10){month="0"+month;}
+  dateStr=year+"-"+month+"-"+day+"T12:00:00";
+  window.location.assign("/ConsultationPlanning?date="+dateStr);
+}
