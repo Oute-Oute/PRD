@@ -23,9 +23,6 @@ class ConsultationPlanningController extends AbstractController
         }
         //Récupération des données ressources de la base de données
         $listeCategoryMRJSON=$this->listeCategoriesMRJSON($doctrine); //Récupération des données ressources matérielles de la base de données
-        $listePatientsJSON=$this->listePatientsJSON($doctrine); //Récupération des données patients de la base de données
-        $listePathwaysJSON=$this->listePathwaysJSON($doctrine); //Récupération des données parcours de la base de données
-        $listeActivitiesJSON=$this->listeActivitiesJSON($doctrine); //Récupération des données activités de la base de données
         $listeScheduledActivitiesJSON=$this->listeScheduledActivitiesJSON($doctrine); //Récupération des données activités programmées de la base de données
         $listeAppointmentJSON=$this->listeAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
         $listeActivityHumanResourceJSON=$this->listeActivityHumanResourceJSON($doctrine); //Récupération des données activité-chr de la base de données
@@ -44,24 +41,11 @@ class ConsultationPlanningController extends AbstractController
         return $this->render('planning/consultation-planning.html.twig', 
             [
             'datetoday' => $date_today,
-            'listePatientsJSON'=>$listePatientsJSON,
-            'listePathwaysJSON'=>$listePathwaysJSON,
-            'listeActivitiesJSON'=>$listeActivitiesJSON,
             'listeScheduledActivitiesJSON'=>$listeScheduledActivitiesJSON,
             'listeAppointmentJSON'=>$listeAppointmentJSON,
-            'listeActivityHumanResourceJSON'=>$listeActivityHumanResourceJSON,
-            'listeActivityMaterialResourceJSON'=>$listeActivityMaterialResourceJSON,
             'listeMaterialResourceScheduledJSON'=>$listeMaterialResourceScheduledJSON,
-            'listeCategoryMRJSON'=>$listeCategoryMRJSON,
-            'listeCategoryHRJSON'=>$listeCategoryHRJSON,
-            'listeCategoryOfHumanResourceJSON'=>$listeCategoryOfHumanResourceJSON,
-            'listeUnavailabilitiesMaterialResourceJSON'=>$listeUnavailabilitiesMaterialResourceJSON,
-            'listeUnavailabilitiesJSON'=>$listeUnavailabilitiesJSON,
-            'listeUnavailabilitiesHumanResourceJSON'=>$listeUnavailabilitiesHumanResourceJSON,
             'listeHumanResourceScheduledJSON'=>$listeHumanResourceScheduledJSON,
-            'listeWorkingHoursJSON'=>$listeWorkingHoursJSON,
-            'listeHumanResourcesJSON'=>$listeHumanResourcesJSON,
-            'listeMaterialResourceJSON'=>$listeMaterialResourceJSON,
+
             
 
         
@@ -69,145 +53,6 @@ class ConsultationPlanningController extends AbstractController
                     
     }
    
-
-    public function listePatientsJSON(ManagerRegistry $doctrine){
-        $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();  
-        $patientArray=array(); 
-        foreach($patients as $patient){
-            $lastname=$patient->getLastname();
-            $firstname=$patient->getFirstname();
-            $title=$lastname." ".$firstname;
-            $id=$patient->getId();
-            $id="patient_".$id;
-            $patientArray[]=array(
-                'id' =>$id,
-                'lastname'=>(str_replace(" ", "3aZt3r", $lastname)),
-                'firstname' =>(str_replace(" ", "3aZt3r", $firstname)),
-                'title'=>$title
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $patientArrayJSON= new JsonResponse($patientArray); 
-        return $patientArrayJSON; 
-    }
-
-    public function listepathwaysJSON(ManagerRegistry $doctrine){
-        $pathways = $doctrine->getRepository("App\Entity\Pathway")->findAll();  
-        $pathwayArray=array(); 
-        foreach($pathways as $pathway){
-            $idpath=$pathway->getId();
-            $idpath="pathway_".$idpath;
-            $pathwayArray[]=array(
-                'id' =>$idpath,
-                'target' =>(str_replace(" ", "3aZt3r", $pathway->getTarget())),
-                'title'=>(str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $pathwayArrayJSON= new JsonResponse($pathwayArray); 
-        return $pathwayArrayJSON; 
-    }
-    public function listeAppointmentJSON(ManagerRegistry $doctrine){
-        $pathwaysPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();  
-        $pathwayPatientArray=array(); 
-        foreach($pathwaysPatients as $pathwayPatient){
-            $pathwayPatientArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $pathwayPatient->getId())),
-                'patient_id'=>($pathwayPatient->getPatient()),
-                'pathway_id' =>($pathwayPatient->getPathway()),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $pathwayPatientArrayJSON= new JsonResponse($pathwayPatientArray); 
-        return $pathwayPatientArrayJSON; 
-    }
-    public function listeActivitiesJSON(ManagerRegistry $doctrine){
-        $activities = $doctrine->getRepository("App\Entity\Activity")->findAll();  
-        $activitiesArray=array(); 
-        foreach($activities as $activity){
-            $activitiesArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $activity->getId())),
-                'activityname'=>(str_replace(" ", "3aZt3r", $activity->getActivityname())),
-                'duration' =>($activity->getDuration()),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $activitiesArrayJSON= new JsonResponse($activitiesArray); 
-        return $activitiesArrayJSON; 
-    }
-    public function listeAPJSON(ManagerRegistry $doctrine){
-        $activitiesPathways = $doctrine->getRepository("App\Entity\AP")->findAll();  
-        $activitiesPathwaysArray=array(); 
-        foreach($activitiesPathways as $activityPathway){
-            $activitiesPathwaysArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $activityPathway->getId())),
-                'activity'=>($activityPathway->getActivity()),
-                'pathway' =>($activityPathway->getPathway()),
-                'activityorder' =>($activityPathway->getActivityorder()),
-                'delayminafter' =>($activityPathway->getDelayminafter()),
-                'delaymaxafter' =>($activityPathway->getDelaymaxafter()),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $activitiesPathwaysArrayJSON= new JsonResponse($activitiesPathwaysArray); 
-        return $activitiesPathwaysArrayJSON; 
-    }
-
-    public function listeCategoryHRJSON(ManagerRegistry $doctrine){
-        $categogiesHR = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();  
-        $categoriesHRArray=array(); 
-        foreach($categogiesHR as $categoryHR){
-            $categoriesHRArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $categoryHR->getId())),
-                'category'=>(str_replace(" ", "3aZt3r", $categoryHR->getCategory()))
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $categoriesHRArrayJSON= new JsonResponse($categoriesHRArray); 
-        return $categoriesHRArrayJSON; 
-    }
-    
-    public function listeCategoriesMRJSON(ManagerRegistry $doctrine){
-        $categogiesMR = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();  
-        $categoriesMRArray=array(); 
-        foreach($categogiesMR as $categoryMR){
-            $categoriesMRArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $categoryMR->getId())),
-                'category'=>(str_replace(" ", "3aZt3r", $categoryMR->getCategory()))
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $categoriesMRArrayJSON= new JsonResponse($categoriesMRArray); 
-        return $categoriesMRArrayJSON; 
-    }
-
-    public function listeActivityHumanResourceJSON(ManagerRegistry $doctrine){
-        $activitiesHR = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findAll();  
-        $activitiesHRArray=array(); 
-        foreach($activitiesHR as $activityHR){
-            $activitiesHRArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $activityHR->getId())),
-                'categoryHumanResource' =>($activityHR->getCategoryhumanresource()),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $activitiesHRArrayJSON= new JsonResponse($activitiesHRArray); 
-        return $activitiesHRArrayJSON; 
-    }
-
-    public function listeActivityMaterialResourceJSON(ManagerRegistry $doctrine){
-        $activitiesMR = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();  
-        $activitiesMRArray=array(); 
-        foreach($activitiesMR as $activityMR){
-            $activitiesMRArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $activityMR->getId())),
-                'categoryMaterialResource' =>($activityMR->getCategorymaterialresource()),
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $activitiesMRArrayJSON= new JsonResponse($activitiesMRArray); 
-        return $activitiesMRArrayJSON; 
-    }
 
     public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine){
         $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
@@ -230,7 +75,7 @@ class ConsultationPlanningController extends AbstractController
                 'end'=>$end,
                 'title'=>($scheduledActivity->getActivity()->getActivityname()),
                 'resourceId'=>$patientId,
-                'patient'=>$patientName,
+                
                 
             ); 
         }   
@@ -238,6 +83,149 @@ class ConsultationPlanningController extends AbstractController
         $scheduledActivitiesArrayJSON= new JsonResponse($scheduledActivitiesArray); 
         return $scheduledActivitiesArrayJSON; 
     }
+
+    public function listeAppointmentJSON(ManagerRegistry $doctrine){
+        $Appointments = $doctrine->getRepository("App\Entity\Appointment")->findAll();  
+        $AppointmentArray=array(); 
+        foreach($Appointments as $Appointment){
+            $AppointmentArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $Appointment->getId())),
+                'day'=>( $Appointment->getDayappointment()->format('Y-m-d')),
+                'earliestappointmenttime'=>(str_replace(" ", "3aZt3r", $Appointment->getEarliestappointmenttime())),
+                'latestappointmenttime'=>(str_replace(" ", "3aZt3r", $Appointment->getLatestappointmenttime())),
+                'scheduled'=>$Appointment->isScheduled(),
+                'patient'=>$this->getPatient($doctrine,$Appointment->getPatient()->getId()),
+                'pathway'=>$this->getPathway($doctrine,$Appointment->getPathway()->getId()),
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $AppointmentArrayJSON= new JsonResponse($AppointmentArray); 
+        return $AppointmentArrayJSON; 
+    }
+    public function getPathway(ManagerRegistry $doctrine, $id){
+        $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id'=>$id));  
+        $pathwayArray=array(); 
+            $idpath=$pathway->getId();
+            $idpath="pathway_".$idpath;
+            $pathwayArray[]=array(
+                'id' =>$idpath,
+                'title'=>(str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
+            );         
+        return $pathwayArray; 
+    }
+
+    public function listeMaterialResourceScheduledJSON(ManagerRegistry $doctrine){
+        $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();  
+        $MaterialResourceScheduledArray=array(); 
+        foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
+            $MaterialResourceScheduledArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $MaterialResourceScheduled->getId())),
+                'scheduledActivity'=>($MaterialResourceScheduled->getScheduledactivity()),
+                'materialResource' =>($MaterialResourceScheduled->getMaterialresource()),
+                
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $MaterialResourceScheduledArrayJSON= new JsonResponse($MaterialResourceScheduledArray); 
+        return $MaterialResourceScheduledArrayJSON; 
+    }
+    public function listeHumanResourceScheduledJSON(ManagerRegistry $doctrine){
+        $HumanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();  
+        $HumanResourceScheduledArray=array(); 
+        foreach($HumanResourceScheduleds as $HumanResourceScheduled){
+            $HumanResourceScheduledArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $HumanResourceScheduled->getId())),
+                'scheduledActivity'=>($HumanResourceScheduled->getScheduledactivity()),
+                'humanResource' =>($HumanResourceScheduled->getHumanresource()),
+                
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $HumanResourceScheduledArrayJSON= new JsonResponse($HumanResourceScheduledArray); 
+        return $HumanResourceScheduledArrayJSON; 
+    }
+
+    public function getPatient(ManagerRegistry $doctrine, $id){
+        $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id'=>$id));  
+        $patientArray=array(); 
+            $lastname=$patient->getLastname();
+            $firstname=$patient->getFirstname();
+            $title=$lastname." ".$firstname;
+            $id=$patient->getId();
+            $id="patient_".$id;
+            $patientArray[]=array(
+                'id' =>$id,
+                'lastname'=>(str_replace(" ", "3aZt3r", $lastname)),
+                'firstname' =>(str_replace(" ", "3aZt3r", $firstname)),
+                'title'=>$title
+            ); 
+        
+        //Conversion des données ressources en json 
+        return $patientArray; 
+    }
+
+    
+    
+
+    public function listeCategoryHRJSON(ManagerRegistry $doctrine){
+        $categoriesHR = $doctrine->getRepository("App\Entity\HumanResourceCategory")->findAll();  
+        $categoriesHRArray=array(); 
+        foreach($categoriesHR as $categoryHR){
+            $categoriesHRArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $categoryHR->getId())),
+                'category'=>(str_replace(" ", "3aZt3r", $categoryHR->getCategoryname()))
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $categoriesHRArrayJSON= new JsonResponse($categoriesHRArray); 
+        return $categoriesHRArrayJSON; 
+    }
+    
+    public function listeCategoriesMRJSON(ManagerRegistry $doctrine){
+        $categoriesMR = $doctrine->getRepository("App\Entity\MaterialResourceCategory")->findAll();  
+        $categoriesMRArray=array(); 
+        foreach($categoriesMR as $categoryMR){
+            $categoriesMRArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $categoryMR->getId())),
+                'category'=>(str_replace(" ", "3aZt3r", $categoryMR->getCategoryname()))
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $categoriesMRArrayJSON= new JsonResponse($categoriesMRArray); 
+        return $categoriesMRArrayJSON; 
+    }
+
+    public function listeActivityHumanResourceJSON(ManagerRegistry $doctrine){
+        $activitiesHR = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findAll();  
+        $activitiesHRArray=array(); 
+        foreach($activitiesHR as $activityHR){
+            $activitiesHRArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $activityHR->getId())),
+                'categoryHumanResource' =>($activityHR->getCategoryhumanresource()),
+                'quantity'=>(str_replace(" ", "3aZt3r", $activityHR->getQuantity())),
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $activitiesHRArrayJSON= new JsonResponse($activitiesHRArray); 
+        return $activitiesHRArrayJSON; 
+    }
+
+    public function listeActivityMaterialResourceJSON(ManagerRegistry $doctrine){
+        $activitiesMR = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();  
+        $activitiesMRArray=array(); 
+        foreach($activitiesMR as $activityMR){
+            $activitiesMRArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $activityMR->getId())),
+                'categoryMaterialResource' =>($activityMR->getCategorymaterialresource()),
+                'quantity'=>(str_replace(" ", "3aZt3r", $activityMR->getQuantity())),
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $activitiesMRArrayJSON= new JsonResponse($activitiesMRArray); 
+        return $activitiesMRArrayJSON; 
+    }
+
+    
     
     public function listeMaterialResourceJSON(ManagerRegistry $doctrine){
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();  
@@ -281,7 +269,7 @@ class ConsultationPlanningController extends AbstractController
         foreach($categoriesHR as $categoryHR){
             $categoryHRArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $categoryHR->getId())),
-                'categoryHumanResource' =>($categoryHR->getCategoryhumanresource()),
+                'categoryHumanResource' =>($categoryHR->getHumanresourceCategory()),
                 'humanResource'=>($categoryHR->getHumanresource())
             ); 
         }   
@@ -290,36 +278,7 @@ class ConsultationPlanningController extends AbstractController
         return $categoriesHRArrayJSON; 
     }
 
-    public function listeMaterialResourceScheduledJSON(ManagerRegistry $doctrine){
-        $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();  
-        $MaterialResourceScheduledArray=array(); 
-        foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
-            $MaterialResourceScheduledArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $MaterialResourceScheduled->getId())),
-                'scheduledActivity'=>($MaterialResourceScheduled->getScheduledactivity()),
-                'materialResource' =>($MaterialResourceScheduled->getMaterialresource()),
-                
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $MaterialResourceScheduledArrayJSON= new JsonResponse($MaterialResourceScheduledArray); 
-        return $MaterialResourceScheduledArrayJSON; 
-    }
-    public function listeHumanResourceScheduledJSON(ManagerRegistry $doctrine){
-        $HumanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();  
-        $HumanResourceScheduledArray=array(); 
-        foreach($HumanResourceScheduleds as $HumanResourceScheduled){
-            $HumanResourceScheduledArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $HumanResourceScheduled->getId())),
-                'scheduledActivity'=>($HumanResourceScheduled->getScheduledactivity()),
-                'humanResource' =>($HumanResourceScheduled->getHumanresource()),
-                
-            ); 
-        }   
-        //Conversion des données ressources en json
-        $HumanResourceScheduledArrayJSON= new JsonResponse($HumanResourceScheduledArray); 
-        return $HumanResourceScheduledArrayJSON; 
-    }
+    
 
     public function listeWorkingHoursJSON(ManagerRegistry $doctrine){
         $workingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findAll();  
@@ -327,8 +286,9 @@ class ConsultationPlanningController extends AbstractController
         foreach($workingHours as $workingHour){
             $workingHoursArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $workingHour->getId())),
-                'startdatetime'=>($workingHour->getStartdatetime()),
-                'enddatetime'=>($workingHour->getEnddatetime()),
+                'starttime'=>($workingHour->getStarttime()),
+                'endtime'=>($workingHour->getEndtime()),
+                'day'=>($workingHour->getDayweek()),
                 'humanResource'=>($workingHour->getHumanresource()),
                 
             ); 
@@ -384,6 +344,41 @@ class ConsultationPlanningController extends AbstractController
         //Conversion des données ressources en json
         $IHRArrayJSON= new JsonResponse($IHRArray); 
         return $IHRArrayJSON; 
+    }
+
+    public function listeSuccessorJSON(ManagerRegistry $doctrine){
+        $successors = $doctrine->getRepository("App\Entity\Successor")->findAll();  
+        $successorsArray=array(); 
+        foreach($successors as $successor){
+            $successorsArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $successor->getId())),
+                'activityA'=>($successor->getActivitya()),
+                'activivtyB' =>($successor->getActivityb()),
+                'delaymin'=>($successor->getDelaymin()),
+                'delaymax'=>($successor->getDelaymax()),
+                
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $successorsArrayJSON= new JsonResponse($successorsArray); 
+        return $successorsArrayJSON; 
+    }
+
+    public function listeTargetJSON(ManagerRegistry $doctrine){
+        $targets = $doctrine->getRepository("App\Entity\Target")->findAll();  
+        $targetsArray=array(); 
+        foreach($targets as $target){
+            $targetsArray[]=array(
+                'id' =>(str_replace(" ", "3aZt3r", $target->getId())),
+                'target'=>($target->gettarget()),
+                'dayweek'=>($target->getDayweek()),
+                'pathway'=>($target->getPathway()),
+                
+            ); 
+        }   
+        //Conversion des données ressources en json
+        $targetsArrayJSON= new JsonResponse($targetsArray); 
+        return $targetsArrayJSON; 
     }
 }
 

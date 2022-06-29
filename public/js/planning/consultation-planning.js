@@ -66,34 +66,21 @@ function filterShow(){
   } else {
     document.getElementById("filterId").style.display = "inline-block";
   }
+}function getObjKey(obj, value) {
+  return Object.keys(obj).find(key => obj[key] == value);
 }
 
 
 function createCalendar(resources){
-  switch(resources){
-    case "Patients":
-      var resourcesArray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
-      break;
-    case "Parcours":
-      var resourcesArray=JSON.parse(document.getElementById('parcours').value.replaceAll("3aZt3r", " "));
-      break;
-      case "Ressources Humaines":
-      var resourcesArray=JSON.parse(document.getElementById('hr').value.replaceAll("3aZt3r", " "));
-      break;
-      case "Ressources Matérielles":
-      var resourcesArray=JSON.parse(document.getElementById('mr').value.replaceAll("3aZt3r", " "));
-      console.log(resourcesArray);
-      break;
-    }
+  
     var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
-    console.log(events);
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
   date=new Date(dateStr)
   //var resources=document.getElementById('resources').value.replaceAll("3aZt3r", " ");   
   //var resourcearray=JSON.parse(resources); 
-  var patientsarray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
+  //var patientsarray=JSON.parse(document.getElementById('patients').value.replaceAll("3aZt3r", " "));
   var calendarEl = document.getElementById('calendar');
 
   calendar=new FullCalendar.Calendar(calendarEl, 
@@ -121,6 +108,8 @@ function createCalendar(resources){
         resourceAreaHeaderContent: headerResources,
         resources: resourcesArray,
         events: events,
+
+
         eventClick: function(event) {
           //récupération des données
           var id = event.event._def.publicId;
@@ -142,7 +131,35 @@ function createCalendar(resources){
         },
     },
     );
-
+    switch(resources){
+      case "Patients":
+        var tempArray=JSON.parse(document.getElementById('appointment').value.replaceAll("3aZt3r", " "));
+        for(var i=0;i<tempArray.length;i++){
+          var temp=tempArray[i];
+          patient=temp['patient'];
+          calendar.addResource({
+            id: patient[0]['id'],
+            title: patient[0]['title']});
+        }
+        break;
+      case "Parcours":
+        var tempArray=JSON.parse(document.getElementById('appointment').value.replaceAll("3aZt3r", " "));
+        for(var i=0;i<tempArray.length;i++){
+          var temp=tempArray[i];
+          pathway=temp['pathway'];
+          calendar.addResource({
+            id: pathway[0]['id'],
+            title: pathway[0]['title']});
+        }
+        break;
+        case "Ressources Humaines":
+        var resourcesArray=JSON.parse(document.getElementById('hr').value.replaceAll("3aZt3r", " "));
+        break;
+        case "Ressources Matérielles":
+        var resourcesArray=JSON.parse(document.getElementById('mr').value.replaceAll("3aZt3r", " "));
+        console.log(resourcesArray);
+        break;
+      }
     
     calendar.gotoDate(date);
     calendar.render();
