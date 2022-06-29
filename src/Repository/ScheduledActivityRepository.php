@@ -44,9 +44,7 @@ class ScheduledActivityRepository extends ServiceEntityRepository
     {   
         $qb= $this->createQueryBuilder('s'); 
         $qb->select('s'); 
-        $qb->where(
-                 $qb->expr()->like('s.startdatetime', ':date')
-             )
+        $qb->where('s.dayscheduled=:date')
              ->setParameter('date',$TodayDate);
              $query=$qb->getQuery()->getResult(); 
              return $query;

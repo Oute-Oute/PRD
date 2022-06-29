@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Pathway;
+use App\Entity\Activity;
+use App\Entity\Successor;
 use App\Entity\AP;
 use App\Form\PathwayType;
 use App\Repository\PathwayRepository;
 use App\Repository\ActivityRepository;
+use App\Repository\SuccessorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,8 +46,9 @@ class PathwayController extends AbstractController
             // On crée l'objet parcours
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
-            $pathway->setPathwaytype($param['pathwaytype']);
-            $pathway->setTarget($param['target']);
+            $pathway->setAvailable(true);
+            //$pathway->setPathwaytype($param['pathwaytype']);
+            //$pathway->setTarget($param['target']);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
@@ -54,8 +58,10 @@ class PathwayController extends AbstractController
             // On récupère toutes les activités
             $activityRepository = new ActivityRepository($this->getDoctrine());
             $activities = $activityRepository->findAll();
+            $successorRepository = new SuccessorRepository($this->getDoctrine());
+
             //$activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
-            $activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
+            //$activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
             
 
             // On récupère le nombre d'activité
@@ -63,25 +69,44 @@ class PathwayController extends AbstractController
 
 
             //$activityArray = array();
+            if ($nbActivity != 0) {
+                $activity_old = new Activity();      
+                
+                $activity_old->setActivityname($param["name-activity-0"]);
+                $activity_old->setDuration($param[ "duration-activity-0"]);
+                $activity_old->setPathway($pathway);
 
-            for($i = 0; $i < $nbActivity; $i++)
-            {
-                // On récupère l'objet activity 
-                $str = 'activity-';
-                $str .= $i;
-                $id = $param[$str];
-                $activity = $activityRepository->find($id);
+                $activityRepository->add($activity_old, true);
 
-                $activityPathway = new AP();
-                 
-                $activityPathway->setActivity($activity);
-                $activityPathway->setPathway($pathway);
-                $activityPathway->setActivityorder($i);
-                $activityPathway->setDelayminafter(0);
-                $activityPathway->setDelaymaxafter(0);
-                $activityPathwayRepository->add($activityPathway, true);
+                for($i = 1; $i < $nbActivity; $i++)
+                {
+                    $activity = new Activity();
+                    $strName = "name-activity-" . $i;
+                    $strDuration = "duration-activity-" . $i;
+    
+                    $activity->setActivityname($param[$strName]);
+                    $activity->setDuration($param[$strDuration]);
+                    $activity->setPathway($pathway);
+        
+                    $activityRepository->add($activity, true);
+    
+                    $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
 
-                //dd($activityPathway);
+                    //dd($activity);
+                    
+                    $successor = new Successor();
+    
+                    //if  ($i < ($nbActivity - 1)) {
+                    $successor->setActivitya($activity_old);
+                    $successor->setActivityb($activity);
+                    $successor->setDelaymin(0);
+                    $successor->setDelaymax(1);
+                    $successorRepository->add($successor, true);
+                   //}
+    
+                    $activity_old = $activityRepository->findById($activity->getId())[0];
+
+                }
             }
             
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
