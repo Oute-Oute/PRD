@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\UnavailabilitiesRepository;
+use App\Repository\UnavailabilityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=UnavailabilitiesRepository::class)
+ * @ORM\Entity(repositoryClass=UnavailabilityRepository::class)
  */
-class Unavailabilities
+class Unavailability
 {
     /**
      * @ORM\Id
@@ -25,7 +25,7 @@ class Unavailabilities
     /**
      * @ORM\Column(type="datetime")
      */
-    private $anddatetime;
+    private $enddatetime;
 
     public function getId(): ?int
     {
@@ -44,14 +44,14 @@ class Unavailabilities
         return $this;
     }
 
-    public function getAnddatetime(): ?\DateTimeInterface
+    public function getEnddatetime(): ?\DateTimeInterface
     {
-        return $this->anddatetime;
+        return $this->enddatetime;
     }
 
-    public function setAnddatetime(\DateTimeInterface $anddatetime): self
+    public function setEnddatetime(\DateTimeInterface $enddatetime): self
     {
-        $this->anddatetime = $anddatetime;
+        $this->enddatetime = $enddatetime;
 
         return $this;
     }
