@@ -13,16 +13,16 @@
 
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
-                            <label for='name'> Nom du parcours </label>
+                            <h4><label for='name'> Nom du parcours </label></h4>
                         </div>
 
                         <div class="form-field-input flex-col">
-                            <input id='pathwayname' type='text' name='pathwayname'>
+                            <input id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
                         </div>
                     </div> 
 
                     <fieldset id="fs-add-activity">
-                        <legend>Choisissez les activités de votre parcours</legend>
+                        <h4>Choisissez les activités de votre parcours</h4>
                 
                         <div id="activities-container"> 
                             {#<select style="display:none;" class="select-activity-sample" class="slct-add-activity" > 

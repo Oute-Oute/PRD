@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
 })
 
+
+function disableSubmit() {
+    let btnSubmit = document.getElementById('submit')
+    btnSubmit.disabled=true
+}
+
 /**
  * Permet d'ajouter une liste déroulante pour choisir une activité lors de la cration d'un parcours (pathway)
  */
@@ -15,18 +21,8 @@ function handleAddActivity() {
 
     NB_ACTIVITY = NB_ACTIVITY + 1;
     document.getElementById('nbActivity').value = NB_ACTIVITY
-    
-    // Recuperation du select par défaut (deja rempli avec les bonnes options)
-    //var selectSample = document.getElementsByClassName("select-activity-sample")[0]
 
-    // Création d'un nouveau select et copie des options du select par défaut
-    //var select = document.createElement("select");
-
-   // Création du paragraphe contenant le titre de l'activité (ex : 'Activité 1')
-    //var pActivityNumber = document.createElement("p");
-    //pActivityNumber.setAttribute('id', 'activity-number')
-    //pActivityNumber.style.marginRight = '10px'
-    //pActivityNumber.innerText =  (SELECT_ID+1) +' : ' 
+    disableSubmit();
     
     // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
     let div = document.createElement("div")
@@ -35,6 +31,7 @@ function handleAddActivity() {
     let inputName = document.createElement('input')
     inputName.setAttribute('class', 'input-name')
     inputName.setAttribute('placeholder', 'Nom')
+    inputName.setAttribute('onchange', 'disableSubmit()')
     //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
 
     let inputDuration = document.createElement('input')
@@ -42,6 +39,7 @@ function handleAddActivity() {
     inputDuration.setAttribute('placeholder', 'Durée (min)')
     inputDuration.setAttribute('type', 'number')
     inputDuration.setAttribute('min', '0')
+    inputDuration.setAttribute('onchange', 'disableSubmit()')
     //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
 
     let img = new Image();
@@ -74,7 +72,7 @@ function handleAddActivity() {
 
 /** Permet de supprimer un select dans la liste déroulante */
 function deleteSelect(id) {
-
+    disableSubmit();
 
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
@@ -134,6 +132,8 @@ function verifyChanges() {
         btnSubmit.disabled = false;
     }
 }
+
+
 
 /**
  * Permet d'afficher la fenêtre modale d'ajout
