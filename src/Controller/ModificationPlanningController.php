@@ -123,9 +123,9 @@ class ModificationPlanningController extends AbstractController
             foreach($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource){
                 array_push($scheduledActivitiesHumanResourcesArray,$scheduledActivitiesHumanResource->getHumanresource()->getId()); 
             }
-            $patientId=$scheduledActivity->getPatient()->getId();
+            $patientId=$scheduledActivity->getAppointment()->getPatient()->getId();
             $patientId="patient_".$patientId;
-            $patientName=$scheduledActivity->getPatient()->getLastname();
+            $patientName=$scheduledActivity->getAppointment()->getPatient()->getLastname();
             $start=$scheduledActivity->getStarttime();
             $day=$scheduledActivity->getDayscheduled();
             $day=$day->format('Y-m-d');
