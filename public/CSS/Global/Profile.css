@@ -19,6 +19,8 @@ form#edit-form div#container  {
     
 }
 
+
+
 div#bloc{
 align-items: flex-start;
 font-size: larger;
@@ -26,16 +28,42 @@ font-size: larger;
 
 P1{
     color: red;
+    display: none;
 }
 P2{
     color: green;
 }
+P3{
+    color: red;
+}
+P4{
+    color: red;
+    display: none;
+}
 
-button#submit_button {
+button#submit_button1 {
     height : 10vh;
     width : 100%;
-    font-size: larger;    
+    font-size: larger;   
+    align-items: center;
+    justify-content: center;
 }
+
+button#submit_button2 {
+    height : 10vh;
+    width : 100%;
+    font-size: larger; 
+    align-items: center;
+    justify-content: center;    
+    display: none;    
+    
+}
+
+
+
+
+
+
 
 
 
