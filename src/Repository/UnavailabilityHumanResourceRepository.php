@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Unavailabilities;
+use App\Entity\UnavailabilityHumanResource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Unavailabilities>
+ * @extends ServiceEntityRepository<UnavailabilityHumanResource>
  *
- * @method Unavailabilities|null find($id, $lockMode = null, $lockVersion = null)
- * @method Unavailabilities|null findOneBy(array $criteria, array $orderBy = null)
- * @method Unavailabilities[]    findAll()
- * @method Unavailabilities[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UnavailabilityHumanResource|null find($id, $lockMode = null, $lockVersion = null)
+ * @method UnavailabilityHumanResource|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UnavailabilityHumanResource[]    findAll()
+ * @method UnavailabilityHumanResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UnavailabilitiesRepository extends ServiceEntityRepository
+class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Unavailabilities::class);
+        parent::__construct($registry, UnavailabilityHumanResource::class);
     }
 
-    public function add(Unavailabilities $entity, bool $flush = false): void
+    public function add(UnavailabilityHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class UnavailabilitiesRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Unavailabilities $entity, bool $flush = false): void
+    public function remove(UnavailabilityHumanResource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class UnavailabilitiesRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Unavailabilities[] Returns an array of Unavailabilities objects
+//     * @return UnavailabilityHumanResource[] Returns an array of UnavailabilityHumanResource objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class UnavailabilitiesRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Unavailabilities
+//    public function findOneBySomeField($value): ?UnavailabilityHumanResource
 //    {
 //        return $this->createQueryBuilder('u')
 //            ->andWhere('u.exampleField = :val')

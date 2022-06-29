@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\UnavailabilitiesMaterialResource;
+use App\Entity\Unavailability;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UnavailabilitiesMaterialResource>
+ * @extends ServiceEntityRepository<Unavailability>
  *
- * @method UnavailabilitiesMaterialResource|null find($id, $lockMode = null, $lockVersion = null)
- * @method UnavailabilitiesMaterialResource|null findOneBy(array $criteria, array $orderBy = null)
- * @method UnavailabilitiesMaterialResource[]    findAll()
- * @method UnavailabilitiesMaterialResource[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Unavailability|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Unavailability|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Unavailability[]    findAll()
+ * @method Unavailability[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UnavailabilitiesMaterialResourceRepository extends ServiceEntityRepository
+class UnavailabilityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UnavailabilitiesMaterialResource::class);
+        parent::__construct($registry, Unavailability::class);
     }
 
-    public function add(UnavailabilitiesMaterialResource $entity, bool $flush = false): void
+    public function add(Unavailability $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class UnavailabilitiesMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(UnavailabilitiesMaterialResource $entity, bool $flush = false): void
+    public function remove(Unavailability $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class UnavailabilitiesMaterialResourceRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return UnavailabilitiesMaterialResource[] Returns an array of UnavailabilitiesMaterialResource objects
+//     * @return Unavailability[] Returns an array of Unavailability objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class UnavailabilitiesMaterialResourceRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?UnavailabilitiesMaterialResource
+//    public function findOneBySomeField($value): ?Unavailability
 //    {
 //        return $this->createQueryBuilder('u')
 //            ->andWhere('u.exampleField = :val')
