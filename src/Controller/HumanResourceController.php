@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Form\HumanResourceType;
+use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\MaterialResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,11 +22,11 @@ class HumanResourceController extends AbstractController
      */
     public function index(HumanResourceRepository $humanResourceRepository): Response
     {
-        $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
-        $materialResources = $materialResourceRepository->findAll();
+        $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+        $humanResourceCategories = $humanResourceCategoryRepository->findAll();
         return $this->render('human_resource/index.html.twig', [
-            'human_resources' => $humanResourceRepository->findAll(),
-            'material_resources' => $materialResources
+            'human_resources' => $humanResourceRepository->findBy(['available' => true]),
+            'human_resources_categories' => $humanResourceCategories
         ]);
     }
 
@@ -38,23 +39,14 @@ class HumanResourceController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
             $param = $request->request->all();
-
             $name = $param['name'];
-            $availability = $param['availability'];
-            if($param['availability'] == 'dispo') {
-                $humanResource->setAvailable(true);
-            }
-            else {
-                $humanResource->setAvailable(false);
-            }
+            $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
 
-            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_resources_humans', [], Response::HTTP_SEE_OTHER);
         }
-
-       
     }
 
     /**
@@ -92,10 +84,14 @@ class HumanResourceController extends AbstractController
      */
     public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$humanResource->getId(), $request->request->get('_token'))) {
-            $humanResourceRepository->remove($humanResource, true);
-        }
+            if($humanResource->isAvailable() == true) {
+                $humanResource->setAvailable(false);
+            }
+            else {
+                $humanResource->setAvailable(true);
+            }
 
+        $humanResourceRepository->add($humanResource, true);
         return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
     }
 }

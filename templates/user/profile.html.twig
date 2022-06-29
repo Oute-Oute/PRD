@@ -13,28 +13,42 @@
 {% endblock %}
 {% block body %}
 	<form id="edit-form" method="post">
+
+
 		<div id="container">
-			<h1 id="title">Mon profil</h1>
 
-			<div>
-				<input type="password" name="old_password" id="old_password" class="form-control"/>
-				<label>Ancien mot de passe</label>
+			<h1 id="title">Mon identifiant :
+				{{ app.user.userIdentifier }}</h1>
+			<div id="bloc">
+				<div>
+					<input type="password" name="old_password" id="old_password" class="form-control"/>
+					<label>Ancien mot de passe</label>
+				</div>
+
+				<!-- Nouveau mot de passe -->
+				<div>
+					<input type="password" name="new_password" id="new_password" class="form-control"/>
+					<label>Nouveau mot de passe</label>
+				</div>
+
+				<!-- Confirmation mot de passe  -->
+				<div>
+					<input type="password" name="confirm_password" id="confirm_password" class="form-control"/>
+					<label>Confirmation mot de passe</label>
+				</div>
+
+
+				<P1>{{messageError}}
+				</P1>
+				<P2>{{messageSucces}}
+				</P2>
+
+
 			</div>
-
-			<!-- Nouveau mot de passe -->
-			<div>
-				<input type="password" name="new_password" id="new_password" class="form-control"/>
-				<label>Nouveau mot de passe</label>
-			</div>
-
-			<!-- Confirmation mot de passe  -->
-			<div>
-				<input type="password" name="confirm_password" id="confirm_password" class="form-control"/>
-				<label>Confirmation mot de passe</label>
-			</div>
-
 			<!-- Submit button -->
 			<button type="submit" id="submit_button" class="btn btn-primary btn-block mb-4">Appliquer le changement</button>
-		</form>
-	</div>
+
+		</div>
+	</form>
+
 </div></div>{% endblock %}

@@ -1,0 +1,45 @@
+
+form#edit-form {
+
+    display:flex;
+    align-items: center;
+    flex-direction : column;
+    justify-content : center;
+    height : 100vh;
+    width : 100%;
+}
+
+form#edit-form div#container  {
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
+    padding : 25px 50px;
+    display : flex;
+    align-items : center;
+    flex-direction: column;
+    border-radius: 20px;
+    
+}
+
+div#bloc{
+align-items: flex-start;
+font-size: larger;
+}
+
+P1{
+    color: red;
+}
+P2{
+    color: green;
+}
+
+button#submit_button {
+    height : 10vh;
+    width : 100%;
+    font-size: larger;    
+}
+
+
+
+
+
+
+

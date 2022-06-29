@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HumanResourceCategory index{% endblock %}
+
+{% block body %}
+    <h1>HumanResourceCategory index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Categoryname</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for human_resource_category in human_resource_categories %}
+            <tr>
+                <td>{{ human_resource_category.id }}</td>
+                <td>{{ human_resource_category.categoryname }}</td>
+                <td>
+                    <a href="{{ path('app_human_resource_category_show', {'id': human_resource_category.id}) }}">show</a>
+                    <a href="{{ path('app_human_resource_category_edit', {'id': human_resource_category.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_human_resource_category_new') }}">Create new</a>
+{% endblock %}

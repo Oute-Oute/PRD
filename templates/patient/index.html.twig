@@ -31,8 +31,7 @@
                 <td>{{ patient.lastname }}</td>
                 <td>{{ patient.firstname }}</td>
                 <td>
-                    <button type="button" class = "btn-infos btn-secondary" onclick="showPatient('{{ patient.id }}')">Infos</a>
-                    <button type="button" class = "btn-edit btn-secondary" onclick="editPatient('{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
+                    <button type="button" class = "btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
                     <form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
                         <input type="hidden" name="patient" value="{{ patient.id }}">
                         <button class="btn-delete btn-secondary">Supprimer</button>
@@ -56,7 +55,7 @@
       <div class="modal-header">
         <h2 class="modal-title">Ajouter un patient</h2>
       </div>
-      <form action="{{ path('Patients') }}" method="post">
+      <form action="{{ path('PatientsPost') }}" method="post">
         <div class="modal-body">
             <div>
                 <label for='lastname'> Nom </label>
@@ -87,6 +86,7 @@
       </div>
       <form action="{{ path('PatientEdit') }}" method="post">
         <div class="modal-body">
+            <input type="hidden" name="idpatient" id="idpatient">
             <div>
                 <label for='lastname'> Nom </label>
                 <input type='text' name='lastname' id='lastname'>
@@ -101,32 +101,6 @@
             <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
         </div>
 	    </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- show-patient-modal -->
-
-<div class="modal" id="show-patient-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Modifier un patient</h2>
-      </div>
-        <div class="modal-body">
-            <div>
-                <label for='lastname'> Nom </label>
-                <input type='text' name='lastname' id='lastname'>
-            </div>
-            <div>
-                <label for='firstname'> Prenom </label>
-                <input type='text' name='firstname' id='firstname'>
-            </div>
-            <br>
-
-            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
-        </div>
     </div>
   </div>
 </div>

@@ -54,6 +54,16 @@ PatientEdit:
   controller: App\Controller\PatientController::patientEdit
   methods: [POST]
 
+Appointment:
+  path: /appointments
+  controller: App\Controller\AppointmentController::appointmentGet
+  methods: [GET]
+
+AppointmentPost:
+  path: /appointments
+  controller: App\Controller\AppointmentController::appointmentPost
+  methods: [POST]
+
 app_activity_index:
   path: /activities
   controller: App\Controller\ActivityController:index
@@ -68,21 +78,13 @@ PathwaysPost:
   controller: App\Controller\PathwayController:new
   methods: [POST]
 
-index_resources:
-  path: /resources
+index_human_resources:
+  path: /human-resources
   controller: App\Controller\HumanResourceController:index
 
-index_resources_types:
-  path: /resources-types
-  controller: App\Controller\ResourceTypeController:index
-
-index_resources_types_humans:
-  path: /resources-types-humans
-  controller: App\Controller\ResourceTypeController:indexFilteredHumans
-
-index_resources_types_materials:
-  path: /resources-types-materials
-  controller: App\Controller\ResourceTypeController:indexFilteredMaterials
+index_material_resources:
+  path: /material-resources
+  controller: App\Controller\MaterialResourceController:index
 
 index_mon_profil:
   path: /mon_profil
