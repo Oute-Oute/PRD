@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConsultationPlanningController extends AbstractController
 {
+
+    public $scheduledActivities;
      /**
      * Fonction pour l'affichage de la page consultation planning par la méthode GET
      */
@@ -46,36 +48,87 @@ class ConsultationPlanningController extends AbstractController
    
 
     public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine){
-        /*$scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
+        $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
         $scheduledActivitiesArray=array(); 
         foreach($scheduledActivities as $scheduledActivity){
-            //$patientId=$scheduledActivity->getPatient()->getId();
-            //$patientId="patient_".$patientId;
-            //$patientName=$scheduledActivity->getPatient()->getLastname();
+            $patientId=$scheduledActivity->getAppointment()->getPatient()->getId();
+            $patientId="patient_".$patientId;
+            $pathwayId=$scheduledActivity->getAppointment()->getPathway()->getId();
+            $pathwayId="pathway_".$pathwayId;
+
+            $MaterialResourceScheduleds=$doctrine   ->getRepository("App\Entity\MaterialResourceScheduled")
+                                                    ->findBy(array("scheduledactivity"=>$scheduledActivity));
+            
+            $humanResourceScheduleds=$doctrine   ->getRepository("App\Entity\HumanResourceScheduled")
+                                                    ->findBy(array("scheduledactivity"=>$scheduledActivity));
+            $HumanResourceScheduledArray[]=array();
+            $MaterialResourceScheduledArray[]=array();
+            foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
+                $id=$MaterialResourceScheduled->getMaterialresource()->getId();
+                $id="materialresource_".$id;
+                
+                $MaterialResourceScheduledArray[]=array(
+                    $id,
+                
+            ); 
+            }
+
+            foreach($humanResourceScheduleds as $humanResourceScheduled){
+                $id=$humanResourceScheduled->getHumanresource()->getId();
+                $id="humanresource_".$id;
+                
+                $HumanResourceScheduledArray[]=array(
+                    $id,
+                
+            ); 
+            }
+            
+            $resourceArray[]=array(
+                $patientId,
+                $pathwayId,
+            );
+            
+            for($i=0;$i<count($MaterialResourceScheduledArray);$i++){
+                array_push($resourceArray[0],$MaterialResourceScheduledArray[$i]);
+
+            }
+            
+            for($i=0;$i<count($HumanResourceScheduledArray);$i++){
+                array_push($resourceArray[0],$HumanResourceScheduledArray[$i]);
+
+            }
+            
             $start=$scheduledActivity->getStarttime();
-            $day=$scheduledActivity->getDay();
+            $day=$scheduledActivity->getDayscheduled();
             $day=$day->format('Y-m-d');
             $start=$start->format('H:i:s');
             $start=$day."T".$start;
             $end=$scheduledActivity->getEndtime();
             $end=$end->format('H:i:s');
             $end=$day."T".$end;
+            global $scheduledActivities;
+            $scheduledActivities[]=$scheduledActivity->getActivity();
             $scheduledActivitiesArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
                 'start'=>$start,
                 'end'=>$end,
-                'title'=>($scheduledActivity->getActivity()->getActivityname())
+                'title'=>($scheduledActivity->getActivity()->getActivityname()),
+                'appointment'=>($scheduledActivity->getAppointment()->getId()),
+                'resourceIds'=>($resourceArray[0]),
                 
                 
             ); 
+            unset($MaterialResourceScheduledArray);
+            unset($HumanResourceScheduledArray);
+            unset($resourceArray);
         }   
+        
         //Conversion des données ressources en json
         $scheduledActivitiesArrayJSON= new JsonResponse($scheduledActivitiesArray); 
-        return $scheduledActivitiesArrayJSON; */
+        return $scheduledActivitiesArrayJSON; 
     }
 
     public function listeAppointmentJSON(ManagerRegistry $doctrine){
-
         $date_today=date('Y-m-d');
         if(isset($_GET["date"])){
             $date_today = $_GET["date"];
@@ -114,30 +167,43 @@ class ConsultationPlanningController extends AbstractController
     }
 
     public function listeMaterialResourceScheduledJSON(ManagerRegistry $doctrine){
-        $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();  
+        global $scheduledActivities;
         $MaterialResourceScheduledArray=array(); 
-        foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
-            $MaterialResourceScheduledArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $MaterialResourceScheduled->getId())),
-                'scheduledActivity'=>($MaterialResourceScheduled->getScheduledactivity()),
-                'materialResource' =>($MaterialResourceScheduled->getMaterialresource()),
+        for ($i=0; $i < count($scheduledActivities); $i++) {
+            $MaterialResourceScheduleds=$doctrine   ->getRepository("App\Entity\MaterialResourceScheduled")
+                                                    ->findBy(array("scheduledactivity"=>$scheduledActivities[$i]));
+            
+            foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
+                $id=$MaterialResourceScheduled->getMaterialresource()->getId();
+                $id="materialresource_".$id;
+                $MaterialResourceScheduledArray[]=array(
+                    'id' =>$id,
+                    'title' =>($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                 
             ); 
         }   
+    }
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON= new JsonResponse($MaterialResourceScheduledArray); 
         return $MaterialResourceScheduledArrayJSON; 
     }
     public function listeHumanResourceScheduledJSON(ManagerRegistry $doctrine){
-        $HumanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();  
+        global $scheduledActivities;
         $HumanResourceScheduledArray=array(); 
-        foreach($HumanResourceScheduleds as $HumanResourceScheduled){
-            $HumanResourceScheduledArray[]=array(
-                'id' =>(str_replace(" ", "3aZt3r", $HumanResourceScheduled->getId())),
-                'scheduledActivity'=>($HumanResourceScheduled->getScheduledactivity()),
-                'humanResource' =>($HumanResourceScheduled->getHumanresource()),
-                
-            ); 
+        for ($i=0; $i < count($scheduledActivities); $i++) {
+            $HumanResourceScheduleds=$doctrine  ->getRepository("App\Entity\HumanResourceScheduled")
+                                                ->findBy(array("scheduledactivity"=>$scheduledActivities[$i]));
+            
+            foreach($HumanResourceScheduleds as $HumanResourceScheduled){
+                $id=$HumanResourceScheduled->getHumanresource()->getId();
+                $id="humanresource_".$id;
+                $HumanResourceScheduledArray[]=array(
+                    'id' =>$id,
+                    'title' =>($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
+                    
+                ); 
+            }
+
         }   
         //Conversion des données ressources en json
         $HumanResourceScheduledArrayJSON= new JsonResponse($HumanResourceScheduledArray); 

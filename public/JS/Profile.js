@@ -1,8 +1,15 @@
-    document.addEventListener('DOMContentLoaded', (event) => {
-        console.log("hel");
-       // document.getElementById('old_password').value = '';
-    });
 
-function mabite(){
-    console.log("test");
+
+
+function validate() {
+    alert("ceci est un test");
 }
+
+function validate1() {
+    alert("ceci est un test");
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    console.log("hello");
+   // document.getElementById('old_password').value = '';
+});

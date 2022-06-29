@@ -1,3 +1,5 @@
+var SELECT_ID = 0;
+
 function showNewModalForm() {
     containerModal = document.getElementById('container-modal')
     containerModal.style.display = "flex";
@@ -67,5 +69,61 @@ function showNewHumanCategModalForm() {
 function showNewMaterialCategModalForm() {
     $('#new-material-resource-category-modal').modal("show");
 }
+/** 
+ * Permet d'ajouter une ou plusieurs catégories de ressources à une ressource humaine lors de sa création.
+ */
+function handleAddHumanCategory() {
+    
+    let selectSample = document.getElementsByClassName('select-category-sample')[0];
+    let newSelect = document.createElement('select');
+    
+    //Boucle pour remplir toutes les categs dans chaque select
+    for (let i = 0; i < selectSample.length; i++){
+        let option = document.createElement('option')
+        option.value = selectSample.options[i].value;
+        option.text = selectSample.options[i].text;
+        newSelect.add(option);
+    }
+    newSelect.setAttribute('name' , 'select-'+SELECT_ID);
+    let categoriesContainer = document.getElementById('categories-container');
+    let formField = document.createElement("div");
+    formField.setAttribute('class', 'form-field category-'+SELECT_ID);
+    newSelect.style.border = 'none';
+    //Image pour delete une categ
+    let image = new Image();
+    image.src = 'img/delete.svg';
+    image.style.marginLeft = '30px';
+    image.setAttribute('id','img-'+SELECT_ID)
+    image.setAttribute('onclick', 'deleteSelect(this.id)')
+    formField.appendChild(newSelect);
+    formField.appendChild(image);
+    categoriesContainer.appendChild(formField);
+    let nbCategory = document.getElementById('nbCategory');
+    SELECT_ID = SELECT_ID +1;
+    nbCategory.value = SELECT_ID;
+
+}
+
+
+/** Permet de supprimer un select dans la liste déroulante */
+function deleteSelect(id) {
+
+
+    // On récupère le numero de la div a supprimer  
+    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
+    id = id[id.length - 1] 
+    // On peut donc recuperer la div
+    let divToDelete = document.getElementsByClassName('category-'+id)[0]
+    console.log(divToDelete)
+    // puis la supprimer
+    let divAddCategory = document.getElementById('categories-container')
+    console.log(divAddCategory)
+    divAddCategory.removeChild(divToDelete)
+    
+    let nbCategory = document.getElementById('nbCategory');
+    SELECT_ID = SELECT_ID - 1;
+    nbCategory.value = SELECT_ID;
+}
+
 // #container-modal 
 // .modal-form             #form-add-activity
