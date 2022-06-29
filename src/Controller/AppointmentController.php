@@ -8,8 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
-
-use function PHPUnit\Framework\isNull;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AppointmentController extends AbstractController
 {
@@ -22,11 +21,12 @@ class AppointmentController extends AbstractController
         ]);
     }
 
-    public function appointmentPost(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
+    public function appointmentAdd(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
         // On recupere toutes les données de la requete
         $param = $request->request->all();
 
+        // On vérifie que tous les champs sont remplis
         if(count($param) != 5)
         {
             return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
@@ -37,7 +37,6 @@ class AppointmentController extends AbstractController
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
-        //dd($pathway);
 
         // Création du patient
         $appointment = new Appointment(); 
@@ -50,6 +49,36 @@ class AppointmentController extends AbstractController
 
         // ajout dans la bdd
         $appointmentRepository->add($appointment, true);
+
+        return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function appointmentEdit(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine)
+    {
+        $param = $request->request->all();
+
+        $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['id' => $param['idpatient']]);
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
+        $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
+        $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
+        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
+
+        $appointment->setPatient($patient);
+        $appointment->setPathway($pathway);
+        $appointment->setDayappointment($dayappointment);
+        $appointment->setEarliestappointmenttime($earliestappointmenttime);
+        $appointment->setLatestappointmenttime($latestappointmenttime);
+        $appointment->setScheduled(false);
+
+        $appointmentRepository->add($appointment, true);
+
+        return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function appointmentDelete(Appointment $appointment, AppointmentRepository $appointmentRepository): Response
+    {
+        $appointmentRepository->remove($appointment, true);
 
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
