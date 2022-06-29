@@ -88,6 +88,11 @@ PathwaysPost:
   controller: App\Controller\PathwayController:new
   methods: [POST]
 
+HumanResPost:
+  path: /human-resources
+  controller: App\Controller\HumanResourceController:new
+  methods: [POST]
+
 index_human_resources:
   path: /human-resources
   controller: App\Controller\HumanResourceController:index
