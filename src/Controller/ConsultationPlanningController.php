@@ -46,7 +46,7 @@ class ConsultationPlanningController extends AbstractController
    
 
     public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine){
-        /*$scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
+        $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();  
         $scheduledActivitiesArray=array(); 
         foreach($scheduledActivities as $scheduledActivity){
             //$patientId=$scheduledActivity->getPatient()->getId();
@@ -71,7 +71,7 @@ class ConsultationPlanningController extends AbstractController
         }   
         //Conversion des données ressources en json
         $scheduledActivitiesArrayJSON= new JsonResponse($scheduledActivitiesArray); 
-        return $scheduledActivitiesArrayJSON; */
+        return $scheduledActivitiesArrayJSON;
     }
 
     public function listeAppointmentJSON(ManagerRegistry $doctrine){
