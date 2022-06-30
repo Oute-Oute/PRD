@@ -11,6 +11,12 @@ div#container {
    position: absolute;
 }
 
+#container-top {
+  display: flex;
+  justify-content: space-between;
+  z-index: 5;
+  margin-top: 2.5%;
+}
 
 .form-control {
   border-radius: 50px;

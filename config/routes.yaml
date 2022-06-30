@@ -44,9 +44,9 @@ Patients:
   controller: App\Controller\PatientController::patientGet
   methods: [GET]
 
-PatientsPost:
+PatientAdd:
   path: /patients
-  controller: App\Controller\PatientController::patientPost
+  controller: App\Controller\PatientController::patientAdd
   methods: [POST]
 
 PatientDelete:
