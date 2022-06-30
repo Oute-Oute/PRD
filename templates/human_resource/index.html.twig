@@ -62,7 +62,7 @@
                 <td>{{ human_resource_category.categoryname }}</td>
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Infos</a>
-                   <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_human_resource_category_edit', {'id': human_resource_category.id}) }}'">Éditer</a>
+                   <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
                     {{ include('human_resource_category/_delete_form.html.twig') }}
 
                 </td>
@@ -79,6 +79,7 @@
 {{ include ('human_resource/new.html.twig') }}
 {{ include ('human_resource_category/new.html.twig') }}
 {{ include ('human_resource_category/show.html') }}
+{{ include ('human_resource_category/edit.html.twig')}}
 
 {% endblock %}
 

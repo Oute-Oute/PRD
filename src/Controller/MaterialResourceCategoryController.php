@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @Route("/material/resource/category")
@@ -56,21 +57,18 @@ class MaterialResourceCategoryController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_material_resource_category_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, MaterialResourceCategory $materialResourceCategory, MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
+    public function edit(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(MaterialResourceCategoryType::class, $materialResourceCategory);
-        $form->handleRequest($request);
+        $idCateg = $request->request->get("idcategory");
+        $nameCateg = $request->request->get("categoryname");
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $materialResourceCategoryRepository->add($materialResourceCategory, true);
+        $category = $materialResourceCategoryRepository->findOneBy(['id' => $idCateg]);
+        $category->setCategoryname($nameCateg);
 
-            return $this->redirectToRoute('app_material_resource_category_index', [], Response::HTTP_SEE_OTHER);
-        }
+        $entityManager->persist($category);
+        $entityManager->flush();
 
-        return $this->renderForm('material_resource_category/edit.html.twig', [
-            'material_resource_category' => $materialResourceCategory,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
@@ -82,6 +80,6 @@ class MaterialResourceCategoryController extends AbstractController
             $materialResourceCategoryRepository->remove($materialResourceCategory, true);
         }
 
-        return $this->redirectToRoute('app_material_resource_category_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
 }

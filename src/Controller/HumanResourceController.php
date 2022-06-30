@@ -115,6 +115,6 @@ class HumanResourceController extends AbstractController
             }
 
         $humanResourceRepository->add($humanResource, true);
-        return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 }

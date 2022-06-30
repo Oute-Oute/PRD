@@ -44,9 +44,9 @@ Patients:
   controller: App\Controller\PatientController::patientGet
   methods: [GET]
 
-PatientsPost:
+PatientAdd:
   path: /patients
-  controller: App\Controller\PatientController::patientPost
+  controller: App\Controller\PatientController::patientAdd
   methods: [POST]
 
 PatientDelete:
@@ -84,6 +84,16 @@ ProfilEdit:
   controller: App\Controller\ProfilController::profilEdit
   methods: [POST][GET]
 
+MaterialResourceCategoryEdit:
+  path: /material-category/edit
+  controller: App\Controller\MaterialResourceCategoryController::edit
+  methods: [POST]
+
+HumanResourceCategoryEdit:
+  path: /human-category/edit
+  controller: App\Controller\HumanResourceCategoryController::edit
+  methods: [POST]
+
 Appointment:
   path: /appointments
   controller: App\Controller\AppointmentController::appointmentGet
@@ -118,9 +128,20 @@ PathwaysPost:
   controller: App\Controller\PathwayController:new
   methods: [POST]
 
+
+PathwayEdit:
+  path: /pathway/edit
+  controller: App\Controller\Pathway:pathwayEdit
+  methods: [POST]
+
 HumanResPost:
   path: /human-resources
   controller: App\Controller\HumanResourceController:new
+  methods: [POST]
+
+MaterialResPost:
+  path: /material-resources
+  controller: App\Controller\MaterialResourceController:new
   methods: [POST]
 
 index_human_resources:
