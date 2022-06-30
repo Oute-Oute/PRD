@@ -26,7 +26,7 @@ div#container {
 
 .flex{
   margin-left : 5%;
-  width: 100%;
+  width: 95%;
   display: block;
   align-items: center;
   justify-content: flex-start;
