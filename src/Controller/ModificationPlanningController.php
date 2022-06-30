@@ -23,62 +23,84 @@ class ModificationPlanningController extends AbstractController
      */
     public function modificationPlanningGet(Request $request,ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
-        if(isset($_GET['form'])){
-            $this->modificationPlanninEventsgGet($request,$doctrine,$entityManager); 
+        $date_today=array(); 
+        if(isset($_POST['form'])){
+            $this->modificationPlanningPost($request,$doctrine,$entityManager); 
+            $date_today=$_POST['date']; 
         }
-        $date_today = $_GET["date"];
+        if(isset($_GET['date'])){
+            $date_today = $_GET["date"];
+        }
         //Récupération des données nécessaires
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
         $listMaterialResources=$doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available'=>true]); 
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-
-        $listescheduledActivity= $this->listScehduledActivity($doctrine,$SAR);  
+        $listeAppointment=$this->listAppointment($doctrine); 
+        $listescheduledActivity= $this->listScehduledActivity($doctrine,$SAR,$date_today);  
         
         $listeHumanResourceJSON=$this->listHumanResourcesJSON($doctrine); 
 
-    return $this->render('planning/modification-planning.html.twig', ['listepatients'=>$listePatients, 'listePathWaypatients' => $listePathWayPatients, 'listeHumanResourcesJSON'=>$listeHumanResourceJSON,'listHumanResources'=>$listHumanResources,'listMaterialResources'=>$listMaterialResources, 'datetoday' => $date_today,'listeScheduledActivitiesJSON'=>$listescheduledActivity ]);
+    return $this->render('planning/modification-planning.html.twig', [
+        'listepatients'=>$listePatients, 
+        'listePathWaypatients' => $listePathWayPatients, 
+        'listeHumanResourcesJSON'=>$listeHumanResourceJSON,
+        'listHumanResources'=>$listHumanResources,
+        'listMaterialResources'=>$listMaterialResources, 
+        'datetoday' => $date_today,
+        'listeScheduledActivitiesJSON'=>$listescheduledActivity,
+        'listeAppointments'=>$listeAppointment
+    ]);
     }
 
-    public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager,ScheduledActivityRepository $SAR)
+    public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
+        dd('alo'); 
+        $form = $request->get('form'); 
         
+        if($form == 'add')
+        {
+            $idAppointment=$request->get('select-appointment'); 
+            $AppointmentBegin=$request->get('time_begin'); 
+            $Appointment=$doctrine->getRepository('App\Entity\Appointment')->findOneBy(['id'=>$idAppointment]); 
+            $activities=$doctrine->getRepository('App\Entity\Activity')->findBy(['pathway'=>$Appointment->getPathway()->getId()]);
+            foreach($activities as $activity){
+              $findfirst=$doctrine->getRepository('App\Entity\Successor')->findBy(['activityb'=>$activity->getId()]); 
+              if($findfirst ==null){
+                $idfirst=$activity->getId(); 
+              }
+            }
+            $activitya=$doctrine->getRepository('App\Entity\Successor')->findOneBy(['id'=>$idfirst])->getActivitya(); 
+           do{
+            $succesor=$doctrine->getRepository('App\Entity\Successor')->findOneBy(['id'=>$activitya->getId()]); 
+            $activityB=$succesor->getActivityb();  
+           }while($activityB!=null); 
+        }
 
     }
 
     public function modificationPlanninEventsgGet(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
-        $form = $request->get('form'); 
         
-        if($form == 'modify')
-        {
-            $title = $request->get('title');
-            $start = $request->get('date');
-            $start .=':00'; 
-            $length='PT'; 
-            $length .= $request->get('length');
-            $length .='M'; 
-            $id = $request->get('id');
-
-            $repositoryPCR = $doctrine->getRepository('\App\Entity\ScheduledActivity');
-            if(isset($title) && isset($start) && isset($length) && isset($id)){
-                $SA = $repositoryPCR->find($id);    
-                $start_time = \DateTime::createFromFormat('H:i:s',substr($start,11));
-                $SA->setStarttime($start_time);
-                $length=new DateInterval($length); 
-                $end_time= \DateTime::createFromFormat('H:i:s', substr($start,11));
-                $end_time=date_add($end_time,$length); 
-                $SA->setEndtime($end_time);
-                $entityManager->flush();
-            }
-        }
-        else if($form == 'add')
-        {
-            echo "</br>" . "j'ajoute" . "</br>";
-        }
 
     }
 
+
+    public function listAppointment(ManagerRegistry $doctrine){
+        $appointments=$doctrine->getRepository("App\Entity\Appointment")->findAll();
+        /*$appointmentsArray=array(); 
+        foreach($appointments as $appointment){
+            $appointmentsArray[]=array(
+                'id'=>$appointment->getId(),
+                'earliestappointmenttime'=>$appointment->getEarliestappointmenttime(), 
+                'lastestappointmenttime'=>$appointment->getLatestappointmenttime(),
+                'dayappointment'=>$appointment->getDayappointment(),
+                'idPatient'=>$appointment->getPatient()->getId(),
+                'idPathway'=>$appointment->getPathway()->getId(),
+            );
+        } */
+        return $appointments; 
+    }
 
     public function listHumanResourcesJSON(ManagerRegistry $doctrine){
         $resources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();  
@@ -110,9 +132,8 @@ class ModificationPlanningController extends AbstractController
         return $resourcesArrayJson; 
     }
 
-    public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR){
-        $TodayDate=substr($_GET['date'],0,10); 
-        $TodayDate=$TodayDate; 
+    public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR,$date){
+        $TodayDate=substr($date,0,10); 
         
         
         $scheduledActivities=$SAR->findSchedulerActivitiesByDate($TodayDate); 
