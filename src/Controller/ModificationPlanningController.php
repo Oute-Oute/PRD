@@ -8,6 +8,7 @@ use App\Entity\HumanResourceScheduled;
 use App\Entity\ScheduledActivity;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
+use App\Repository\ModificationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
 use DateInterval;
+use DateTime;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
@@ -62,6 +64,31 @@ class ModificationPlanningController extends AbstractController
         'listeActivitiesJSON'=>$listeActivitiesJSON,
         'listeAppointmentsJSON'=>$listeAppointmentJSON
     ]);
+    }
+
+    public function bordel(string $date_today){
+        $modificationRepository = new ModificationRepository($this->getDoctrine()); 
+
+        $date_today = strtotime(str_replace('T', ' ', $date_today));
+        $dateTime_today = new \DateTime(date('Y-m-d h:i:s', $date_today));
+        $date_today = new \DateTime('now'); //date('Y-m-d', $date_today);
+
+        $interval = $date_today->diff($dateTime_today);
+        dd($interval->format('Difference of %h hours, %i minutes and %s seconds'));
+
+        $modifications = $modificationRepository->findAll();
+        $modifArray = array();
+        foreach ($modifications as $modification) {
+            $modifArray[] = array(
+                'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d h:i:s')),
+                'dateModified' => ($modification->getDatemodified()->format('Y-m-d'))
+            );
+        }
+        dd($modifArray);
+
+        if(count($modifications) >= 1){
+            dd($modifications);
+        }
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
