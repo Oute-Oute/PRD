@@ -1,6 +1,6 @@
     <!-- add-patient-modal -->
 
-<div class="modal" id="edit-pathway-modal">
+<div class="modal" id="edit--pathway-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,9 @@
             <form action="{{ path('PathwayEdit') }}" method="post">
                 <div class="modal-body">
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
-                    <input style="display:none;" name="nbActivity" id="nbActivity_EditForm">
+                    <input style="display:none;" name="nbactivity" id="edit--nbactivity">
+                    <input style="display:none;" name="nbactivity-toedit" id="edit--nbactivity-toedit">
+                    <input style="display:none;" name="pathwayid" id="edit--pathwayid">
 
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
@@ -17,25 +19,25 @@
                         </div>
 
                         <div class="form-field-input flex-col">
-                            <input id='edit-pathwayname' type='text' name='pathwayname' onchange='disableSubmit_EditForm()'>
+                            <input id='edit--pathwayname' type='text' name='pathwayname' onchange='edit__disableSubmit()'>
                         </div>
                     </div> 
 
                     <fieldset id="fs-add-activity">
                         <h4>Choisissez les activités de votre parcours</h4>
 
-                        <div id="edit-activities-container"> 
+                        <div id="edit--activities-container"> 
 
                         </div>
 
-                        <button type="button" id='btn-add-activity' onclick="handleAddActivity_EditForm()"> <b> Ajouter </b> </button> 
+                        <button type="button" id='btn-add-activity' onclick="edit__handleAddActivity()"> <b> Ajouter </b> </button> 
 
                     </fieldset>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
-                    <button type='button' onclick="verifyChanges_EditForm()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                    <button id='edit-submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+                    <button type='button' onclick="edit__verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                    <button id='edit--submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
                 </div>
     	    </form>
         </div>

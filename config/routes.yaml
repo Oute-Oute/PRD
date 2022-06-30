@@ -106,7 +106,7 @@ PathwaysPost:
 
 PathwayEdit:
   path: /pathway/edit
-  controller: App\Controller\Pathway:pathwayEdit
+  controller: App\Controller\PathwayController:edit
   methods: [POST]
 
 HumanResPost:

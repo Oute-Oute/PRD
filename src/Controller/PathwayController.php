@@ -140,10 +140,10 @@ class PathwayController extends AbstractController
     /**
      * Methode dedition d'un pathway dans la base de données
      */
-    public function edit(Request $request, Pathway $pathway, PathwayRepository $pathwayRepository): Response
+    public function edit(Request $request): Response
     {
         
-   // Méthode POST pour ajouter un circuit
+        // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
             // On recupere toutes les données de la requete
@@ -159,6 +159,9 @@ class PathwayController extends AbstractController
             //$pathway->setTarget($param['target']);
 
             // On ajoute le parcours a la bd
+            $pathwayRepository = new PathwayRepository($this->getDoctrine());
+            $pathwayid = $pathwayRepository->findById($param["pathwayid"]);
+            dd($pathwayid);
             $pathwayRepository->add($pathway, true);
 
             // On s'occupe ensuite ds liens entre le parcours et les activités :
