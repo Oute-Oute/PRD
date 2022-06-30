@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Activity;
 use App\Entity\ScheduledActivity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,8 +39,10 @@ class ModificationPlanningController extends AbstractController
         $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listeAppointment=$this->listAppointment($doctrine); 
         $listescheduledActivity= $this->listScehduledActivity($doctrine,$SAR,$date_today);  
-        
+        $listesuccessionJSON=$this->listSuccessorJSON($doctrine); 
+        $listeActivitiesJSON=$this->listActivityJSON($doctrine); 
         $listeHumanResourceJSON=$this->listHumanResourcesJSON($doctrine); 
+        $listeAppointmentJSON=$this->listAppointmentJSON($doctrine); 
 
     return $this->render('planning/modification-planning.html.twig', [
         'listepatients'=>$listePatients, 
@@ -49,13 +52,15 @@ class ModificationPlanningController extends AbstractController
         'listMaterialResources'=>$listMaterialResources, 
         'datetoday' => $date_today,
         'listeScheduledActivitiesJSON'=>$listescheduledActivity,
-        'listeAppointments'=>$listeAppointment
+        'listeAppointments'=>$listeAppointment,
+        'listeSuccessorsJSON'=>$listesuccessionJSON,
+        'listeActivitiesJSON'=>$listeActivitiesJSON,
+        'listeAppointmentsJSON'=>$listeAppointmentJSON
     ]);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
-        dd('alo'); 
         $form = $request->get('form'); 
         
         if($form == 'add')
@@ -71,14 +76,48 @@ class ModificationPlanningController extends AbstractController
               }
             }
             $activitya=$doctrine->getRepository('App\Entity\Successor')->findOneBy(['id'=>$idfirst])->getActivitya(); 
+            
            do{
-            $succesor=$doctrine->getRepository('App\Entity\Successor')->findOneBy(['id'=>$activitya->getId()]); 
+            $succesor=$doctrine->getRepository('App\Entity\Successor')->findOneBy(['activitya'=>$activitya->getId()]); 
+            dd($succesor); 
             $activityB=$succesor->getActivityb();  
            }while($activityB!=null); 
         }
 
+         
+
+    }
+    public function listSuccessorJSON(ManagerRegistry $doctrine){
+        $successors=$doctrine->getRepository('App\Entity\Successor')->findAll(); 
+        $successorsArray=array(); 
+        foreach($successors as $succesor){
+            $successorsArray[]=array(
+                'id'=>$succesor->getId(),
+                'idactivitya'=>$succesor->getActivitya()->getId(),
+                'idactivityb'=>$succesor->getActivityb()->getId(), 
+                'delaymin'=>$succesor->getDelaymin(), 
+                'delaymax'=>$succesor->getDelaymax(),
+            ); 
+        }
+
+        $successorsArrayJSON=new JsonResponse($successorsArray); 
+        return $successorsArrayJSON; 
     }
 
+    public function listActivityJSON(ManagerRegistry $doctrine){
+        $activities=$doctrine->getRepository('App\Entity\Activity')->findAll(); 
+        $activitiesArray=array(); 
+        foreach($activities as $activity){
+            $activitiesArray[]=array(
+                'id'=>$activity->getId(),
+                'name'=>(str_replace(" ", "3aZt3r", $activity->getActivityname())),
+                'duration'=>$activity->getDuration(),
+                'idPathway'=>$activity->getPathway()->getId()
+            );
+        }
+        $activitiesArrayJSON=new JsonResponse($activitiesArray); 
+        return $activitiesArrayJSON; 
+    }
     public function modificationPlanninEventsgGet(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         
@@ -101,6 +140,24 @@ class ModificationPlanningController extends AbstractController
         } */
         return $appointments; 
     }
+
+    public function listAppointmentJSON(ManagerRegistry $doctrine){
+        $appointments=$doctrine->getRepository("App\Entity\Appointment")->findAll();
+        $appointmentsArray=array(); 
+        foreach($appointments as $appointment){
+            $appointmentsArray[]=array(
+                'id'=>$appointment->getId(),
+                'earliestappointmenttime'=>$appointment->getEarliestappointmenttime()->format('H:i:s'), 
+                'lastestappointmenttime'=>$appointment->getLatestappointmenttime()->format('H:i:s'),
+                'dayappointment'=>$appointment->getDayappointment()->format('Y:m:d'),
+                'idPatient'=>$appointment->getPatient()->getId(),
+                'idPathway'=>$appointment->getPathway()->getId(),
+            );
+        } 
+        $appointmentsArrayJSON=new JsonResponse($appointmentsArray); 
+        return $appointmentsArrayJSON; 
+    }
+
 
     public function listHumanResourcesJSON(ManagerRegistry $doctrine){
         $resources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();  

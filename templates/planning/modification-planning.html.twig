@@ -55,15 +55,14 @@
       <div class="modal-header"> <!-- sépare le header de la modal -->
         <h2 class="modal-title">Ajouter un rendez-vous</h2>
       </div>
-      <form method="post" action="/ModificationPlanning"> <!-- créer un form qui renvoie une méthode post au controller -->
         <div class="modal-body"> <!-- sépare le body de la modal -->
-          <input name="form" type="hidden" value="add">
           <input id="date" name="date" type="hidden" value={{datetoday}}>
-
+          <input id="listeAppointments" name="listeAppointments" type='hidden' value={{listeAppointmentsJSON.content}}>
+          <input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listeSuccessorsJSON.content}}>
+          <input id="listeActivities" name="listeActivities" type='hidden' value={{listeActivitiesJSON.content}}>
           <div id="select-container-patient"> 
             <label>Choisissez le rendez-vous</label>
               <select onchange="showSelectAppointment()" id="select-appointment" name="select-appointment"> 
-
                 <option value="" selected hidden> Selection patient </option>
                 {% for Appointment in listeAppointments %} 
                 <option value="{{ Appointment.id }}"> patient :{{ Appointment.patient.LastName }} {{ Appointment.patient.firstname }} Nom du parcours : {{Appointment.PathWay.PathWayname}} </option>
@@ -74,11 +73,11 @@
 
           <div id="select-container-date" class="input-container onWhite">
             <label>Date de début du parcours : </label>
-              <input class="input-field" type="time" id="time_begin" name="time_begin" required>
+              <input class="input-field" type="time" id="timeBegin" name="timeBegin" required>
           </div>
             <div class="modal-footer">
               <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
+              <button type="submit" class="btn-valide btn-secondary" onclick="AddEventValider()">Valider</button>
             </div>
           </div>
 	    </form>
