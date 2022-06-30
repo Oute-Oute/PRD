@@ -1,10 +1,25 @@
-var calendar;
-var datepicker;
+/**
+     * @file consultation-planning.js
+     * @brief This file contains the js scripts for the consultation planning page, essentially the calendar.
+     * @author Thomas Blumstein
+     * @version 1.0
+     * @date 2022/06
+     */
+
+
+var calendar; // var globale pour le calendrier
 var date=new Date();
 var dateStr=date.toDateString();
 var headerResources="Patients";
 const height = document.querySelector('div').clientHeight
 
+
+/**
+ * 
+ * @brief This function is called when the page is loaded. It creates the calendar.
+ * @param {*} param 
+ * @returns 
+ */
 function $_GET(param) {
 	var vars = {};
 	window.location.href.replace( location.hash, '' ).replace( 
@@ -90,7 +105,7 @@ function createCalendar(resources){
         timeZone: 'Europe/Paris',
         selectable: true,
         editable: false,
-        contentHeight: height*13/16,
+        contentHeight: height*12/16,
         handleWindowResize: true,
         eventDurationEditable: false,
         nowIndicator: true,
