@@ -19,9 +19,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Humanresourcename</th>
-                <th>Available</th>
-                <th>actions</th>
+                <th>Nom de la ressource</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -29,7 +28,6 @@
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
-                <td>{{ human_resource.available ? 'Yes' : 'No' }}</td>
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_human_resource_edit', {'id': human_resource.id}) }}'">Éditer</a>
@@ -51,8 +49,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Categoryname</th>
-                <th>actions</th>
+                <th>Nom de la catégorie</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

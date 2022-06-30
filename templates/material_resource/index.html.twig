@@ -20,9 +20,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Materialresourcename</th>
-                <th>Available</th>
-                <th>actions</th>
+                <th>Nom de la ressource</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +29,6 @@
             <tr>
                 <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
-                <td>{{ material_resource.available ? 'Yes' : 'No' }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_edit', {'id': material_resource.id}) }}'">Éditer</a>
@@ -50,8 +48,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Categoryname</th>
-                <th>actions</th>
+                <th>Nom de la catégorie</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

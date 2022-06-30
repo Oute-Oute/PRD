@@ -2,11 +2,15 @@
 
 {% block title %}Listing des parcours{% endblock %}
 
-{% block stylesheets %}
-        <script src="js/Pathway/pathway.js"></script>
+{% block javascripts %}
+  <script src="js/Pathway/pathway.js"></script>
         <script src="js/jquery-3.6.0.js"></script>
         <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <script src="js/Pathway/EditForm.js"> </script>
+{% endblock %}
+
+{% block stylesheets %}
+       <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
 {% endblock %}
@@ -25,27 +29,38 @@
         activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].name => nom de l'activité
         activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
     */
+        {% if (activitiesByPathways) %}
         var activitiesByPathways = new Array();
+<<<<<<< HEAD
+        
+=======
+        {% if (activitiesByPathways) %}
+            {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
+                activitiesByPathways[{{indexPathway}}] = new Object();
+                activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
+                //console.log('{{ pathways[indexPathway].id }}')
+                activitiesByPathways[{{indexPathway}}].activities = new Array();
+                {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+>>>>>>> 4045ec4b78736bf4e84725a31439b52525218541
 
-        {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
-            activitiesByPathways[{{indexPathway}}] = new Object();
-            activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
-            //console.log('{{ pathways[indexPathway].id }}')
-            activitiesByPathways[{{indexPathway}}].activities = new Array();
-            {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
 
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
 
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
-
+                {% else %}
+                {% endfor %}
             {% else %}
             {% endfor %}
+<<<<<<< HEAD
         {% else %}
         {% endfor %}
         console.table(activitiesByPathways);
-
+=======
+            console.table(activitiesByPathways);
+>>>>>>> 4045ec4b78736bf4e84725a31439b52525218541
+        {% endif %}
     </script> 
 
     <div id = "index-users">
@@ -81,7 +96,7 @@
                 
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': pathway.id}) }}'">Infos</a>
-                    <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{pathway.id}}')">Éditer</a>
+                    <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{pathway.id}}', '{{pathway.pathwayname}}', '{{indexPathway}}')">Éditer</a>
                         {{ include('pathway/_delete_form.html.twig') }}
                 </td>
             </tr>
