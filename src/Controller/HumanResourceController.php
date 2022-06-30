@@ -25,6 +25,19 @@ class HumanResourceController extends AbstractController
     {
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
+        $humanResources = $humanResourceRepository->findAll();
+
+        $nbResource = count($humanResources);
+        $categoriesByResources = array();
+
+        for ($i = 0; $i < $nbResource; $i++) {
+            //note à moi-même pr demain
+            //ici 'pathway' est un objet qui est situé dans l'entité d'une activité pour un parcours
+            //moi je n'ai pas d'objet catégorie dans mon entité ressource, je dois donc récup
+            //les données dans le repository de CategOf
+            array_push($categoriesByResources, $humanResourceRepository->findBy(['pathway' => $humanResources[$i]]));
+            //dd($activitiesByPathway[$i]);
+        }
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'human_resources_categories' => $humanResourceCategories

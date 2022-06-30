@@ -106,7 +106,17 @@ PathwaysPost:
 
 PathwayEdit:
   path: /pathway/edit
-  controller: App\Controller\Pathway:pathwayEdit
+  controller: App\Controller\PathwayController:edit
+  methods: [POST]
+
+HumanResourceEdit:
+  path: /human-resource/edit
+  controller: App\Controller\HumanResourceController::edit
+  methods: [POST]
+
+MaterialResourceEdit:
+  path: /material-resource/edit
+  controller: App\Controller\MaterialResourceController::edit
   methods: [POST]
 
 HumanResPost:

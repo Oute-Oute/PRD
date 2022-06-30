@@ -5,6 +5,7 @@ var modifAlertTime = 500000000000000; // En millisecondes
 //setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
+var CoundAddEvent=0; 
 var headerResources="Ressources Matérielles";
 var dateStr=($_GET('date')).replaceAll('%3A',':'); 
 var date=new Date(dateStr);
@@ -71,15 +72,99 @@ function formatDate(date){
 }
 
 function setEvents(){
+    var events = calendar.getEvents();
+    let resources = [];
+    events.forEach((event) => {
+        resources.push(event.getResources());
+    });
     document.getElementById('events').value = JSON.stringify(calendar.getEvents());
+    document.getElementById('list-resource').value = JSON.stringify(resources);
     document.getElementById('validation-date').value = $_GET('date');
 }
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent(){
-    let selectContainerCircuit = document.getElementById('select-container-circuit');
     let selectContainerDate = document.getElementById('select-container-date');
     $('#add-planning-modal').modal("show");
+    
+}
+
+function AddEventValider(){
+    //Récupération de la bdd nécéssaire à l'ajout d'un parcours
+    var listeSuccessors=JSON.parse(document.getElementById('listeSuccessors').value); 
+    var listeActivities=JSON.parse(document.getElementById('listeActivities').value);
+    var listeAppointments=JSON.parse(document.getElementById('listeAppointments').value);
+    var appointmentid=document.getElementById('select-appointment').value; 
+    var PathwayBeginTime=document.getElementById('timeBegin').value;
+    //Date de début du parcours 
+    var PathwayBeginDate= new Date(new Date(dateStr.substring(0,10)+' '+PathwayBeginTime).getTime()+2*60*60000); 
+    var appointment; 
+    //Récupération du rdv choisit par l'utiuilisateur
+    for(let i=0; i<listeAppointments.length;i++){
+        if(listeAppointments[i]['id']==appointmentid){
+            appointment=listeAppointments[i]; 
+        }
+    }
+
+    //Récupération des activités du parcours
+    var activitiesInPathwayAppointment=[]; 
+    for(let i=0;i<listeActivities.length;i++){
+        if(listeActivities[i]['idPathway']==appointment['idPathway']){
+            activitiesInPathwayAppointment.push(listeActivities[i]); 
+        }
+    }
+
+    //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
+    var successorsActivitybIdList=[]; 
+    for(let i=0; i<listeSuccessors.length;i++){
+        successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
+    }
+
+    //get the forst activity of the pathway
+    for(let i=0; i<activitiesInPathwayAppointment.length;i++){
+            if(successorsActivitybIdList.includes(activitiesInPathwayAppointment[i].id)==false){
+                var firstActivityPathway=activitiesInPathwayAppointment[i]; 
+            }
+    }
+    
+    var idactivitya=firstActivityPathway.id;
+    var activitya; 
+    var successoracivitya; 
+
+    //Début de la création des events
+    do{ 
+        var idactivityB=undefined; 
+        //find activity with idactivitya id
+        for(let i=0; i<listeActivities.length;i++){
+            if(listeActivities[i].id==idactivitya){
+                activitya=listeActivities[i]; 
+            }
+        }
+        //trouover dans la table successor le correspondant au activiteida
+        for(let i=0; i<listeSuccessors.length;i++){
+            if(listeSuccessors[i].idactivitya==idactivitya){
+                successoracivitya=listeSuccessors[i]; 
+                 idactivityB=listeSuccessors[i].idactivityb; 
+            }
+        }
+        //countAddEvent pour avoir un id different pour chaque events ajoutes
+        CoundAddEvent++; 
+        //Ajout d'un event au calendar
+        calendar.addEvent({
+            id: 'new'+CoundAddEvent,
+            resourceId: '2',
+            title: activitya.name,
+            start: PathwayBeginDate,
+            end: PathwayBeginDate.getTime()+activitya.duration*60000,
+          });
+          
+          //Detection de la dernière activite du parcours
+            if(idactivityB != undefined){
+                idactivitya=idactivityB;
+            }
+        PathwayBeginDate=new Date(PathwayBeginDate.getTime()+activitya.duration*60000); 
+    }while(idactivityB != undefined); 
+    calendar.render();
 }
 
 function showSelectDate(){
@@ -104,8 +189,8 @@ function changePlanning(){
 function createCalendar(){
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var resourcearray=JSON.parse(document.getElementById('Humanresources').value.replaceAll("3aZt3r", " "));
-    var eventsarray=JSON.parse(document.getElementById('listeScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
+    var resourcearray=JSON.parse(document.getElementById('Resources').value.replaceAll("3aZt3r", " "));
+    var eventsarray=JSON.parse(document.getElementById('listScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
     console.log(eventsarray); 
 
 
