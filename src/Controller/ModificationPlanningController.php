@@ -41,18 +41,18 @@ class ModificationPlanningController extends AbstractController
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listeAppointment=$this->listAppointment($doctrine); 
-        $listescheduledActivity= $this->listScehduledActivity($doctrine,$SAR,$date_today);  
+        $listScheduledActivity= $this->listScehduledActivity($doctrine,$SAR,$date_today);  
         
-        $listeResourceJSON=$this->listResourcesJSON($doctrine); 
+        $listResourceJSON=$this->listResourcesJSON($doctrine); 
 
     return $this->render('planning/modification-planning.html.twig', [
         'listepatients'=>$listePatients, 
         'listePathWaypatients' => $listePathWayPatients, 
-        'listeResourceJSON'=>$listeResourceJSON,
+        'listResourceJSON'=>$listResourceJSON,
         'listHumanResources'=>$listHumanResources,
         'listMaterialResources'=>$listMaterialResources, 
         'datetoday' => $date_today,
-        'listeScheduledActivitiesJSON'=>$listescheduledActivity,
+        'listeScheduledActivitiesJSON'=>$listScheduledActivity,
         'listeAppointments'=>$listeAppointment
     ]);
     }
@@ -183,54 +183,77 @@ class ModificationPlanningController extends AbstractController
 
     public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine)
     {
-        $listeEvent = json_decode($request->request->get("events"));
-        $listeResource = json_decode($request->request->get("list-resource"));
-        $listeScheduledEvent = array();
-        for($index = 0; $index < sizeof($listeEvent); $index++)
+        //récupération des events et des ressources depuis le twig
+        $listEvent = json_decode($request->request->get("events"));
+        $listResource = json_decode($request->request->get("list-resource"));
+
+        //création d'une nouvelle liste fusionnant les deux listes précédentes : events et ressources
+        $listScheduledEvent = array();
+        for($index = 0; $index < sizeof($listEvent); $index++)
         {
             $newScheduledEvent = array();
-            array_push($newScheduledEvent, $listeEvent[$index]);
-            array_push($newScheduledEvent, $listeResource[$index]);
-            array_push($listeScheduledEvent, $newScheduledEvent);
+            array_push($newScheduledEvent, $listEvent[$index]);
+            array_push($newScheduledEvent, $listResource[$index]);
+            array_push($listScheduledEvent, $newScheduledEvent);
         }
-        $date = $request->request->get("validation-date");
 
-        $listeScheduledActivity = $scheduledActivityRepository->findBy(['dayscheduled' => \DateTime::createFromFormat('Y-m-d', substr($date,0,10))]);
-        foreach($listeScheduledEvent as $event)
+        //récupération de toutes les activités programmées prévu le jour qui vient d'être plannifié
+        $date = $request->request->get("validation-date");
+        $listScheduledActivity = $scheduledActivityRepository->findBy(['dayscheduled' => \DateTime::createFromFormat('Y-m-d', substr($date, 0, 10))]);
+        
+        //on parcours la liste des évènement plannifié qui viennent d'être modifiés
+        foreach($listScheduledEvent as $event)
         {
+            //on instancie un booléen pour savoir si l'évènement est déjà en bdd ou non
             $scheduledActivityExist = false;
 
-            foreach($listeScheduledActivity as $scheduledActivity)
+            //on parcours la liste des évènement programmés déjà stocké en bdd
+            foreach($listScheduledActivity as $scheduledActivity)
             {
+                //si l'évènement modifié correspond à un évènement déjà enregistré en bdd, alors on le met à jour
                 if($scheduledActivity->getId() == $event[0]->id)
                 {
+                    //on précise au booléen que l'évènement modifié existe déjà et qu'on a pas à le créer
                     $scheduledActivityExist = true;
 
+                    //on met à jour ses attributs dans sa table
                     $scheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event[0]->start,11,16)));
                     $scheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event[0]->end,11,16)));
                     $scheduledActivity->setDayscheduled(\DateTime::createFromFormat('Y-m-d', substr($event[0]->start,0,10)));
 
                     $scheduledActivityRepository->add($scheduledActivity, true);
 
+                    //on récupère la liste des ressources associées à l'évènement
                     $listeMaterialResourceScheduled = $materialResourceScheduledRepository->findBy((['scheduledactivity'=>$scheduledActivity->getId()]));
-                    
                     $listeHumanResourceScheduled = $humanResourceScheduledRepository->findBy((['scheduledactivity'=>$scheduledActivity->getId()]));
 
-                    foreach($event[1] as $resourceId)
+                    //on parcours la liste des ressources modifiés
+                    foreach($event[1] as $resource)
                     {
-                        if(substr($resourceId->id, 0, 5) == "human")
+                        //on regarde si la ressource modifié est de type Humaine
+                        if(substr($resource->id, 0, 5) == "human")
                         {
-                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resourceId->id, 6)]);
+                            //on récupère l'objet ressource humaine correspondant
+                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource->id, 6)]);
+
+                            //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $humanResourceExist = false;
+
+                            //on parcours la liste des relation déjà présente en bdd
                             foreach($listeHumanResourceScheduled as $humanResourceScheduled)
                             {
+                                //on regarde si la relation est déjà présente en bdd
                                 if($humanResourceScheduled->getHumanresource() == $humanResource)
                                 {
+                                    //on précise au booléen que la relation existe déjà et qu'on a pas à le créer
                                     $humanResourceExist = true;
                                 }
                             }
+
+                            //si la relation n'est pas déjà existante, on la créer
                             if(!$humanResourceExist)
                             {
+                                //ajout de la nouvelle relation en bdd
                                 $newHumanResourceScheduled = new HumanResourceScheduled();
                                 $newHumanResourceScheduled->setHumanresource($humanResource);
                                 $newHumanResourceScheduled->setScheduledactivity($scheduledActivity);
@@ -238,19 +261,31 @@ class ModificationPlanningController extends AbstractController
                                 $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
                             }
                         }
+
+                        //sinon, la relation est donc de type matérielle
                         else
                         {
-                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resourceId->id, 9)]);
+                            //on récupère l'objet ressource matériel correspondant
+                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource->id, 9)]);
+                            
+                            //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $materialResourceExist = false;
+
+                            //on parcours la liste des relation déjà présente en bdd
                             foreach($listeMaterialResourceScheduled as $materialResourceScheduled)
                             {
+                                //on regarde si la relation est déjà présente en bdd
                                 if($materialResourceScheduled->getMaterialresource() == $materialResource)
                                 {
+                                    //on précise au booléen que la relation existe déjà et qu'on a pas à le créer
                                     $materialResourceExist = true;
                                 }
                             }
+
+                            //si la relation n'est pas déjà existante, on la créer
                             if(!$materialResourceExist)
                             {
+                                //ajout de la nouvelle relation en bdd
                                 $newMaterialResourceScheduled = new MaterialResourceScheduled();
                                 $newMaterialResourceScheduled->setMaterialresource($materialResource);
                                 $newMaterialResourceScheduled->setScheduledactivity($scheduledActivity);
@@ -260,50 +295,76 @@ class ModificationPlanningController extends AbstractController
                         }
                     }
 
+                    //on parcours la liste des relation entre ressource humaine et évènement programmé de la bdd
                     foreach($listeHumanResourceScheduled as $humanResourceScheduled)
                     {
+                        //on instancie un booléen pour savoir si la ressource est toujours associé à l'évènement modifié
                         $humanResourceExist = false;
-                        foreach($event[1] as $resourceId)
+
+                        //on parcours la liste des ressources modifiés
+                        foreach($event[1] as $resource)
                         {
-                            if(substr($resourceId->id, 0, 5) == "human")
+                            //on ne compare que les ressource de type humaine
+                            if(substr($resource->id, 0, 5) == "human")
                             {
-                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resourceId->id, 6)]);
+                                //on récupère en bdd la ressource humaine correspondante
+                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource->id, 6)]);
+                                
+                                //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if($humanResourceScheduled->getHumanresource() == $humanResource)
                                 {
+                                    //on précise au booléen que la relation est toujours présente
                                     $humanResourceExist = true;
                                 }
                             }
                         }
+
+                        //si la relation n'est plus présente dans la liste des relations modifiés
                         if(!$humanResourceExist)
                         {
+                            //on supprime la relation entre l'évènement programmé et la ressource humaine
                             $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
                         }
                     }
 
+                    //on parcours la liste des relation entre ressource matérielle et évènement programmé de la bdd
                     foreach($listeMaterialResourceScheduled as $materialResourceScheduled)
                     {
+                        //on instancie un booléen pour savoir si la ressource est toujours associé à l'évènement modifié
                         $materialResourceExist = false;
-                        foreach($event[1] as $resourceId)
+
+                        //on parcours la liste des ressources associé à l'évènement
+                        foreach($event[1] as $resource)
                         {
-                            if(substr($resourceId->id, 0, 8) == "material")
+                            //on ne compare que les ressource de type matérielle
+                            if(substr($resource->id, 0, 8) == "material")
                             {
-                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resourceId->id, 9)]);
+                                //on récupère en bdd la ressource matérielle correspondante
+                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource->id, 9)]);
+                                
+                                //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if($materialResourceScheduled->getMaterialresource() == $materialResource)
                                 {
+                                    //on précise au booléen que la relation est toujours présente
                                     $materialResourceExist = true;
                                 }
                             }
                         }
+
+                        //si la relation n'est plus présente dans la liste des relations modifiés
                         if(!$materialResourceExist)
                         {
+                            //on supprime la relation entre l'évènement programmé et la ressource matérielle
                             $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
                         }
                     }
                 }
             }
 
+            //si l'évènement modifié n'est pas encore en bdd
             if($scheduledActivityExist == false)
             {
+                //on créer un nouvelle évènement
                 $newScheduledActivity = new ScheduledActivity();
                 $newScheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event[0]->start,11,16)));
                 $newScheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event[0]->end,11,16)));
@@ -313,10 +374,13 @@ class ModificationPlanningController extends AbstractController
 
                 $scheduledActivityRepository->add($newScheduledActivity, true);
 
+                //on parcours la liste de ses ressources associés
                 foreach($event[1] as $resourceId)
                 {
+                    //on créer les relations avec les ressources de type humaine
                     if(substr($resourceId->id, 0, 5) == "human")
                     {
+                        //on créer la nouvelle relation entre la ressource humaine et le nouvel évènement
                         $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resourceId->id, 6)]);
                         $newHumanResourceScheduled = new HumanResourceScheduled();
                         $newHumanResourceScheduled->setHumanresource($humanResource);
@@ -324,8 +388,11 @@ class ModificationPlanningController extends AbstractController
 
                         $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
                     }
+
+                    //on créer les relations avec les ressources de type matérielle
                     else
                     {
+                        //on créer la nouvelle relation entre la ressource matérielle et le nouvel évènement
                         $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resourceId->id, 9)]);
 
                         $newMaterialResourceScheduled = new MaterialResourceScheduled();

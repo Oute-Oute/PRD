@@ -111,7 +111,7 @@ function createCalendar(){
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
     var resourcearray=JSON.parse(document.getElementById('Resources').value.replaceAll("3aZt3r", " "));
-    var eventsarray=JSON.parse(document.getElementById('listeScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
+    var eventsarray=JSON.parse(document.getElementById('listScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
     console.log(eventsarray); 
 
 
