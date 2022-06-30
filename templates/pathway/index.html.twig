@@ -26,26 +26,26 @@
         activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
     */
         var activitiesByPathways = new Array();
+        {% if (activitiesByPathways) %}
+            {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
+                activitiesByPathways[{{indexPathway}}] = new Object();
+                activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
+                //console.log('{{ pathways[indexPathway].id }}')
+                activitiesByPathways[{{indexPathway}}].activities = new Array();
+                {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
 
-        {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
-            activitiesByPathways[{{indexPathway}}] = new Object();
-            activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
-            //console.log('{{ pathways[indexPathway].id }}')
-            activitiesByPathways[{{indexPathway}}].activities = new Array();
-            {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
 
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
+                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
 
-                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
-
+                {% else %}
+                {% endfor %}
             {% else %}
             {% endfor %}
-        {% else %}
-        {% endfor %}
-        console.table(activitiesByPathways);
-
+            console.table(activitiesByPathways);
+        {% endif %}
     </script> 
 
     <div id = "index-users">
