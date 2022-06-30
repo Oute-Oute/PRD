@@ -71,7 +71,13 @@ function formatDate(date){
 }
 
 function setEvents(){
+    var events = calendar.getEvents();
+    let resources = [];
+    events.forEach((event) => {
+        resources.push(event.getResources());
+    });
     document.getElementById('events').value = JSON.stringify(calendar.getEvents());
+    document.getElementById('list-resource').value = JSON.stringify(resources);
     document.getElementById('validation-date').value = $_GET('date');
 }
 
@@ -104,7 +110,7 @@ function changePlanning(){
 function createCalendar(){
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var resourcearray=JSON.parse(document.getElementById('Humanresources').value.replaceAll("3aZt3r", " "));
+    var resourcearray=JSON.parse(document.getElementById('Resources').value.replaceAll("3aZt3r", " "));
     var eventsarray=JSON.parse(document.getElementById('listeScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
     console.log(eventsarray); 
 

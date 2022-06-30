@@ -97,7 +97,7 @@
 </div>
 
     <input type=hidden id="date" value="<?php echo $$_GET['date']; ?>"/>
-    <input type=hidden id="Humanresources" value='{{listeHumanResourcesJSON.content}}'/>
+    <input type=hidden id="Resources" value='{{listeResourceJSON.content}}'/>
     <input type=hidden id="listeScheduledActivitiesJSON" value='{{listeScheduledActivitiesJSON.content}}'/>
 
 
@@ -147,13 +147,13 @@
           <form method="post" action="{{ path('ModificationPlanningValidation') }}">
             <input type=hidden id='events' name="events"/>
             <input type=hidden id='validation-date' name="validation-date"/>
-            <input type=hidden id='listscheduled' name="listscheduled"/>
+            <input type=hidden id='list-resource' name="list-resource"/>
             <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
           </form>
         </div>
       </div>
       <div class="calendar-container">
-      
+
         <!-- affichage du calendar -->
         <div id = 'calendar'>
         </div>
