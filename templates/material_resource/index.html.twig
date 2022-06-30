@@ -20,9 +20,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Materialresourcename</th>
-                <th>Available</th>
-                <th>actions</th>
+                <th>Nom de la ressource</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +29,6 @@
             <tr>
                 <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
-                <td>{{ material_resource.available ? 'Yes' : 'No' }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_edit', {'id': material_resource.id}) }}'">Éditer</a>
@@ -39,20 +37,19 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="4">Pas de ressources matérielles créées !</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
     <h1>Liste des catégories des ressources matérielles</h1>
         <button class ="btn-add" onclick="showNewMaterialCategModalForm()"> Ajouter une nouvelle catégorie de ressource matérielle </button>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Categoryname</th>
-                <th>actions</th>
+                <th>Nom de la catégorie</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -62,7 +59,7 @@
                 <td>{{ material_resource_category.categoryname }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Infos</a>
-                   <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_material_resource_category_edit', {'id': material_resource_category.id}) }}'">Éditer</a>
+                   <button class = "btn-edit btn-secondary"  onclick="showEditMaterialCategModalForm('{{ material_resource_category.id }}', '{{ material_resource_category.categoryname }}')">Éditer</a>
                    {{ include('material_resource_category/_delete_form.html.twig') }}
                 </td>
             </tr>
@@ -74,9 +71,9 @@
         </tbody>
     </table>
 </div>
-
 {{ include ('material_resource/show.html') }}
 {{ include ('material_resource/new.html.twig') }}
 {{ include ('material_resource_category/new.html.twig') }}
 {{ include ('material_resource_category/show.html') }}
+{{ include ('material_resource_category/edit.html.twig')}}
 {% endblock %}

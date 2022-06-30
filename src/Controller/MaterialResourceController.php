@@ -101,6 +101,6 @@ class MaterialResourceController extends AbstractController
             $materialResourceRepository->remove($materialResource, true);
         }
 
-        return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
 }

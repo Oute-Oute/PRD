@@ -1,8 +1,8 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 500000000000000; // En millisecondes
-setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
+//setTimeout(showPopup, modifAlertTime);
+//setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent=0; 
@@ -44,15 +44,41 @@ function unshowDiv(id) {
 function modifyEvent(){
     var id = document.getElementById('id').value;
     var event = calendar.getEventById(id)
-    console.log(event.start);
-    var start = document.getElementById('new-start').value;
+    var today = $_GET('date').substring(0,10);
+    var start = today + "T" + document.getElementById('new-start').value;
+    var length = document.getElementById('length').value;
+    var date = new Date(start.replace("T", " "))
+
+    var end = new Date(date.getTime()+length*60*1000);
+
     event.setStart(start);
-    console.log(event);
+    event.setEnd(formatDate(end).replace(" ", "T"));
     $('#modify-planning-modal').modal('toggle');
 }
 
+function formatDate(date){
+    return (
+        [
+          date.getFullYear(),
+          (date.getMonth() + 1).toString().padStart(2, '0'),
+          (date.getDate()).toString().padStart(2, '0'),
+        ].join('-') +
+        ' ' +
+        [
+          (date.getHours()).toString().padStart(2, '0'),
+          (date.getMinutes()).toString().padStart(2, '0'),
+        ].join(':')
+      );
+}
+
 function setEvents(){
+    var events = calendar.getEvents();
+    let resources = [];
+    events.forEach((event) => {
+        resources.push(event.getResources());
+    });
     document.getElementById('events').value = JSON.stringify(calendar.getEvents());
+    document.getElementById('list-resource').value = JSON.stringify(resources);
     document.getElementById('validation-date').value = $_GET('date');
 }
 
@@ -163,7 +189,7 @@ function changePlanning(){
 function createCalendar(){
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var resourcearray=JSON.parse(document.getElementById('Humanresources').value.replaceAll("3aZt3r", " "));
+    var resourcearray=JSON.parse(document.getElementById('Resources').value.replaceAll("3aZt3r", " "));
     var eventsarray=JSON.parse(document.getElementById('listeScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
     console.log(eventsarray); 
 
@@ -222,7 +248,7 @@ function createCalendar(){
                 length = Math.floor((tmp/1000/60));
         
                 //set les données à afficher par défault
-                $('#new-start').val(start.toISOString().substring(0,19));
+                $('#new-start').val(start.toISOString().substring(11,16));
                 document.getElementById('show-title').innerHTML = activity.title;
                 $('#title').val(activity.title);
                 $('#length').val(length);

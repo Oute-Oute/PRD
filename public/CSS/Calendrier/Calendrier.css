@@ -11,6 +11,12 @@ div#container {
    position: absolute;
 }
 
+#container-top {
+  display: flex;
+  justify-content: space-between;
+  z-index: 5;
+  margin-top: 2.5%;
+}
 
 .form-control {
   border-radius: 50px;
@@ -20,7 +26,7 @@ div#container {
 
 .flex{
   margin-left : 5%;
-  width: 100%;
+  width: 95%;
   display: block;
   align-items: center;
   justify-content: flex-start;
