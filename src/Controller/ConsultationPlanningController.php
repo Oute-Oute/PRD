@@ -143,8 +143,8 @@ class ConsultationPlanningController extends AbstractController
             $AppointmentArray[]=array(
                 'id' =>(str_replace(" ", "3aZt3r", $Appointment->getId())),
                 'day'=>( $Appointment->getDayappointment()->format('Y-m-d')),
-                'earliestappointmenttime'=>(str_replace(" ", "3aZt3r", $Appointment->getEarliestappointmenttime())),
-                'latestappointmenttime'=>(str_replace(" ", "3aZt3r", $Appointment->getLatestappointmenttime())),
+                'earliestappointmenttime'=>($Appointment->getEarliestappointmenttime()),
+                'latestappointmenttime'=>($Appointment->getLatestappointmenttime()),
                 'scheduled'=>$Appointment->isScheduled(),
                 'patient'=>$this->getPatient($doctrine,$Appointment->getPatient()->getId()),
                 'pathway'=>$this->getPathway($doctrine,$Appointment->getPathway()->getId()),
