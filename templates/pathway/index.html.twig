@@ -29,11 +29,7 @@
         activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].name => nom de l'activité
         activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
     */
-        {% if (activitiesByPathways) %}
         var activitiesByPathways = new Array();
-<<<<<<< HEAD
-        
-=======
         {% if (activitiesByPathways) %}
             {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
                 activitiesByPathways[{{indexPathway}}] = new Object();
@@ -41,7 +37,6 @@
                 //console.log('{{ pathways[indexPathway].id }}')
                 activitiesByPathways[{{indexPathway}}].activities = new Array();
                 {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
->>>>>>> 4045ec4b78736bf4e84725a31439b52525218541
 
                     activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
                     activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
@@ -53,13 +48,7 @@
                 {% endfor %}
             {% else %}
             {% endfor %}
-<<<<<<< HEAD
-        {% else %}
-        {% endfor %}
-        console.table(activitiesByPathways);
-=======
             console.table(activitiesByPathways);
->>>>>>> 4045ec4b78736bf4e84725a31439b52525218541
         {% endif %}
     </script> 
 
