@@ -93,6 +93,12 @@ PathwaysPost:
   controller: App\Controller\PathwayController:new
   methods: [POST]
 
+
+PathwayEdit:
+  path: /pathway/edit
+  controller: App\Controller\Pathway:pathwayEdit
+  methods: [POST]
+
 HumanResPost:
   path: /human-resources
   controller: App\Controller\HumanResourceController:new

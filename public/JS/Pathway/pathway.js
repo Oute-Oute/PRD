@@ -134,6 +134,17 @@ function verifyChanges() {
 }
 
 
+/**
+ * Permet d'afficher la fenêtre modale d'édition
+ */
+function showEditModalForm(){
+    $('#edit-pathway-modal').modal("show");
+    console.log(activitiesByPathways)
+
+    for (let i = 0; i < activitiesByPathways.length ; i++) {
+        console.log(i)
+    }
+}
 
 /**
  * Permet d'afficher la fenêtre modale d'ajout
@@ -148,3 +159,4 @@ function showNewModalForm(){
 function hideNewModalForm() {
     $('#add-pathway-modal').modal("hide");
 }
+

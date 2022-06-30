@@ -12,6 +12,42 @@
 {% endblock %}
 
 {% block body %}
+
+    <script> 
+    /* Script permettant de remplir dans le js un tableau qui contient toutes les activités des pathway
+
+        Pour accéder a une activité d'un pathway :
+        On a :
+        activitiesByPathways.idPathway => id du pathway 
+        activitiesByPathways.activities => liste d'activites lié au pathway
+        Puis : 
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].idActivity => id de l'activité
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].name => nom de l'activité
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
+    */
+        var activitiesByPathways = new Array();
+
+        {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
+            activitiesByPathways[{{indexPathway}}] = new Object();
+            activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
+            //console.log('{{ pathways[indexPathway].id }}')
+            activitiesByPathways[{{indexPathway}}].activities = new Array();
+            {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+
+                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
+                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
+                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
+
+                activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
+
+            {% else %}
+            {% endfor %}
+        {% else %}
+        {% endfor %}
+        console.table(activitiesByPathways);
+
+    </script> 
+
     <div id = "index-users">
     <h1>Listing des parcours</h1>
     <button type="button" class ="btn-add" onclick="showNewModalForm()">Ajouter un nouveau parcours</button>
@@ -22,21 +58,35 @@
             <tr>
                 <th>Id</th>
                 <th>Nom</th>
+                <th> Activités</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
+        {% set indexPathway = 0 %}
         {% for pathway in pathways %}
             <tr>
-                <td>{{ pathway.id }}</td>
-                <td>{{ pathway.pathwayname }}</td>
-                {#<td>{{ pathway.pathwaytype }}</td>#}
+                <td> {{ pathway.id }} </td>
+                <td> {{ pathway.pathwayname }} </td>
+
+               {#  #}
+               <td> 
+                    <select>
+                        {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+                            <option value="{{activitiesByPathways[indexPathway][indexActivity].id}}">   {{(indexActivity+1) ~ '. ' ~ activitiesByPathways[indexPathway][indexActivity].activityname }} </option>
+                        {% else %}
+                        {% endfor %}
+                    </select> 
+                </td>
+                
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="window.location.href='{{ path('app_circuit_show', {'id': pathway.id}) }}'">Infos</a>
-                    <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_circuit_edit', {'id': pathway.id}) }}'">Éditer</a>
+                    <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{pathway.id}}')">Éditer</a>
                         {{ include('pathway/_delete_form.html.twig') }}
                 </td>
             </tr>
+            {% set indexPathway = indexPathway + 1 %}
+
         {% else %}
             <tr>
                 <td colspan="3">Pas de parcours créés !</td>
@@ -48,6 +98,8 @@
     {# Fenêtre modale d'ajout #}
     {{ include ('pathway/modal_new.html.twig') }}
     {# Fenêtre modale d'édition #}
-    {# {{ include ('pathway/modal_edit.html.twig') }} #}
+    {{ include ('pathway/modal_edit.html.twig') }}
+
+
 
 {% endblock %}
