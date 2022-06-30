@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HumanResourceCategory;
 use App\Form\HumanResourceCategoryType;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\HumanResourceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,21 +57,17 @@ class HumanResourceCategoryController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_human_resource_category_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
+    public function edit(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(HumanResourceCategoryType::class, $humanResourceCategory);
-        $form->handleRequest($request);
+        $idCateg = $request->request->get("idcategory");
+        $nameCateg = $request->request->get("categoryname");
+        $category = $humanResourceCategoryRepository->findOneBy(['id' => $idCateg]);
+        $category->setCategoryname($nameCateg);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $humanResourceCategoryRepository->add($humanResourceCategory, true);
+        $entityManager->persist($category);
+        $entityManager->flush();
 
-            return $this->redirectToRoute('app_human_resource_category_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('human_resource_category/edit.html.twig', [
-            'human_resource_category' => $humanResourceCategory,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
@@ -82,6 +79,6 @@ class HumanResourceCategoryController extends AbstractController
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
         }
 
-        return $this->redirectToRoute('app_human_resource_category_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 }
