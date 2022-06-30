@@ -59,6 +59,31 @@ PatientEdit:
   controller: App\Controller\PatientController::patientEdit
   methods: [POST]
 
+User:
+  path: /user
+  controller: App\Controller\UserController::userGet
+  methods: [GET]
+
+UserAdd:
+  path: /userAdd
+  controller: App\Controller\UserController::userAdd
+  methods: [POST]
+
+UserDelete:
+  path: /user/{id}/delete
+  controller: App\Controller\UserController::userDelete
+  methods: [POST]
+
+UserEdit:
+  path: /user/edit
+  controller: App\Controller\UserController::userEdit
+  methods: [POST]
+
+ProfilEdit:
+  path: /profil/edit
+  controller: App\Controller\ProfilController::profilEdit
+  methods: [POST][GET]
+
 Appointment:
   path: /appointments
   controller: App\Controller\AppointmentController::appointmentGet
