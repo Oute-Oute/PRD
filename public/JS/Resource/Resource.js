@@ -69,6 +69,18 @@ function showNewHumanCategModalForm() {
 function showNewMaterialCategModalForm() {
     $('#new-material-resource-category-modal').modal("show");
 }
+
+function showEditHumanCategModalForm(id, name) {
+    document.getElementById('idcategoryedit').value = id;
+    document.getElementById('categorynameedit').value = name;
+ $('#edit-human-resource-category-modal').modal("show");
+}
+
+function showEditMaterialCategModalForm(id, name) {
+    document.getElementById('idcategoryedit').value = id;
+    document.getElementById('categorynameedit').value = name;
+$('#edit-material-resource-category-modal').modal("show");
+}
 /** 
  * Permet d'ajouter une ou plusieurs catégories de ressources à une ressource humaine lors de sa création.
  */

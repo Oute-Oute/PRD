@@ -1,13 +1,22 @@
-{% extends 'base.html.twig' %}
+<div class="modal" id="edit-material-resource-category-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier une catégorie de ressource matérielle</h2>
+      </div>
+      <form action="{{ path('MaterialResourceCategoryEdit') }}" method="post">
+        <div class="modal-body">
+            <input type="hidden" name="idcategoryedit" id="idcategoryedit">
+            <div>
+                <label for='categorynameedit'> Nom de la catégorie </label>
+                <input type='text' name='categorynameedit' id='categorynameedit'>
+            </div>
+            <br>
 
-{% block title %}Edit MaterialResourceCategory{% endblock %}
-
-{% block body %}
-    <h1>Edit MaterialResourceCategory</h1>
-
-    {{ include('material_resource_category/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_material_resource_category_index') }}">back to list</a>
-
-    {{ include('material_resource_category/_delete_form.html.twig') }}
-{% endblock %}
+            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('index_material_resources') }}'">Consulter les ressources</button>
+            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
+        </div>
+	    </form>
+    </div>
+  </div>
+</div>

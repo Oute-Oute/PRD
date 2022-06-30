@@ -1,6 +1,8 @@
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
+
+
 /**
  * Appelée au chargement de la page de création d'un parcours (circuit)
  */
@@ -70,7 +72,11 @@ function handleAddActivity() {
     SELECT_ID++
 } 
 
-/** Permet de supprimer un select dans la liste déroulante */
+
+/**
+ * Permet de supprimer un select dans la liste déroulante 
+ * @param {*} id : img-0, img-1
+ */
 function deleteSelect(id) {
     disableSubmit();
 
@@ -135,6 +141,7 @@ function verifyChanges() {
 
 
 
+
 /**
  * Permet d'afficher la fenêtre modale d'ajout
  */
@@ -147,4 +154,6 @@ function showNewModalForm(){
  */
 function hideNewModalForm() {
     $('#add-pathway-modal').modal("hide");
+    console.log('hide')
 }
+

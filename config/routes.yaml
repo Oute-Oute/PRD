@@ -59,6 +59,16 @@ PatientEdit:
   controller: App\Controller\PatientController::patientEdit
   methods: [POST]
 
+MaterialResourceCategoryEdit:
+  path: /material-category/edit
+  controller: App\Controller\MaterialResourceCategoryController::edit
+  methods: [POST]
+
+HumanResourceCategoryEdit:
+  path: /human-category/edit
+  controller: App\Controller\HumanResourceCategoryController::edit
+  methods: [POST]
+
 Appointment:
   path: /appointments
   controller: App\Controller\AppointmentController::appointmentGet
@@ -91,6 +101,12 @@ Pathways:
 PathwaysPost:
   path: /pathways
   controller: App\Controller\PathwayController:new
+  methods: [POST]
+
+
+PathwayEdit:
+  path: /pathway/edit
+  controller: App\Controller\Pathway:pathwayEdit
   methods: [POST]
 
 HumanResPost:
