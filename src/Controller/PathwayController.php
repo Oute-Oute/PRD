@@ -118,10 +118,10 @@ class PathwayController extends AbstractController
                     $activity_old = $activityRepository->findById($activity->getId())[0];
 
                 }
-            }
             
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
+    }
         
         
     }

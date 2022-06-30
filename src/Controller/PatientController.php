@@ -18,7 +18,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    public function patientPost(Request $request, PatientRepository $patientRepository): Response
+    public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
         // Méthode POST pour ajouter un patient
         if ($request->getMethod() === 'POST' ) {
@@ -64,38 +64,36 @@ class PatientController extends AbstractController
 
         foreach($appointments as $appointment)
         {
+            //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
+            $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+            $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+            foreach($scheduledActivities as $scheduledActivity)
+            {
+                //suppression des données associées au patient de la table MaterialResourceScheduled
+                $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                foreach($allMaterialResourceScheduled as $materialResourceScheduled)
+                {
+                    $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+                }
+
+
+                //suppression des données associées au patient de la table HumanResourceScheduled
+                $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                foreach($allHumanResourceScheduled as $humanResourceScheduled)
+                {
+                    $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+                }
+
+
+                //suppression des données associées au patient de la table ScheduledActivity
+                $scheduledActivityRepository->remove($scheduledActivity, true);
+            }
             $appointmentRepository->remove($appointment, true);
-        }
-
-
-        //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
-        $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
-        $scheduledActivities = $scheduledActivityRepository->findBy(['patient' => $patient]);
-
-        foreach($scheduledActivities as $scheduledActivity)
-        {
-            //suppression des données associées au patient de la table MaterialResourceScheduled
-            $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
-            $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
-
-            foreach($allMaterialResourceScheduled as $materialResourceScheduled)
-            {
-                $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-            }
-
-
-            //suppression des données associées au patient de la table HumanResourceScheduled
-            $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
-            $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
-
-            foreach($allHumanResourceScheduled as $humanResourceScheduled)
-            {
-                $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-            }
-
-
-            //suppression des données associées au patient de la table ScheduledActivity
-            $scheduledActivityRepository->remove($scheduledActivity, true);
         }
 
         //suppression du patient dans la table Patient

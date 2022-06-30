@@ -1,8 +1,8 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
-var modifAlertTime = 5000; // En millisecondes
-setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
+var modifAlertTime = 500000000000000; // En millisecondes
+//setTimeout(showPopup, modifAlertTime);
+//setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var headerResources="Ressources Matérielles";
@@ -43,11 +43,31 @@ function unshowDiv(id) {
 function modifyEvent(){
     var id = document.getElementById('id').value;
     var event = calendar.getEventById(id)
-    console.log(event.start);
-    var start = document.getElementById('new-start').value;
+    var today = $_GET('date').substring(0,10);
+    var start = today + "T" + document.getElementById('new-start').value;
+    var length = document.getElementById('length').value;
+    var date = new Date(start.replace("T", " "))
+
+    var end = new Date(date.getTime()+length*60*1000);
+
     event.setStart(start);
-    console.log(event);
+    event.setEnd(formatDate(end).replace(" ", "T"));
     $('#modify-planning-modal').modal('toggle');
+}
+
+function formatDate(date){
+    return (
+        [
+          date.getFullYear(),
+          (date.getMonth() + 1).toString().padStart(2, '0'),
+          (date.getDate()).toString().padStart(2, '0'),
+        ].join('-') +
+        ' ' +
+        [
+          (date.getHours()).toString().padStart(2, '0'),
+          (date.getMinutes()).toString().padStart(2, '0'),
+        ].join(':')
+      );
 }
 
 function setEvents(){
@@ -59,16 +79,7 @@ function setEvents(){
 function addEvent(){
     let selectContainerCircuit = document.getElementById('select-container-circuit');
     let selectContainerDate = document.getElementById('select-container-date');
-    selectContainerCircuit.style.display = "none";
-    selectContainerDate.style.display = "none";
     $('#add-planning-modal').modal("show");
-}
-
-
-
-function showSelectCircuit(){
-    let selectContainerCircuit = document.getElementById('select-container-circuit');
-    selectContainerCircuit.style.display = "block";
 }
 
 function showSelectDate(){
@@ -152,7 +163,7 @@ function createCalendar(){
                 length = Math.floor((tmp/1000/60));
         
                 //set les données à afficher par défault
-                $('#new-start').val(start.toISOString().substring(0,19));
+                $('#new-start').val(start.toISOString().substring(11,16));
                 document.getElementById('show-title').innerHTML = activity.title;
                 $('#title').val(activity.title);
                 $('#length').val(length);

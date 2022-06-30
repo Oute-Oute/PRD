@@ -1,24 +1,50 @@
-<!-- new-activity-modal -->
+    <!-- add-patient-modal -->
 
 <div class="modal" id="new-material-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Ajouter la ressource matérielle <span id="show-title"></span></h2>
+                <h2 class="modal-title">Ajouter une ressource matérielle</h2>
             </div>
+            <form action="{{ path('MaterialResPost') }}" method="post">
+                <div class="modal-body">
+                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+                    <input style="display:none;" name="nbCategory" id="nbCategory">
 
-            <form action="{{ path('app_material_resource_new') }}" method="POST">
-              <div class="modal-body">
-                  <div>
-                      <label for='name'> Nom </label>
-                      <input type='text' name='name'>
-                  </div>
+                    <div class='flex-row'>
+                        <div class="form-field-label flex-col">
+                            <label for='name'> Nom de la ressource </label>
+                        </div>
+                        <div class="form-field-input flex-col">
+                            <input id='categoryname' type='text' name='categoryname'>
+                        </div>
+                    </div> 
+ 
+                    <fieldset id="fs-add-material-category">
+                        <legend>Choisissez les catégories de votre ressource</legend>
+                
+                        <div id="categories-container"> 
+                            <select style="display:none;" class="select-category-sample" class="slct-add-category" > 
 
-              <br>
-              <div class="modal-footer">
-                  <button  type="submit" class="btn-valide btn-secondary"> Ajouter </button>
-              </div>
-          </form>
+                                {% for material_resource_category in material_resources_categories %} 
+                                    <option value="{{ material_resource_category.id }}"> {{ material_resource_category.categoryname }} </option>
+                                {% else %}
+                                    <p> Pas de catégories créées ! </p>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                        <button type="button" id='btn-add-category' onclick="handleAddHumanCategory()"> <b> Ajouter </b> </button> 
+
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+                    <button id='submit' type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+
+                </div>
+    	    </form>
         </div>
     </div>
+</div>
 </div>

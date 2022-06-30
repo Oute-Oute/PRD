@@ -72,7 +72,6 @@ function filterShow(){
 function createCalendar(resources){
   
     var events=JSON.parse(document.getElementById('events').value.replaceAll("3aZt3r", " "));
-    console.log(events);
   if(document.getElementById("Date").value!=null){
     dateStr=document.getElementById("Date").value
   }
