@@ -1,6 +1,6 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
-var modifAlertTime = 5000; // En millisecondes
+var modifAlertTime = 500000000000000; // En millisecondes
 setTimeout(showPopup, modifAlertTime);
 setTimeout(deleteModifInDB, modifAlertTime+60000);
 
@@ -59,16 +59,7 @@ function setEvents(){
 function addEvent(){
     let selectContainerCircuit = document.getElementById('select-container-circuit');
     let selectContainerDate = document.getElementById('select-container-date');
-    selectContainerCircuit.style.display = "none";
-    selectContainerDate.style.display = "none";
     $('#add-planning-modal').modal("show");
-}
-
-
-
-function showSelectCircuit(){
-    let selectContainerCircuit = document.getElementById('select-container-circuit');
-    selectContainerCircuit.style.display = "block";
 }
 
 function showSelectDate(){
