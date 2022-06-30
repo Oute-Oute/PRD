@@ -103,8 +103,6 @@ function handleAddHumanCategory() {
     nbCategory.value = SELECT_ID;
 
 }
-
-
 /** Permet de supprimer un select dans la liste déroulante */
 function deleteSelect(id) {
 

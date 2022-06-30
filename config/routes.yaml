@@ -98,6 +98,11 @@ HumanResPost:
   controller: App\Controller\HumanResourceController:new
   methods: [POST]
 
+MaterialResPost:
+  path: /material-resources
+  controller: App\Controller\MaterialResourceController:new
+  methods: [POST]
+
 index_human_resources:
   path: /human-resources
   controller: App\Controller\HumanResourceController:index

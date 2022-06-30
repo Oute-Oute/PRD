@@ -1,6 +1,3 @@
-
-
-
 function validate() {
     alert("ceci est un test");
 }
