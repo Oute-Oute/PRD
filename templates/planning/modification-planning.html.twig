@@ -4,14 +4,16 @@
 
 {% block stylesheets %}
 
-  <!-- insertion de bootstrap et fullcalendar-scheduler -->
+  <!-- insertion de bootstrap, jquery et fullcalendar-scheduler -->
   <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet' />
   <script src='js/fullcalendar-scheduler/lib/main.js'></script>
-  <script src="js/planning/modification-planning.js"></script>
   <script src="js/jquery-3.6.0.js"></script>
   <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
-  <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">    
+  <!-- insertion des fichier js et css spécifique à modification planning -->
+  <script src="js/planning/modification-planning.js"></script>
+  <link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">   
+
 {% endblock %}
 
 {% block body %}
@@ -27,19 +29,27 @@
         <h2 class="modal-title">Modifier <span id="show-title"></span></h2>
       </div>
             <div class="modal-body">
+              <!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
                 <input name="form" type="hidden" value="modify">
                 <input id="id" name="id" type="hidden">
                 <input id="length" name="length" type="hidden">
                 <input id="title" name="title" type="hidden">
 
+              <!-- initialise l'heure de début de l'activité prévu et permet de la modifier -->
                 <label>Heure de début de l'activité : </label>
                 <div class="input-container onWhite">
                     <input class="input-field" type="time-local" id="new-start" name="new-start" required>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
+                  <!-- bouton de suppression à revoir, permet pour le moment d'être redirigé vers la gestion des rendez-vous pour en supprimer un -->
+                  <form method="get" action="{{ path('Appointment') }}">
+                    <button class="btn-delete btn-secondary" onclick="return confirm('Voulez-vous être redirigé vers la gestion des rendez-vous ? Vos modifications vont être perdues');">Supprimer le rendez-vous</button>
+                  </form>
+
+                  <!-- bouton permettant de fermer la modal ou de valider les modification -->
+                  <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
                 </div>
             </div>
     </div>
@@ -94,48 +104,55 @@
     <!-- affichage du haut de la page -->
     
     <div class="all-container">
-    <h1>Modification du Planning</h1>
-    <div id="container-top">
-    <div class="CRUD-div">
-      <button type="button" class="btn-consult btn-secondary" onclick="addEvent()">Ajouter</button>
-      <select class="list-edit" id="displayList" onchange="changePlanning()">
-				<option value="0" selected disabled>Changer l'affichage
-				</option>
-				<option value="parcours">Parcours</option>
-				<option value="patients">Patients</option>
-				<option value="rh">Ressources humaines</option>
-				<option value="rm">Ressources Matérielles</option>
-			</select>
-      <button id="filterbutton" onclick="filterShow()" class="btn-edit" title="Filtrer l'affichage">
-			<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg></button>
-			<div id="filterId" class="filter-container" style="display:none">
-				<div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">J'aime</label>
-				</div>
+      <h1>Modification du Planning</h1>
+      <div id="container-top">
+        <div class="CRUD-div">
+          <!-- bouton d'ajout d'un rendez-vous dans le planning -->
+          <button type="button" class="btn-consult btn-secondary" onclick="addEvent()">Ajouter</button>
 
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">Manger</label>
-				</div>
-			</div>
-      </div>
-      <div class="CRUD-right">
-      <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
-      <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
-      <form method="post" action="{{ path('ModificationPlanningValidation') }}">
-        <input type=hidden id='events' name="events"/>
-        <input type=hidden id='validation-date' name="validation-date"/>
-        <input type=hidden id='listscheduled' name="listscheduled"/>
-        <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
-      </form>
-      </div>
-      </div>
-<div class="calendar-container">
+          <!-- filtre de l'affichage par catégorie -->
+          <select class="list-edit" id="displayList" onchange="changePlanning()">
+            <option value="0" selected disabled>Changer l'affichage
+            </option>
+            <option value="parcours">Parcours</option>
+            <option value="patients">Patients</option>
+            <option value="rh">Ressources humaines</option>
+            <option value="rm">Ressources Matérielles</option>
+          </select>
 
-    <!-- affichage du calendar -->
-    <div id = 'calendar'>
+          <!-- bouton pour filtrer l'affichage (pas encore opérationnel) -->
+          <button id="filterbutton" onclick="filterShow()" class="btn-edit" title="Filtrer l'affichage">
+          <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg></button>
+          <div id="filterId" class="filter-container" style="display:none">
+            <div>
+              <input type="checkbox" id="scales" name="scales" checked>
+              <label for="scales">J'aime</label>
+            </div>
+
+            <div>
+              <input type="checkbox" id="horns" name="horns">
+              <label for="horns">Manger</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- liste des boutons pour annuler ou valider les modifications -->
+        <div class="CRUD-right">
+          <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
+          <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
+          <form method="post" action="{{ path('ModificationPlanningValidation') }}">
+            <input type=hidden id='events' name="events"/>
+            <input type=hidden id='validation-date' name="validation-date"/>
+            <input type=hidden id='listscheduled' name="listscheduled"/>
+            <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
+          </form>
+        </div>
+      </div>
+      <div class="calendar-container">
+      
+        <!-- affichage du calendar -->
+        <div id = 'calendar'>
+        </div>
+      </div>
     </div>
-</div>
-</div>
 {% endblock %}
