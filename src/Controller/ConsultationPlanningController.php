@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConsultationPlanningController extends AbstractController
 {
-/**
+    /*
      * @file consultation_planning.php
      * @brief This file contains the controller for planning's consultation.
      * @author Thomas Blumstein
@@ -19,12 +19,12 @@ class ConsultationPlanningController extends AbstractController
      * @date 2022/06
      */
 
-    /**
+    /*
      * @var $scheduledActivities
      * @brief This variable contains the list of scheduled activities used in several function of the Controller.
      * */
     public $scheduledActivities;
-    /**
+    /*
      * @brief This function is the getter of the Controller.
      * @details It creates the data used by html an js files by collecting them from the database.
      * @param ManagerRegistry $doctrine
@@ -62,7 +62,7 @@ class ConsultationPlanningController extends AbstractController
         );
     }
 
-    /** 
+    /*
      * @brief This function is the getter of the Scheduled Activities from the database.
      * @param ManagerRegistry $doctrine
      * @return array all the data of the activites to display
@@ -147,7 +147,7 @@ class ConsultationPlanningController extends AbstractController
         return $scheduledActivitiesArrayJSON;
     }
 
-    /** 
+    /*
      * @brief This function is the getter of the Appointments from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the Appointments's data
@@ -180,7 +180,7 @@ class ConsultationPlanningController extends AbstractController
         return $AppointmentArrayJSON;
     }
 
-    /** 
+    /*
      * @brief This function is the getter of the Pathways from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the pathways's data
@@ -198,7 +198,7 @@ class ConsultationPlanningController extends AbstractController
         return $pathwayArray;
     }
 
-    /**
+    /*
      * @brief This function is the getter of the Material Resources to display from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
@@ -228,7 +228,7 @@ class ConsultationPlanningController extends AbstractController
         return $MaterialResourceScheduledArrayJSON;
     }
 
-    /**
+    /*
      * @brief This function is the getter of the Human Resources to display from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
@@ -258,7 +258,7 @@ class ConsultationPlanningController extends AbstractController
         return $HumanResourceScheduledArrayJSON;
     }
 
-    /**
+    /*
      * @brief This function is the getter of the Patients from the database.
      * @param ManagerRegistry $doctrine
      * @param $id the id of the patient to get
@@ -285,7 +285,7 @@ class ConsultationPlanningController extends AbstractController
     }
 
 
-    /**
+    /*
      * @brief This function is the getter of the Material Resources from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
@@ -309,7 +309,7 @@ class ConsultationPlanningController extends AbstractController
         return $materialResourceArrayJSON;
     }
 
-    /**
+    /*
      * @brief This function is the getter of the Human Resources from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
