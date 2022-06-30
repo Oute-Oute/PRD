@@ -11,11 +11,26 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConsultationPlanningController extends AbstractController
 {
+/**
+     * @file consultation_planning.php
+     * @brief This file contains the controller for planning's consultation.
+     * @author Thomas Blumstein
+     * @version 1.0
+     * @date 2022/06
+     */
 
+    /**
+     * @var $scheduledActivities
+     * @brief This variable contains the list of scheduled activities used in several function of the Controller.
+     * */
     public $scheduledActivities;
     /**
-     * Fonction pour l'affichage de la page consultation planning par la méthode GET
+     * @brief This function is the getter of the Controller.
+     * @details It creates the data used by html an js files by collecting them from the database.
+     * @param ManagerRegistry $doctrine
+     * @return JSON File containing the data used by the html and js files.
      */
+
     public function consultationPlanningGet(ManagerRegistry $doctrine): Response
     {
         $date_today = date(('Y-m-d'));
@@ -47,7 +62,11 @@ class ConsultationPlanningController extends AbstractController
         );
     }
 
-
+    /** 
+     * @brief This function is the getter of the Scheduled Activities from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array all the data of the activites to display
+     */
     public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine)
     {
         $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();
@@ -128,6 +147,11 @@ class ConsultationPlanningController extends AbstractController
         return $scheduledActivitiesArrayJSON;
     }
 
+    /** 
+     * @brief This function is the getter of the Appointments from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the Appointments's data
+     */
     public function listeAppointmentJSON(ManagerRegistry $doctrine)
     {
         $date_today = date('Y-m-d');
@@ -155,6 +179,12 @@ class ConsultationPlanningController extends AbstractController
         $AppointmentArrayJSON = new JsonResponse($AppointmentArray);
         return $AppointmentArrayJSON;
     }
+
+    /** 
+     * @brief This function is the getter of the Pathways from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the pathways's data
+     */
     public function getPathway(ManagerRegistry $doctrine, $id)
     {
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
@@ -168,6 +198,11 @@ class ConsultationPlanningController extends AbstractController
         return $pathwayArray;
     }
 
+    /**
+     * @brief This function is the getter of the Material Resources to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
     public function listeMaterialResourceScheduledJSON(ManagerRegistry $doctrine)
     {
         global $scheduledActivities;
@@ -192,6 +227,12 @@ class ConsultationPlanningController extends AbstractController
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
         return $MaterialResourceScheduledArrayJSON;
     }
+
+    /**
+     * @brief This function is the getter of the Human Resources to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
     public function listeHumanResourceScheduledJSON(ManagerRegistry $doctrine)
     {
         global $scheduledActivities;
@@ -217,6 +258,12 @@ class ConsultationPlanningController extends AbstractController
         return $HumanResourceScheduledArrayJSON;
     }
 
+    /**
+     * @brief This function is the getter of the Patients from the database.
+     * @param ManagerRegistry $doctrine
+     * @param $id the id of the patient to get
+     * @return array of the patient's data
+     */
     public function getPatient(ManagerRegistry $doctrine, $id)
     {
         $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
@@ -238,6 +285,11 @@ class ConsultationPlanningController extends AbstractController
     }
 
 
+    /**
+     * @brief This function is the getter of the Material Resources from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
     public function listeMaterialResourceJSON(ManagerRegistry $doctrine)
     {
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
@@ -257,6 +309,11 @@ class ConsultationPlanningController extends AbstractController
         return $materialResourceArrayJSON;
     }
 
+    /**
+     * @brief This function is the getter of the Human Resources from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
     public function listeHumanResourceJSON(ManagerRegistry $doctrine)
     {
         $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
