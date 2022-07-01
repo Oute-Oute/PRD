@@ -58,8 +58,6 @@ class PathwayController extends AbstractController
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
             $pathway->setAvailable(true);
-            //$pathway->setPathwaytype($param['pathwaytype']);
-            //$pathway->setTarget($param['target']);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
@@ -70,10 +68,6 @@ class PathwayController extends AbstractController
             $activityRepository = new ActivityRepository($this->getDoctrine());
             $activities = $activityRepository->findAll();
             $successorRepository = new SuccessorRepository($this->getDoctrine());
-
-            //$activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
-            //$activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
-            
 
             // On récupère le nombre d'activité
             $nbActivity = $param['nbActivity'];
@@ -98,22 +92,16 @@ class PathwayController extends AbstractController
                     $activity->setActivityname($param[$strName]);
                     $activity->setDuration($param[$strDuration]);
                     $activity->setPathway($pathway);
-        
                     $activityRepository->add($activity, true);
     
                     $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
 
-                    //dd($activity);
-                    
                     $successor = new Successor();
-    
-                    //if  ($i < ($nbActivity - 1)) {
                     $successor->setActivitya($activity_old);
                     $successor->setActivityb($activity);
                     $successor->setDelaymin(0);
                     $successor->setDelaymax(1);
                     $successorRepository->add($successor, true);
-                   //}
     
                     $activity_old = $activityRepository->findById($activity->getId())[0];
 
@@ -140,23 +128,21 @@ class PathwayController extends AbstractController
     /**
      * Methode dedition d'un pathway dans la base de données
      */
-    public function edit(Request $request, Pathway $pathway, PathwayRepository $pathwayRepository): Response
+    public function edit(Request $request): Response
     {
         
-   // Méthode POST pour ajouter un circuit
+        // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
             // On recupere toutes les données de la requete
             $param = $request->request->all();
+            //dd($param);
 
-
-            // Premierement on s'occupe d'ajouter le parcours dans la bd :
-            // On crée l'objet parcours
-            $pathway = new Pathway();
+            // On récupère l'objet parcours que l'on souhaite modifier grace a son id
+            $pathwayRepository = new PathwayRepository($this->getDoctrine());
+            $pathway = $pathwayRepository->findById($param['pathwayid'])[0];
             $pathway->setPathwayname($param['pathwayname']);
-            $pathway->setAvailable(true);
-            //$pathway->setPathwaytype($param['pathwaytype']);
-            //$pathway->setTarget($param['target']);
+            //$pathway->setAvailable(true);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
@@ -165,16 +151,39 @@ class PathwayController extends AbstractController
 
             // On récupère toutes les activités
             $activityRepository = new ActivityRepository($this->getDoctrine());
-            $activities = $activityRepository->findAll();
             $successorRepository = new SuccessorRepository($this->getDoctrine());
+            $activities = $activityRepository->findAll();
 
-            //$activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\Activity")->findAll();
-            //$activityPathwayRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\AP");
+            // On supprime toutes les activités et leurs successor
+            $em=$this->getDoctrine()->getManager();
+            $activitiesInPathway = $activityRepository->findBy(['pathway' => $pathway]);
             
+            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
+
+                $successorsa = $successorRepository->findBy(['activitya' => $activitiesInPathway[$indexActivity]]);
+                for ($indexSuccessora = 0; $indexSuccessora < count($successorsa); $indexSuccessora++) {
+                    $em->remove($successorsa[$indexSuccessora]);
+                }
+
+                $successorsb = $successorRepository->findBy(['activityb' => $activitiesInPathway[$indexActivity]]);
+                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
+                    $em->remove($successorsa[$indexSuccessorb]);
+                }
+                $em->flush();
+
+               // $em->remove($activitiesInPathway[$indexActivity]);
+            }
+            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
+                $em->remove($activitiesInPathway[$indexActivity]);
+                $em->flush();
+
+            }
+            //$em->flush();
+
+            //dd($activityRepository->findAll());
 
             // On récupère le nombre d'activité
-            $nbActivity = $param['nbActivity'];
-
+            $nbActivity = $param['nbactivity'];
 
             //$activityArray = array();
             if ($nbActivity != 0) {

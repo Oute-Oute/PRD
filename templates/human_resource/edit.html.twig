@@ -1,13 +1,42 @@
-{% extends 'base.html.twig' %}
+    <!-- add-patient-modal -->
 
-{% block title %}Edit HumanResource{% endblock %}
+<div class="modal" id="edit-human-resource-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Éditer une ressource humaine</h2>
+            </div>
+            <form action="{{ path('HumanResourceEdit') }}" method="post">
+                <div class="modal-body">
+                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+                    <input style="display:none;" name="nbCategory" id="nbCategory_EditForm">
 
-{% block body %}
-    <h1>Edit HumanResource</h1>
+                    <div class='flex-row'>
+                        <div class="form-field-label flex-col">
+                            <h4><label for='name'> Nom de la ressource </label></h4>
+                        </div>
 
-    {{ include('human_resource/_form.html.twig', {'button_label': 'Update'}) }}
+                        <div class="form-field-input flex-col">
+                            <input id='edit-resourcename' type='text' name='resourcename' onchange='disableSubmit_EditForm()'>
+                        </div>
+                    </div> 
 
-    <a href="{{ path('app_human_resource_index') }}">back to list</a>
+                    <fieldset id="fs-add-category">
+                        <h4>Choisissez les activités de votre parcours</h4>
 
-    {{ include('human_resource/_delete_form.html.twig') }}
-{% endblock %}
+                        <div id="edit-activities-container"> 
+
+                        </div>
+
+                        <button type="button" id='btn-add-category' onclick="handleAddCategory_EditForm()"> <b> Ajouter </b> </button> 
+
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
+                    <button id='edit-submit' type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+                </div>
+    	    </form>
+        </div>
+    </div>
+</div>

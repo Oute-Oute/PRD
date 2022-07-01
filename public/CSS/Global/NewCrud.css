@@ -1,5 +1,4 @@
-
-fieldset#fs-add-activity {
+fieldset#fs-add-activity, #fs-add-human-category, #fs-add-material-category {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,7 +25,9 @@ fieldset#fs-add-activity button#btn-add-activity:hover {
     box-shadow: 0px 0px 5px black;
 }
 
-fieldset#fs-add-pathway, #fs-add-human-category {
+f
+
+fieldset#fs-add-pathway, #fs-add-human-category, #fs-add-material-category {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,6 +49,33 @@ fieldset#fs-add-pathway button#btn-add-pathway {
     border : 1px solid black;
     margin-top: 5px;
 }
+
+fieldset#fs-add-human-category button#btn-add-category {
+    background: #404040;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+    margin-top: 5px;
+}
+
+fieldset#fs-add-material-category button#btn-add-category {
+    background: #404040;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    color: #404040;
+    background : none;
+    border : 1px solid black;
+    margin-top: 5px;
+}
+
 fieldset#fs-add-pathway button#btn-add-pathway:hover {
     box-shadow: 0px 0px 5px black;
 }
