@@ -91,6 +91,7 @@ function createCalendar(resources) {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
+  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -128,7 +129,6 @@ function createCalendar(resources) {
     resourceOrder: "title", //display the resources in the alphabetical order of their names
     resourceAreaWidth: "20%", //set the width of the resources area
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
-    resources: resourcesArray, //set the resources
     events: events, //set the events
 
     //when we click on an event, display a modal window with the event information
@@ -138,14 +138,30 @@ function createCalendar(resources) {
       var activity = calendar.getEventById(id);
       var start = activity.start;
       var end = activity.end;
+      var humanResources = activity.extendedProps.humanResources;
+      var humanResourcesNames = "";
+      for (var i = 0; i < humanResources.length; i++) {
+        if (humanResources[i][1] != undefined) {
+          humanResourcesNames += humanResources[i][1] + "; ";
+        }
+      }
+      var materialResources = activity.extendedProps.materialResources;
+      var materialResourcesNames = "";
+      for (var i = 0; i < materialResources.length; i++) {
+        if (materialResources[i][1] != undefined) {
+          materialResourcesNames += materialResources[i][1] + "; ";
+        }
+      }
 
       //set data to display in the modal window
       $("#start").val(start.toISOString().substring(0, 19));
       $("#end").val(end.toISOString().substring(0, 19));
       document.getElementById("show-title").innerHTML = activity.title;
       $("#id").val(id);
-      console.log(activity.resourceId);
+      $("#parcours").val(activity.extendedProps.pathway);
       $("#patient").val(activity.extendedProps.patient);
+      $("#rh").val(humanResourcesNames);
+      $("#rm").val(materialResourcesNames);
 
       //open the window
       $("#modify-planning-modal").modal("show");
@@ -182,12 +198,12 @@ function createCalendar(resources) {
       }
       break;
     case "Ressources Humaines": //if we want to display by the resources
-      var resourcesArray = JSON.parse(
+      var tempArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
+      console.log(tempArray);
+      for (var i = 0; i < tempArray.length; i++) {
+        var temp = tempArray[i]; //get the resources data
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"],
@@ -196,11 +212,11 @@ function createCalendar(resources) {
       }
       break;
     case "Ressources Matérielles": //if we want to display by the resources
-      var resourcesArray = JSON.parse(
+      var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
+      for (var i = 0; i < tempArray.length; i++) {
+        var temp = tempArray[i]; //get the resources data
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"],
