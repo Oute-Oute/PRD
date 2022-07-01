@@ -13,6 +13,7 @@ class PatientController extends AbstractController
 {
     public function patientGet(PatientRepository $patientRepository): Response
     {
+        //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', [
             'patients' => $patientRepository->findAll()
         ]);
@@ -20,36 +21,38 @@ class PatientController extends AbstractController
 
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
-        // Méthode POST pour ajouter un patient
-        if ($request->getMethod() === 'POST' ) {
-            // On recupere toutes les données de la requete
-            $param = $request->request->all();
+        // On recupere toutes les données de la requête
+        $param = $request->request->all();
 
-            $lastname = $param['lastname'];       // le nom
-            $firstname = $param['firstname'];     // le prenom
+        $lastname = $param['lastname'];       // le nom
+        $firstname = $param['firstname'];     // le prenom
 
-            // Création du patient
-            $patient = new Patient(); 
-            $patient->setLastname($lastname);
-            $patient->setFirstname($firstname);
+        // Création du patient
+        $patient = new Patient(); 
+        $patient->setLastname($lastname);
+        $patient->setFirstname($firstname);
             
-            // ajout dans la bdd
-            $patientRepository->add($patient, true);
+        // ajout dans la bdd
+        $patientRepository->add($patient, true);
 
-            return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
-        }
+        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
     public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
     {
+        //on récupère les nouvelles informations sur le patient
         $idpatient = $request->request->get("idpatient");
         $lastname = $request->request->get("lastname");
         $firstname = $request->request->get("firstname");
 
+        //on récupère le patient grâce à son id
         $patient = $patientRepository->findOneBy(['id' => $idpatient]);
+
+        //on modifie les données du patient
         $patient->setLastname($lastname);
         $patient->setFirstname($firstname);
 
+        //on met à jour le patient dans la bdd
         $entityManager->persist($patient);
         $entityManager->flush();
 
