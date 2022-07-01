@@ -79,10 +79,15 @@ UserEdit:
   controller: App\Controller\UserController::userEdit
   methods: [POST]
 
+Profil:
+  path: /profil
+  controller: App\Controller\ProfilController::profilGet
+  methods: [GET]
+
 ProfilEdit:
-  path: /profil/edit
+  path: /profil
   controller: App\Controller\ProfilController::profilEdit
-  methods: [POST][GET]
+  methods: [POST]
 
 MaterialResourceCategoryEdit:
   path: /material-category/edit
@@ -127,7 +132,6 @@ PathwaysPost:
   path: /pathways
   controller: App\Controller\PathwayController:new
   methods: [POST]
-
 
 PathwayEdit:
   path: /pathway/edit
