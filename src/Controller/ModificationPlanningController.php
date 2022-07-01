@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\MaterialResourceScheduled;
 use App\Entity\HumanResourceScheduled;
 use App\Entity\ScheduledActivity;
+use App\Entity\Modification;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\ModificationRepository;
@@ -15,6 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
+use App\Repository\UserRepository;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -31,12 +33,16 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
         $dateModified = array();
+        $idUser = 0;
         if (isset($_POST['form'])) {
             $this->modificationPlanningPost($request, $doctrine, $entityManager);
             $dateModified = $_POST['date'];
         }
         if (isset($_GET['date'])) {
             $dateModified = $_GET["date"];
+        }
+        if (isset($_GET['id'])) {
+            $idUser = $_GET["id"];
         }
 
         //Récupération des données nécessaires
@@ -52,7 +58,11 @@ class ModificationPlanningController extends AbstractController
 
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
-        $this->alertModif($dateModified);
+
+        if($this->alertModif($dateModified)){
+            $this->modificationAdd($dateModified, $idUser);
+        }
+
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
             'listePathWaypatients' => $listePathWayPatients,
@@ -75,8 +85,8 @@ class ModificationPlanningController extends AbstractController
         $modifications = $modificationRepository->findAll();
 
         $dateModified = str_replace('T12:00:00', '', $dateModified);
-        $date_today = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-        $date_today = new \DateTime($date_today->format('Y-m-d H:i:s'));
+        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
 
         $modifArray = array();
         $i = 0;
@@ -85,19 +95,20 @@ class ModificationPlanningController extends AbstractController
                 'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
                 'dateModified' => ($modification->getDatemodified()->format('Y-m-d'))
             );
-            $dateTimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
-            $interval = $dateTimeModified->diff($date_today);
+            $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
+            $interval = $datetimeModified->diff($dateToday);
 
-            $interval_hour = $interval->format('%h');
-            $interval_minutes = $interval->format('%i');
+            $intervalHour = $interval->format('%h');
+            $intervalMinutes = $interval->format('%i');
             
             if($modifArray[$i]['dateModified']==$dateModified){
                 // ATTENTION, le timer doit être supérieur à celui du popup
-                if($interval_hour*60+$interval_minutes < 30){
+                if($intervalHour*60+$intervalMinutes < 30){
                     echo "<script> 
                         alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
                         window.location.assign('/ConsultationPlanning');
                     </script>";
+                    return false;
                 }
                 else{
                     // Supprimer la modif dans BDD car trop vieille
@@ -106,6 +117,26 @@ class ModificationPlanningController extends AbstractController
             }
             $i++;
         }
+        return true;
+    }
+
+    public function modificationAdd($dateModified, $idUser){
+        $modificationRepository = new ModificationRepository($this->getDoctrine());
+
+        $userRepository = new UserRepository($this->getDoctrine());
+        $user = $userRepository->findOneBy(['id' => $idUser]);
+
+        $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
+        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+
+        $modification = new Modification();
+        $modification->setUser($user);
+        $modification->setDatemodif($datetimeModified); 
+        $modification->setDatetimemodification($dateToday);
+        
+        // ajout dans la bdd
+        $modificationRepository->add($modification, true);
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -536,21 +567,4 @@ class ModificationPlanningController extends AbstractController
         }
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
-
-    /*public function writeModifDB(Modification $modification, ModificationRepository $modificationRepository, ManagerRegistry $doctrine)
-    {
-       
-    }*/
-
-
-    // A faire quand l'écriture dans la BDD de la modification sera implémentée
-    /*
-    public function ModificationDelete(Patient $patient, PatientRepository $patientRepository): Response
-    {
-        //suppression du patient dans la table Patient
-        $patientRepository->remove($patient, true);
-
-        return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
-    }
-    */
 }
