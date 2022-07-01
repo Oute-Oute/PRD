@@ -77,8 +77,15 @@ function setEvents() {
   var events = calendar.getEvents();
   let resources = [];
   events.forEach((event) => {
-    resources.push(event.getResources());
+    var listResource = [];
+    console.log(event)
+    for (let i = 0; i < event._def.resourceIds.length; i++) {
+      listResource.push(event._def.resourceIds[i]);
+    }
+    console.log(listResource)
+    resources.push(listResource);
   });
+  console.log(resources)
   document.getElementById("events").value = JSON.stringify(
     calendar.getEvents()
   );

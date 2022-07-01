@@ -13,11 +13,3 @@ function editPatient(id, lastname, firstname) {
     //on affiche la modale
     $('#edit-patient-modal').modal("show");
 }
-
-//function permettant d'ouvrir la modale d'informations d'un patient
-function showPatient(id) {
-    document.getElementById('idpatient').value = id;
-    document.getElementById('lastname').value = lastname;
-    document.getElementById('firstname').value = firstname;
-    $('#show-patient-modal').modal("show");
-}

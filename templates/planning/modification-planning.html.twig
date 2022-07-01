@@ -141,6 +141,7 @@
 
         <!-- liste des boutons pour annuler ou valider les modifications -->
         <div class="CRUD-right">
+          <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
           <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
           <form method="post" action="{{ path('ModificationPlanningValidation') }}">
             <input type=hidden id='events' name="events"/>

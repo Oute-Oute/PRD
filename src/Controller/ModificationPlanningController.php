@@ -406,13 +406,12 @@ class ModificationPlanningController extends AbstractController
                     //on récupère la liste des ressources associées à l'évènement
                     $listeMaterialResourceScheduled = $materialResourceScheduledRepository->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
                     $listeHumanResourceScheduled = $humanResourceScheduledRepository->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
-
                     //on parcours la liste des ressources modifiés
                     foreach ($event[1] as $resource) {
                         //on regarde si la ressource modifié est de type Humaine
-                        if (substr($resource->id, 0, 5) == "human") {
+                        if (substr($resource, 0, 5) == "human") {
                             //on récupère l'objet ressource humaine correspondant
-                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource->id, 6)]);
+                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $humanResourceExist = false;
@@ -440,7 +439,7 @@ class ModificationPlanningController extends AbstractController
                         //sinon, la relation est donc de type matérielle
                         else {
                             //on récupère l'objet ressource matériel correspondant
-                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource->id, 9)]);
+                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $materialResourceExist = false;
@@ -474,9 +473,9 @@ class ModificationPlanningController extends AbstractController
                         //on parcours la liste des ressources modifiés
                         foreach ($event[1] as $resource) {
                             //on ne compare que les ressource de type humaine
-                            if (substr($resource->id, 0, 5) == "human") {
+                            if (substr($resource, 0, 5) == "human") {
                                 //on récupère en bdd la ressource humaine correspondante
-                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource->id, 6)]);
+                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
 
                                 //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if ($humanResourceScheduled->getHumanresource() == $humanResource) {
@@ -501,9 +500,9 @@ class ModificationPlanningController extends AbstractController
                         //on parcours la liste des ressources associé à l'évènement
                         foreach ($event[1] as $resource) {
                             //on ne compare que les ressource de type matérielle
-                            if (substr($resource->id, 0, 8) == "material") {
+                            if (substr($resource, 0, 8) == "material") {
                                 //on récupère en bdd la ressource matérielle correspondante
-                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource->id, 9)]);
+                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
 
                                 //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if ($materialResourceScheduled->getMaterialresource() == $materialResource) {
@@ -541,9 +540,9 @@ class ModificationPlanningController extends AbstractController
                 //on parcours la liste de ses ressources associés
                 foreach ($event[1] as $resource) {
                     //on créer les relations avec les ressources de type humaine
-                    if (substr($resource->id, 0, 5) == "human") {
+                    if (substr($resource, 0, 5) == "human") {
                         //on créer la nouvelle relation entre la ressource humaine et le nouvel évènement
-                        $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource->id, 6)]);
+                        $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
                         $newHumanResourceScheduled = new HumanResourceScheduled();
                         $newHumanResourceScheduled->setHumanresource($humanResource);
                         $newHumanResourceScheduled->setScheduledactivity($newScheduledActivity);
@@ -554,7 +553,7 @@ class ModificationPlanningController extends AbstractController
                     //on créer les relations avec les ressources de type matérielle
                     else {
                         //on créer la nouvelle relation entre la ressource matérielle et le nouvel évènement
-                        $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource->id, 9)]);
+                        $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
 
                         $newMaterialResourceScheduled = new MaterialResourceScheduled();
                         $newMaterialResourceScheduled->setMaterialresource($materialResource);
