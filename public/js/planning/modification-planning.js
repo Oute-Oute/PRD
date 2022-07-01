@@ -217,9 +217,6 @@ function createCalendar(typeResource){
                 console.log(eventResource.id)
                 listResource.push(eventResource.id);
               }
-              else{
-                listResource.push("default")
-              }
             });
 
             setEvents.push({
@@ -321,11 +318,13 @@ function createCalendar(typeResource){
               break;
             case "Parcours": //if we want to display by the parcours
               var tempArray = JSON.parse(
-                document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+                document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
               ); //get the data of the appointments
+              console.log(tempArray)
               for (var i = 0; i < tempArray.length; i++) {
                 var temp = tempArray[i];
-                pathway = temp["pathway"]; //get the resources data
+                pathway = temp["idPathway"]; //get the resources data
+                console.log(pathway)
                 calendar.addResource({
                   //add the resources to the calendar
                   id: pathway[0]["id"],
@@ -337,7 +336,6 @@ function createCalendar(typeResource){
               var resourcesArray = JSON.parse(
                 document.getElementById("human").value.replaceAll("3aZt3r", " ")
               ); //get the data of the resources
-              console.log(resourcesArray)
               for (var i = 0; i < resourcesArray.length; i++) {
                 var temp = resourcesArray[i]; //get the resources data
                 calendar.addResource({

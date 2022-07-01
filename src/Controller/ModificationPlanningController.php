@@ -190,12 +190,23 @@ class ModificationPlanningController extends AbstractController
     public function listAppointmentJSON(ManagerRegistry $doctrine)
     {
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findAll();
+
+        
+
         $appointmentsArray = array();
         foreach ($appointments as $appointment) {
+            $earliestappointmenttime="";
+            if ($appointment->getEarliestappointmenttime()!=null) {
+                $earliestappointmenttime = $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s');
+            }
+            $latestappointmenttime="";
+            if ($appointment->getLatestappointmenttime()!=null) {
+                $latestappointmenttime = $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s');
+            }
             $appointmentsArray[] = array(
                 'id' => $appointment->getId(),
-                'earliestappointmenttime' => $appointment->getEarliestappointmenttime()->format('H:i:s'),
-                'lastestappointmenttime' => $appointment->getLatestappointmenttime()->format('H:i:s'),
+                'earliestappointmenttime' => $earliestappointmenttime,
+                'lastestappointmenttime' => $latestappointmenttime,
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
@@ -244,20 +255,19 @@ class ModificationPlanningController extends AbstractController
     public function listHumanResourcesJSON(ManagerRegistry $doctrine)
     {
         $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
-        $materialResourcesArray = array();
+        $humanResourcesArray = array();
 
         if ($humanResources != null) {
             foreach ($humanResources as $humanResource) {
-                $materialResourcesArray[] = array(
+                $humanResourcesArray[] = array(
                     'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
                 );
             }
         }
-
         //Conversion des données ressources en json
-        $materialResourcesArrayJson = new JsonResponse($materialResourcesArray);
-        return $materialResourcesArrayJson;
+        $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
+        return $humanResourcesArrayJson;    
     }
 
     public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
