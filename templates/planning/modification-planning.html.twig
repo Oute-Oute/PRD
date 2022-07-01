@@ -67,12 +67,12 @@
       </div>
         <div class="modal-body"> <!-- sépare le body de la modal -->
           <input id="date" name="date" type="hidden" value={{datetoday}}>
-          <input id="listeAppointments" name="listeAppointments" type='hidden' value={{listeAppointmentsJSON.content}}>
+          <input id="listeAppointments" name="listeAppointments" type='hidden' value={{listAppointmentsJSON.content}}>
           <input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listeSuccessorsJSON.content}}>
           <input id="listeActivities" name="listeActivities" type='hidden' value={{listeActivitiesJSON.content}}>
           <div id="select-container-patient"> 
             <label>Choisissez le rendez-vous</label>
-              <select onchange="showSelectAppointment()" id="select-appointment" name="select-appointment"> 
+              <select id="select-appointment" name="select-appointment"> 
                 <option value="" selected hidden> Selection patient </option>
                 {% for Appointment in listeAppointments %} 
                 <option value="{{ Appointment.id }}"> patient :{{ Appointment.patient.LastName }} {{ Appointment.patient.firstname }} Nom du parcours : {{Appointment.PathWay.PathWayname}} </option>
@@ -96,9 +96,11 @@
 </div>
 
     <input type=hidden id="date" value="<?php echo $$_GET['date']; ?>"/>
-    <input type=hidden id="Resources" value='{{listResourceJSON.content}}'/>
+    <input type="hidden" id="material" value='{{listMaterialResourceJSON.content}}'/>
+		<input type="hidden" id="human" value='{{listHumanResourceJSON.content}}'/>
+    <input id="listeAppointments" name="listeAppointments" type='hidden' value={{listAppointmentsJSON.content}}>
     <input type=hidden id="listScheduledActivitiesJSON" value='{{listScheduledActivitiesJSON.content}}'/>
-
+    
 
     <!-- affichage du haut de la page -->
     
@@ -142,7 +144,6 @@
         <!-- liste des boutons pour annuler ou valider les modifications -->
         <div class="CRUD-right">
           <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
-          <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
           <form method="post" action="{{ path('ModificationPlanningValidation') }}">
             <input type=hidden id='events' name="events"/>
             <input type=hidden id='validation-date' name="validation-date"/>

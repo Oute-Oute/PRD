@@ -9,6 +9,10 @@ var CoundAddEvent=0;
 var headerResources="Ressources Matérielles";
 var dateStr=($_GET('date')).replaceAll('%3A',':'); 
 var date=new Date(dateStr);
+
+var resourcearray;
+var eventsarray;
+
 function $_GET(param) {
 	var vars = {};
 	window.location.href.replace( location.hash, '' ).replace( 
@@ -31,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function()
     
 
     //Créer le calendar sous les conditions que l'on souhaite
-    createCalendar()
+    createCalendar(headerResources)
 
     
 });
@@ -67,6 +71,7 @@ function formatDate(date){
         [
           (date.getHours()).toString().padStart(2, '0'),
           (date.getMinutes()).toString().padStart(2, '0'),
+          (date.getSeconds()).toString().padStart(2, '0'),
         ].join(':')
       );
 }
@@ -152,10 +157,13 @@ function AddEventValider(){
         //Ajout d'un event au calendar
         calendar.addEvent({
             id: 'new'+CoundAddEvent,
-            resourceId: '2',
+            resourceId: 'human-1',
             title: activitya.name,
             start: PathwayBeginDate,
             end: PathwayBeginDate.getTime()+activitya.duration*60000,
+            patient: appointment.idPatient,
+            appointment: appointment.id,
+            activity: activitya.id,
           });
           
           //Detection de la dernière activite du parcours
@@ -165,6 +173,7 @@ function AddEventValider(){
         PathwayBeginDate=new Date(PathwayBeginDate.getTime()+activitya.duration*60000); 
     }while(idactivityB != undefined); 
     calendar.render();
+    $('#add-planning-modal').modal("toggle");
 }
 
 function showSelectDate(){
@@ -172,11 +181,6 @@ function showSelectDate(){
     selectContainerDate.style.display = "block";
 }
 
-function changePlanning(){
-    var selectedItem = document.getElementById("displayList");
-      headerResources=document.getElementById("displayList").options[document.getElementById('displayList').selectedIndex].text;
-      createCalendar();
-  }
   
   function filterShow(){
     if(document.getElementById("filterId").style.display != "none"){
@@ -186,14 +190,55 @@ function changePlanning(){
     }
   }
 
-function createCalendar(){
+  function changePlanning() {
+    var header =
+      document.getElementById("displayList").options[
+        document.getElementById("displayList").selectedIndex
+      ].text; //get the type of resources to display in the list
+    headerResources = header; //update the header of the list
+    createCalendar(header); //rerender the calendar with the new type of resources
+  }
+
+function createCalendar(typeResource){
+    if(eventsarray == null){
+        eventsarray = JSON.parse(document.getElementById('listScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
+    }
+    else
+    {
+        var listEvent = calendar.getEvents();
+        let setEvents = [];
+        listEvent.forEach((eventModify) => {
+            var start = new Date(eventModify.start-2*60*60*1000);
+            var end = new Date(eventModify.end-2*60*60*1000);
+
+            let listResource = [];
+            eventModify.getResources().forEach((eventResource) => {
+              if(eventResource != null){
+                console.log(eventResource.id)
+                listResource.push(eventResource.id);
+              }
+              else{
+                listResource.push("default")
+              }
+            });
+
+            setEvents.push({
+                id: eventModify.id,
+                start: formatDate(start).replace(" ", "T"),
+                end: formatDate(end).replace(" ", "T"),
+                title: eventModify.title,
+                resourceIds: listResource,
+                patient: eventModify.extendedProps.patient,
+                appointment: eventModify.extendedProps.appointment,
+                activity: eventModify.extendedProps.activity,
+            })
+        });
+        eventsarray = setEvents;
+    }
+    console.log(eventsarray)
+
     const height = document.querySelector('div').clientHeight;
     var calendarEl = document.getElementById('calendar');
-    var resourcearray=JSON.parse(document.getElementById('Resources').value.replaceAll("3aZt3r", " "));
-    var eventsarray=JSON.parse(document.getElementById('listScheduledActivitiesJSON').value.replaceAll("3aZt3r", " "));
-    console.log(eventsarray); 
-
-
 
     calendar = new FullCalendar.Calendar(calendarEl, 
         {
@@ -233,7 +278,6 @@ function createCalendar(){
             resourceOrder: 'title',
             resourceAreaWidth: '20%',
             resourceAreaHeaderContent: headerResources,
-            resources: resourcearray,
             events:eventsarray,
     
             //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
@@ -259,6 +303,72 @@ function createCalendar(){
             },
         },
         );
+        console.log(document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " "))
+        switch (typeResource) {
+            case "Patients": //if we want to display by the patients
+              var tempArray = JSON.parse(
+                document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
+              ); //get the data of the appointments
+              for (var i = 0; i < tempArray.length; i++) {
+                var temp = tempArray[i];
+                patient = temp["idPatient"]; //get the resources data
+                calendar.addResource({
+                  //add the resources to the calendar
+                  id: patient[0]["id"],
+                  title: patient[0]["title"],
+                });
+              }
+              break;
+            case "Parcours": //if we want to display by the parcours
+              var tempArray = JSON.parse(
+                document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+              ); //get the data of the appointments
+              for (var i = 0; i < tempArray.length; i++) {
+                var temp = tempArray[i];
+                pathway = temp["pathway"]; //get the resources data
+                calendar.addResource({
+                  //add the resources to the calendar
+                  id: pathway[0]["id"],
+                  title: pathway[0]["title"],
+                });
+              }
+              break;
+            case "Ressources Humaines": //if we want to display by the resources
+              var resourcesArray = JSON.parse(
+                document.getElementById("human").value.replaceAll("3aZt3r", " ")
+              ); //get the data of the resources
+              console.log(resourcesArray)
+              for (var i = 0; i < resourcesArray.length; i++) {
+                var temp = resourcesArray[i]; //get the resources data
+                calendar.addResource({
+                  //add the resources to the calendar
+                  id: temp["id"],
+                  title: temp["title"],
+                });
+              }
+              calendar.addResource({
+                id: "default",
+                title: "Aucune ressource allouée",
+              })
+              break;
+            case "Ressources Matérielles": //if we want to display by the resources
+              var resourcesArray = JSON.parse(
+                document.getElementById("material").value.replaceAll("3aZt3r", " ")
+              ); //get the data of the resources
+              for (var i = 0; i < resourcesArray.length; i++) {
+                var temp = resourcesArray[i]; //get the resources data
+                calendar.addResource({
+                  //add the resources to the calendar
+                  id: temp["id"],
+                  title: temp["title"],
+                });
+                calendar.addResource({
+                  id: "default",
+                  title: "Aucune ressource allouée",
+                });
+              }
+              break;
+          }
         //affiche le calendar
     calendar.gotoDate(date);
     calendar.render();
@@ -274,10 +384,10 @@ function closePopup() {
     setTimeout(showPopup, modifAlertTime);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+/*document.addEventListener('DOMContentLoaded', function() {
     var userData = document.querySelector('.js-data');
     var userId = userData.dataset.userId;
-});
+});*/
 
 function deleteModifInDB(popupClicked){
     if(popupClicked){
