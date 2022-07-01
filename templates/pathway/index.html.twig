@@ -36,20 +36,25 @@
                 activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
                 //console.log('{{ pathways[indexPathway].id }}')
                 activitiesByPathways[{{indexPathway}}].activities = new Array();
-                {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+                
+                {% if (activitiesByPathways[indexPathway]) %}
+                    {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
 
-                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
-                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
-                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
+                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
+                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
+                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
 
-                    activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
+                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
 
-                {% else %}
-                {% endfor %}
+                    {% else %}
+                    {% endfor %}
+                {% endif %}
+
             {% else %}
             {% endfor %}
-            console.table(activitiesByPathways);
         {% endif %}
+        console.log(activitiesByPathways);
+
     </script> 
 
     <div id = "index-users">
@@ -75,12 +80,16 @@
 
                {#  #}
                <td> 
-                    <select>
-                        {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
-                            <option value="{{activitiesByPathways[indexPathway][indexActivity].id}}">   {{(indexActivity+1) ~ '. ' ~ activitiesByPathways[indexPathway][indexActivity].activityname }} </option>
-                        {% else %}
-                        {% endfor %}
-                    </select> 
+                    {% if (activitiesByPathways[indexPathway]) %}
+                        <select>
+                                {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
+                                    <option value="{{activitiesByPathways[indexPathway][indexActivity].id}}">   {{(indexActivity+1) ~ '. ' ~ activitiesByPathways[indexPathway][indexActivity].activityname }} </option>
+                                {% else %}
+                                {% endfor %}
+                        </select> 
+                    {% else %}
+                        <p> Pas d'activites créées ! </p> 
+                    {% endif %}
                 </td>
                 
                 <td>

@@ -1,5 +1,7 @@
 
+// SLEECT ID : correspond a l'indice de l'activité à créée 0, 1, 2... 
 var SELECT_ID_EDIT = 0
+// NB ACTIVITY : nombre totale d'activité
 var NB_ACTIVITY_EDIT = 0
 
 function edit__disableSubmit() {
@@ -11,6 +13,7 @@ function edit__disableSubmit() {
 /**
  * Permet de supprimer un select dans la liste déroulante 
  * @param {*} id : img-0, img-1
+ * en prenant uniquement le dernier chiffre de l'id on recupere l'indice de l'activité a supprimer
  */
 function edit__deleteSelect(id) {
     edit__disableSubmit();
@@ -33,28 +36,54 @@ function edit__deleteSelect(id) {
 
 /**
  * Permet d'afficher la fenêtre modale d'édition
+ * => remplit les inputs suivants :
+ * Nombre d'activité déjà présentes
+ * Id du pathway
+ * Nom du pathway
+ * Les noms et durée des activités déjà présentes dans le pathway
  */
 function showEditModalForm(id, name, index){
+    // Affichage de la fenetre modale 
     $('#edit--pathway-modal').modal("show");
 
+
+    // On recupère la div qui contient nos activités
     let divAddActivity = document.getElementById('edit--activities-container')
-    divAddActivity.innerHTML = ''
+    divAddActivity.innerHTML = ''   // On supprime toutes les activités qui existent dans cette div
 
+    // on définit nos variables 
     SELECT_ID_EDIT = 0
-    NB_ACTIVITY_EDIT = activitiesByPathways.length
+    NB_ACTIVITY_EDIT = activitiesByPathways[index].activities.length
+    // input contenant le nombre d'activité (on le definit avec le nombre d'activité déjà présente dans le pathway)
+    document.getElementById('edit--nbactivity').value = NB_ACTIVITY_EDIT
+    //document.getElementById('edit--nbactivity-toedit').value = NB_ACTIVITY_EDIT
 
-    document.getElementById('edit--nbactivity-toedit').value = NB_ACTIVITY_EDIT
 
+    // On set nos input lié au pathway
+
+    // input contenant l'id du pathway
+    document.getElementById('edit--pathwayid').value = activitiesByPathways[index].idPathway
+
+    //input contenant le nom du pathway
     document.getElementById('edit--pathwayname').value = name
-    for (let i = 0; i < activitiesByPathways.length ; i++) {
+
+
+    // Puis on créé nos activités : 
+
+    for (let i = 0; i < activitiesByPathways[index].activities.length ; i++) {
         // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
         let div = document.createElement("div")
         div.setAttribute('class', 'form-field')
 
+        // input de l'id de l'activité utile pour editer les activités au lieu de toutes les supprimer (a revoir)
+        /*
         let inputIdActivity = document.createElement('input')
         inputIdActivity.setAttribute('name', 'edit--activity-id-'+i)
         inputIdActivity.style.display = "none";
+        inputIdActivity.value = activitiesByPathways[index].activities[i].idActivity
+        */
 
+        // input du nom de l'activité
         let inputName = document.createElement('input')
         inputName.setAttribute('class', 'input-name')
         inputName.setAttribute('placeholder', 'Nom')
@@ -62,6 +91,7 @@ function showEditModalForm(id, name, index){
         inputName.value = activitiesByPathways[index].activities[i].name
         //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
 
+        // input de la durée de l'activité
         let inputDuration = document.createElement('input')
         inputDuration.setAttribute('class', 'input-duration')
         inputDuration.setAttribute('placeholder', 'Durée (min)')
@@ -71,18 +101,19 @@ function showEditModalForm(id, name, index){
         inputDuration.value = activitiesByPathways[index].activities[i].duration
         //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
 
+        // image pour supprimer l'activité
         let img = new Image();
         img.src = 'img/delete.svg'
         img.setAttribute('id','edit--img-'+SELECT_ID_EDIT)
         img.setAttribute('onclick', 'edit__deleteSelect(this.id)')
 
+        // on ajoute les inputs et l'image dans une div
         div.appendChild(inputName)
         div.appendChild(inputDuration)
-        div.appendChild(inputIdActivity)
+        //div.appendChild(inputIdActivity)
         div.appendChild(img)
 
-        // On l'affiche et on l'ajoute a la fin de la balise div activities-container
-        //select.style.display = "block";
+        // Puis on ajoute cette div a la fin de la balise div activities-container (qui contient toutes les activités)
         let divAddActivity = document.getElementById('edit--activities-container')
 
         let divcontainer = document.createElement('div')
@@ -172,8 +203,7 @@ function edit__verifyChanges() {
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
     for (let i = 0; i < NB_ACTIVITY_EDIT; i++) {
-        console.log(activitiesContainer.children[i])
-        console.log(activitiesContainer.children[i].children[1])
+        console.log( activitiesContainer.children[i].children[1])
         activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
         let name = activitiesContainer.children[i].children[1].children[0].value
         activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))

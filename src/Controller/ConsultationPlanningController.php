@@ -88,6 +88,7 @@ class ConsultationPlanningController extends AbstractController
                 $id = "materialresource_" . $id;
                 $MaterialResourceScheduledArray[] = array(
                     $id,
+                    $MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename(),
                 );
             }
             foreach ($humanResourceScheduleds as $humanResourceScheduled) {
@@ -95,6 +96,7 @@ class ConsultationPlanningController extends AbstractController
                 $id = "humanresource_" . $id;
                 $HumanResourceScheduledArray[] = array(
                     $id,
+                    $humanResourceScheduled->getHumanresource()->getHumanresourcename(),
                 );
             }
             //factorisation de toutes les ressources en un unique tableau
@@ -102,11 +104,12 @@ class ConsultationPlanningController extends AbstractController
                 $patientId,
                 $pathwayId,
             );
-            for ($i = 0; $i < count($MaterialResourceScheduledArray); $i++) {
-                array_push($resourceArray[0], $MaterialResourceScheduledArray[$i]);
+            for ($i = 1; $i < count($MaterialResourceScheduledArray); $i++) {
+
+                array_push($resourceArray[0], $MaterialResourceScheduledArray[$i][0]);
             }
-            for ($i = 0; $i < count($HumanResourceScheduledArray); $i++) {
-                array_push($resourceArray[0], $HumanResourceScheduledArray[$i]);
+            for ($i = 1; $i < count($HumanResourceScheduledArray); $i++) {
+                array_push($resourceArray[0], $HumanResourceScheduledArray[$i][0]);
             }
 
             //récupération des données de l'activité programmée
@@ -121,8 +124,9 @@ class ConsultationPlanningController extends AbstractController
             $end = $scheduledActivity->getEndtime();
             $end = $end->format('H:i:s');
             $end = $day . "T" . $end; //formatage sous forme de DateTime pour fullcalendar
-            /*  ajout de toutes les activités du jour dans un tableau global 
-                pour les autres fonctions qui en ont besoin*/
+            $patientLastName = $scheduledActivity->getAppointment()->getPatient()->getLastname();
+            $patientFirstName = $scheduledActivity->getAppointment()->getPatient()->getFirstname();
+            $patient=$patientLastName . " " . $patientFirstName;
             //ajout des données de l'activité programmée dans un tableau pour etre converti en JSON
             $scheduledActivitiesArray[] = array(
                 'id' => (str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
@@ -132,11 +136,10 @@ class ConsultationPlanningController extends AbstractController
                 'appointment' => ($scheduledActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
                 'extendedProps' => array(
-                    'patient_lastname' => ($scheduledActivity->getAppointment()->getPatient()->getLastname()),
-                    'patient_firstname' => ($scheduledActivity->getAppointment()->getPatient()->getFirstname()),
+                    'patient' => $patient,
                     'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
-                    'materialresources' => ($MaterialResourceScheduledArray),
-                    'humanresources' => ($HumanResourceScheduledArray),
+                    'materialResources' => ($MaterialResourceScheduledArray),
+                    'humanResources' => ($HumanResourceScheduledArray),
                 ),
 
 
