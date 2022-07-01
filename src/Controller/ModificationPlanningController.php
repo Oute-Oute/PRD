@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
 use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
@@ -30,26 +31,29 @@ class ModificationPlanningController extends AbstractController
      */
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
-        $date_today = array();
+        $dateModified = array();
         if (isset($_POST['form'])) {
             $this->modificationPlanningPost($request, $doctrine, $entityManager);
-            $date_today = $_POST['date'];
+            $dateModified = $_POST['date'];
         }
         if (isset($_GET['date'])) {
-            $date_today = $_GET["date"];
+            $dateModified = $_GET["date"];
         }
+
         //Récupération des données nécessaires
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
         $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available' => true]);
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listeAppointment = $this->listAppointment($doctrine);
-        $listescheduledActivity = $this->listScehduledActivity($doctrine, $SAR, $date_today);
+        $listescheduledActivity = $this->listScehduledActivity($doctrine, $SAR, $dateModified);
         $listesuccessionJSON = $this->listSuccessorJSON($doctrine);
         $listeActivitiesJSON = $this->listActivityJSON($doctrine);
         $listeAppointmentJSON = $this->listAppointmentJSON($doctrine);
 
         $listResourceJSON = $this->listResourcesJSON($doctrine);
+
+        $this->alertModif($dateModified);
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -57,7 +61,7 @@ class ModificationPlanningController extends AbstractController
             'listResourceJSON' => $listResourceJSON,
             'listHumanResources' => $listHumanResources,
             'listMaterialResources' => $listMaterialResources,
-            'datetoday' => $date_today,
+            'datetoday' => $dateModified,
             'listScheduledActivitiesJSON' => $listescheduledActivity,
             'listeAppointments' => $listeAppointment,
             'listeSuccessorsJSON' => $listesuccessionJSON,
@@ -66,29 +70,42 @@ class ModificationPlanningController extends AbstractController
         ]);
     }
 
-    public function bordel(string $date_today)
+    public function alertModif($dateModified)
     {
         $modificationRepository = new ModificationRepository($this->getDoctrine());
-
-        $date_today = strtotime(str_replace('T', ' ', $date_today));
-        $dateTime_today = new \DateTime(date('Y-m-d h:i:s', $date_today));
-        $date_today = new \DateTime('now'); //date('Y-m-d', $date_today);
-
-        $interval = $date_today->diff($dateTime_today);
-        dd($interval->format('Difference of %h hours, %i minutes and %s seconds'));
-
         $modifications = $modificationRepository->findAll();
+
+        $dateModified = str_replace('T12:00:00', '', $dateModified);
+        $date_today = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+        $date_today = new \DateTime($date_today->format('Y-m-d H:i:s'));
+
         $modifArray = array();
+        $i = 0;
         foreach ($modifications as $modification) {
             $modifArray[] = array(
-                'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d h:i:s')),
+                'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
                 'dateModified' => ($modification->getDatemodified()->format('Y-m-d'))
             );
-        }
-        dd($modifArray);
+            $dateTimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
+            $interval = $dateTimeModified->diff($date_today);
 
-        if (count($modifications) >= 1) {
-            dd($modifications);
+            $interval_hour = $interval->format('%h');
+            $interval_minutes = $interval->format('%i');
+            
+            if($modifArray[$i]['dateModified']==$dateModified){
+                // ATTENTION, le timer doit être supérieur à celui du popup
+                if($interval_hour*60+$interval_minutes < 30){
+                    echo "<script> 
+                        alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
+                        window.location.assign('/ConsultationPlanning');
+                    </script>";
+                }
+                else{
+                    // Supprimer la modif dans BDD car trop vieille
+                    $modificationRepository->remove($modification, true);
+                }
+            }
+            $i++;
         }
     }
 
