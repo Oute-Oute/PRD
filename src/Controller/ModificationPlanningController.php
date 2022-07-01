@@ -33,7 +33,7 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
         $dateModified = array();
-        $idUser = 0;
+        $idUser = 1;
         if (isset($_POST['form'])) {
             $this->modificationPlanningPost($request, $doctrine, $entityManager);
             $dateModified = $_POST['date'];

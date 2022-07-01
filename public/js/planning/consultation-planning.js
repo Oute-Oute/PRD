@@ -57,7 +57,7 @@ function changePlanning() {
 /**
  * @brief This function is called when we want to go to the modification page
  */
-function modify(id) {
+function modify(id = 1) {
   var day = calendar.getDate().getDate(); //get the day
   var month = calendar.getDate().getMonth() + 1; //get the month (add 1 because it starts at 0)
   var year = calendar.getDate().getFullYear(); //get the year
