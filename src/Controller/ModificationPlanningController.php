@@ -6,6 +6,7 @@ use App\Entity\MaterialResourceScheduled;
 use App\Entity\HumanResourceScheduled;
 use App\Entity\ScheduledActivity;
 use App\Entity\Modification;
+use App\Entity\User;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\ModificationRepository;
@@ -125,6 +126,16 @@ class ModificationPlanningController extends AbstractController
 
         $userRepository = new UserRepository($this->getDoctrine());
         $user = $userRepository->findOneBy(['id' => $idUser]);
+
+        // Pour le développement, on crée un utilisateur de base s'il n'est pas présent, A ENLEVER PLUS TARD
+        if(!$user){
+            $user = new User();
+            $roles[] = 'ROLE_USER';
+            $user->setUsername("Bebou");
+            $user->setPassword("mdp");
+            $user->setRoles($roles);
+        }
+        $userRepository->add($user, true);
 
         $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
         $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
