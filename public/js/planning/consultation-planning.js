@@ -134,37 +134,38 @@ function createCalendar(resources) {
     //when we click on an event, display a modal window with the event information
     eventClick: function (event) {
       //get the data of the event
-      var id = event.event._def.publicId;
-      var activity = calendar.getEventById(id);
-      var start = activity.start;
-      var end = activity.end;
-      var humanResources = activity.extendedProps.humanResources;
-      var humanResourcesNames = "";
-      for (var i = 0; i < humanResources.length; i++) {
-        if (humanResources[i][1] != undefined) {
-          humanResourcesNames += humanResources[i][1] + "; ";
+      var id = event.event._def.publicId; //get the id of the event
+      var activity = calendar.getEventById(id); //get the event with the id
+      var start = activity.start; //get the start date of the event
+      var end = activity.end; //get the end date of the event
+      var humanResources = activity.extendedProps.humanResources;//get the human resources of the event
+      var humanResourcesNames = "";//create a string with the human resources names
+      for (var i = 0; i < humanResources.length-1; i++) {//for each human resource except the last one
+        if (humanResources[i][1] != undefined) { //if the human resource exist
+          humanResourcesNames += humanResources[i][1] + "; ";//add the human resource name to the string with a ; and a space
         }
       }
-      var materialResources = activity.extendedProps.materialResources;
-      var materialResourcesNames = "";
-      for (var i = 0; i < materialResources.length; i++) {
-        if (materialResources[i][1] != undefined) {
-          materialResourcesNames += materialResources[i][1] + "; ";
+      humanResourcesNames += humanResources[i][1] //add the last human resource name to the string
+
+      var materialResources = activity.extendedProps.materialResources;//get the material resources of the event
+      var materialResourcesNames = "";//create a string with the material resources names
+      for (var i = 0; i < materialResources.length-1; i++) {//for each material resource except the last one
+        if (materialResources[i][1] != undefined) {//if the material resource exist
+          materialResourcesNames += materialResources[i][1] + "; ";//add the material resource name to the string with a ; and a space
         }
       }
+      materialResourcesNames += materialResources[i][1]//add the last material resource name to the string
 
       //set data to display in the modal window
-      $("#start").val(start.toISOString().substring(0, 19));
-      $("#end").val(end.toISOString().substring(0, 19));
-      document.getElementById("show-title").innerHTML = activity.title;
-      $("#id").val(id);
-      $("#parcours").val(activity.extendedProps.pathway);
-      $("#patient").val(activity.extendedProps.patient);
-      $("#rh").val(humanResourcesNames);
-      $("#rm").val(materialResourcesNames);
+      $("#start").val(start.toISOString().substring(0, 19));//set the start date of the event
+      $("#end").val(end.toISOString().substring(0, 19));//set the end date of the event
+      document.getElementById("show-title").innerHTML = activity.title;//set the title of the event
+      $("#parcours").val(activity.extendedProps.pathway);//set the pathway of the event
+      $("#patient").val(activity.extendedProps.patient);//set the patient of the event
+      $("#rh").val(humanResourcesNames);//set the human resources of the event
+      $("#rm").val(materialResourcesNames);//set the material resources of the event
 
-      //open the window
-      $("#modify-planning-modal").modal("show");
+      $("#modify-planning-modal").modal("show");//open the window
     },
   });
   //change the type of the calendar(Patients, Resources...)
