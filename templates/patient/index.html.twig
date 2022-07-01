@@ -1,108 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des patients{% endblock %}
-{% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        <script src="js/Patient/patient.js"></script>
-        <script src="js/jquery-3.6.0.js"></script>
-        <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-  
-        {% endblock %}
-        
-{% block body %}
-    <div id = "index-users">    
-<h1 id="title">Liste des patients</h1>
-    <button type="button" class ="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for patient in patients %}
-            <tr>
-                <td>{{ patient.id }}</td>
-                <td>{{ patient.lastname }}</td>
-                <td>{{ patient.firstname }}</td>
-                <td>
-                    <button type="button" class = "btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
-                    <form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
-                        <input type="hidden" name="patient" value="{{ patient.id }}">
-                        <button class="btn-delete btn-secondary">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">Pas de patients créés !</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-
-<!-- add-patient-modal -->
-
-<div class="modal" id="add-patient-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Ajouter un patient</h2>
-      </div>
-      <form action="{{ path('PatientAdd') }}" method="post">
-        <div class="modal-body">
-            <div>
-                <label for='lastname'> Nom </label>
-                <input type='text' name='lastname'>
-            </div>
-            <div>
-                <label for='firstname'> Prenom </label>
-                <input type='text' name='firstname'>
-            </div>
-            <br>
-
-            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
-            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
-        </div>
-	    </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- edit-patient-modal -->
-
-<div class="modal" id="edit-patient-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Modifier un patient</h2>
-      </div>
-      <form action="{{ path('PatientEdit') }}" method="post">
-        <div class="modal-body">
-            <input type="hidden" name="idpatient" id="idpatient">
-            <div>
-                <label for='lastname'> Nom </label>
-                <input type='text' name='lastname' id='lastname'>
-            </div>
-            <div>
-                <label for='firstname'> Prenom </label>
-                <input type='text' name='firstname' id='firstname'>
-            </div>
-            <br>
-
-            <button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
-            <button type="submit" class="btn-valide btn-secondary"> Modifier </button>
-        </div>
-	    </form>
-    </div>
-  </div>
-</div>
-
+{% block title %}Liste des patients
 {% endblock %}
+{% block stylesheets %}
+	<!-- insertion de bootstrap et jquery -->
+    <script src="js/Patient/patient.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+  
+    <!-- insertion des fichier js et css spécifique à modification planning -->
+    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+    <script src="js/jquery-3.6.0.js"></script>
+	
+{% endblock %}
+
+{% block body %}
+	<div id="index-users">
+		<h1 id="title">Liste des patients</h1>
+
+		<!-- bouton pour l'ajout d'un nouveau patient -->
+		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
+
+		<!-- affichage de la liste de tous les patients -->
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for patient in patients %}
+					<tr>
+						<td>{{ patient.id }}</td>
+						<td>{{ patient.lastname }}</td>
+						<td>{{ patient.firstname }}</td>
+						<td>
+							<button type="button" class="btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
+							<form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
+								<input type="hidden" name="patient" value="{{ patient.id }}">
+								<button class="btn-delete btn-secondary">Supprimer</button>
+							</form>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="5">Pas de patients créés !</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+
+		<!-- add-patient-modal -->
+
+		<div class="modal" id="add-patient-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Ajouter un patient</h2>
+					</div>
+					<form action="{{ path('PatientAdd') }}" method="post">
+						<div class="modal-body">
+							<div>
+								<label for='lastname'>
+									Nom
+								</label>
+								<input type='text' name='lastname' required="required">
+							</div>
+							<div>
+								<label for='firstname'>
+									Prenom
+								</label>
+								<input type='text' name='firstname' required="required">
+							</div>
+							<br>
+
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
+							<button type="submit" class="btn-valide btn-secondary">
+								Ajouter
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- edit-patient-modal -->
+
+		<div class="modal" id="edit-patient-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Modifier un patient</h2>
+					</div>
+					<form action="{{ path('PatientEdit') }}" method="post">
+						<div class="modal-body">
+							<input type="hidden" name="idpatient" id="idpatient">
+							<div>
+								<label for='lastname'>
+									Nom
+								</label>
+								<input type='text' name='lastname' id='lastname'>
+							</div>
+							<div>
+								<label for='firstname'>
+									Prenom
+								</label>
+								<input type='text' name='firstname' id='firstname'>
+							</div>
+							<br>
+
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
+							<button type="submit" class="btn-valide btn-secondary">
+								Modifier
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	{% endblock %}

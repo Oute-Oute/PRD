@@ -14,6 +14,7 @@ class AppointmentController extends AbstractController
 {
     public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
+        //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
             'appointments' => $appointmentRepository->findAll(),
             'patients' => $doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),
@@ -38,7 +39,7 @@ class AppointmentController extends AbstractController
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
 
-        // Création du patient
+        // Création du rendez-vous
         $appointment = new Appointment(); 
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);
@@ -55,16 +56,16 @@ class AppointmentController extends AbstractController
 
     public function appointmentEdit(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine)
     {
+        //on récupère les nouvelles informations sur le rendez-vous
         $param = $request->request->all();
-
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['id' => $param['idpatient']]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
-        dd($param['earliestappointmenttime']);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
 
+        //on modifie les données du rendez-vous
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);
         $appointment->setDayappointment($dayappointment);
@@ -72,6 +73,7 @@ class AppointmentController extends AbstractController
         $appointment->setLatestappointmenttime($latestappointmenttime);
         $appointment->setScheduled(false);
 
+        //on met à jour le rendez-vous dans la bdd
         $appointmentRepository->add($appointment, true);
 
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
@@ -79,6 +81,37 @@ class AppointmentController extends AbstractController
 
     public function appointmentDelete(Appointment $appointment, AppointmentRepository $appointmentRepository): Response
     {
+        //on récupère toutes les activités programmées associées au rendez-vous
+        $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+        $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+        foreach($scheduledActivities as $scheduledActivity)
+        {
+            //suppression des données associées au rendez-vous de la table MaterialResourceScheduled
+            $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+            $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+            foreach($allMaterialResourceScheduled as $materialResourceScheduled)
+            {
+                $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+            }
+
+
+            //suppression des données associées au rendez-vous de la table HumanResourceScheduled
+            $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+            $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+            foreach($allHumanResourceScheduled as $humanResourceScheduled)
+            {
+                $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+            }
+
+
+            //suppression des données associées au rendez-vous de la table ScheduledActivity
+            $scheduledActivityRepository->remove($scheduledActivity, true);
+        }
+
+        //suppression du rendez-vous
         $appointmentRepository->remove($appointment, true);
 
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);

@@ -2,19 +2,25 @@
 
 {% block title %}Liste des rendez-vous{% endblock %}
 {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+        <!-- insertion de bootstrap et jquery -->
         <script src="js/Appointment/appointment.js"></script>
-        <script src="js/jquery-3.6.0.js"></script>
         <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
+        <!-- insertion des fichier js et css spécifique à modification planning -->
+        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+        <script src="js/jquery-3.6.0.js"></script>
+        
         {% endblock %}
         
 {% block body %}
     <div id = "index-users">    
     <h1 id="title">Liste des rendez-vous</h1>
+
+    <!-- bouton pour l'ajout d'un nouveau rendez-vous -->
     <button type="button" class ="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
 
+    <!-- affichage de la liste de tous les rendez-vous -->
     <table class="table table-striped">
         <thead>
             <tr>

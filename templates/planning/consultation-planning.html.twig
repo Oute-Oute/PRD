@@ -17,7 +17,7 @@
 	<div class="all-container">
 		<h1>Consultation du Planning</h1>
 		<div class="flex">
-			<button class="btn-valide" onclick="modify()">Modifier le planning</button>
+			<button class="btn-valide" onclick="modify({#{{app.user.getId()}}#}1)">Modifier le planning</button>
 			<select class="list-edit" id="displayList" onchange="changePlanning()">
 				<option value="0" selected disabled>Changer l'affichage
 				</option>
@@ -65,33 +65,40 @@
 	</div>
 
 
-<div class="calendar-container">
-	<div id='calendar'></div>
-</div></div></div><div class="modal" id="modify-planning-modal"><div class="modal-dialog">
-<div class="modal-content">
-	<div class="modal-header">
-		<h2 class="modal-title">Evenement
-			<span id="show-title"></span>
-		</h2>
+	<div class="calendar-container">
+		<div id='calendar'></div>
 	</div>
-	<form method="post" action="/ModificationPlanning">
-		<div class="modal-body">
-			<input name="form" type="hidden" value="modify">
-			<input id="id" name="id" type="hidden">
-			<input id="length" name="length" type="hidden">
-			<input id="title" name="title" type="hidden">
-
-			<label>Horaires de l'activité :
-			</label>
-			<div class="input-container onWhite">
-				<input class="input-field" type="datetime-local" id="start" name="start" disabled>
-				<input class="input-field" type="datetime-local" id="end" name="end" disabled>
-			</div>
-
-			<div class="modal-footer">
-				<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-
-			</div>
+</div></div><div class="modal" id="modify-planning-modal">
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h2 class="modal-title">
+				<span id="show-title"></span>
+			</h2>
 		</div>
-	</form>
-</div></div></div>{% endblock %}
+		<form method="post" action="/ModificationPlanning">
+			<div class="modal-body">
+				<label class="label-event">Horaires de l'activité :
+				</label>
+				<div class="input-container onWhite">
+					<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+					<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+					<label class="label-event">Parcours :</label></br>
+					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input></br>
+					<label class="label-event">Patient :</label></br>
+					<input class="input-modal" type="text" id="patient" name="patient" disabled></input></br>
+					<label class="label-event">Ressource Humaine :</label></br>
+					<input class="input-modal" type="text" id="rh" name="rh" disabled></input></br>
+					<label class="label-event">Ressource Matérielle :</label></br>
+					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+
+				</div>
+			</div>
+		</form>
+	</div>
+</div></div>{% endblock %}
