@@ -1,34 +1,45 @@
     <!-- add-patient-modal -->
-
-<div class="modal" id="edit-human-resource-modal">
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+{% endblock %}
+<div class="modal" id="edit--human-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Éditer une ressource humaine</h2>
             </div>
-            <form action="{{ path('HumanResourceEdit') }}" method="post">
+            <form id = "edit-form-resource" action="{{ path('HumanResourceEdit') }}" method="post">
                 <div class="modal-body">
-                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
-                    <input style="display:none;" name="nbCategory" id="nbCategory_EditForm">
 
+                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+                    <input style="display:none;" name="nbcategory" id="edit--nbcategory">
+                    <input style="display:none;" name="id" id="edit--resourceid">
+    
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
                             <h4><label for='name'> Nom de la ressource </label></h4>
                         </div>
 
                         <div class="form-field-input flex-col">
-                            <input id='edit-resourcename' type='text' name='resourcename' onchange='disableSubmit_EditForm()'>
+                            <input id='edit--resourcename' type='text' name='resourcename' onchange='disableSubmit_EditForm()'>
                         </div>
                     </div> 
 
-                    <fieldset id="fs-add-category">
-                        <h4>Choisissez les activités de votre parcours</h4>
+                    <fieldset id="fs-add-human-category">
+                        <legend>Choisissez les catégories de votre ressource</legend>
+                
+                        <div id="edit--categories-container"> 
+                            <select style="display:none;" class="select-category-sample" class="slct-add-category" > 
 
-                        <div id="edit-activities-container"> 
+                                {% for human_resource_category in human_resources_categories %} 
+                                    <option value="{{ human_resource_category.id }}"> {{ human_resource_category.categoryname }} </option>
+                                {% else %}
+                                    <p> Pas de catégories créées ! </p>
+                                {% endfor %}
 
+                            </select>
                         </div>
-
-                        <button type="button" id='btn-add-category' onclick="handleAddCategory_EditForm()"> <b> Ajouter </b> </button> 
+                        <button type="button" id='btn-add-category' onclick="edit__handleAddCategory()"> <b> Ajouter </b> </button> 
 
                     </fieldset>
                 </div>

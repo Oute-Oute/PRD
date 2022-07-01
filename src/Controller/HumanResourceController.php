@@ -24,23 +24,30 @@ class HumanResourceController extends AbstractController
     public function index(HumanResourceRepository $humanResourceRepository): Response
     {
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
         $humanResources = $humanResourceRepository->findAll();
+        $categOfHumanResource = $categOfHumanResourceRepository->findAll();
+        $humanResourceCategory = $humanResourceCategoryRepository->findAll();
 
-        $nbResource = count($humanResources);
+        $nbHumanResource = count($humanResources);
+        $nbCategBy = count($categOfHumanResource);
         $categoriesByResources = array();
 
-        for ($i = 0; $i < $nbResource; $i++) {
-            //note à moi-même pr demain
-            //ici 'pathway' est un objet qui est situé dans l'entité d'une activité pour un parcours
-            //moi je n'ai pas d'objet catégorie dans mon entité ressource, je dois donc récup
-            //les données dans le repository de CategOf
-            array_push($categoriesByResources, $humanResourceRepository->findBy(['pathway' => $humanResources[$i]]));
-            //dd($activitiesByPathway[$i]);
+        for($indexResource = 0; $indexResource < $nbHumanResource; $indexResource++) {
+            $listCategOf = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResources[$indexResource]]);
+            $categoriesByResource = array();
+            for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
+                array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
+            }
+            array_push($categoriesByResources, $categoriesByResource);
         }
+
+        //dd($categoriesByResources);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
-            'human_resources_categories' => $humanResourceCategories
+            'human_resources_categories' => $humanResourceCategories,
+            'categoriesByResources' => $categoriesByResources
         ]); 
     }
 

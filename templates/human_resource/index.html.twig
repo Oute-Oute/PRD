@@ -13,6 +13,37 @@
     <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
 {% endblock %}
 {% block body %}
+
+    <script> 
+    /* Script permettant de remplir dans le js un tableau qui contient toutes les activités des pathway
+
+        Pour accéder a une activité d'un pathway :
+        On a :
+        activitiesByPathways.idPathway => id du pathway 
+        activitiesByPathways.activities => liste d'activites lié au pathway
+        Puis : 
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].idActivity => id de l'activité
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].name => nom de l'activité
+        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
+    */  
+        var categoriesByResources = new Array();
+        {% if (categoriesByResources) %}
+            {% for indexResource in 0..(categoriesByResources|length - 1) %}
+                categoriesByResources[{{indexResource}}] = new Object();
+               {# categoriesByResource[{{indexResource}}].idResource = '{{ human_resources[indexResource].id }}' #}
+                categoriesByResources[{{indexResource}}].categories = new Array();
+                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}] = new Object();
+                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].idCategory = '{{ categoriesByResources[indexResource][indexCategory].id }}'
+                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].name = '{{ categoriesByResources[indexResource][indexCategory].categoryname }}' 
+                {% else %}
+                {% endfor %}
+            {% else %}
+            {% endfor %}
+            console.table(categoriesByResources);
+        {% endif %}
+    </script> 
+
 <div id="both-tables">
     <h1>Liste des ressources humaines</h1>
         <button class ="btn-add" onclick="showNewHumanModalForm()"> Ajouter une nouvelle ressource humaine </button>
@@ -32,7 +63,7 @@
                 <td>{{ human_resource.humanresourcename }}</td>
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
-                    <button class = "btn-edit btn-secondary" onclick="showEditModalFormHumanResource('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
+                    <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('human_resource/_delete_form.html.twig') }}
                 </td>
             </tr>
