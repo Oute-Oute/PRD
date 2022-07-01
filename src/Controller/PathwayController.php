@@ -126,7 +126,7 @@ class PathwayController extends AbstractController
 
 
     /**
-     * Methode dedition d'un pathway dans la base de données
+     * Methode d'edition d'un pathway dans la base de données
      */
     public function edit(Request $request): Response
     {
@@ -228,16 +228,46 @@ class PathwayController extends AbstractController
             
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
-
-
     }
 
-    /**
-     * @Route("/{id}", name="app_circuit_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Pathway $pathway, PathwayRepository $pathwayRepository): Response
+
+    public function delete(Request $request): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$pathway->getId(), $request->request->get('_token'))) {
+        if ($request->getMethod() === 'POST') {
+            
+            // On supprime toutes les activités et leurs successor
+            $em = $this->getDoctrine()->getManager();
+
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $pathwayRepository = new PathwayRepository($this->getDoctrine());
+            $successorRepository = new SuccessorRepository($this->getDoctrine());
+            
+            $param = $request->request->all();
+            $pathway = $pathwayRepository->findById($param['pathwayid'])[0];
+            $activitiesInPathway = $activityRepository->findBy(['pathway' => $pathway]);
+            
+            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
+
+                $successorsa = $successorRepository->findBy(['activitya' => $activitiesInPathway[$indexActivity]]);
+                for ($indexSuccessora = 0; $indexSuccessora < count($successorsa); $indexSuccessora++) {
+                    $em->remove($successorsa[$indexSuccessora]);
+                }
+
+                $successorsb = $successorRepository->findBy(['activityb' => $activitiesInPathway[$indexActivity]]);
+                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
+                    $em->remove($successorsa[$indexSuccessorb]);
+                }
+                $em->flush();
+
+               // $em->remove($activitiesInPathway[$indexActivity]);
+            }
+            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
+                $em->remove($activitiesInPathway[$indexActivity]);
+                $em->flush();
+
+            } 
+
+            // Puis on supprime le pathway
             $pathwayRepository->remove($pathway, true);
         }
 
