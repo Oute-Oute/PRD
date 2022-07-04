@@ -77,14 +77,11 @@ function setEvents() {
   let resources = [];
   events.forEach((event) => {
     var listResource = [];
-    console.log(event);
     for (let i = 0; i < event._def.resourceIds.length; i++) {
       listResource.push(event._def.resourceIds[i]);
     }
-    console.log(listResource);
     resources.push(listResource);
   });
-  console.log(resources);
   document.getElementById("events").value = JSON.stringify(
     calendar.getEvents()
   );
@@ -198,7 +195,7 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       calendar.addEvent({
         id: "new" + CoundAddEvent,
-        resourceIds: ["human-default", "material-default"],
+        resourceIds: ["h-default", "m-default"],
         title: activitya.name,
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
@@ -326,6 +323,52 @@ function createCalendar(typeResource) {
       //ouvre la modal
       $("#modify-planning-modal").modal("show");
     },
+
+    eventDragStop: function (event, jsEvent) {
+      var listEvent = calendar.getEvents();
+      var oldEvent = event.event._def;
+      var modifyEvent = event.el.fcSeg;
+      var appointmentId = event.event._def.extendedProps.appointment;
+      var listEventAppointment = [];
+      listEvent.forEach((oldEvents) => {
+        if(oldEvents._def.extendedProps.appointment == appointmentId){
+          listEventAppointment.push(oldEvents);
+        }
+      })
+
+      var isFirst = true;
+      listEventAppointment.forEach((eventAppointment) =>{
+        if(eventAppointment._def.start < oldEvent.start){
+          console.log(eventAppointment)
+          isFirst = false;
+        }
+      })
+
+      if(isFirst){
+        var listeAppointments = JSON.parse(
+          document.getElementById("listeAppointments").value
+        );
+        var appointment;
+        for (let i = 0; i < listeAppointments.length; i++) {
+          if (listeAppointments[i]["id"] == appointmentId) {
+            appointment = listeAppointments[i];
+          }
+        }
+        let earliestAppointmentDate = new Date(
+          appointment.earliestappointmenttime
+        );
+        let latestAppointmentDate = new Date(
+          appointment.latestappointmenttime
+        );
+      
+        if (
+          earliestAppointmentDate <= event.event._def.start &&
+          event.event._def.start <= latestAppointmentDate
+        ) {
+
+        }
+      }
+    }
   });
   switch (typeResource) {
     /*case "Patients": //if we want to display by the patients
@@ -373,7 +416,7 @@ function createCalendar(typeResource) {
         });
       }
       calendar.addResource({
-        id: "human-default",
+        id: "h-default",
         title: "Aucune ressource allouée",
       });
       break;
@@ -389,7 +432,7 @@ function createCalendar(typeResource) {
           title: temp["title"],
         });
         calendar.addResource({
-          id: "material-default",
+          id: "m-default",
           title: "Aucune ressource allouée",
         });
       }
