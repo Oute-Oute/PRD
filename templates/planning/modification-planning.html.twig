@@ -140,14 +140,13 @@
         </div>
 
         <!-- liste des boutons pour annuler ou valider les modifications -->
-        <div class="CRUD-right">
-          <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">test</button>
+        <div class="CRUD-div">
           <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
           <form method="post" action="{{ path('ModificationPlanningValidation') }}">
+            <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
             <input type=hidden id='events' name="events"/>
             <input type=hidden id='validation-date' name="validation-date"/>
             <input type=hidden id='list-resource' name="list-resource"/>
-            <button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
           </form>
         </div>
       </div>

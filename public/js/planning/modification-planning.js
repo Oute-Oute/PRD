@@ -2,8 +2,8 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 1680000; // En millisecondes
-setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
+//setTimeout(showPopup, modifAlertTime);
+//setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -231,9 +231,11 @@ function createCalendar(typeResource) {
     first = false;
     listEvent = calendar.getEvents();
     listEvent.forEach((event) => {
+      let eventResources = []
       for (let i = 0; i < event._def.resourceIds.length; i++) {
-        listResource.push(event._def.resourceIds[i]);
+        eventResources.push(event._def.resourceIds[i])
       }
+      listResource.push(eventResources);
     });
   }
 
@@ -297,11 +299,8 @@ function createCalendar(typeResource) {
       $("#modify-planning-modal").modal("show");
     },
   });
-  console.log(
-    document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
-  );
   switch (typeResource) {
-    case "Patients": //if we want to display by the patients
+    /*case "Patients": //if we want to display by the patients
       var tempArray = JSON.parse(
         document
           .getElementById("listeAppointments")
@@ -332,7 +331,7 @@ function createCalendar(typeResource) {
           title: pathway[0]["title"],
         });
       }
-      break;
+      break;*/
     case "Ressources Humaines": //if we want to display by the resources
       var resourcesArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
@@ -376,24 +375,23 @@ function createCalendar(typeResource) {
         .value.replaceAll("3aZt3r", " ")
     );
   } else {
-    console.log(listEvent);
     let setEvents = [];
+    var index = 0
     listEvent.forEach((eventModify) => {
       var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
       var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
 
-      
-      console.log(eventModify.getResources());
       setEvents.push({
         id: eventModify.id,
         start: formatDate(start).replace(" ", "T"),
         end: formatDate(end).replace(" ", "T"),
         title: eventModify.title,
-        resourceIds: listResource,
+        resourceIds: listResource[index],
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
       });
+      index++
     });
     eventsarray = setEvents;
   }
@@ -401,7 +399,6 @@ function createCalendar(typeResource) {
     calendar.addEvent(eventsarray[i]);
   }
 
-  console.log(eventsarray);
   //affiche le calendar
   calendar.gotoDate(date);
   calendar.render();

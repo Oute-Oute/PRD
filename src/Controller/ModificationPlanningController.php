@@ -238,11 +238,11 @@ class ModificationPlanningController extends AbstractController
         foreach ($appointments as $appointment) {
             $earliestappointmenttime="";
             if ($appointment->getEarliestappointmenttime()!=null) {
-                $earliestappointmenttime = $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s');
+                $earliestappointmenttime = str_replace(" ", "T", $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s'));
             }
             $latestappointmenttime="";
             if ($appointment->getLatestappointmenttime()!=null) {
-                $latestappointmenttime = $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s');
+                $latestappointmenttime = str_replace(" ", "T", $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s'));
             }
             $appointmentsArray[] = array(
                 'id' => $appointment->getId(),
@@ -421,7 +421,9 @@ class ModificationPlanningController extends AbstractController
                         //on regarde si la ressource modifié est de type Humaine
                         if (substr($resource, 0, 5) == "human") {
                             //on récupère l'objet ressource humaine correspondant
-                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
+                            parse_str($resource, $array);
+                            dd($array);
+                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => $array[1]]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $humanResourceExist = false;
