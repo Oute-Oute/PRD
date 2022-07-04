@@ -18,7 +18,7 @@
                             <label for='name'> Nom de la ressource </label>
                         </div>
                         <div class="form-field-input flex-col">
-                            <input id='categoryname' type='text' name='categoryname'>
+                            <input id='resourcename' type='text' name='resourcename'>
                         </div>
                     </div> 
  
@@ -42,7 +42,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button id='submit' type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+                    <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
 
                 </div>
     	    </form>

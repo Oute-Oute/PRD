@@ -39,11 +39,6 @@ class ScheduledActivity
      */
     private $endtime;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $dayscheduled;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -93,18 +88,6 @@ class ScheduledActivity
     public function setEndtime(\DateTimeInterface $endtime): self
     {
         $this->endtime = $endtime;
-
-        return $this;
-    }
-
-    public function getDayscheduled(): ?\DateTimeInterface
-    {
-        return $this->dayscheduled;
-    }
-
-    public function setDayscheduled(\DateTimeInterface $dayscheduled): self
-    {
-        $this->dayscheduled = $dayscheduled;
 
         return $this;
     }
