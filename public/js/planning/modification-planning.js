@@ -195,7 +195,7 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       calendar.addEvent({
         id: "new" + CoundAddEvent,
-        resourceIds: ["human-default", "material-default"],
+        resourceIds: ["h-default", "m-default"],
         title: activitya.name.replaceAll('3aZt3r',' '),
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
