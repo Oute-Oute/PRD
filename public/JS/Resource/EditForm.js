@@ -68,6 +68,8 @@ function showEditModalForm(id, name, index){
             newSelect.add(option);        
         }
 
+        newSelect.value = categoriesByResources[index].categories[j].idCategory;
+
         newSelect.setAttribute('name' , 'select-'+SELECT_ID);
 
         let formField = document.createElement("div");
