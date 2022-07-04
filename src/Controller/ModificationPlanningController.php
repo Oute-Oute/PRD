@@ -247,7 +247,7 @@ class ModificationPlanningController extends AbstractController
             $appointmentsArray[] = array(
                 'id' => $appointment->getId(),
                 'earliestappointmenttime' => $earliestappointmenttime,
-                'lastestappointmenttime' => $latestappointmenttime,
+                'latestappointmenttime' => $latestappointmenttime,
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
