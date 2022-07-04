@@ -1,32 +1,5 @@
 var SELECT_ID = 0;
-
-function showNewModalForm() {
-    containerModal = document.getElementById('container-modal')
-    containerModal.style.display = "flex";
-    
-    formAddActivity = document.getElementById('form-add-activity');
-    formAddActivity.style.display = "none";
-
-    formAddResource = document.getElementById('form-add-resource');
-    formAddResource.style.display = "flex";
-
-    formAddResourcetype = document.getElementById('form-add-resourcetype');
-    formAddResourcetype.style.display = "none";
-}
-
-function hideNewModalForm() {
-    containerModal = document.getElementById('container-modal')
-    containerModal.style.display = "none";
-
-    formAddActivity = document.getElementById('form-add-activity');
-    formAddActivity.style.display = "none";
-
-    formAddResource = document.getElementById('form-add-resource');
-    formAddResource.style.display = "none";
-
-    formAddResourcetype = document.getElementById('form-add-resourcetype');
-    formAddResourcetype.style.display = "none";
-}
+var NB_CATEGORY = 0;
 
 function showInfosModalHuman(resourceId, resourceName, resourceType) {
     document.getElementById('human-resource-id').innerText = resourceId
@@ -112,7 +85,10 @@ function handleAddHumanCategory() {
     categoriesContainer.appendChild(formField);
     let nbCategory = document.getElementById('nbCategory');
     SELECT_ID = SELECT_ID +1;
-    nbCategory.value = SELECT_ID;
+    console.log(SELECT_ID)
+
+    NB_CATEGORY = NB_CATEGORY +1;
+    nbCategory.value = NB_CATEGORY;
 
 }
 /** Permet de supprimer un select dans la liste déroulante */
@@ -124,16 +100,41 @@ function deleteSelect(id) {
     id = id[id.length - 1] 
     // On peut donc recuperer la div
     let divToDelete = document.getElementsByClassName('category-'+id)[0]
-    console.log(divToDelete)
     // puis la supprimer
     let divAddCategory = document.getElementById('categories-container')
-    console.log(divAddCategory)
     divAddCategory.removeChild(divToDelete)
     
     let nbCategory = document.getElementById('nbCategory');
     SELECT_ID = SELECT_ID - 1;
-    nbCategory.value = SELECT_ID;
+    console.log(SELECT_ID)
+    NB_CATEGORY = NB_CATEGORY -1;
+    nbCategory.value = NB_CATEGORY;
 }
 
+
+/**
+ * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ */
+ function verifyChanges() {
+
+    let formOk = true
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('categories-container')
+
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    for (let i = 1; i <= NB_CATEGORY; i++) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ Number(i-1))
+    }
+
+    if (document.getElementById('resourcename').value === '') {
+        formOk = false
+    }
+
+    if (formOk) {
+        let btnSubmit = document.getElementById('submit')
+        btnSubmit.disabled = false;
+    }
+}
 // #container-modal 
 // .modal-form             #form-add-activity
