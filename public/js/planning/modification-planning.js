@@ -117,6 +117,7 @@ function AddEventValider() {
     new Date(dateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
       2 * 60 * 60000
   );
+
   var appointment;
   //Récupération du rdv choisit par l'utiuilisateur
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -125,10 +126,11 @@ function AddEventValider() {
     }
   }
 
+
   //Récupération des activités du parcours
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivities.length; i++) {
-    if (listeActivities[i]["idPathway"] == appointment["idPathway"]) {
+    if ('pathway_'+listeActivities[i]["idPathway"] == appointment["idPathway"][0].id) {
       activitiesInPathwayAppointment.push(listeActivities[i]);
     }
   }
@@ -139,13 +141,11 @@ function AddEventValider() {
     successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
   }
 
+
   //get the forst activity of the pathway
   for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
     if (
-      successorsActivitybIdList.includes(
-        activitiesInPathwayAppointment[i].id
-      ) == false
-    ) {
+      successorsActivitybIdList.includes(activitiesInPathwayAppointment[i].id) == false) {
       var firstActivityPathway = activitiesInPathwayAppointment[i];
     }
   }
@@ -175,7 +175,7 @@ function AddEventValider() {
     //Ajout d'un event au calendar
     calendar.addEvent({
       id: "new" + CoundAddEvent,
-      resourceId: "human-1",
+      resourceId: "default",
       title: activitya.name,
       start: PathwayBeginDate,
       end: PathwayBeginDate.getTime() + activitya.duration * 60000,
@@ -401,7 +401,6 @@ function createCalendar(typeResource) {
     calendar.addEvent(eventsarray[i]);
   }
 
-  console.log(eventsarray);
   //affiche le calendar
   calendar.gotoDate(date);
   calendar.render();
