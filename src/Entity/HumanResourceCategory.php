@@ -38,4 +38,9 @@ class HumanResourceCategory
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getCategoryname();
+    }
 }

@@ -60,9 +60,9 @@ class ModificationPlanningController extends AbstractController
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
 
-        if($this->alertModif($dateModified)){
+        /*if($this->alertModif($dateModified)){
             $this->modificationAdd($dateModified, $idUser);
-        }
+        }*/
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -127,27 +127,26 @@ class ModificationPlanningController extends AbstractController
         $userRepository = new UserRepository($this->getDoctrine());
         $user = $userRepository->findOneBy(['id' => $idUser]);
 
-        // Pour le développement, on crée un utilisateur de base s'il n'est pas présent, A ENLEVER PLUS TARD
+        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
+        // A enlever plus tard car on est censé être connecté
         if(!$user){
-            $user = new User();
-            $roles[] = 'ROLE_USER';
-            $user->setUsername("Bebou");
-            $user->setPassword("mdp");
-            $user->setRoles($roles);
+            //dd("Erreur, vous n'êtes pas connecté !");
         }
-        $userRepository->add($user, true);
+        else{
+            $userRepository->add($user, true);
 
-        $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
-        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
+            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
 
-        $modification = new Modification();
-        $modification->setUser($user);
-        $modification->setDatemodif($datetimeModified); 
-        $modification->setDatetimemodification($dateToday);
-        
-        // ajout dans la bdd
-        $modificationRepository->add($modification, true);
+            $modification = new Modification();
+            $modification->setUser($user);
+            $modification->setDatemodif($datetimeModified); 
+            $modification->setDatetimemodification($dateToday);
+            
+            // ajout dans la bdd
+            $modificationRepository->add($modification, true);
+        }
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
