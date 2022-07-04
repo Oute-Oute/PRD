@@ -51,11 +51,11 @@ class ModificationPlanningController extends AbstractController
         $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available' => true]);
         $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-        $listeAppointment = $this->listAppointment($doctrine);
+        $listeAppointment = $this->listAppointment($doctrine,$dateModified);
         $listescheduledActivity = $this->listScehduledActivity($doctrine, $SAR, $dateModified);
         $listesuccessionJSON = $this->listSuccessorJSON($doctrine);
         $listeActivitiesJSON = $this->listActivityJSON($doctrine);
-        $listAppointmentJSON = $this->listAppointmentJSON($doctrine);
+        $listAppointmentJSON = $this->listAppointmentJSON($doctrine,$dateModified);
 
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
@@ -211,9 +211,11 @@ class ModificationPlanningController extends AbstractController
     }
 
 
-    public function listAppointment(ManagerRegistry $doctrine)
+    public function listAppointment(ManagerRegistry $doctrine,$date)
     {
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findAll();
+        
+        $date=new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10)))); 
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date]);
         /*$appointmentsArray=array(); 
         foreach($appointments as $appointment){
             $appointmentsArray[]=array(
@@ -228,12 +230,10 @@ class ModificationPlanningController extends AbstractController
         return $appointments;
     }
 
-    public function listAppointmentJSON(ManagerRegistry $doctrine)
+    public function listAppointmentJSON(ManagerRegistry $doctrine,$date)
     {
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-
-        
-
+        $date=new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10)))); 
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date]);
         $appointmentsArray = array();
         foreach ($appointments as $appointment) {
             $earliestappointmenttime="";
