@@ -175,7 +175,7 @@ function AddEventValider() {
     //Ajout d'un event au calendar
     calendar.addEvent({
       id: "new" + CoundAddEvent,
-      resourceId: "default",
+      resourceIds: ["human-default", "material-default"],
       title: activitya.name,
       start: PathwayBeginDate,
       end: PathwayBeginDate.getTime() + activitya.duration * 60000,
@@ -345,7 +345,7 @@ function createCalendar(typeResource) {
         });
       }
       calendar.addResource({
-        id: "default",
+        id: "human-default",
         title: "Aucune ressource allouée",
       });
       break;
@@ -361,7 +361,7 @@ function createCalendar(typeResource) {
           title: temp["title"],
         });
         calendar.addResource({
-          id: "default",
+          id: "material-default",
           title: "Aucune ressource allouée",
         });
       }
