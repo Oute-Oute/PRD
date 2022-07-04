@@ -186,7 +186,7 @@ function AddEventValider() {
           activitya = listeActivities[i];
         }
       }
-      //trouover dans la table successor le correspondant au activiteida
+      //trouver dans la table successor le correspondant au activiteida
       for (let i = 0; i < listeSuccessors.length; i++) {
         if (listeSuccessors[i].idactivitya == idactivitya) {
           successoracivitya = listeSuccessors[i];
@@ -199,7 +199,7 @@ function AddEventValider() {
       calendar.addEvent({
         id: "new" + CoundAddEvent,
         resourceIds: ["human-default", "material-default"],
-        title: activitya.name,
+        title: activitya.name.replaceAll('3aZt3r',' '),
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
         patient: appointment.idPatient,

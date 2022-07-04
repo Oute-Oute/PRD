@@ -70,23 +70,23 @@
           <input id="listeAppointments" name="listeAppointments" type='hidden' value={{listAppointmentsJSON.content}}>
           <input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listeSuccessorsJSON.content}}>
           <input id="listeActivities" name="listeActivities" type='hidden' value={{listeActivitiesJSON.content}}>
-          <div id="select-container-patient"> 
+
+          <div id="select-container-patient"> <!-- Selection du rendez-vous -->
             <label>Choisissez le rendez-vous</label>
               <select id="select-appointment" name="select-appointment" required> 
                 <option value="" selected hidden> Selection du rendez-vous </option>
                 {% for Appointment in listeAppointments %} 
                 <option value="{{ Appointment.id }}"> {{ Appointment.patient.LastName }} {{ Appointment.patient.firstname }} / {{Appointment.PathWay.PathWayname}} </option>
                 {% endfor %}
-
               </select>
           </div>
 
-          <div id="select-container-date" class="input-container onWhite">
+          <div id="select-container-date" class="input-container onWhite"> <!-- Selection de l'heure de début du rdv -->
             <label>Heure de début du parcours : </label>
               <input class="input-field" type="time" id="timeBegin" name="timeBegin" required>
           </div>
          
-          <div id="time-selected-error" class="alert alert-danger" role="alert">
+          <div id="time-selected-error" class="alert alert-danger" role="alert"> <!-- Affichage du message d'erreur si l'utilisateur ne rentre pas une heure correcte par rapport à la table appointment -->
             Veuillez renseigner une heure de début de parcours correcte pour ce rendez-vous.
           </div>
             <div class="modal-footer">

@@ -215,25 +215,14 @@ class ModificationPlanningController extends AbstractController
     {
         
         $date=new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10)))); 
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date]);
-        /*$appointmentsArray=array(); 
-        foreach($appointments as $appointment){
-            $appointmentsArray[]=array(
-                'id'=>$appointment->getId(),
-                'earliestappointmenttime'=>$appointment->getEarliestappointmenttime(), 
-                'lastestappointmenttime'=>$appointment->getLatestappointmenttime(),
-                'dayappointment'=>$appointment->getDayappointment(),
-                'idPatient'=>$appointment->getPatient()->getId(),
-                'idPathway'=>$appointment->getPathway()->getId(),
-            );
-        } */
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date,'scheduled'=>0]); 
         return $appointments;
     }
 
     public function listAppointmentJSON(ManagerRegistry $doctrine,$date)
     {
         $date=new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10)))); 
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date]);
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment'=>$date,'scheduled'=>0]);
         $appointmentsArray = array();
         foreach ($appointments as $appointment) {
             $earliestappointmenttime="";
