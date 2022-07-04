@@ -60,9 +60,9 @@ class ModificationPlanningController extends AbstractController
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
 
-        if($this->alertModif($dateModified)){
+        /*if($this->alertModif($dateModified)){
             $this->modificationAdd($dateModified, $idUser);
-        }
+        }*/
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
