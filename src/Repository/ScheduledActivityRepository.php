@@ -40,14 +40,14 @@ class ScheduledActivityRepository extends ServiceEntityRepository
         }
     }
 
-    public function findSchedulerActivitiesByDate($TodayDate)
+    public function findSchedulerActivitiesByDate($date)
     {   
-        $qb= $this->createQueryBuilder('s'); 
-        $qb->select('s'); 
-        $qb->where('s.dayscheduled=:date')
-             ->setParameter('date',$TodayDate);
-             $query=$qb->getQuery()->getResult(); 
-             return $query;
+        $qb= $this->createQueryBuilder('sa')
+            ->join('sa.appointment', 'a')
+            ->where('a.dayappointment = :date')
+            ->setParameter('date', $date);
+        $query=$qb->getQuery()->getResult();
+        return $query;
     }
 
 //    public function findOneBySomeField($value): ?ScheduledActivity

@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\ScheduledActivityRepository;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -24,6 +25,7 @@ class ConsultationPlanningController extends AbstractController
      * @brief This variable contains the list of scheduled activities used in several function of the Controller.
      * */
     public $scheduledActivities;
+    public $date;
 
     /*
      * @brief This function is the getter of the Controller.
@@ -31,16 +33,17 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return JSON File containing the data used by the html and js files.
      */
-    public function consultationPlanningGet(ManagerRegistry $doctrine): Response
+    public function consultationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
     {
-        $dateGet = date(('Y-m-d'));
+        global $date;
+        $date = date(('Y-m-d'));
         if (isset($_GET["date"])) {
-            $dateGet = $_GET["date"];
-            $dateGet = str_replace('T12:00:00', '', $dateGet);
+            $date = $_GET["date"];
+            $date = str_replace('T12:00:00', '', $date);
         }
         //Récupération des données ressources de la base de données
-        $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine); //Récupération des données activités programmées de la base de données
         $listeAppointmentJSON = $this->listeAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
+        $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine,$SAR); //Récupération des données activités programmées de la base de données
         $listeMaterialResourceScheduledJSON = $this->listeMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $listeHumanResourceScheduledJSON = $this->listeHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
 
@@ -48,7 +51,7 @@ class ConsultationPlanningController extends AbstractController
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
-                'datetoday' => $dateGet,
+                'datetoday' => $date,
                 'listeScheduledActivitiesJSON' => $listeScheduledActivitiesJSON,
                 'listeAppointmentJSON' => $listeAppointmentJSON,
                 'listeMaterialResourceScheduledJSON' => $listeMaterialResourceScheduledJSON,
@@ -62,10 +65,11 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array all the data of the activites to display
      */
-    public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine)
+    public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR)
     {
+        global $date;
         global $scheduledActivities;
-        $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();
+        $scheduledActivities = $SAR->findSchedulerActivitiesByDate($date);
         $scheduledActivitiesArray = array();
         foreach ($scheduledActivities as $scheduledActivity) {
             //recuperation des id des ressources pour fullcalendar
@@ -114,7 +118,7 @@ class ConsultationPlanningController extends AbstractController
 
             //récupération des données de l'activité programmée
             //jour de l'activité
-            $day = $scheduledActivity->getDayscheduled();
+            $day = $scheduledActivity->getAppointment()->getDayappointment();
             $day = $day->format('Y-m-d');
             //heure de début de l'activité programmée
             $start = $scheduledActivity->getStarttime();
@@ -163,33 +167,27 @@ class ConsultationPlanningController extends AbstractController
     public function listeAppointmentJSON(ManagerRegistry $doctrine)
     {
         //recuperation de la date dont on veut le planning
-        $dateGet = date('Y-m-d');
-        if (isset($_GET["date"])) {
-            $dateGet = $_GET["date"];
-            $dateGet = str_replace('T12:00:00', '', $dateGet); //formattage post full calendar pour correspondre à la base de données
-
-        }
-        $date = new \DateTime($dateGet);
-
+        global $date;
+        $dateTime = new \DateTime($date);
         //recuperartion des appointments du jour depuis la base de données
-        $Appointments = $doctrine->getRepository("App\Entity\Appointment")
-            ->findBy(array('dayappointment' => $date));
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")
+            ->findBy(array('dayappointment' => $dateTime));
         //Creation d'un tableau pour stocker les données des appointments
-        $AppointmentArray = array();
-        foreach ($Appointments as $Appointment) {
-            $AppointmentArray[] = array(
-                'id' => (str_replace(" ", "3aZt3r", $Appointment->getId())),
-                'day' => ($Appointment->getDayappointment()->format('Y-m-d')),
-                'earliestappointmenttime' => ($Appointment->getEarliestappointmenttime()),
-                'latestappointmenttime' => ($Appointment->getLatestappointmenttime()),
-                'scheduled' => $Appointment->isScheduled(),
-                'patient' => $this->getPatient($doctrine, $Appointment->getPatient()->getId()),
-                'pathway' => $this->getPathway($doctrine, $Appointment->getPathway()->getId()),
+        $appointmentArray = array();
+        foreach ($appointments as $appointment) {
+            $appointmentArray[] = array(
+                'id' => (str_replace(" ", "3aZt3r", $appointment->getId())),
+                'day' => ($appointment->getDayappointment()->format('Y-m-d')),
+                'earliestappointmenttime' => ($appointment->getEarliestappointmenttime()),
+                'latestappointmenttime' => ($appointment->getLatestappointmenttime()),
+                'scheduled' => $appointment->isScheduled(),
+                'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
+                'pathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
             );
         }
         //Conversion des données ressources en json
-        $AppointmentArrayJSON = new JsonResponse($AppointmentArray);
-        return $AppointmentArrayJSON;
+        $appointmentArrayJSON = new JsonResponse($appointmentArray);
+        return $appointmentArrayJSON;
     }
 
     /*
