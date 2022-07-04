@@ -69,7 +69,7 @@
             <div>
                 <label for='idpatient'> Patient </label>
                 <div id="select-container"> 
-                    <select class="select-patient-sample" name='idpatient'> 
+                    <select class="select-patient-sample" name='idpatient' required="required"> 
 
                         <option value="" selected disabled hidden> Selectionner le patient </option>
                         {% for patient in patients %} 
@@ -85,7 +85,7 @@
             <div>
                 <label for='idpathway'> Parcours </label>
                 <div id="select-container"> 
-                    <select class="select-pathway-sample" name='idpathway'> 
+                    <select class="select-pathway-sample" name='idpathway' required="required"> 
 
                         <option value="" selected disabled hidden> Selectionner le parcours </option>
                         {% for pathway in pathways %} 
@@ -100,17 +100,17 @@
             </br>
             <div>
                 <label for='dayappointment'> Jour du rendez-vous </label>
-                <input type='date' name='dayappointment'>
+                <input type='date' name='dayappointment' required="required">
             </div>
             </br>
             <div>
                 <label for='earliestappointmenttime'> Heure d'arrivé au plus tôt </label>
-                <input type='time' name='earliestappointmenttime'>
+                <input type='time' name='earliestappointmenttime' required="required">
             </div>
             </br>
             <div>
                 <label for='latestappointmenttime'> Heure d'arrivé au plus tard </label>
-                <input type='time' name='latestappointmenttime'>
+                <input type='time' name='latestappointmenttime' required="required">
             </div>
             </br>
 

@@ -351,7 +351,7 @@ class ModificationPlanningController extends AbstractController
 
             $patientId = $scheduledActivity->getAppointment()->getPatient()->getId();
             $start = $scheduledActivity->getStarttime();
-            $day = $scheduledActivity->getDayscheduled();
+            $day = $scheduledActivity->getAppointment()->getDayappointment();
             $day = $day->format('Y-m-d');
             $start = $start->format('H:i:s');
             $start = $day . "T" . $start;
@@ -392,7 +392,7 @@ class ModificationPlanningController extends AbstractController
 
         //récupération de toutes les activités programmées prévu le jour qui vient d'être plannifié
         $date = $request->request->get("validation-date");
-        $listScheduledActivity = $scheduledActivityRepository->findBy(['dayscheduled' => \DateTime::createFromFormat('Y-m-d', substr($date, 0, 10))]);
+        $listScheduledActivity = $scheduledActivityRepository->findSchedulerActivitiesByDate(substr($date, 0, 10));
 
         //on parcours la liste des évènement plannifié qui viennent d'être modifiés
         foreach ($listScheduledEvent as $event) {
@@ -409,7 +409,6 @@ class ModificationPlanningController extends AbstractController
                     //on met à jour ses attributs dans sa table
                     $scheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event[0]->start, 11, 16)));
                     $scheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event[0]->end, 11, 16)));
-                    $scheduledActivity->setDayscheduled(\DateTime::createFromFormat('Y-m-d', substr($event[0]->start, 0, 10)));
 
                     $scheduledActivityRepository->add($scheduledActivity, true);
 
@@ -421,8 +420,8 @@ class ModificationPlanningController extends AbstractController
                         //on regarde si la ressource modifié est de type Humaine
                         if (substr($resource, 0, 5) == "human") {
                             //on récupère l'objet ressource humaine correspondant
-                            
-                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
+                            $idResource = explode("-", $resource);
+                            $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => $idResource[1]]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $humanResourceExist = false;
@@ -448,9 +447,10 @@ class ModificationPlanningController extends AbstractController
                         }
 
                         //sinon, la relation est donc de type matérielle
-                        else {
+                        else if(substr($resource, 0, 8) == "material"){
                             //on récupère l'objet ressource matériel correspondant
-                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
+                            $idResource = explode("-", $resource);
+                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => $idResource[1]]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non
                             $materialResourceExist = false;
@@ -485,8 +485,9 @@ class ModificationPlanningController extends AbstractController
                         foreach ($event[1] as $resource) {
                             //on ne compare que les ressource de type humaine
                             if (substr($resource, 0, 5) == "human") {
+                                $idResource = explode("-", $resource);
                                 //on récupère en bdd la ressource humaine correspondante
-                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
+                                $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => $idResource[1]]);
 
                                 //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if ($humanResourceScheduled->getHumanresource() == $humanResource) {
@@ -512,8 +513,9 @@ class ModificationPlanningController extends AbstractController
                         foreach ($event[1] as $resource) {
                             //on ne compare que les ressource de type matérielle
                             if (substr($resource, 0, 8) == "material") {
+                                $idResource = explode("-", $resource);
                                 //on récupère en bdd la ressource matérielle correspondante
-                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
+                                $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => $idResource[1]]);
 
                                 //on regarde si la ressource est toujours associé à l'évènement modifié
                                 if ($materialResourceScheduled->getMaterialresource() == $materialResource) {
@@ -538,7 +540,6 @@ class ModificationPlanningController extends AbstractController
                 $newScheduledActivity = new ScheduledActivity();
                 $newScheduledActivity->setStarttime(\DateTime::createFromFormat('H:i:s', substr($event[0]->start, 11, 16)));
                 $newScheduledActivity->setEndtime(\DateTime::createFromFormat('H:i:s', substr($event[0]->end, 11, 16)));
-                $newScheduledActivity->setDayscheduled(\DateTime::createFromFormat('Y-m-d', substr($event[0]->start, 0, 10)));
 
                 $activity = $doctrine->getRepository("App\Entity\Activity")->findOneBy(["id" => $event[0]->extendedProps->activity]);
                 $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $event[0]->extendedProps->appointment]);
@@ -552,8 +553,9 @@ class ModificationPlanningController extends AbstractController
                 foreach ($event[1] as $resource) {
                     //on créer les relations avec les ressources de type humaine
                     if (substr($resource, 0, 5) == "human") {
+                        $idResource = explode("-", $resource);
                         //on créer la nouvelle relation entre la ressource humaine et le nouvel évènement
-                        $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
+                        $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => $idResource[1]]);
                         $newHumanResourceScheduled = new HumanResourceScheduled();
                         $newHumanResourceScheduled->setHumanresource($humanResource);
                         $newHumanResourceScheduled->setScheduledactivity($newScheduledActivity);
@@ -562,9 +564,10 @@ class ModificationPlanningController extends AbstractController
                     }
 
                     //on créer les relations avec les ressources de type matérielle
-                    else {
+                    else if (substr($resource, 0, 8) == "material"){
+                        $idResource = explode("-", $resource);
                         //on créer la nouvelle relation entre la ressource matérielle et le nouvel évènement
-                        $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => substr($resource, 9)]);
+                        $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => $idResource[1]]);
 
                         $newMaterialResourceScheduled = new MaterialResourceScheduled();
                         $newMaterialResourceScheduled->setMaterialresource($materialResource);
