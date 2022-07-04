@@ -52,6 +52,11 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
+  let filter = document.getElementById("filterId");
+  filter.style.display = "none"; //hide the filter
+  while(filter.firstChild){
+    filter.removeChild(filter.firstChild);
+  }
 }
 
 /**
@@ -75,12 +80,53 @@ function modify(id = 1) {
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
  */
 function filterShow() {
-  if (document.getElementById("filterId").style.display != "none") {
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none") {
     //if the filter is already displayed
-    document.getElementById("filterId").style.display = "none"; //hide the filter
+    filter.style.display = "none"; //hide the filter
+    while(filter.firstChild){
+      filter.removeChild(filter.firstChild);
+    }
   } else {
-    document.getElementById("filterId").style.display = "inline-block"; //display the filter
+    filter.style.display = "inline-block"; //display the filter
+    if(calendar.getResources().length==0){
+      var label=document.createElement("label");
+      label.innerHTML="Aucune ressource à filtrer";
+      filter.appendChild(label);
+      filter.appendChild(document.createElement("br"));
+    }
+      for(var i = 0; i < calendar.getResources().length; i++){
+      var input=document.createElement("input");
+      input.type="checkbox";
+      input.id=calendar.getResources()[i].id;
+      input.name=calendar.getResources()[i].title;
+      input.checked=true;
+      input.onchange=function(){
+        changeFilter(this.id);
+      }
+      filter.appendChild(input);
+      var label=document.createElement("label");
+      label.htmlFor=calendar.getResources()[i].id;
+      label.innerHTML="&nbsp;"+calendar.getResources()[i].title;
+      filter.appendChild(label);
+      filter.appendChild(document.createElement("br"));
+
+    }
   }
+}
+
+
+function changeFilter(id){
+    if(document.getElementById(id).checked==true){
+       calendar.addResource({
+        id: id,
+        title: document.getElementById(id).name
+       })
+    }
+    else{
+      var resource=calendar.getResourceById(id);
+      resource.remove();
+    }
 }
 
 /**
@@ -91,7 +137,6 @@ function createCalendar(resources) {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -202,7 +247,6 @@ function createCalendar(resources) {
       var tempArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-      console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         calendar.addResource({
@@ -218,12 +262,14 @@ function createCalendar(resources) {
       ); //get the data of the resources
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
+        if (temp!=undefined) {
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"],
           title: temp["title"],
         });
       }
+    }
       break;
   }
 
