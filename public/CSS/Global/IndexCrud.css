@@ -1,12 +1,12 @@
 
 
 
-#index-users {
+.index {
     display : flex;
     flex-direction : column;
     width : 100%;
     padding : 20px 30px;
-
+    overflow-y: scroll;
 }
 
 .table-index{
