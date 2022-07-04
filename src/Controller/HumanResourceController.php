@@ -105,22 +105,69 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
+    public function edit(Request $request) 
     {
-        $form = $this->createForm(HumanResourceType::class, $humanResource);
-        $form->handleRequest($request);
+        // Méthode POST pour ajouter un circuit
+        if ($request->getMethod() === 'POST' ) {
+            
+            // On recupere toutes les données de la requete
+            $param = $request->request->all();
+            //dd($param);
+            // On récupère l'objet parcours que l'on souhaite modifier grace a son id
+            $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
+            $humanResource = $humanResourceRepository->findById($param['id'])[0];
+            $humanResource->setHumanResourceName($param['resourcename']);
+            //$pathway->setAvailable(true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            // On ajoute le parcours a la bd
             $humanResourceRepository->add($humanResource, true);
 
-            return $this->redirectToRoute('index_resources', [], Response::HTTP_SEE_OTHER);
+            // On s'occupe ensuite ds liens entre le parcours et les activités :
+
+            // On récupère toutes les activités
+            $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $categOfHumanResource = $categOfHumanResourceRepository->findAll();
+            $humanResourcesCategories = $humanResourceCategoryRepository->findAll();
+
+            // On supprime toutes les activités et leurs successor
+            $em=$this->getDoctrine()->getManager();
+            $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
+                for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+                    $em->remove($categsOfResources[$indexCategOf]);
+                }
+                $em->flush();
+            }
+
+            // On récupère le nombre de catégories
+            $nbCategories = $param['nbcategory'];
+
+            //$activityArray = array();
+            if ($nbCategories != 0) {
+                /* $categOf_old = new CategoryOfHumanResource();      
+                
+                $categOf_old->setHumanresource($param["name-activity-0"]);
+                $categOf_old->setHumanresourcecategory($param[ "duration-activity-0"]);
+
+                $categOfHumanResourceRepository->add($categOf_old, true); */
+
+                for($i = 0; $i < $nbCategories; $i++)
+                {
+                    $categOf = new CategoryOfHumanResource();
+                    $categOf->setHumanresource($humanResource);
+                    $categOf->setHumanresourcecategory($humanResourceCategoryRepository->findById($param['select-'.$i])[0]);
+                    $categOfHumanResourceRepository->add($categOf, true);
+                   //}
+
+                  //  $categOf_old = $categOfHumanResourceRepository->findById($humanResource->getId())[0];
+
+                }
+            }
+            
+            return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('human_resource/edit.html.twig', [
-            'human_resource' => $humanResource,
-            'form' => $form,
-        ]);
-    }
+
 
     /**
      * @Route("/{id}", name="app_human_resource_delete", methods={"POST"})
