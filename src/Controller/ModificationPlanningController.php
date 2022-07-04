@@ -60,9 +60,9 @@ class ModificationPlanningController extends AbstractController
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
 
-        if($this->alertModif($dateModified)){
+        /*if($this->alertModif($dateModified)){
             $this->modificationAdd($dateModified, $idUser);
-        }
+        }*/
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -127,27 +127,26 @@ class ModificationPlanningController extends AbstractController
         $userRepository = new UserRepository($this->getDoctrine());
         $user = $userRepository->findOneBy(['id' => $idUser]);
 
-        // Pour le développement, on crée un utilisateur de base s'il n'est pas présent, A ENLEVER PLUS TARD
+        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
+        // A enlever plus tard car on est censé être connecté
         if(!$user){
-            $user = new User();
-            $roles[] = 'ROLE_USER';
-            $user->setUsername("Bebou");
-            $user->setPassword("mdp");
-            $user->setRoles($roles);
+            //dd("Erreur, vous n'êtes pas connecté !");
         }
-        $userRepository->add($user, true);
+        else{
+            $userRepository->add($user, true);
 
-        $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
-        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
+            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
 
-        $modification = new Modification();
-        $modification->setUser($user);
-        $modification->setDatemodif($datetimeModified); 
-        $modification->setDatetimemodification($dateToday);
-        
-        // ajout dans la bdd
-        $modificationRepository->add($modification, true);
+            $modification = new Modification();
+            $modification->setUser($user);
+            $modification->setDatemodif($datetimeModified); 
+            $modification->setDatetimemodification($dateToday);
+            
+            // ajout dans la bdd
+            $modificationRepository->add($modification, true);
+        }
     }
 
     public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -239,16 +238,16 @@ class ModificationPlanningController extends AbstractController
         foreach ($appointments as $appointment) {
             $earliestappointmenttime="";
             if ($appointment->getEarliestappointmenttime()!=null) {
-                $earliestappointmenttime = $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s');
+                $earliestappointmenttime = str_replace(" ", "T", $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s'));
             }
             $latestappointmenttime="";
             if ($appointment->getLatestappointmenttime()!=null) {
-                $latestappointmenttime = $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s');
+                $latestappointmenttime = str_replace(" ", "T", $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s'));
             }
             $appointmentsArray[] = array(
                 'id' => $appointment->getId(),
                 'earliestappointmenttime' => $earliestappointmenttime,
-                'lastestappointmenttime' => $latestappointmenttime,
+                'latestappointmenttime' => $latestappointmenttime,
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
@@ -422,6 +421,7 @@ class ModificationPlanningController extends AbstractController
                         //on regarde si la ressource modifié est de type Humaine
                         if (substr($resource, 0, 5) == "human") {
                             //on récupère l'objet ressource humaine correspondant
+                            
                             $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => substr($resource, 6)]);
 
                             //on instancie un booléen pour savoir si la relation est déjà en bdd ou non

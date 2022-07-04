@@ -1,9 +1,8 @@
-
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 1680000; // En millisecondes
-setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
+//setTimeout(showPopup, modifAlertTime);
+//setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -78,14 +77,14 @@ function setEvents() {
   let resources = [];
   events.forEach((event) => {
     var listResource = [];
-    console.log(event)
+    console.log(event);
     for (let i = 0; i < event._def.resourceIds.length; i++) {
       listResource.push(event._def.resourceIds[i]);
     }
-    console.log(listResource)
+    console.log(listResource);
     resources.push(listResource);
   });
-  console.log(resources)
+  console.log(resources);
   document.getElementById("events").value = JSON.stringify(
     calendar.getEvents()
   );
@@ -95,7 +94,8 @@ function setEvents() {
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent() {
-  let selectContainerDate = document.getElementById("select-container-date");
+  let selectContainerErrorTime = document.getElementById("time-selected-error");
+  selectContainerErrorTime.style.display = "none";
   $("#add-planning-modal").modal("show");
 }
 
@@ -111,89 +111,117 @@ function AddEventValider() {
     document.getElementById("listeAppointments").value
   );
   var appointmentid = document.getElementById("select-appointment").value;
-  var PathwayBeginTime = document.getElementById("timeBegin").value;
-  //Date de début du parcours
-  var PathwayBeginDate = new Date(
-    new Date(dateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
-      2 * 60 * 60000
-  );
-  var appointment;
+
   //Récupération du rdv choisit par l'utiuilisateur
+  var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
       appointment = listeAppointments[i];
     }
   }
 
-  //Récupération des activités du parcours
-  var activitiesInPathwayAppointment = [];
-  for (let i = 0; i < listeActivities.length; i++) {
-    if (listeActivities[i]["idPathway"] == appointment["idPathway"]) {
-      activitiesInPathwayAppointment.push(listeActivities[i]);
-    }
-  }
+  //Date de début du parcours
+  var PathwayBeginTime = document.getElementById("timeBegin").value;
+  var PathwayBeginDate = new Date(
+    new Date(dateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
+      2 * 60 * 60000
+  );
 
-  //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
-  var successorsActivitybIdList = [];
-  for (let i = 0; i < listeSuccessors.length; i++) {
-    successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
-  }
+  //Test pour savoir si l'heure renseignée est comprise dans l'interval earliestappointmenttime et lastestappointmenttime
+ 
 
-  //get the forst activity of the pathway
-  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
-    if (
-      successorsActivitybIdList.includes(
-        activitiesInPathwayAppointment[i].id
-      ) == false
-    ) {
-      var firstActivityPathway = activitiesInPathwayAppointment[i];
-    }
-  }
+  let earliestAppointmentDate = new Date(
+    appointment.earliestappointmenttime
+  ).getTime();
+  let latestAppointmentDate = new Date(
+    appointment.latestappointmenttime
+  ).getTime();
+  let choosenAppointmentDate = new Date(
+    "1970-01-01 " + PathwayBeginTime
+  ).getTime();
 
-  var idactivitya = firstActivityPathway.id;
-  var activitya;
-  var successoracivitya;
+  if (
+    earliestAppointmentDate <= choosenAppointmentDate &&
+    choosenAppointmentDate <= latestAppointmentDate
+  ) {
 
-  //Début de la création des events
-  do {
-    var idactivityB = undefined;
-    //find activity with idactivitya id
+    //Récupération des activités du parcours
+    var activitiesInPathwayAppointment = [];
     for (let i = 0; i < listeActivities.length; i++) {
-      if (listeActivities[i].id == idactivitya) {
-        activitya = listeActivities[i];
+      if (
+        "pathway_" + listeActivities[i]["idPathway"] ==
+        appointment["idPathway"][0].id
+      ) {
+        activitiesInPathwayAppointment.push(listeActivities[i]);
       }
     }
-    //trouover dans la table successor le correspondant au activiteida
-    for (let i = 0; i < listeSuccessors.length; i++) {
-      if (listeSuccessors[i].idactivitya == idactivitya) {
-        successoracivitya = listeSuccessors[i];
-        idactivityB = listeSuccessors[i].idactivityb;
-      }
-    }
-    //countAddEvent pour avoir un id different pour chaque events ajoutes
-    CoundAddEvent++;
-    //Ajout d'un event au calendar
-    calendar.addEvent({
-      id: "new" + CoundAddEvent,
-      resourceId: "human-1",
-      title: activitya.name,
-      start: PathwayBeginDate,
-      end: PathwayBeginDate.getTime() + activitya.duration * 60000,
-      patient: appointment.idPatient,
-      appointment: appointment.id,
-      activity: activitya.id,
-    });
 
-    //Detection de la dernière activite du parcours
-    if (idactivityB != undefined) {
-      idactivitya = idactivityB;
+    //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
+    var successorsActivitybIdList = [];
+    for (let i = 0; i < listeSuccessors.length; i++) {
+      successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
     }
-    PathwayBeginDate = new Date(
-      PathwayBeginDate.getTime() + activitya.duration * 60000
-    );
-  } while (idactivityB != undefined);
-  calendar.render();
-  $("#add-planning-modal").modal("toggle");
+
+    //get the forst activity of the pathway
+    for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
+      if (
+        successorsActivitybIdList.includes(
+          activitiesInPathwayAppointment[i].id
+        ) == false
+      ) {
+        var firstActivityPathway = activitiesInPathwayAppointment[i];
+      }
+    }
+
+    var idactivitya = firstActivityPathway.id;
+    var activitya;
+    var successoracivitya;
+
+    //Début de la création des events
+    do {
+      var idactivityB = undefined;
+      //find activity with idactivitya id
+      for (let i = 0; i < listeActivities.length; i++) {
+        if (listeActivities[i].id == idactivitya) {
+          activitya = listeActivities[i];
+        }
+      }
+      //trouover dans la table successor le correspondant au activiteida
+      for (let i = 0; i < listeSuccessors.length; i++) {
+        if (listeSuccessors[i].idactivitya == idactivitya) {
+          successoracivitya = listeSuccessors[i];
+          idactivityB = listeSuccessors[i].idactivityb;
+        }
+      }
+      //countAddEvent pour avoir un id different pour chaque events ajoutes
+      CoundAddEvent++;
+      //Ajout d'un event au calendar
+      calendar.addEvent({
+        id: "new" + CoundAddEvent,
+        resourceIds: ["human-default", "material-default"],
+        title: activitya.name,
+        start: PathwayBeginDate,
+        end: PathwayBeginDate.getTime() + activitya.duration * 60000,
+        patient: appointment.idPatient,
+        appointment: appointment.id,
+        activity: activitya.id,
+      });
+
+      //Detection de la dernière activite du parcours
+      if (idactivityB != undefined) {
+        idactivitya = idactivityB;
+      }
+      PathwayBeginDate = new Date(
+        PathwayBeginDate.getTime() + activitya.duration * 60000
+      );
+    } while (idactivityB != undefined);
+    calendar.render();
+    $("#add-planning-modal").modal("toggle");
+  }
+  else{
+    let selectContainerErrorTime = document.getElementById("time-selected-error");
+    selectContainerErrorTime.style.display = "block";
+  }
 }
 
 function showSelectDate() {
@@ -223,7 +251,7 @@ function createCalendar(typeResource) {
   var calendarEl = document.getElementById("calendar");
   var first;
   var listEvent;
-  
+
   let listResource = [];
   if (eventsarray == undefined) {
     first = true;
@@ -231,9 +259,11 @@ function createCalendar(typeResource) {
     first = false;
     listEvent = calendar.getEvents();
     listEvent.forEach((event) => {
+      let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
-        listResource.push(event._def.resourceIds[i]);
+        eventResources.push(event._def.resourceIds[i]);
       }
+      listResource.push(eventResources);
     });
   }
 
@@ -297,11 +327,8 @@ function createCalendar(typeResource) {
       $("#modify-planning-modal").modal("show");
     },
   });
-  console.log(
-    document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
-  );
   switch (typeResource) {
-    case "Patients": //if we want to display by the patients
+    /*case "Patients": //if we want to display by the patients
       var tempArray = JSON.parse(
         document
           .getElementById("listeAppointments")
@@ -332,7 +359,7 @@ function createCalendar(typeResource) {
           title: pathway[0]["title"],
         });
       }
-      break;
+      break;*/
     case "Ressources Humaines": //if we want to display by the resources
       var resourcesArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
@@ -346,7 +373,7 @@ function createCalendar(typeResource) {
         });
       }
       calendar.addResource({
-        id: "default",
+        id: "human-default",
         title: "Aucune ressource allouée",
       });
       break;
@@ -362,7 +389,7 @@ function createCalendar(typeResource) {
           title: temp["title"],
         });
         calendar.addResource({
-          id: "default",
+          id: "material-default",
           title: "Aucune ressource allouée",
         });
       }
@@ -376,24 +403,23 @@ function createCalendar(typeResource) {
         .value.replaceAll("3aZt3r", " ")
     );
   } else {
-    console.log(listEvent);
     let setEvents = [];
+    var index = 0;
     listEvent.forEach((eventModify) => {
       var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
       var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
 
-      
-      console.log(eventModify.getResources());
       setEvents.push({
         id: eventModify.id,
         start: formatDate(start).replace(" ", "T"),
         end: formatDate(end).replace(" ", "T"),
         title: eventModify.title,
-        resourceIds: listResource,
+        resourceIds: listResource[index],
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
       });
+      index++;
     });
     eventsarray = setEvents;
   }
@@ -401,7 +427,6 @@ function createCalendar(typeResource) {
     calendar.addEvent(eventsarray[i]);
   }
 
-  console.log(eventsarray);
   //affiche le calendar
   calendar.gotoDate(date);
   calendar.render();
