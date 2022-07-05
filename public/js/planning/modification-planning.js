@@ -1,8 +1,8 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 1680000; // En millisecondes
-//setTimeout(showPopup, modifAlertTime);
-//setTimeout(deleteModifInDB, modifAlertTime+60000);
+setTimeout(showPopup, modifAlertTime);
+setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -644,16 +644,11 @@ function closePopup() {
   setTimeout(showPopup, modifAlertTime);
 }
 
-/*document.addEventListener('DOMContentLoaded', function() {
-    var userData = document.querySelector('.js-data');
-    var userId = userData.dataset.userId;
-});*/
-
-function deleteModifInDB(popupClicked) {
+function deleteModifInDB(popupClicked){
   if (popupClicked) {
     popupClicked = false;
     setTimeout(deleteModifInDB, modifAlertTime);
   } else {
-    // Supprimer modif sur la BDD
+    window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
   }
 }

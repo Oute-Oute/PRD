@@ -193,7 +193,7 @@
 		</div>
 
 		<!-- liste des boutons pour annuler ou valider les modifications -->
-		<button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
+		<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date'))">Annuler</button>
 		<form method="post" action="{{ path('ModificationPlanningValidation') }}">
 			<button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
 			<input type="hidden" id='events' name="events"/>

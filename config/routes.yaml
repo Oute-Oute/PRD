@@ -39,6 +39,11 @@ ModificationPlanningValidation:
   controller: App\Controller\ModificationPlanningController::modificationPlanningValidation
   methods: [POST]
 
+ModificationDeleteOnUnload:
+  path: /ModificationDeleteOnUnload
+  controller: App\Controller\ModificationPlanningController::modificationDeleteOnUnload
+  methods: [GET]
+  
 Patients:
   path: /patients
   controller: App\Controller\PatientController::patientGet
