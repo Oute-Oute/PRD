@@ -243,6 +243,7 @@ class ModificationPlanningController extends AbstractController
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'scheduled'=>$appointment->isScheduled(),
             );
         }
         $appointmentsArrayJSON = new JsonResponse($appointmentsArray);

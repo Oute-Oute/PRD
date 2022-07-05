@@ -93,17 +93,6 @@
 						<!-- Selection du rendez-vous -->
 						<label>Choisissez le rendez-vous</label>
 						<select id="select-appointment" name="select-appointment" required>
-							<option value="" selected hidden>
-								Selection du rendez-vous
-							</option>
-							{% for Appointment in listeAppointments %}
-								<option value="{{ Appointment.id }}">
-									{{ Appointment.patient.LastName }}
-									{{ Appointment.patient.firstname }}
-									/
-									{{Appointment.PathWay.PathWayname}}
-								</option>
-							{% endfor %}
 						</select>
 					</div>
 
