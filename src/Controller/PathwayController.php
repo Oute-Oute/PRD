@@ -70,7 +70,7 @@ class PathwayController extends AbstractController
             $successorRepository = new SuccessorRepository($this->getDoctrine());
 
             // On récupère le nombre d'activité
-            $nbActivity = $param['nbActivity'];
+            $nbActivity = $param['nbactivity'];
 
 
             //$activityArray = array();
