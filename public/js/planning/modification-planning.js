@@ -1,12 +1,12 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 1680000; // En millisecondes
-//setTimeout(showPopup, modifAlertTime);
-//setTimeout(deleteModifInDB, modifAlertTime+60000);
+setTimeout(showPopup, modifAlertTime);
+setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
-var headerResources = "Ressources Matérielles";
+var headerResources = "Ressources Humaines";
 var dateStr = $_GET("date").replaceAll("%3A", ":");
 var date = new Date(dateStr);
 
@@ -580,11 +580,22 @@ function createCalendar(typeResource) {
       ); //get the data of the resources
       for (var i = 0; i < resourcesArray.length; i++) {
         var temp = resourcesArray[i]; //get the resources data
-        calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"],
-          title: temp["title"],
-        });
+        var businessHours = []; //create an array to store the working hours
+          for (var j = 0; j < temp["workingHours"].length; j++) {
+            businesstemp = {
+              //create a new business hour
+              startTime: temp["workingHours"][j]["startTime"], //set the start time
+              endTime: temp["workingHours"][j]["endTime"], //set the end time
+              daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
+            };
+            businessHours.push(businesstemp); //add the business hour to the array
+          }
+          calendar.addResource({
+            //add the resources to the calendar
+            id: temp["id"], //set the id
+            title: temp["title"], //set the title
+            businessHours: businessHours, //get the business hours
+          });
       }
       calendar.addResource({
         id: "h-default",
@@ -656,16 +667,11 @@ function closePopup() {
   setTimeout(showPopup, modifAlertTime);
 }
 
-/*document.addEventListener('DOMContentLoaded', function() {
-    var userData = document.querySelector('.js-data');
-    var userId = userData.dataset.userId;
-});*/
-
-function deleteModifInDB(popupClicked) {
+function deleteModifInDB(popupClicked){
   if (popupClicked) {
     popupClicked = false;
     setTimeout(deleteModifInDB, modifAlertTime);
   } else {
-    // Supprimer modif sur la BDD
+    window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
   }
 }

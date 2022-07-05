@@ -9,6 +9,7 @@
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 	<script src="js/jquery-3.6.0.js"></script>
+  <script src="js/popper.min.js"></script>  
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 
 	<!-- insertion des fichier js et css spécifique à modification planning -->
@@ -181,7 +182,7 @@
 		</div>
 
 		<!-- liste des boutons pour annuler ou valider les modifications -->
-		<button type="button" class="btn-delete btn-secondary" onclick="window.location.href='{{ path('ConsultationPlanning') }}'">Annuler</button>
+		<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date'))">Annuler</button>
 		<form method="post" action="{{ path('ModificationPlanningValidation') }}">
 			<button type="submit" class="btn-valide btn-secondary" onclick="setEvents()">Valider</button>
 			<input type="hidden" id='events' name="events"/>
@@ -190,7 +191,7 @@
 		</form>
 	</div>
 	<div
-		class="calendar-container">
+		id="calendar-container" class="calendar-container">
 
 		<!-- affichage du calendar -->
 		<div id='calendar'></div>

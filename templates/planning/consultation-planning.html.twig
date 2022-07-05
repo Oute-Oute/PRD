@@ -8,11 +8,12 @@
 {% endblock %}
 {% block body %}
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+	
+	<script src="js/jquery-3.6.0.js"></script>
+    <script src="js/popper.min.js"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 	<script src="js/planning/consultation-planning.js"></script>
-	<script src="js/jquery-3.6.0.js"></script>
-	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
-
 
 	<div class="all-container" id="all">
 		<h1>Consultation du Planning</h1>
@@ -31,9 +32,7 @@
 					<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
 				</svg>
 			</button>
-			<div id="filterId" class="filter-container" style="display:none">
-
-			</div>
+			<div id="filterId" class="filter-container" style="display:none"></div>
 			<div class="datepicker">
 				<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{datetoday}}" .str_replace('t12:00:00','')></input>
 		</div>
@@ -56,37 +55,44 @@
 	<div class="calendar-container">
 		<div id='calendar'></div>
 	</div>
-</div></div><div class="modal" id="modify-planning-modal">
-<div class="modal-dialog">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h2 class="modal-title">
-				<span id="show-title"></span>
-			</h2>
-		</div>
-		<form method="post" action="/ModificationPlanning">
-			<div class="modal-body">
-				<label class="label-event">Horaires de l'activité :
-				</label>
-				<div class="input-container onWhite">
-					<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
-					<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
-					<label class="label-event">Parcours :</label></br>
-					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input></br>
-					<label class="label-event">Patient :</label></br>
-					<input class="input-modal" type="text" id="patient" name="patient" disabled></input></br>
-					<label class="label-event">Ressource Humaine :</label></br>
-					<input class="input-modal" type="text" id="rh" name="rh" disabled></input></br>
-					<label class="label-event">Ressource Matérielle :</label></br>
-					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
-
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-
-				</div>
+</div>
+<div class="modal" id="modify-planning-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title"></span>
+				</h2>
 			</div>
-		</form>
+			<form method="post" action="/ModificationPlanning">
+				<div class="modal-body">
+					<label class="label-event">Horaires de l'activité :
+					</label>
+					<div class="input-container onWhite">
+						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+					<label class="label-event">Parcours :</label>
+					</br>
+					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+					</br>
+					<label class="label-event">Patient :</label>
+					</br>
+					<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+					</br>
+					<label class="label-event">Ressource Humaine :</label>
+					</br>
+					<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
+					</br>
+					<label class="label-event">Ressource Matérielle :</label>
+					</br>
+					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</form> 
+		</div>
 	</div>
-</div></div>{% endblock %}
+
+				{% endblock %}
