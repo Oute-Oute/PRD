@@ -64,10 +64,11 @@ class ModificationPlanningController extends AbstractController
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
         $listActivityHumanResourcesJSON=$this->listActivityHumanResourcesJSON($doctrine); 
-        $listActivityMaterialResourcesJSON=$this->listActivityMaterialResourcesJSON($doctrine); 
-        /*if($this->alertModif($dateModified)){
+        $listActivityMaterialResourcesJSON=$this->listActivityMaterialResourcesJSON($doctrine);
+
+        if($this->alertModif($dateModified)){
             $this->modificationAdd($dateModified, $idUser);
-        }*/
+        }
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -760,6 +761,7 @@ class ModificationPlanningController extends AbstractController
                 }
             }
         }
+        $this->modificationDeleteOnUnload($request, $doctrine);
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -771,7 +773,7 @@ class ModificationPlanningController extends AbstractController
         $dateModified = str_replace('T12:00:00', '', $dateModified);
 
         //$modificationRepository = $doctrine->getRepository("App\Entity\Modification");
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
+        $modificationRepository = new ModificationRepository($doctrine);
         $modifications = $modificationRepository->findAll();
         $i = 0;
         foreach ($modifications as $modification) {
