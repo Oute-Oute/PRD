@@ -621,7 +621,7 @@ class ModificationPlanningController extends AbstractController
                             $strDate = substr($date, 0, 10);
                             $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
 
-                            $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getHumanresourcename());
+                            $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
 
                             foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
                             {
@@ -663,7 +663,7 @@ class ModificationPlanningController extends AbstractController
                             $strDate = substr($date, 0, 10);
                             $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
 
-                            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getMaterialresourcename());
+                            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
 
                             foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
                             {
