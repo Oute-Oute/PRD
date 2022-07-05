@@ -28,21 +28,27 @@ class HumanResourceController extends AbstractController
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
         $humanResources = $humanResourceRepository->findAll();
         $categOfHumanResource = $categOfHumanResourceRepository->findAll();
-        $humanResourceCategory = $humanResourceCategoryRepository->findAll();
-
         $nbHumanResource = count($humanResources);
         $nbCategBy = count($categOfHumanResource);
         $categoriesByResources = array();
 
         for($indexResource = 0; $indexResource < $nbHumanResource; $indexResource++) {
-            $listCategOf = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResources[$indexResource]]);
-            $categoriesByResource = array();
-            for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
-                array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
+            if ($humanResources[$indexResource]->isAvailable()) {
+                $listCategOf = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResources[$indexResource]]);
+            
+                $categoriesByResource = array();
+                for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
+                    //dd($humanResourceCategories[$indexCategOf]->getCategoryname());
+                    //dd( $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]]));
+                    //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
+                    //dd($listCategOf[$indexCategOf]);
+    
+                    array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()])[0]);
+                    
+                }
+                array_push($categoriesByResources, $categoriesByResource);
             }
-            array_push($categoriesByResources, $categoriesByResource);
         }
-
         //dd($categoriesByResources);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
@@ -60,7 +66,7 @@ class HumanResourceController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
             $param = $request->request->all();
-            $name = $param['categoryname'];
+            $name = $param['resourcename'];
             $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
@@ -84,7 +90,7 @@ class HumanResourceController extends AbstractController
                 $linkCategRes = new CategoryOfHumanResource();      
 
                 $linkCategRes->setHumanresource($humanResource);
-                $linkCategRes->setHumanResourcecategory($humanResourceCategoryRepository->findById($param['select-'.$i])[0]);
+                $linkCategRes->setHumanResourcecategory($humanResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
                 $categoryOfHumanResourceRepository->add($linkCategRes, true);
             }
             return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
@@ -106,13 +112,12 @@ class HumanResourceController extends AbstractController
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request) 
-    {
+    { 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
             // On recupere toutes les données de la requete
             $param = $request->request->all();
-            //dd($param);
             // On récupère l'objet parcours que l'on souhaite modifier grace a son id
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResource = $humanResourceRepository->findById($param['id'])[0];
@@ -153,10 +158,13 @@ class HumanResourceController extends AbstractController
 
                 for($i = 0; $i < $nbCategories; $i++)
                 {
+                    
                     $categOf = new CategoryOfHumanResource();
                     $categOf->setHumanresource($humanResource);
-                    $categOf->setHumanresourcecategory($humanResourceCategoryRepository->findById($param['select-'.$i])[0]);
+                    $categOf->setHumanresourcecategory($humanResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
+                    //dd($categOf);
                     $categOfHumanResourceRepository->add($categOf, true);
+                    //dd($categOfHumanResourceRepository->findAll());
                    //}
 
                   //  $categOf_old = $categOfHumanResourceRepository->findById($humanResource->getId())[0];
@@ -164,7 +172,7 @@ class HumanResourceController extends AbstractController
                 }
             }
             
-            return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
         }
 
 

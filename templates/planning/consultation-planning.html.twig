@@ -14,7 +14,7 @@
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
 
 
-	<div class="all-container">
+	<div class="all-container" id="all">
 		<h1>Consultation du Planning</h1>
 		<div class="flex">
 			<button class="btn-valide" onclick="modify({#{{app.user.getId()}}#}1)">Modifier le planning</button>
@@ -32,19 +32,7 @@
 				</svg>
 			</button>
 			<div id="filterId" class="filter-container" style="display:none">
-				<div>
-					<input type="checkbox" id="scales" name="scales" checked>
-					<label for="scales">WORK</label>
-				</div>
 
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">IN</label>
-				</div>
-				<div>
-					<input type="checkbox" id="horns" name="horns">
-					<label for="horns">PROGRESS</label>
-				</div>
 			</div>
 			<div class="datepicker">
 				<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{datetoday}}" .str_replace('t12:00:00','')></input>

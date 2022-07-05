@@ -1,6 +1,6 @@
 
 
-/* surcharge de la classe de bootstrap */
+/*  ------------------ SURCHARGE CLASSE BOOTSTRAP------------------ */
 .modal-body {
     display: flex;
     flex-direction: column;
@@ -11,3 +11,81 @@
 .modal-dialog {
     max-width: 600px;
 }
+
+/* ------------------ POUR TOUS LES FORMULAIRES ------------------*/
+/* Input pour tous les formulaires */
+input.input {
+    height: 35px;
+    border-radius: 10px;
+    border-width: 1px;
+}
+/* Label pour tous les formulaires */
+.label {
+    margin: 0px;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+
+/* ------------------FORMULAIRE PATHWAY ------------------ */
+div#edit--activities-container {
+    margin-bottom:20px;
+}
+
+/* classe représentant un champ contenant une activité  */
+div.form-field {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    /*margin: 10px 10px; */
+}
+
+/* nom d'une activité */
+div.form-field .input-name {
+    height:35px;
+    margin: 0;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border: transparent;
+    border-right: 1px lightgray solid;
+}
+
+/* durée d'un activité */
+div.form-field .input-duration {
+    height:35px;
+    border: transparent;
+    margin-left: 1px;
+    border-right: 1px lightgray solid;
+}
+
+/* texte dans un champ de formulaire */
+div.form-field p.label {
+    border-right: 1px solid lightgray;
+    margin: 0;
+}
+
+ /* image (delete) */
+div.form-field img{
+    width:20px;
+    cursor: pointer;
+}
+
+ 
+div.form-field select {
+    height: 35px;
+    border-radius: 15px; 
+    min-width: 300px;
+   /* margin: 10px 15px;*/
+    padding-left: 15px;
+}
+p .label {
+    margin: 0px;
+    font-weight: 900;
+}
+
+
+
+

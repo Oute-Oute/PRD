@@ -28,7 +28,7 @@ class CategoryOfHumanResource
      * @ORM\JoinColumn(nullable=false)
      */
     private $humanresourcecategory;
-
+ 
     public function getId(): ?int
     {
         return $this->id;
