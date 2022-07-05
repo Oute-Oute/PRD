@@ -173,15 +173,20 @@ class ConsultationPlanningController extends AbstractController
         $appointments = $doctrine->getRepository("App\Entity\Appointment")
             ->findBy(array('dayappointment' => $dateTime));
         //Creation d'un tableau pour stocker les données des appointments
+
         $appointmentArray = array();
         foreach ($appointments as $appointment) {
+            $businessHours = array(
+                'startTime' => $appointment->getEarliestappointmenttime()->format('H:i'),
+                'endTime' => $appointment->getLatestappointmenttime()->format('H:i'),
+            );
             $appointmentArray[] = array(
                 'id' => (str_replace(" ", "3aZt3r", $appointment->getId())),
                 'day' => ($appointment->getDayappointment()->format('Y-m-d')),
                 'earliestappointmenttime' => ($appointment->getEarliestappointmenttime()),
                 'latestappointmenttime' => ($appointment->getLatestappointmenttime()),
                 'scheduled' => $appointment->isScheduled(),
-                'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
+                'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId(), $businessHours),
                 'pathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
             );
         }
@@ -241,7 +246,7 @@ class ConsultationPlanningController extends AbstractController
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                         'extendedProps' => array(
-                        'Categories' => ($MaterialResourceArray),
+                            'Categories' => ($MaterialResourceArray),
                         ),
 
                     );
@@ -299,7 +304,8 @@ class ConsultationPlanningController extends AbstractController
                     $HumanResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
-                        'Categories' => ($HumanResourceArray),
+                        'categories' => ($HumanResourceArray),
+                        'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
 
                     );
 
@@ -310,6 +316,25 @@ class ConsultationPlanningController extends AbstractController
         //Conversion des données ressources en json
         $HumanResourceScheduledArrayJSON = new JsonResponse($HumanResourceScheduledArray);
         return $HumanResourceScheduledArrayJSON;
+    }
+
+    
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHoursArray = array();
+        foreach ($setOfWorkingHours as $workingHours) {
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = array(
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+
+            );
+        }
+        return $workingHoursArray;
     }
 
     public function getHumanCategory(ManagerRegistry $doctrine, $resource)
@@ -332,7 +357,7 @@ class ConsultationPlanningController extends AbstractController
      * @param $id the id of the patient to get
      * @return array of the patient's data
      */
-    public function getPatient(ManagerRegistry $doctrine, $id)
+    public function getPatient(ManagerRegistry $doctrine, $id, $businessHours)
     {
         //recuperation du patient depuis la base de données
         $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
@@ -342,11 +367,13 @@ class ConsultationPlanningController extends AbstractController
         $title = $lastname . " " . $firstname; //utilisé pour l'affichage fullcalendar
         $id = $patient->getId();
         $id = "patient_" . $id;
+
         $patientArray[] = array(
             'id' => $id,
             'lastname' => (str_replace(" ", "3aZt3r", $lastname)),
             'firstname' => (str_replace(" ", "3aZt3r", $firstname)),
-            'title' => $title
+            'title' => $title,
+            'businessHours' => $businessHours,
         );
 
         //Conversion des données ressources en json 
