@@ -63,6 +63,18 @@
             <tr>
                 <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
+                <td> 
+                    {% if (categoriesByResources[indexResource]) %}
+                        <select>
+                                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+                                    <option value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
+                                {% else %}
+                                {% endfor %}
+                        </select> 
+                    {% else %}
+                        <p> Pas d'activites créées ! </p> 
+                    {% endif %}
+                </td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="showEditModalFormMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}', '{{indexResource}}')">Éditer</a>

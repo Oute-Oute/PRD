@@ -53,6 +53,7 @@
             <tr>
                 <th>Id</th>
                 <th>Nom de la ressource</th>
+                <th>Catégories</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -62,12 +63,26 @@
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
+                <td> 
+                    {% if (categoriesByResources[indexResource]) %}
+                        <select>
+                                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+                                    <option value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
+                                {% else %}
+                                {% endfor %}
+                        </select> 
+                    {% else %}
+                        <p> Pas d'activites créées ! </p> 
+                    {% endif %}
+                </td>
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('human_resource/_delete_form.html.twig') }}
                 </td>
             </tr>
+
+            
 
             {% set indexResource = indexResource + 1 %}
         {% else %}
