@@ -107,9 +107,17 @@ function AddEventValider() {
   var listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value
   );
+
+  var listeActivitHumanResource = JSON.parse(
+    document.getElementById("listeActivityHumanResource").value
+  );
+  var listeActivityMaterialResource = JSON.parse(
+    document.getElementById("listeActivityMaterialResource").value
+  );
+
   var appointmentid = document.getElementById("select-appointment").value;
 
-  //Récupération du rdv choisit par l'utiuilisateur
+  //Récupération du rdv choisit par l'utilisateur
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
@@ -125,22 +133,17 @@ function AddEventValider() {
   );
 
   //Test pour savoir si l'heure renseignée est comprise dans l'interval earliestappointmenttime et lastestappointmenttime
- 
-
-  let earliestAppointmentDate = new Date(
+  var earliestAppointmentDate = new Date(
     appointment.earliestappointmenttime
   ).getTime();
-  let latestAppointmentDate = new Date(
+  var latestAppointmentDate = new Date(
     appointment.latestappointmenttime
-  ).getTime();
-  let choosenAppointmentDate = new Date(
+  ).getTime(); 
+  var choosenAppointmentDate = new Date(
     "1970-01-01 " + PathwayBeginTime
   ).getTime();
 
-  if (
-    earliestAppointmentDate <= choosenAppointmentDate &&
-    choosenAppointmentDate <= latestAppointmentDate
-  ) {
+  var EndPathwayDate=new Date(choosenAppointmentDate);
 
     //Récupération des activités du parcours
     var activitiesInPathwayAppointment = [];
@@ -152,6 +155,15 @@ function AddEventValider() {
         activitiesInPathwayAppointment.push(listeActivities[i]);
       }
     }
+
+    for(let i=0; i<activitiesInPathwayAppointment.length; i++){
+      EndPathwayDate=new Date (new Date(EndPathwayDate).getTime()+activitiesInPathwayAppointment[i].duration*60000); 
+    }
+    
+    if (
+      earliestAppointmentDate <= choosenAppointmentDate &&
+      EndPathwayDate <= latestAppointmentDate
+    ) {
 
     //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
     var successorsActivitybIdList = [];
@@ -177,12 +189,41 @@ function AddEventValider() {
     //Début de la création des events
     do {
       var idactivityB = undefined;
-      //find activity with idactivitya id
+      var quantityHumanResources = 0;
+      var quantityMaterialResources = 0;
+      var activityResourcesArray = [];
+      //trouver l'activité correspondant à l'idactivitya
       for (let i = 0; i < listeActivities.length; i++) {
         if (listeActivities[i].id == idactivitya) {
           activitya = listeActivities[i];
         }
       }
+
+      //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+      for (let i = 0; i < listeActivitHumanResource.length; i++) {
+        if (listeActivitHumanResource[i].activityId == idactivitya) {
+          quantityHumanResources += listeActivitHumanResource[i].quantity;
+        }
+      }
+
+      //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
+      for (let i = 0; i < quantityHumanResources; i++) {
+        activityResourcesArray.push("h-default");
+      }
+
+      //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
+      for (let i = 0; i < listeActivityMaterialResource.length; i++) {
+        if (listeActivityMaterialResource[i].activityId == idactivitya) {
+          quantityMaterialResources +=
+            listeActivityMaterialResource[i].quantity;
+        }
+      }
+
+      //Rentrer le nombre de resources materielles dans le tableau de Resources de l'event
+      for (let i = 0; i < quantityMaterialResources; i++) {
+        activityResourcesArray.push("m-default");
+      }
+
       //trouver dans la table successor le correspondant au activiteida
       for (let i = 0; i < listeSuccessors.length; i++) {
         if (listeSuccessors[i].idactivitya == idactivitya) {
@@ -195,8 +236,8 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       calendar.addEvent({
         id: "new" + CoundAddEvent,
-        resourceIds: ["h-default", "m-default"],
-        title: activitya.name.replaceAll('3aZt3r',' '),
+        resourceIds: activityResourcesArray,
+        title: activitya.name.replaceAll("3aZt3r", " "),
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
         patient: appointment.idPatient,
@@ -214,9 +255,10 @@ function AddEventValider() {
     } while (idactivityB != undefined);
     calendar.render();
     $("#add-planning-modal").modal("toggle");
-  }
-  else{
-    let selectContainerErrorTime = document.getElementById("time-selected-error");
+  } else {
+    let selectContainerErrorTime = document.getElementById(
+      "time-selected-error"
+    );
     selectContainerErrorTime.style.display = "block";
   }
 }
@@ -331,20 +373,20 @@ function createCalendar(typeResource) {
       var appointmentId = event.event._def.extendedProps.appointment;
       var listEventAppointment = [];
       listEvent.forEach((oldEvents) => {
-        if(oldEvents._def.extendedProps.appointment == appointmentId){
+        if (oldEvents._def.extendedProps.appointment == appointmentId) {
           listEventAppointment.push(oldEvents);
         }
-      })
+      });
 
       var isFirst = true;
-      listEventAppointment.forEach((eventAppointment) =>{
-        if(eventAppointment._def.start < oldEvent.start){
-          console.log(eventAppointment)
+      listEventAppointment.forEach((eventAppointment) => {
+        if (eventAppointment._def.start < oldEvent.start) {
+          console.log(eventAppointment);
           isFirst = false;
         }
-      })
+      });
 
-      if(isFirst){
+      if (isFirst) {
         var listeAppointments = JSON.parse(
           document.getElementById("listeAppointments").value
         );
@@ -357,18 +399,15 @@ function createCalendar(typeResource) {
         let earliestAppointmentDate = new Date(
           appointment.earliestappointmenttime
         );
-        let latestAppointmentDate = new Date(
-          appointment.latestappointmenttime
-        );
-      
+        let latestAppointmentDate = new Date(appointment.latestappointmenttime);
+
         if (
           earliestAppointmentDate <= event.event._def.start &&
           event.event._def.start <= latestAppointmentDate
         ) {
-
         }
       }
-    }
+    },
   });
   switch (typeResource) {
     /*case "Patients": //if we want to display by the patients

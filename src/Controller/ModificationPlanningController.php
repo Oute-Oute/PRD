@@ -56,10 +56,10 @@ class ModificationPlanningController extends AbstractController
         $listesuccessionJSON = $this->listSuccessorJSON($doctrine);
         $listeActivitiesJSON = $this->listActivityJSON($doctrine);
         $listAppointmentJSON = $this->listAppointmentJSON($doctrine,$dateModified);
-
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
-
+        $listActivityHumanResourcesJSON=$this->listActivityHumanResourcesJSON($doctrine); 
+        $listActivityMaterialResourcesJSON=$this->listActivityMaterialResourcesJSON($doctrine); 
         /*if($this->alertModif($dateModified)){
             $this->modificationAdd($dateModified, $idUser);
         }*/
@@ -76,7 +76,10 @@ class ModificationPlanningController extends AbstractController
             'listeAppointments' => $listeAppointment,
             'listeSuccessorsJSON' => $listesuccessionJSON,
             'listeActivitiesJSON' => $listeActivitiesJSON,
-            'listAppointmentsJSON' => $listAppointmentJSON
+            'listAppointmentsJSON' => $listAppointmentJSON,
+            'listeActivityHumanResourcesJSON'=>$listActivityHumanResourcesJSON,
+            'listeActivityMaterialResourcesJSON'=>$listActivityMaterialResourcesJSON
+
         ]);
     }
 
@@ -327,16 +330,46 @@ class ModificationPlanningController extends AbstractController
         $scheduledActivities = $SAR->findSchedulerActivitiesByDate($TodayDate);
         $scheduledActivitiesArray = array();
         foreach ($scheduledActivities as $scheduledActivity) {
-            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+            //Obtention du nombre de resources matérielles à renseigner pour cette activité
+            $activitiesMaterialResourcesByActivityId=$doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity'=>$scheduledActivity->getActivity()->getId()]); 
+            $quantityMaterialResources=0; 
+            foreach($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId ){
+                $quantityMaterialResources=$quantityMaterialResources+$activityMaterialResourcesByActivityId->getQuantity(); 
+            }
+
+             //Obtention du nombre de resources Humaines à renseigner pour cette activité
+             $activitiesHumanResourcesByActivityId=$doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity'=>$scheduledActivity->getActivity()->getId()]); 
+             $quantityHumanResources=0; 
+             foreach($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId ){
+                 $quantityHumanResources=$quantityHumanResources+$activityHumanResourcesByActivityId->getQuantity(); 
+             }
             $scheduledActivitiesResourcesArray = array();
+
+            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+           
             foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
+                $quantityHumanResources=$quantityHumanResources-1; 
                 array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
             }
 
             $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
             foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
+                $quantityMaterialResources=$quantityMaterialResources-1;
                 array_push($scheduledActivitiesResourcesArray, "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId());
             }
+
+    
+
+            //Put the number of undefined HumanResources in scheduledActivitiesResourcesArray
+            for($i=0; $i<$quantityHumanResources;$i++){
+                array_push($scheduledActivitiesResourcesArray,"h-default"); 
+            }
+
+             //Put the number of undefined MaterialResources in scheduledActivitiesResourcesArray
+            for($i=0; $i<$quantityMaterialResources;$i++){
+                array_push($scheduledActivitiesResourcesArray,"m-default"); 
+            }
+
 
             $patientId = $scheduledActivity->getAppointment()->getPatient()->getId();
             $start = $scheduledActivity->getStarttime();
@@ -362,6 +395,34 @@ class ModificationPlanningController extends AbstractController
         }
         $scheduledActivitiesArrayJson = new JsonResponse($scheduledActivitiesArray);
         return $scheduledActivitiesArrayJson;
+    }
+
+    public function listActivityHumanResourcesJSON(ManagerRegistry $doctrine){
+        $activitiesHumanResources=$doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll(); 
+        $activitiesHumanResourcesArray=array(); 
+        foreach($activitiesHumanResources as $activityHumanResources){
+            $activitiesHumanResourcesArray[]=array(
+            'id'=>$activityHumanResources->getId(),
+            'activityId'=>$activityHumanResources->getActivity()->getId(),
+            'humanResourceCategoryId'=>$activityHumanResources->getHumanresourcecategory()->getId(), 
+            'quantity'=>$activityHumanResources->getQuantity(),
+            ); 
+        }
+        return new JsonResponse($activitiesHumanResourcesArray); 
+    }
+
+    public function listActivityMaterialResourcesJSON(ManagerRegistry $doctrine){
+        $activitiesMaterialResources=$doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll(); 
+        $activitiesMaterialResourcesArray=array(); 
+        foreach($activitiesMaterialResources as $activityMaterialResources){
+            $activitiesMaterialResourcesArray[]=array(
+            'id'=>$activityMaterialResources->getId(),
+            'activityId'=>$activityMaterialResources->getActivity()->getId(),
+            'materialResourceCategoryId'=>$activityMaterialResources->getMaterialresourcecategory()->getId(), 
+            'quantity'=>$activityMaterialResources->getQuantity(),
+            ); 
+        } 
+        return new JsonResponse($activitiesMaterialResourcesArray); 
     }
 
     public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine)
