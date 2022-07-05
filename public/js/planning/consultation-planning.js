@@ -52,6 +52,11 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
+  let filter = document.getElementById("filterId");//get the filter
+  filter.style.display = "none"; //hide the filter
+  while(filter.firstChild){//while there is something in the filter
+    filter.removeChild(filter.firstChild);//remove the old content
+  }
 }
 
 /**
@@ -75,23 +80,64 @@ function modify(id = 1) {
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
  */
 function filterShow() {
-  if (document.getElementById("filterId").style.display != "none") {
-    //if the filter is already displayed
-    document.getElementById("filterId").style.display = "none"; //hide the filter
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none") {//if the filter is already displayed
+    filter.style.display = "none"; //hide the filter
+    while(filter.firstChild){//while there is something in the filter
+      filter.removeChild(filter.firstChild); //remove the old content
+    }
   } else {
-    document.getElementById("filterId").style.display = "inline-block"; //display the filter
+    filter.style.display = "inline-block"; //display the filter
+    if(calendar.getResources().length==0){//if there is no resource in the calendar
+      var label=document.createElement("label");//display a label
+      label.innerHTML="Aucune ressource à filtrer";//telling "no resources"
+      filter.appendChild(label);//add the label to the filter
+    }
+      for(var i = 0; i < calendar.getResources().length; i++){//fo all the resources in the calendar
+      var input=document.createElement("input");//create a input
+      input.type="checkbox";//set the type of the input to checkbox
+      input.id=calendar.getResources()[i].id;//set the id of the input to the id of the resource
+      input.name=calendar.getResources()[i].title;//set the name of the input to the title of the resource
+      input.checked=true;//set the checkbox to checked
+      input.onchange=function(){//set the onchange event
+        changeFilter(this.id);//call the changeFilter function with the id of the resource
+      }
+      filter.appendChild(input);//add the input to the filter
+      var label=document.createElement("label");//create a label
+      label.htmlFor=calendar.getResources()[i].id;//set the htmlFor of the label to the id of the resource
+      label.innerHTML="&nbsp;"+calendar.getResources()[i].title; //set the text of the label to the title of the resource
+      filter.appendChild(label);//add the label to the filter
+      filter.appendChild(document.createElement("br"));//add a br to the filter for display purpose
+
+    }
   }
 }
 
 /**
- * @brief This function is called when we want to go to create or recreate the calendar
+ * @brief This function is called when we want to filter the resources of the calendar
+ * @param {*} id the id of resource to filter
+ */
+function changeFilter(id){
+    if(document.getElementById(id).checked==true){//if the resource is checked
+       calendar.addResource({//add the resource to the calendar
+        id: id,//set the id of the resource
+        title: document.getElementById(id).name//set the title of the resource
+       })
+    }
+    else{
+      var resource=calendar.getResourceById(id);//get the resource with the id from the calendar
+      resource.remove();//remove the resource from the calendar
+    }
+}
+
+/**
+ * @brief This function is called when we want to create or recreate the calendar
  * @param {*} resources the type of resources to display (Patients, Resources...)
  */
 function createCalendar(resources) {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -202,7 +248,6 @@ function createCalendar(resources) {
       var tempArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-      console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         calendar.addResource({
@@ -218,12 +263,14 @@ function createCalendar(resources) {
       ); //get the data of the resources
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
+        if (temp!=undefined) {
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"],
           title: temp["title"],
         });
       }
+    }
       break;
   }
 
