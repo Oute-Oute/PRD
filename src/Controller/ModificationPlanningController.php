@@ -248,6 +248,7 @@ class ModificationPlanningController extends AbstractController
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'scheduled'=>$appointment->isScheduled(),
             );
         }
         $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
@@ -759,6 +760,26 @@ class ModificationPlanningController extends AbstractController
                     }
                 }
             }
+        }
+        return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine){
+        $dateModified = $request->request->get("validation-date");
+        if(isset($_GET['dateModified'])){
+            $dateModified = $_GET['dateModified'];
+        }
+        $dateModified = str_replace('T12:00:00', '', $dateModified);
+
+        //$modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $modificationRepository = new ModificationRepository($this->getDoctrine());
+        $modifications = $modificationRepository->findAll();
+        $i = 0;
+        foreach ($modifications as $modification) {
+            if($modification->getDatemodified()->format('Y-m-d')==$dateModified){
+                $modificationRepository->remove($modification, true);
+            }
+            $i++;
         }
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }

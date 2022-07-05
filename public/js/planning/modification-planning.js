@@ -1,8 +1,8 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 1680000; // En millisecondes
-//setTimeout(showPopup, modifAlertTime);
-//setTimeout(deleteModifInDB, modifAlertTime+60000);
+setTimeout(showPopup, modifAlertTime);
+setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -91,7 +91,25 @@ function setEvents() {
 function addEvent() {
   let selectContainerErrorTime = document.getElementById("time-selected-error");
   selectContainerErrorTime.style.display = "none";
+ let listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  let appointmentSelection=document.getElementById("select-appointment"); 
+  
+  //Reset toutes les options de la liste
+  for(let i = appointmentSelection.options.length-1; i >= 0; i--) {
+    appointmentSelection.remove(i);
+  } 
+ 
+  //Ajoute les appointment non plannifiés dans la liste
+  var nbOptions=0; 
+  for(let i=0; i<listeAppointments.length;i++){
+    if(listeAppointments[i].scheduled==false){
+      appointmentSelection.options[nbOptions]=new Option(listeAppointments[i].idPatient[0].firstname+' '+listeAppointments[i].idPatient[0].lastname+' / '+listeAppointments[i].idPathway[0].title,listeAppointments[i].id); 
+      nbOptions++; 
+    }
+  }
+
   $("#add-planning-modal").modal("show");
+
   let filter = document.getElementById("filterId"); //get the filter
   filter.style.display = "none"; //hide the filter
   while (filter.firstChild) {
@@ -121,13 +139,16 @@ function AddEventValider() {
 
   var appointmentid = document.getElementById("select-appointment").value;
 
-  //Récupération du rdv choisit par l'utilisateur
+  //Récupération du rdv choisit par l'utilisateur et de la place de l'élément dans listeAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
       appointment = listeAppointments[i];
+      listeAppointments[i].scheduled=true; 
     }
   }
+
+  document.getElementById("listeAppointments").value=JSON.stringify(listeAppointments); 
 
   //Date de début du parcours
   var PathwayBeginTime = document.getElementById("timeBegin").value;
@@ -260,7 +281,9 @@ function AddEventValider() {
       );
     } while (idactivityB != undefined);
     calendar.render();
+
     $("#add-planning-modal").modal("toggle");
+
   } else {
     let selectContainerErrorTime = document.getElementById(
       "time-selected-error"
@@ -644,16 +667,11 @@ function closePopup() {
   setTimeout(showPopup, modifAlertTime);
 }
 
-/*document.addEventListener('DOMContentLoaded', function() {
-    var userData = document.querySelector('.js-data');
-    var userId = userData.dataset.userId;
-});*/
-
-function deleteModifInDB(popupClicked) {
+function deleteModifInDB(popupClicked){
   if (popupClicked) {
     popupClicked = false;
     setTimeout(deleteModifInDB, modifAlertTime);
   } else {
-    // Supprimer modif sur la BDD
+    window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
   }
 }
