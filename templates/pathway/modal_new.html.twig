@@ -11,15 +11,10 @@
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
                     <input style="display:none;" name="nbActivity" id="nbActivity">
 
-                    <div class='flex-row'>
-                        <div class="form-field-label flex-col">
-                            <h4><label for='name'> Nom du parcours </label></h4>
-                        </div>
-
-                        <div class="form-field-input flex-col">
-                            <input id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
-                        </div>
-                    </div> 
+                    <div class="flex-col"> 
+                        <label class="label" for='name'> Nom du parcours </label>        
+                        <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
+                    </div>
 
                     <fieldset id="fs-add-activity">
                         <h4>Choisissez les activités de votre parcours</h4>

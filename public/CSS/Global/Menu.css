@@ -139,9 +139,21 @@ h1, .h1 {
     top: 0;
     bottom: 0;
     overflow: auto;
-    background-color: #373193;
+    /*background-color: #373193; gris*/
+    background-color: #1e2b37;
+    background-color: #76818d;
+    background-color: var(--main-blue);
+
 }
 
+.dashboard-nav a {
+    color: #fff;
+}
+
+.dashboard-nav a:hover {
+    color: #fff;
+    background-color: var(--main-green);
+}
 .dashboard-compact .dashboard-nav {
     display: none;
 }
@@ -168,21 +180,10 @@ h1, .h1 {
     margin-right: auto;
 }
 
-.dashboard-nav a {
-    color: #515151;
-}
-
 .dashboard-nav a:hover {
     text-decoration: none;
 }
 
-.dashboard-nav {
-    background-color: #76818d;
-}
-
-.dashboard-nav a {
-    color: #fff;
-}
 
 .brand-logo {
     font-family: "Nunito", sans-serif;

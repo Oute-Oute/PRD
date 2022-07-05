@@ -32,12 +32,14 @@
                 categoriesByResources[{{indexResource}}] = new Object();
                {# categoriesByResource[{{indexResource}}].idResource = '{{ human_resources[indexResource].id }}' #}
                 categoriesByResources[{{indexResource}}].categories = new Array();
-                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
-                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}] = new Object();
-                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].idCategory = '{{ categoriesByResources[indexResource][indexCategory].id }}'
-                    categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].name = '{{ categoriesByResources[indexResource][indexCategory].categoryname }}' 
-                {% else %}
-                {% endfor %}
+                {% if (categoriesByResources[indexResource]) %}
+                    {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+                        categoriesByResources[{{indexResource}}].categories[{{indexCategory}}] = new Object();
+                        categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].idCategory = '{{ categoriesByResources[indexResource][indexCategory].id }}'
+                        categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].name = '{{ categoriesByResources[indexResource][indexCategory].categoryname }}' 
+                    {% else %}
+                    {% endfor %}
+                {% endif %}
             {% else %}
             {% endfor %}
             console.table(categoriesByResources);

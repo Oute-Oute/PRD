@@ -118,12 +118,13 @@ function showEditModalForm(id, name, index){
 
         let divcontainer = document.createElement('div')
         //divcontainer.setAttribute('class', "title-container")
-        divcontainer.setAttribute('class', 'flex-row')
+        //divcontainer.setAttribute('class', 'flex-row')
         divcontainer.style.justifyContent = "center"
         let pTitle = document.createElement("p")
+        pTitle.setAttribute('class', 'label')
         pTitle.innerHTML = "Activité : "
-        let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
-        divcontainer.setAttribute('class', divclass + ' edit--form-div-activity-'+SELECT_ID_EDIT)
+       // let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
+        divcontainer.setAttribute('class', 'edit--form-div-activity-'+SELECT_ID_EDIT)
         divcontainer.appendChild(pTitle)
         divcontainer.appendChild(div)
         divAddActivity.appendChild(divcontainer)
@@ -178,12 +179,13 @@ function edit__handleAddActivity() {
 
     let divcontainer = document.createElement('div')
     //divcontainer.setAttribute('class', "title-container")
-    divcontainer.setAttribute('class', 'flex-row')
+    //divcontainer.setAttribute('class', 'flex-row')
     divcontainer.style.justifyContent = "center"
     let pTitle = document.createElement("p")
     pTitle.innerHTML = "Activité : "
-    let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
-    divcontainer.setAttribute('class', divclass + ' edit--form-div-activity-'+SELECT_ID_EDIT)
+    pTitle.setAttribute('class', 'label')
+    //let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde form-field a div
+    divcontainer.setAttribute('class', 'edit--form-div-activity-'+SELECT_ID_EDIT)
     divcontainer.appendChild(pTitle)
     divcontainer.appendChild(div)
     divAddActivity.appendChild(divcontainer)
