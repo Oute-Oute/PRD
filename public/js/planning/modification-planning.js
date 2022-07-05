@@ -77,14 +77,11 @@ function setEvents() {
   let resources = [];
   events.forEach((event) => {
     var listResource = [];
-    console.log(event);
     for (let i = 0; i < event._def.resourceIds.length; i++) {
       listResource.push(event._def.resourceIds[i]);
     }
-    console.log(listResource);
     resources.push(listResource);
   });
-  console.log(resources);
   document.getElementById("events").value = JSON.stringify(
     calendar.getEvents()
   );
@@ -97,6 +94,11 @@ function addEvent() {
   let selectContainerErrorTime = document.getElementById("time-selected-error");
   selectContainerErrorTime.style.display = "none";
   $("#add-planning-modal").modal("show");
+  let filter = document.getElementById("filterId");//get the filter
+  filter.style.display = "none"; //hide the filter
+  while(filter.firstChild){//while there is something in the filter
+    filter.removeChild(filter.firstChild);//remove the old content
+  }
 }
 
 function AddEventValider() {
@@ -186,7 +188,7 @@ function AddEventValider() {
           activitya = listeActivities[i];
         }
       }
-      //trouover dans la table successor le correspondant au activiteida
+      //trouver dans la table successor le correspondant au activiteida
       for (let i = 0; i < listeSuccessors.length; i++) {
         if (listeSuccessors[i].idactivitya == idactivitya) {
           successoracivitya = listeSuccessors[i];
@@ -198,8 +200,8 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       calendar.addEvent({
         id: "new" + CoundAddEvent,
-        resourceIds: ["human-default", "material-default"],
-        title: activitya.name,
+        resourceIds: ["h-default", "m-default"],
+        title: activitya.name.replaceAll('3aZt3r',' '),
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
         patient: appointment.idPatient,
@@ -229,12 +231,58 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
-function filterShow() {
-  if (document.getElementById("filterId").style.display != "none") {
-    document.getElementById("filterId").style.display = "none";
+/**
+ * @brief This function is called when we want to go to display the filter window, called when click on the filter button
+ */
+ function filterShow() {
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none") {//if the filter is already displayed
+    filter.style.display = "none"; //hide the filter
+    while(filter.firstChild){//while there is something in the filter
+      filter.removeChild(filter.firstChild); //remove the old content
+    }
   } else {
-    document.getElementById("filterId").style.display = "inline-block";
+    filter.style.display = "inline-block"; //display the filter
+    if(calendar.getResources().length==0){//if there is no resource in the calendar
+      var label=document.createElement("label");//display a label
+      label.innerHTML="Aucune ressource à filtrer";//telling "no resources"
+      filter.appendChild(label);//add the label to the filter
+    }
+      for(var i = 0; i < calendar.getResources().length; i++){//fo all the resources in the calendar
+      var input=document.createElement("input");//create a input
+      input.type="checkbox";//set the type of the input to checkbox
+      input.id=calendar.getResources()[i].id;//set the id of the input to the id of the resource
+      input.name=calendar.getResources()[i].title;//set the name of the input to the title of the resource
+      input.checked=true;//set the checkbox to checked
+      input.onchange=function(){//set the onchange event
+        changeFilter(this.id);//call the changeFilter function with the id of the resource
+      }
+      filter.appendChild(input);//add the input to the filter
+      var label=document.createElement("label");//create a label
+      label.htmlFor=calendar.getResources()[i].id;//set the htmlFor of the label to the id of the resource
+      label.innerHTML="&nbsp;"+calendar.getResources()[i].title; //set the text of the label to the title of the resource
+      filter.appendChild(label);//add the label to the filter
+      filter.appendChild(document.createElement("br"));//add a br to the filter for display purpose
+
+    }
   }
+}
+
+/**
+ * @brief This function is called when we want to filter the resources of the calendar
+ * @param {*} id the id of resource to filter
+ */
+function changeFilter(id){
+    if(document.getElementById(id).checked==true){//if the resource is checked
+       calendar.addResource({//add the resource to the calendar
+        id: id,//set the id of the resource
+        title: document.getElementById(id).name//set the title of the resource
+       })
+    }
+    else{
+      var resource=calendar.getResourceById(id);//get the resource with the id from the calendar
+      resource.remove();//remove the resource from the calendar
+    }
 }
 
 function changePlanning() {
@@ -244,6 +292,11 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
+  let filter = document.getElementById("filterId");//get the filter
+  filter.style.display = "none"; //hide the filter
+  while(filter.firstChild){//while there is something in the filter
+    filter.removeChild(filter.firstChild);//remove the old content
+  }
 }
 
 function createCalendar(typeResource) {
@@ -326,6 +379,52 @@ function createCalendar(typeResource) {
       //ouvre la modal
       $("#modify-planning-modal").modal("show");
     },
+
+    eventDragStop: function (event, jsEvent) {
+      var listEvent = calendar.getEvents();
+      var oldEvent = event.event._def;
+      var modifyEvent = event.el.fcSeg;
+      var appointmentId = event.event._def.extendedProps.appointment;
+      var listEventAppointment = [];
+      listEvent.forEach((oldEvents) => {
+        if(oldEvents._def.extendedProps.appointment == appointmentId){
+          listEventAppointment.push(oldEvents);
+        }
+      })
+
+      var isFirst = true;
+      listEventAppointment.forEach((eventAppointment) =>{
+        if(eventAppointment._def.start < oldEvent.start){
+          console.log(eventAppointment)
+          isFirst = false;
+        }
+      })
+
+      if(isFirst){
+        var listeAppointments = JSON.parse(
+          document.getElementById("listeAppointments").value
+        );
+        var appointment;
+        for (let i = 0; i < listeAppointments.length; i++) {
+          if (listeAppointments[i]["id"] == appointmentId) {
+            appointment = listeAppointments[i];
+          }
+        }
+        let earliestAppointmentDate = new Date(
+          appointment.earliestappointmenttime
+        );
+        let latestAppointmentDate = new Date(
+          appointment.latestappointmenttime
+        );
+      
+        if (
+          earliestAppointmentDate <= event.event._def.start &&
+          event.event._def.start <= latestAppointmentDate
+        ) {
+
+        }
+      }
+    }
   });
   switch (typeResource) {
     /*case "Patients": //if we want to display by the patients
@@ -373,7 +472,7 @@ function createCalendar(typeResource) {
         });
       }
       calendar.addResource({
-        id: "human-default",
+        id: "h-default",
         title: "Aucune ressource allouée",
       });
       break;
@@ -389,7 +488,7 @@ function createCalendar(typeResource) {
           title: temp["title"],
         });
         calendar.addResource({
-          id: "material-default",
+          id: "m-default",
           title: "Aucune ressource allouée",
         });
       }

@@ -59,5 +59,5 @@ class HumanResource
     public function __toString()
     {
         return $this->getHumanresourcename();
-    }
+    } 
 }

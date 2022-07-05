@@ -1,13 +1,53 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Edit MaterialResource{% endblock %}
-
-{% block body %}
-    <h1>Edit MaterialResource</h1>
-
-    {{ include('material_resource/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_material_resource_index') }}">back to list</a>
-
-    {{ include('material_resource/_delete_form.html.twig') }}
+    <!-- add-patient-modal -->
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 {% endblock %}
+<div class="modal" id="edit--material-resource-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Éditer une ressource matérielle</h2>
+            </div>
+            <form id = "edit-form-resource" action="{{ path('MaterialResourceEdit') }}" method="post">
+                <div class="modal-body">
+
+                    <input style="display:none;" name="nbcategory" id="edit--nbcategory">
+                    <input style="display:none;" name="id" id="edit--resourceid">
+    
+                    <div class='flex-row'>
+                        <div class="form-field-label flex-col">
+                            <h4><label for='name'> Nom de la ressource </label></h4>
+                        </div>
+
+                        <div class="form-field-input flex-col">
+                            <input id='edit--resourcename' type='text' name='resourcename' onchange='edit__disableSubmit()'>
+                        </div>
+                    </div> 
+
+                    <fieldset id="fs-add-material-category">
+                        <legend>Choisissez les catégories de votre ressource</legend>
+                
+                        <div id="edit--categories-container"> 
+                            <select style="display:none;" class="select-category-sample" class="slct-add-category" > 
+ 
+                                {% for material_resource_category in material_resources_categories %} 
+                                    <option value="{{ material_resource_category.id }}"> {{ material_resource_category.categoryname }} </option>
+                                {% else %}
+                                    <p> Pas de catégories créées ! </p>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                        <button type="button" id='btn-add-category' onclick="edit__handleAddCategory()"> <b> Modifier </b> </button> 
+
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
+                    <button type='button' onclick="edit__verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                    <button id='edit--submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+                </div>
+    	    </form>
+        </div>
+    </div>
+</div>
