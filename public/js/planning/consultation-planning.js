@@ -282,7 +282,6 @@ function createCalendar(resources) {
         var temp = tempArray[i]; //get the resources data
         if (calendar.getResourceById(temp["id"]) == null) {
           //if the resource is not already in the calendar
-          console.log(temp["workingHours"]);
           var businessHours = []; //create an array to store the working hours
           for (var j = 0; j < temp["workingHours"].length; j++) {
             businesstemp = {

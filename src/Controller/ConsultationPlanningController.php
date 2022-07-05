@@ -139,7 +139,6 @@ class ConsultationPlanningController extends AbstractController
                 'title' => ($scheduledActivity->getActivity()->getActivityname()),
                 'appointment' => ($scheduledActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
-                'description' => ($scheduledActivity->getActivity()->getActivityname()),
                 'extendedProps' => array(
                     'patient' => $patient,
                     'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
@@ -261,6 +260,12 @@ class ConsultationPlanningController extends AbstractController
         return $MaterialResourceScheduledArrayJSON;
     }
 
+    /*
+     * @brief This function is the getter of the Material Categories to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @parma MaterialResource $resource
+     * @return array of the resource's data
+     */
     public function getMaterialCategory(ManagerRegistry $doctrine, $resource)
     {
         //recuperation du pathway depuis la base de données
@@ -320,6 +325,11 @@ class ConsultationPlanningController extends AbstractController
     }
 
 
+    /*
+     * @brief This function is the getter of the working hours to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
     public function getWorkingHours(ManagerRegistry $doctrine, $resource)
     {
         //recuperation du pathway depuis la base de données
@@ -338,6 +348,12 @@ class ConsultationPlanningController extends AbstractController
         return $workingHoursArray;
     }
 
+    /*
+     * @brief This function is the getter of the Human Categories to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @parma HumanResource $resource
+     * @return array of the resource's data
+     */
     public function getHumanCategory(ManagerRegistry $doctrine, $resource)
     {
         //recuperation du pathway depuis la base de données
