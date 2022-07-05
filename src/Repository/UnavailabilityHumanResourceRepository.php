@@ -39,6 +39,17 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findUnavailabilityHumanResourceByDate($date, $name)
+    {   
+        $qb= $this->createQueryBuilder('uhr')
+            ->join('uhr.unavailability', 'u')
+            ->join('uhr.humanresource', 'hr')
+            ->where('u.startdatetime = :date AND hr.humanresourcename = :name')
+            ->setParameters(['date'=> $date, 'name'=> $name]);
+        $query=$qb->getQuery()->getResult();
+        return $query;
+    }
+
 //    /**
 //     * @return UnavailabilityHumanResource[] Returns an array of UnavailabilityHumanResource objects
 //     */
