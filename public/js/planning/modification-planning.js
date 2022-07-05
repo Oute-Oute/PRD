@@ -6,7 +6,7 @@ var modifAlertTime = 1680000; // En millisecondes
 
 var calendar;
 var CoundAddEvent = 0;
-var headerResources = "Ressources Matérielles";
+var headerResources = "Ressources Humaines";
 var dateStr = $_GET("date").replaceAll("%3A", ":");
 var date = new Date(dateStr);
 
@@ -408,6 +408,15 @@ function createCalendar(typeResource) {
     resourceOrder: "title",
     resourceAreaWidth: "20%",
     resourceAreaHeaderContent: headerResources,
+
+    eventDidMount: function (info) {
+      $(info.el).tooltip({
+        title: info.event.title,
+        placement: "top",
+        trigger: "hover",
+        container: "body",
+      });
+    },
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
     eventClick: function (event, element) {
