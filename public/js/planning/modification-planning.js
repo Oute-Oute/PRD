@@ -43,16 +43,14 @@ function unshowDiv(id) {
 //function permettant la modification de l'activité
 function modifyEvent() {
   var id = document.getElementById("id").value;
-  var event = calendar.getEventById(id);
+  var oldEvent = calendar.getEventById(id);
+
   var today = $_GET("date").substring(0, 10);
-  var start = today + "T" + document.getElementById("new-start").value;
-  var length = document.getElementById("length").value;
-  var date = new Date(start.replace("T", " "));
+  var newStart = new Date(today + " " + document.getElementById("new-start").value);
+  var newDelay = oldEvent.start.getTime()-(2*60*60*1000) - newStart.getTime();
+  var clickModify = true;
 
-  var end = new Date(date.getTime() + length * 60 * 1000);
-
-  event.setStart(start);
-  event.setEnd(formatDate(end).replace(" ", "T"));
+  updateEventsAppointment(oldEvent, newDelay, clickModify)
   $("#modify-planning-modal").modal("toggle");
 }
 
@@ -243,6 +241,86 @@ function changePlanning() {
   createCalendar(header); //rerender the calendar with the new type of resources
 }
 
+function updateEventsAppointment(oldEvent, newDelay, clickModify) {
+  //TODO : corrigé la modification de l'event modifié
+  var listEvent = calendar.getEvents();
+    var appointmentId = oldEvent._def.extendedProps.appointment;
+    var listEventAppointment = [];
+    listEvent.forEach((currentEvent) => {
+      if(currentEvent._def.extendedProps.appointment == appointmentId){
+        if(currentEvent._def.publicId == oldEvent._def.publicId){
+          listEventAppointment.push(oldEvent);
+        }
+        else {
+          listEventAppointment.push(currentEvent);
+        }
+      }
+    })
+
+    var eventFirst = listEventAppointment[0];
+    var eventLast = listEventAppointment[0];
+    listEventAppointment.forEach((eventAppointment) =>{
+      if(eventAppointment.end > eventLast.end)
+      {
+        eventLast = eventAppointment;
+      }
+      if(eventAppointment.start < eventFirst.start){
+        eventFirst = eventAppointment;
+      }
+    })
+
+    var listeAppointments = JSON.parse(
+      document.getElementById("listeAppointments").value
+    );
+    var appointment;
+    for (let i = 0; i < listeAppointments.length; i++) {
+      if (listeAppointments[i]["id"] == appointmentId) {
+        appointment = listeAppointments[i];
+      }
+    }
+    let earliestAppointmentDate = new Date( dateStr.split("T")[0] + " " +
+      appointment.earliestappointmenttime.split("T")[1]
+    );
+    let latestAppointmentDate = new Date( dateStr.split("T")[0] + " " +
+      appointment.latestappointmenttime.split("T")[1]
+    );
+
+      if (
+        earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
+        new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
+      ) {
+        listEventAppointment.forEach((eventAppointment) => {
+          if(clickModify)
+          {
+            var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
+            var startStr = formatDate(startDate).replace(" ", "T");
+            var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
+            var endStr = formatDate(endDate).replace(" ", "T");
+            eventAppointment.setStart(startStr);
+            eventAppointment.setEnd(endStr);
+          }
+          else if (eventAppointment._def.publicId != oldEvent._def.publicId)
+          {
+            var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
+            var startStr = formatDate(startDate).replace(" ", "T");
+            var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
+            var endStr = formatDate(endDate).replace(" ", "T");
+            eventAppointment.setStart(startStr);
+            eventAppointment.setEnd(endStr);
+          }
+        })
+      }
+
+      else {
+        var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
+        var startStr = formatDate(startDate).replace(" ", "T");
+        var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
+        var endStr = formatDate(endDate).replace(" ", "T");
+        calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
+        calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+      }
+}
+
 function createCalendar(typeResource) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
@@ -324,50 +402,13 @@ function createCalendar(typeResource) {
       $("#modify-planning-modal").modal("show");
     },
 
-    eventDragStop: function (event, jsEvent) {
-      var listEvent = calendar.getEvents();
-      var oldEvent = event.event._def;
-      var modifyEvent = event.el.fcSeg;
-      var appointmentId = event.event._def.extendedProps.appointment;
-      var listEventAppointment = [];
-      listEvent.forEach((oldEvents) => {
-        if(oldEvents._def.extendedProps.appointment == appointmentId){
-          listEventAppointment.push(oldEvents);
-        }
-      })
-
-      var isFirst = true;
-      listEventAppointment.forEach((eventAppointment) =>{
-        if(eventAppointment._def.start < oldEvent.start){
-          console.log(eventAppointment)
-          isFirst = false;
-        }
-      })
-
-      if(isFirst){
-        var listeAppointments = JSON.parse(
-          document.getElementById("listeAppointments").value
-        );
-        var appointment;
-        for (let i = 0; i < listeAppointments.length; i++) {
-          if (listeAppointments[i]["id"] == appointmentId) {
-            appointment = listeAppointments[i];
-          }
-        }
-        let earliestAppointmentDate = new Date(
-          appointment.earliestappointmenttime
-        );
-        let latestAppointmentDate = new Date(
-          appointment.latestappointmenttime
-        );
-      
-        if (
-          earliestAppointmentDate <= event.event._def.start &&
-          event.event._def.start <= latestAppointmentDate
-        ) {
-
-        }
-      }
+    eventDrop: function (event) {
+      var oldEvent = event.oldEvent;
+      var modifyEvent = event.event;
+      console.log(oldEvent, modifyEvent)
+      var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
+      var clickModify = false;
+      updateEventsAppointment(oldEvent, newDelay, clickModify);
     }
   });
   switch (typeResource) {
