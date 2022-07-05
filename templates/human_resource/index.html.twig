@@ -30,7 +30,6 @@
         {% if (categoriesByResources) %}
             {% for indexResource in 0..(categoriesByResources|length - 1) %}
                 categoriesByResources[{{indexResource}}] = new Object();
-                console.log('index {{indexResource}}')
                 {# categoriesByResources[{{indexResource}}].resourceName = '{{ categoriesByResources[indexResource].humanresourcename }}'#} 
                 categoriesByResources[{{indexResource}}].categories = new Array();
                 {% if (categoriesByResources[indexResource]) %}
@@ -40,11 +39,9 @@
                         categoriesByResources[{{indexResource}}].categories[{{indexCategory}}].name = '{{ categoriesByResources[indexResource][indexCategory].categoryname }}' 
                     {% else %}
                     {% endfor %}
-                {% endif %}
+                {% endif %} 
             {% else %}
-            {% endfor %}
-            console.log(categoriesByResources);
-            
+            {% endfor %}            
         {% endif %}
     </script> 
 

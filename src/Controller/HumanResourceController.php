@@ -112,7 +112,7 @@ class HumanResourceController extends AbstractController
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request) 
-    {
+    { 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
@@ -172,7 +172,7 @@ class HumanResourceController extends AbstractController
                 }
             }
             
-            return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
         }
 
 
