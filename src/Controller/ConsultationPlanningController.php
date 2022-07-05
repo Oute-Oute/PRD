@@ -139,6 +139,7 @@ class ConsultationPlanningController extends AbstractController
                 'title' => ($scheduledActivity->getActivity()->getActivityname()),
                 'appointment' => ($scheduledActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
+                'description' => ($scheduledActivity->getActivity()->getActivityname()),
                 'extendedProps' => array(
                     'patient' => $patient,
                     'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
@@ -318,7 +319,7 @@ class ConsultationPlanningController extends AbstractController
         return $HumanResourceScheduledArrayJSON;
     }
 
-    
+
     public function getWorkingHours(ManagerRegistry $doctrine, $resource)
     {
         //recuperation du pathway depuis la base de données

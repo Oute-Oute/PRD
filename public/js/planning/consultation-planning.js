@@ -183,6 +183,15 @@ function createCalendar(resources) {
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
     events: events, //set the events
 
+    eventDidMount: function (info) {
+      $(info.el).tooltip({
+        title: info.event.title,
+        placement: "top",
+        trigger: "hover",
+        container: "body",
+      });
+    },
+
     //when we click on an event, display a modal window with the event information
     eventClick: function (event) {
       //get the data of the event
@@ -233,14 +242,16 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
         patient = temp["patient"]; //get the resources data
-        if (calendar.getResourceById(patient[0]["id"]) == null) {//if the resource is not already in the calendar
+        if (calendar.getResourceById(patient[0]["id"]) == null) {
+          //if the resource is not already in the calendar
           calendar.addResource({
             //add the resources to the calendar
-            id: patient[0]["id"],//set the id of the resource
-            title: patient[0]["title"],//set the title of the resource
-            businessHours: {//set the business hours of the resource
-              startTime: patient[0]["businessHours"]["startTime"],//set the start time of the business hours
-              endTime: patient[0]["businessHours"]["endTime"],//set the end time of the business hours
+            id: patient[0]["id"], //set the id of the resource
+            title: patient[0]["title"], //set the title of the resource
+            businessHours: {
+              //set the business hours of the resource
+              startTime: patient[0]["businessHours"]["startTime"], //set the start time of the business hours
+              endTime: patient[0]["businessHours"]["endTime"], //set the end time of the business hours
             },
           });
         }
@@ -253,11 +264,12 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
         pathway = temp["pathway"]; //get the resources data
-        if (calendar.getResourceById(pathway[0]['id']) == null) {//if the resource is not already in the calendar
+        if (calendar.getResourceById(pathway[0]["id"]) == null) {
+          //if the resource is not already in the calendar
           calendar.addResource({
             //add the resources to the calendar
-            id: pathway[0]["id"],//set the id of the resource
-            title: pathway[0]["title"],//set the title of the resource
+            id: pathway[0]["id"], //set the id of the resource
+            title: pathway[0]["title"], //set the title of the resource
           });
         }
       }
@@ -268,22 +280,24 @@ function createCalendar(resources) {
       ); //get the data of the resources
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
-        if (calendar.getResourceById(temp["id"]) == null) {//if the resource is not already in the calendar
+        if (calendar.getResourceById(temp["id"]) == null) {
+          //if the resource is not already in the calendar
           console.log(temp["workingHours"]);
-          var businessHours = [];//create an array to store the working hours
+          var businessHours = []; //create an array to store the working hours
           for (var j = 0; j < temp["workingHours"].length; j++) {
-            businesstemp = {//create a new business hour
-              startTime: temp["workingHours"][j]["startTime"],//set the start time
-              endTime: temp["workingHours"][j]["endTime"],//set the end time
-              daysOfWeek: [temp["workingHours"][j]["day"]],//set the day
+            businesstemp = {
+              //create a new business hour
+              startTime: temp["workingHours"][j]["startTime"], //set the start time
+              endTime: temp["workingHours"][j]["endTime"], //set the end time
+              daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
             };
-            businessHours.push(businesstemp);//add the business hour to the array
+            businessHours.push(businesstemp); //add the business hour to the array
           }
           calendar.addResource({
             //add the resources to the calendar
-            id: temp["id"],//set the id
-            title: temp["title"],//set the title
-            businessHours: businessHours,//get the business hours
+            id: temp["id"], //set the id
+            title: temp["title"], //set the title
+            businessHours: businessHours, //get the business hours
           });
         }
       }
@@ -295,11 +309,12 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {
-          if (calendar.getResourceById(temp["id"]) == null) {//if the resource is not already in the calendar
+          if (calendar.getResourceById(temp["id"]) == null) {
+            //if the resource is not already in the calendar
             calendar.addResource({
               //add the resources to the calendar
-              id: temp["id"],//set the id
-              title: temp["title"],//set the title
+              id: temp["id"], //set the id
+              title: temp["title"], //set the title
             });
           }
         }
