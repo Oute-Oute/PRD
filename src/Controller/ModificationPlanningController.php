@@ -249,6 +249,7 @@ class ModificationPlanningController extends AbstractController
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'scheduled'=>$appointment->isScheduled(),
             );
         }
         $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
@@ -622,7 +623,7 @@ class ModificationPlanningController extends AbstractController
                             $strDate = substr($date, 0, 10);
                             $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
 
-                            $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getHumanresourcename());
+                            $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
 
                             foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
                             {
@@ -664,7 +665,7 @@ class ModificationPlanningController extends AbstractController
                             $strDate = substr($date, 0, 10);
                             $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
 
-                            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getMaterialresourcename());
+                            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
 
                             foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
                             {
