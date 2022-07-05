@@ -43,7 +43,7 @@ class ConsultationPlanningController extends AbstractController
         }
         //Récupération des données ressources de la base de données
         $listeAppointmentJSON = $this->listeAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
-        $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine,$SAR); //Récupération des données activités programmées de la base de données
+        $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $listeMaterialResourceScheduledJSON = $this->listeMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $listeHumanResourceScheduledJSON = $this->listeHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
 
@@ -130,7 +130,7 @@ class ConsultationPlanningController extends AbstractController
             $end = $day . "T" . $end; //formatage sous forme de DateTime pour fullcalendar
             $patientLastName = $scheduledActivity->getAppointment()->getPatient()->getLastname();
             $patientFirstName = $scheduledActivity->getAppointment()->getPatient()->getFirstname();
-            $patient=$patientLastName . " " . $patientFirstName;
+            $patient = $patientLastName . " " . $patientFirstName;
             //ajout des données de l'activité programmée dans un tableau pour etre converti en JSON
             $scheduledActivitiesArray[] = array(
                 'id' => (str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
@@ -173,15 +173,20 @@ class ConsultationPlanningController extends AbstractController
         $appointments = $doctrine->getRepository("App\Entity\Appointment")
             ->findBy(array('dayappointment' => $dateTime));
         //Creation d'un tableau pour stocker les données des appointments
+
         $appointmentArray = array();
         foreach ($appointments as $appointment) {
+            $businessHours = array(
+                'startTime' => $appointment->getEarliestappointmenttime()->format('H:i'),
+                'endTime' => $appointment->getLatestappointmenttime()->format('H:i'),
+            );
             $appointmentArray[] = array(
                 'id' => (str_replace(" ", "3aZt3r", $appointment->getId())),
                 'day' => ($appointment->getDayappointment()->format('Y-m-d')),
                 'earliestappointmenttime' => ($appointment->getEarliestappointmenttime()),
                 'latestappointmenttime' => ($appointment->getLatestappointmenttime()),
                 'scheduled' => $appointment->isScheduled(),
-                'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
+                'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId(), $businessHours),
                 'pathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
             );
         }
@@ -220,7 +225,7 @@ class ConsultationPlanningController extends AbstractController
         //tilisation de la variable globale $scheduledActivities pour recuperer les activites programmées du jour
         global $scheduledActivities;
         $MaterialResourceScheduledArray = array();
-        
+
         if ($scheduledActivities != null) { //si il y a des données dans la base de données
             for ($i = 0; $i < count($scheduledActivities); $i++) {
                 //recuperation des ressources de l'activité programmée
@@ -228,19 +233,46 @@ class ConsultationPlanningController extends AbstractController
                     ->findBy(array("scheduledactivity" => $scheduledActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
+                    $materialCategories = $this->getMaterialCategory($doctrine, $MaterialResourceScheduled->getMaterialresource());
+                    $materialCategoryArray = array();
+                    foreach ($materialCategories as $materialCategory) {
+                        $MaterialResourceArray[] = array(
+                            'category' => ($materialCategory),
+                        );
+                    }
                     $id = $MaterialResourceScheduled->getMaterialresource()->getId();
                     $id = "materialresource_" . $id;
                     $MaterialResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
+                        'extendedProps' => array(
+                            'Categories' => ($MaterialResourceArray),
+                        ),
 
                     );
+                    unset($MaterialResourceArray);
                 }
             }
         }
+        unset($MaterialResourceArray);
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
         return $MaterialResourceScheduledArrayJSON;
+    }
+
+    public function getMaterialCategory(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        //dd($resource,$doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll());
+        $materialCategories = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $resource));
+        $materialCategoryArray = array();
+        foreach ($materialCategories as $materialCategory) {
+            $materialCategoryArray[] = array(
+                'name' => ($materialCategory->getMaterialresourcecategory()->getCategoryname()),
+            );
+        }
+        //Conversion des données ressources en json
+        return $materialCategoryArray;
     }
 
     /*
@@ -260,13 +292,24 @@ class ConsultationPlanningController extends AbstractController
                     ->findBy(array("scheduledactivity" => $scheduledActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($HumanResourceScheduleds as $HumanResourceScheduled) {
+                    $humanCategories = $this->getHumanCategory($doctrine, $HumanResourceScheduled->getHumanresource());
+                    $HumanResourceArray = array();
+                    foreach ($humanCategories as $humanCategory) {
+                        $HumanResourceArray[] = array(
+                            'category' => ($humanCategory),
+                        );
+                    }
                     $id = $HumanResourceScheduled->getHumanresource()->getId();
                     $id = "humanresource_" . $id;
                     $HumanResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
+                        'categories' => ($HumanResourceArray),
+                        'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
 
                     );
+
+                    unset($HumanResourceArray);
                 }
             }
         }
@@ -275,13 +318,46 @@ class ConsultationPlanningController extends AbstractController
         return $HumanResourceScheduledArrayJSON;
     }
 
+    
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHoursArray = array();
+        foreach ($setOfWorkingHours as $workingHours) {
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = array(
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+
+            );
+        }
+        return $workingHoursArray;
+    }
+
+    public function getHumanCategory(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $humanCategories = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array("humanresource" => $resource));
+        $humanCategoryArray = array();
+        foreach ($humanCategories as $humanCategory) {
+            $humanCategoryArray[] = array(
+                'name' => ($humanCategory->getHumanresourcecategory()->getCategoryname()),
+            );
+        }
+        //Conversion des données ressources en json
+        return $humanCategoryArray;
+    }
+
     /*
      * @brief This function is the getter of the Patients from the database.
      * @param ManagerRegistry $doctrine
      * @param $id the id of the patient to get
      * @return array of the patient's data
      */
-    public function getPatient(ManagerRegistry $doctrine, $id)
+    public function getPatient(ManagerRegistry $doctrine, $id, $businessHours)
     {
         //recuperation du patient depuis la base de données
         $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
@@ -291,11 +367,13 @@ class ConsultationPlanningController extends AbstractController
         $title = $lastname . " " . $firstname; //utilisé pour l'affichage fullcalendar
         $id = $patient->getId();
         $id = "patient_" . $id;
+
         $patientArray[] = array(
             'id' => $id,
             'lastname' => (str_replace(" ", "3aZt3r", $lastname)),
             'firstname' => (str_replace(" ", "3aZt3r", $firstname)),
-            'title' => $title
+            'title' => $title,
+            'businessHours' => $businessHours,
         );
 
         //Conversion des données ressources en json 

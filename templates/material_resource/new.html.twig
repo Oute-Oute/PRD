@@ -1,7 +1,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 {% endblock %}
-
+ 
 <div class="modal" id="new-material-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -13,13 +13,9 @@
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
                     <input style="display:none;" name="nbCategory" id="nbCategory">
 
-                    <div class='flex-row'>
-                        <div class="form-field-label flex-col">
-                            <label for='name'> Nom de la ressource </label>
-                        </div>
-                        <div class="form-field-input flex-col">
-                            <input id='categoryname' type='text' name='categoryname'>
-                        </div>
+                    <div class='flex-col'>
+                            <label class="label" for='name'> Nom de la ressource </label>
+                            <input class="input" id='categoryname' type='text' name='categoryname'>
                     </div> 
  
                     <fieldset id="fs-add-material-category">

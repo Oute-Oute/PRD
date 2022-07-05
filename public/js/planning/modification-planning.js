@@ -92,6 +92,12 @@ function addEvent() {
   let selectContainerErrorTime = document.getElementById("time-selected-error");
   selectContainerErrorTime.style.display = "none";
   $("#add-planning-modal").modal("show");
+  let filter = document.getElementById("filterId"); //get the filter
+  filter.style.display = "none"; //hide the filter
+  while (filter.firstChild) {
+    //while there is something in the filter
+    filter.removeChild(filter.firstChild); //remove the old content
+  }
 }
 
 function AddEventValider() {
@@ -105,9 +111,17 @@ function AddEventValider() {
   var listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value
   );
+
+  var listeActivitHumanResource = JSON.parse(
+    document.getElementById("listeActivityHumanResource").value
+  );
+  var listeActivityMaterialResource = JSON.parse(
+    document.getElementById("listeActivityMaterialResource").value
+  );
+
   var appointmentid = document.getElementById("select-appointment").value;
 
-  //Récupération du rdv choisit par l'utiuilisateur
+  //Récupération du rdv choisit par l'utilisateur
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
@@ -123,34 +137,40 @@ function AddEventValider() {
   );
 
   //Test pour savoir si l'heure renseignée est comprise dans l'interval earliestappointmenttime et lastestappointmenttime
- 
-
-  let earliestAppointmentDate = new Date(
+  var earliestAppointmentDate = new Date(
     appointment.earliestappointmenttime
   ).getTime();
-  let latestAppointmentDate = new Date(
+  var latestAppointmentDate = new Date(
     appointment.latestappointmenttime
   ).getTime();
-  let choosenAppointmentDate = new Date(
+  var choosenAppointmentDate = new Date(
     "1970-01-01 " + PathwayBeginTime
   ).getTime();
 
+  var EndPathwayDate = new Date(choosenAppointmentDate);
+
+  //Récupération des activités du parcours
+  var activitiesInPathwayAppointment = [];
+  for (let i = 0; i < listeActivities.length; i++) {
+    if (
+      "pathway_" + listeActivities[i]["idPathway"] ==
+      appointment["idPathway"][0].id
+    ) {
+      activitiesInPathwayAppointment.push(listeActivities[i]);
+    }
+  }
+
+  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
+    EndPathwayDate = new Date(
+      new Date(EndPathwayDate).getTime() +
+        activitiesInPathwayAppointment[i].duration * 60000
+    );
+  }
+
   if (
     earliestAppointmentDate <= choosenAppointmentDate &&
-    choosenAppointmentDate <= latestAppointmentDate
+    EndPathwayDate <= latestAppointmentDate
   ) {
-
-    //Récupération des activités du parcours
-    var activitiesInPathwayAppointment = [];
-    for (let i = 0; i < listeActivities.length; i++) {
-      if (
-        "pathway_" + listeActivities[i]["idPathway"] ==
-        appointment["idPathway"][0].id
-      ) {
-        activitiesInPathwayAppointment.push(listeActivities[i]);
-      }
-    }
-
     //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
     var successorsActivitybIdList = [];
     for (let i = 0; i < listeSuccessors.length; i++) {
@@ -175,12 +195,41 @@ function AddEventValider() {
     //Début de la création des events
     do {
       var idactivityB = undefined;
-      //find activity with idactivitya id
+      var quantityHumanResources = 0;
+      var quantityMaterialResources = 0;
+      var activityResourcesArray = [];
+      //trouver l'activité correspondant à l'idactivitya
       for (let i = 0; i < listeActivities.length; i++) {
         if (listeActivities[i].id == idactivitya) {
           activitya = listeActivities[i];
         }
       }
+
+      //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+      for (let i = 0; i < listeActivitHumanResource.length; i++) {
+        if (listeActivitHumanResource[i].activityId == idactivitya) {
+          quantityHumanResources += listeActivitHumanResource[i].quantity;
+        }
+      }
+
+      //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
+      for (let i = 0; i < quantityHumanResources; i++) {
+        activityResourcesArray.push("h-default");
+      }
+
+      //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
+      for (let i = 0; i < listeActivityMaterialResource.length; i++) {
+        if (listeActivityMaterialResource[i].activityId == idactivitya) {
+          quantityMaterialResources +=
+            listeActivityMaterialResource[i].quantity;
+        }
+      }
+
+      //Rentrer le nombre de resources materielles dans le tableau de Resources de l'event
+      for (let i = 0; i < quantityMaterialResources; i++) {
+        activityResourcesArray.push("m-default");
+      }
+
       //trouver dans la table successor le correspondant au activiteida
       for (let i = 0; i < listeSuccessors.length; i++) {
         if (listeSuccessors[i].idactivitya == idactivitya) {
@@ -193,8 +242,8 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       calendar.addEvent({
         id: "new" + CoundAddEvent,
-        resourceIds: ["h-default", "m-default"],
-        title: activitya.name.replaceAll('3aZt3r',' '),
+        resourceIds: activityResourcesArray,
+        title: activitya.name.replaceAll("3aZt3r", " "),
         start: PathwayBeginDate,
         end: PathwayBeginDate.getTime() + activitya.duration * 60000,
         patient: appointment.idPatient,
@@ -212,9 +261,10 @@ function AddEventValider() {
     } while (idactivityB != undefined);
     calendar.render();
     $("#add-planning-modal").modal("toggle");
-  }
-  else{
-    let selectContainerErrorTime = document.getElementById("time-selected-error");
+  } else {
+    let selectContainerErrorTime = document.getElementById(
+      "time-selected-error"
+    );
     selectContainerErrorTime.style.display = "block";
   }
 }
@@ -224,11 +274,62 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
+/**
+ * @brief This function is called when we want to go to display the filter window, called when click on the filter button
+ */
 function filterShow() {
-  if (document.getElementById("filterId").style.display != "none") {
-    document.getElementById("filterId").style.display = "none";
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none") {
+    //if the filter is already displayed
+    filter.style.display = "none"; //hide the filter
+    while (filter.firstChild) {
+      //while there is something in the filter
+      filter.removeChild(filter.firstChild); //remove the old content
+    }
   } else {
-    document.getElementById("filterId").style.display = "inline-block";
+    filter.style.display = "inline-block"; //display the filter
+    if (calendar.getResources().length == 0) {
+      //if there is no resource in the calendar
+      var label = document.createElement("label"); //display a label
+      label.innerHTML = "Aucune ressource à filtrer"; //telling "no resources"
+      filter.appendChild(label); //add the label to the filter
+    }
+    for (var i = 0; i < calendar.getResources().length; i++) {
+      //fo all the resources in the calendar
+      var input = document.createElement("input"); //create a input
+      input.type = "checkbox"; //set the type of the input to checkbox
+      input.id = calendar.getResources()[i].id; //set the id of the input to the id of the resource
+      input.name = calendar.getResources()[i].title; //set the name of the input to the title of the resource
+      input.checked = true; //set the checkbox to checked
+      input.onchange = function () {
+        //set the onchange event
+        changeFilter(this.id); //call the changeFilter function with the id of the resource
+      };
+      filter.appendChild(input); //add the input to the filter
+      var label = document.createElement("label"); //create a label
+      label.htmlFor = calendar.getResources()[i].id; //set the htmlFor of the label to the id of the resource
+      label.innerHTML = "&nbsp;" + calendar.getResources()[i].title; //set the text of the label to the title of the resource
+      filter.appendChild(label); //add the label to the filter
+      filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+    }
+  }
+}
+
+/**
+ * @brief This function is called when we want to filter the resources of the calendar
+ * @param {*} id the id of resource to filter
+ */
+function changeFilter(id) {
+  if (document.getElementById(id).checked == true) {
+    //if the resource is checked
+    calendar.addResource({
+      //add the resource to the calendar
+      id: id, //set the id of the resource
+      title: document.getElementById(id).name, //set the title of the resource
+    });
+  } else {
+    var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
+    resource.remove(); //remove the resource from the calendar
   }
 }
 
@@ -239,6 +340,12 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
+  let filter = document.getElementById("filterId"); //get the filter
+  filter.style.display = "none"; //hide the filter
+  while (filter.firstChild) {
+    //while there is something in the filter
+    filter.removeChild(filter.firstChild); //remove the old content
+  }
 }
 
 function updateEventsAppointment(oldEvent, newDelay, clickModify) {

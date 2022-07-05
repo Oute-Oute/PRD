@@ -59,8 +59,8 @@ class HumanResourceCategoryController extends AbstractController
      */
     public function edit(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository, EntityManagerInterface $entityManager): Response
     {
-        $idCateg = $request->request->get("idcategory");
-        $nameCateg = $request->request->get("categoryname");
+        $idCateg = $request->request->get("idcategoryedit");
+        $nameCateg = $request->request->get("categorynameedit");
         $category = $humanResourceCategoryRepository->findOneBy(['id' => $idCateg]);
         $category->setCategoryname($nameCateg);
 

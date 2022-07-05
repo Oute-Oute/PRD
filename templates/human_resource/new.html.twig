@@ -13,13 +13,9 @@
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
                     <input style="display:none;" name="nbCategory" id="nbCategory">
 
-                    <div class='flex-row'>
-                        <div class="form-field-label flex-col">
-                            <label for='name'> Nom de la ressource </label>
-                        </div>
-                        <div class="form-field-input flex-col">
-                            <input id='categoryname' type='text' name='categoryname'>
-                        </div>
+                    <div class='flex-col'>
+                            <label class="label" for='name'> Nom de la ressource </label>
+                            <input class="input" id='categoryname' type='text' name='categoryname'>
                     </div> 
  
                     <fieldset id="fs-add-human-category">
@@ -33,7 +29,7 @@
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>
                                 {% endfor %}
-
+ 
                             </select>
                         </div>
                         <button type="button" id='btn-add-category' onclick="handleAddHumanCategory()"> <b> Ajouter </b> </button> 
@@ -42,7 +38,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button id='submit' type="submit" class="btn-valide btn-secondary"> Ajouter </button>
+                    <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
 
                 </div>
     	    </form>

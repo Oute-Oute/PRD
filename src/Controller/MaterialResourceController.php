@@ -25,11 +25,37 @@ class MaterialResourceController extends AbstractController
     public function index(MaterialResourceRepository $materialResourceRepository): Response
     {
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
         $materialResourceCategories = $materialResourceCategoryRepository->findAll();
+        $materialResources = $materialResourceRepository->findAll();
+        $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
+        $nbMaterialResource = count($materialResources);
+        $nbCategBy = count($categOfMaterialResource);
+        $categoriesByResources = array();
+
+        for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
+            if ($materialResources[$indexResource]->isAvailable()) {
+                $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
+            
+                $categoriesByResource = array();
+                for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
+                    //dd($humanResourceCategories[$indexCategOf]->getCategoryname());
+                    //dd( $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]]));
+                    //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
+                    //dd($listCategOf[$indexCategOf]);
+    
+                    array_push($categoriesByResource, $materialResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getMaterialresourcecategory()->getId()])[0]);
+                    
+                }
+                array_push($categoriesByResources, $categoriesByResource);
+            }
+        }
+        //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $materialResourceRepository->findBy(['available' => true]),
-            'material_resources_categories' => $materialResourceCategories
-        ]);
+            'material_resources_categories' => $materialResourceCategories,
+            'categoriesByResources' => $categoriesByResources
+        ]); 
     }
 
     /**
@@ -75,23 +101,69 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, MaterialResource $materialResource, MaterialResourceRepository $materialResourceRepository): Response
+    public function edit(Request $request)
     {
-        $form = $this->createForm(MaterialResource1Type::class, $materialResource);
-        $form->handleRequest($request);
+       // Méthode POST pour ajouter un circuit
+       if ($request->getMethod() === 'POST' ) {
+            
+        // On recupere toutes les données de la requete
+        $param = $request->request->all();
+        // On récupère l'objet parcours que l'on souhaite modifier grace a son id
+        $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
+        $materialResource = $materialResourceRepository->findById($param['id'])[0];
+        $materialResource->setMaterialResourceName($param['resourcename']);
+        //$pathway->setAvailable(true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $materialResourceRepository->add($materialResource, true);
+        // On ajoute le parcours a la bd
+        $materialResourceRepository->add($materialResource, true);
 
-            return $this->redirectToRoute('app_material_resource_index', [], Response::HTTP_SEE_OTHER);
+        // On s'occupe ensuite ds liens entre le parcours et les activités :
+
+        // On récupère toutes les activités
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
+        $materialResourcesCategories = $materialResourceCategoryRepository->findAll();
+
+        // On supprime toutes les activités et leurs successor
+        $em=$this->getDoctrine()->getManager();
+        $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+            for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+                $em->remove($categsOfResources[$indexCategOf]);
+            }
+            $em->flush();
         }
 
-        return $this->renderForm('material_resource/edit.html.twig', [
-            'material_resource' => $materialResource,
-            'form' => $form,
-        ]);
-    }
+        // On récupère le nombre de catégories
+        $nbCategories = $param['nbcategory'];
 
+        //$activityArray = array();
+        if ($nbCategories != 0) {
+            /* $categOf_old = new CategoryOfHumanResource();      
+            
+            $categOf_old->setHumanresource($param["name-activity-0"]);
+            $categOf_old->setHumanresourcecategory($param[ "duration-activity-0"]);
+
+            $categOfHumanResourceRepository->add($categOf_old, true); */
+
+            for($i = 0; $i < $nbCategories; $i++)
+            {
+                
+                $categOf = new CategoryOfMaterialResource();
+                $categOf->setMaterialresource($materialResource);
+                $categOf->setMaterialresourcecategory($materialResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
+                //dd($categOf);
+                $categOfMaterialResourceRepository->add($categOf, true);
+                //dd($categOfHumanResourceRepository->findAll());
+               //}
+
+              //  $categOf_old = $categOfHumanResourceRepository->findById($humanResource->getId())[0];
+
+            }
+        }
+        
+        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+    }
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
