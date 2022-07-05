@@ -52,10 +52,10 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
-  let filter = document.getElementById("filterId");
+  let filter = document.getElementById("filterId");//get the filter
   filter.style.display = "none"; //hide the filter
-  while(filter.firstChild){
-    filter.removeChild(filter.firstChild);
+  while(filter.firstChild){//while there is something in the filter
+    filter.removeChild(filter.firstChild);//remove the old content
   }
 }
 
