@@ -300,12 +300,35 @@ class ModificationPlanningController extends AbstractController
                 $humanResourcesArray[] = array(
                     'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
+                    'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
                 );
             }
         }
         //Conversion des données ressources en json
         $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
         return $humanResourcesArrayJson;    
+    }
+     /*
+     * @brief This function is the getter of the working hours to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHoursArray = array();
+        foreach ($setOfWorkingHours as $workingHours) {
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = array(
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+
+            );
+        }
+        return $workingHoursArray;
     }
 
     public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
