@@ -536,7 +536,6 @@ function createCalendar(typeResource) {
     eventDrop: function (event) {
       var oldEvent = event.oldEvent;
       var modifyEvent = event.event;
-      console.log(oldEvent, modifyEvent)
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var clickModify = false;
       updateEventsAppointment(oldEvent, newDelay, clickModify);
