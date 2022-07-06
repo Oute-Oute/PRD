@@ -180,15 +180,16 @@
 			</button>
 			<div id="filterId" class="filter-container" style="display:none"></div>
 		</div>
-
 		<!-- liste des boutons pour annuler ou valider les modifications -->
-		<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date'))">Annuler</button>
-		<form method="post" action="{{ path('ModificationPlanningValidation') }}">
-			<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
-			<input type="hidden" id='events' name="events"/>
-			<input type="hidden" id='validation-date' name="validation-date"/>
-			<input type="hidden" id='list-resource' name="list-resource"/>
-		</form>
+		<div id='container-top-right'>
+			<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date'))">Annuler</button>
+			<form method="post" action="{{ path('ModificationPlanningValidation') }}">
+				<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
+				<input type="hidden" id='events' name="events"/>
+				<input type="hidden" id='validation-date' name="validation-date"/>
+				<input type="hidden" id='list-resource' name="list-resource"/>
+			</form>
+		</div>
 	</div>
 	<div
 		id="calendar-container" class="calendar-container">

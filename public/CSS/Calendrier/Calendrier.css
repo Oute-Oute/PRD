@@ -18,6 +18,11 @@ div#container {
   margin-top: 2.5%;
 }
 
+#container-top-right {
+  display: flex;
+  flex-direction: row;
+}
+
 .form-control {
   border-radius: 50px;
   box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;

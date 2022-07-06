@@ -19,7 +19,7 @@
                     <fieldset id="fs-add-activity">
                         <h4>Choisissez les activités de votre parcours</h4>
                 
-                        <div id="activities-container"> 
+                        <div class="activities-container"> 
                             {#<select style="display:none;" class="select-activity-sample" class="slct-add-activity" > 
 
                                 {% for activity in activities %} 
@@ -30,7 +30,7 @@
 
                             </select>#}
 
-                            <div class="div-activity-0" >
+                           <!-- <div class="div-activity-0" >
                                 <p class="label">Activité : </p>
                                 <div class="activity-field">
                                     <input class="input-name" placeholder="Nom" onchange="disableSubmit()">
@@ -38,20 +38,23 @@
                                     <img src="img/delete.svg" id="img-0" onclick="deleteSelect(this.id)">
                                 </div>
 
+
                                 <div class="div-edit-activities" id="div-edit-activity-0" >
                                     <div class="div-buttons-resources">                    
                                         <button type="button"> Humaines </button>
-                                       <button type="button"> Materielles </button> 
+                                        <button type="button"> Materielles </button> 
                                     </div>
+
                                     <div class="div-resources"> 
-                                             <div class="div-resources-h"> 
+                                        <div class="div-resources-h"> 
                                     
                                         </div>
                                         <div class="div-resources-m"> 
                                     
                                         </div>
                                     </div>
-                 
+
+                                    <p> Ajouter une ressource </p>
                                     <div class="div-add-resources"> 
                                         <select> 
                                             <option> Ressource 1 </option>
@@ -63,7 +66,9 @@
                                         <button type="button"> + </button>
                                     </div>
                                 </div>
-                            </div>
+
+
+                            </div>-->
 
                         </div>
                         <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
@@ -73,7 +78,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
                     <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>0
+                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
                 </div>
     	    </form>
         </div>

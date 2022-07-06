@@ -1,10 +1,7 @@
-
-
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
-var popupClicked = false;
 var modifAlertTime = 480000; // En millisecondes
+var timer;
 setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -420,9 +417,12 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+        calendar.getEventById(oldEvent._def.publicId).setStart(calendar.getEventById(oldEvent._def.publicId).start);
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
+            eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -432,6 +432,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
           }
           else if (eventAppointment._def.publicId != oldEvent._def.publicId)
           {
+            eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -443,6 +444,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
       }
 
       else {
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
         var startStr = formatDate(startDate).replace(" ", "T");
         var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
@@ -540,7 +542,7 @@ function createCalendar(typeResource) {
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var clickModify = false;
       updateEventsAppointment(oldEvent, newDelay, clickModify);
-      console.log(RessourcesAllocated(modifyEvent)); 
+      calendar.render();
     }
   });
   switch (typeResource) {
@@ -653,6 +655,10 @@ function createCalendar(typeResource) {
   for (var i = 0; i < eventsarray.length; i++) {
     calendar.addEvent(eventsarray[i]);
   }
+  let listCurrentEvent = calendar.getEvents();
+  listCurrentEvent.forEach((currentEvent) => {
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+  })
 
   //affiche le calendar
   calendar.gotoDate(date);
@@ -661,21 +667,28 @@ function createCalendar(typeResource) {
 
 function showPopup() {
   $("#divPopup").show();
+
+  timer = setInterval(function() {
+    var count = $('span.countdown').html();
+    if (count > 1) {
+      $('span.countdown').html(count - 1);
+    }
+    else{
+        clearInterval(timer);
+        window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
+    }
+  }, 1000);
 }
 
 function closePopup() {
   $("#divPopup").hide();
-  popupClicked = true;
+  clearInterval(timer);
+  $('span.countdown').html(60);
   setTimeout(showPopup, modifAlertTime);
 }
 
-function deleteModifInDB(popupClicked){
-  if (popupClicked) {
-    popupClicked = false;
-    setTimeout(deleteModifInDB, modifAlertTime);
-  } else {
-    window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
-  }
+function deleteModifInDB(){
+  window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
 }
 
 function RessourcesAllocated(event){
