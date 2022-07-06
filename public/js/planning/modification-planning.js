@@ -697,14 +697,14 @@ function deleteModifInDB(){
 function RessourcesAllocated(event){
     
     if(event._def.resourceIds.includes('m-default')){
-        return 'red';  
+        return 'rgba(173, 11, 11, 0.753)';  
     }
     else if(event._def.resourceIds.includes('h-default')){
-        return 'red'; 
+      return 'rgba(173, 11, 11, 0.753)'; 
     }
 
     else{
-      return 'green';
+      return '#20c997';
     }
 
 }
