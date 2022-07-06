@@ -136,5 +136,19 @@ function deleteSelect(id) {
         btnSubmit.disabled = false;
     }
 }
+
+function hideNewModalForm() {
+    $('#new-human-resource-category-modal').modal("hide");
+    $('#new-human-resource-modal').modal("hide");
+    $('#new-material-resource-category-modal').modal("hide");
+    $('#new-material-resource-modal').modal("hide");
+}
+
+function hideEditModalForm() {
+    $('#edit-human-resource-category-modal').modal("hide");
+    $('#edit--human-resource-modal').modal("hide");
+    $('#edit--material-resource-category-modal').modal("hide");
+    $('#edit--material-resource-modal').modal("hide");
+}
 // #container-modal 
 // .modal-form             #form-add-activity

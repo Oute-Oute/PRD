@@ -210,7 +210,6 @@ function showNewModalForm(){
  */
 function hideNewModalForm() {
     $('#add-pathway-modal').modal("hide");
-    console.log('hide')
 }
 
 
