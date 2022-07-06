@@ -22,10 +22,10 @@ function showPatient(id) {
 
 function usernameTestEdit(){
    
-  var listeUser=JSON.parse(document.getElementById("userList").value);
-  let usernamerequest = document.getElementById('username').value;  
-  var id = document.getElementById('iduser').value;  
-  console.log(id)
+  let listeUser=JSON.parse(document.getElementById("userList").value);
+  let usernamerequest = document.getElementById('usernameEdit').value;  
+  let id = document.getElementById('iduserEdit').value;  
+  console.log(usernamerequest)
   let dispo = true    
   for (let i = 0; i < listeUser.length; i++){      
      if (usernamerequest == listeUser[i].username && !(id==listeUser[i].id)){
