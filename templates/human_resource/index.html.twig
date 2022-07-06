@@ -51,9 +51,8 @@
     <table class="table table-striped table-index-users">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nom de la ressource</th>
-                <th>Catégories</th>
+                <th>Identifiant</th>
+                <th>Nom</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -63,22 +62,24 @@
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
+                {#
                 <td> 
                     {% if (categoriesByResources[indexResource]) %}
-                        <select>
+                    <select>
                                 {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
-                                    <option value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
+                                    <option id = "option-categories-list-select" value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
                                 {% else %}
                                 {% endfor %}
                         </select> 
+                    </div>
                     {% else %}
                         <p> Pas d'activites créées ! </p> 
-                    {% endif %}
-                </td>
+                    {% endif %} 
+                </td> #}
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
-                    {{ include('human_resource/_delete_form.html.twig') }}
+                    {{ include('human_resource/delete_resource.html.twig') }}
                 </td>
             </tr>
 
@@ -100,7 +101,7 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Nom de la catégorie</th>
+                <th>Nom</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -112,7 +113,7 @@
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Infos</a>
                    <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
-                    {{ include('human_resource_category/_delete_form.html.twig') }}
+                    {{ include('human_resource/delete_category.html.twig') }}
 
                 </td>
             </tr>
@@ -124,12 +125,12 @@
         </tbody>
     </table>
 </div>
-{{ include ('human_resource/show.html') }}
-{{ include ('human_resource/new.html.twig') }}
-{{ include ('human_resource/edit.html.twig') }}
-{{ include ('human_resource_category/new.html.twig') }}
-{{ include ('human_resource_category/show.html') }}
-{{ include ('human_resource_category/edit.html.twig')}}
+{{ include ('human_resource/show_resource.html.twig') }}
+{{ include ('human_resource/new_resource.html.twig') }}
+{{ include ('human_resource/edit_resource.html.twig') }}
+{{ include ('human_resource/show_category.html.twig') }}
+{{ include ('human_resource/new_category.html.twig') }}
+{{ include ('human_resource/edit_category.html.twig')}}
 
 {% endblock %}
 

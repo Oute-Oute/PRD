@@ -1,0 +1,34 @@
+	<!-- edit-patient-modal -->
+
+		<div class="modal" id="edit-patient-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Modifier un patient</h2>
+					</div>
+					<form action="{{ path('PatientEdit') }}" method="post">
+						<div class="modal-body">
+							<input type="hidden" name="idpatient" id="idpatient">
+							<div class="flex-col">
+								<label class="label" for='lastname'>
+									Nom
+								</label>
+								<input class="input" type='text' name='lastname' id='lastname'>
+							</div>
+							<div class="flex-col">
+								<label class="label" for='firstname'>
+									Prénom
+								</label>
+								<input class="input" type='text' name='firstname' id='firstname'>
+							</div>
+							<br>
+
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
+							<button type="submit" class="btn-valide btn-secondary">
+								Modifier
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>

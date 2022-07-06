@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MaterialResource index{% endblock %}
+{% block title %}Liste des ressources matérielles{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
@@ -52,8 +52,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nom de la ressource</th>
+                <th>Identifiant</th>
+                <th>Nom</th>
                 <th>Actions</th>
             </tr>
         </thead> 
@@ -63,22 +63,10 @@
             <tr>
                 <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
-                <td> 
-                    {% if (categoriesByResources[indexResource]) %}
-                        <select>
-                                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
-                                    <option value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
-                                {% else %}
-                                {% endfor %}
-                        </select> 
-                    {% else %}
-                        <p> Pas d'activites créées ! </p> 
-                    {% endif %}
-                </td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Infos</a>
                    <button class = "btn-edit btn-secondary" onclick="showEditModalFormMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}', '{{indexResource}}')">Éditer</a>
-                    {{ include('material_resource/_delete_form.html.twig') }}
+                    {{ include('material_resource/delete_resource.html.twig') }}
                 </td>
             </tr>
         {% set indexResource = indexResource + 1 %}
@@ -94,8 +82,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nom de la catégorie</th>
+                <th>Identifiant</th>
+                <th>Nom</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -107,7 +95,7 @@
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Infos</a>
                    <button class = "btn-edit btn-secondary"  onclick="showEditMaterialCategModalForm('{{ material_resource_category.id }}', '{{ material_resource_category.categoryname }}')">Éditer</a>
-                   {{ include('material_resource_category/_delete_form.html.twig') }}
+                   {{ include('material_resource/delete_category.html.twig') }}
                 </td>
             </tr>
         {% else %}
@@ -120,10 +108,10 @@
 </div>
 
 
-{{ include ('material_resource/show.html') }}
-{{ include ('material_resource/new.html.twig') }}
-{{ include ('material_resource/edit.html.twig') }}
-{{ include ('material_resource_category/new.html.twig') }}
-{{ include ('material_resource_category/show.html') }}
-{{ include ('material_resource_category/edit.html.twig')}}
+{{ include ('material_resource/show_resource.html.twig') }}
+{{ include ('material_resource/new_resource.html.twig') }}
+{{ include ('material_resource/edit_resource.html.twig') }}
+{{ include ('material_resource/show_category.html.twig') }}
+{{ include ('material_resource/new_category.html.twig') }}
+{{ include ('material_resource/edit_category.html.twig')}}
 {% endblock %}

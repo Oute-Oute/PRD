@@ -694,9 +694,9 @@ class ModificationPlanningController extends AbstractController
                 $activity = $doctrine->getRepository("App\Entity\Activity")->findOneBy(["id" => $event[0]->extendedProps->activity]);
                 $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $event[0]->extendedProps->appointment]);
 
+                $appointment->setScheduled(true);
                 $newScheduledActivity->setActivity($activity);
                 $newScheduledActivity->setAppointment($appointment);
-
                 $scheduledActivityRepository->add($newScheduledActivity, true);
 
                 //on parcours la liste de ses ressources associés

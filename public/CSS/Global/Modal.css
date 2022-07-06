@@ -88,9 +88,6 @@ p .label {
     font-weight: 900;
 }
 
-
-
-
 /* ------------------ MODIFICATION RESOURCE IN DANS UN ACTIVITY ------------------ */
 
 .div-edit-activities {
@@ -109,8 +106,7 @@ p .label {
     border: none;
     width: 50%;
     background-color: transparent;
-    border: 1px solid lightgrey;
-
+    border: none;
 }
 
 /* div qui contient le tableau des resources */
@@ -162,3 +158,4 @@ p .label {
     border: none;
     font-weight: 900;
 }
+

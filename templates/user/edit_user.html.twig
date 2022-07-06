@@ -1,0 +1,48 @@
+
+		<!-- edit-user-modal -->
+
+		<div class="modal" id="edit-user-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Modifier un utilisateur</h2>
+					</div>
+					<form action="{{ path('UserEdit') }}" method="post">
+						<div class="modal-body">
+							<input type="hidden" name="iduser" id="iduser">
+							<div>
+								<label for='username'>
+									Nom d'utilisateur
+								</label>
+								<input type='text' name='username' id='username'>
+							</div>
+							<div>
+								<label for='password'>
+									Nouveau mot de passe temporaire
+								</label>
+								<input type='password' required="required" name='password' id='password'>
+							</div>
+							<div>
+								<label for='role'>
+									Roles
+								</label>
+								<select name="role" id="role">
+									<option value="">--Choissisez le role de l'utilisateur--</option>
+									<option value="Admin">Admin</option>
+									<option value="Editeur">Editeur</option>
+									<option value="Visiteur">Visiteur</option>
+
+								</select>
+							</div>
+
+							<br>
+
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
+							<button type="submit" class="btn-valide btn-secondary">
+								Modifier
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
