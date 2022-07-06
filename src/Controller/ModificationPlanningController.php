@@ -114,7 +114,7 @@ class ModificationPlanningController extends AbstractController
             
             if($modifArray[$i]['dateModified']==$dateModified){
                 // ATTENTION, le timer doit être supérieur à celui du popup
-                if($intervalHour*60+$intervalMinutes < 30){
+                if($intervalHour*60+$intervalMinutes < 10){
                     if($idUser == $modifArray[$i]['userId']){// Empeche d'envoyer une erreur si un user quitte et revient
                         $modificationRepository->remove($modification, true);
                     }
