@@ -1,6 +1,6 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
-var modifAlertTime = 1680000; // En millisecondes
+var modifAlertTime = 480000; // En millisecondes
 setTimeout(showPopup, modifAlertTime);
 setTimeout(deleteModifInDB, modifAlertTime+60000);
 

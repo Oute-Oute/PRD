@@ -66,7 +66,7 @@ class ModificationPlanningController extends AbstractController
         $listActivityHumanResourcesJSON=$this->listActivityHumanResourcesJSON($doctrine); 
         $listActivityMaterialResourcesJSON=$this->listActivityMaterialResourcesJSON($doctrine);
 
-        if($this->alertModif($dateModified)){
+        if($this->alertModif($dateModified, $idUser)){
             $this->modificationAdd($dateModified, $idUser);
         }
 
@@ -89,7 +89,7 @@ class ModificationPlanningController extends AbstractController
         ]);
     }
 
-    public function alertModif($dateModified)
+    public function alertModif($dateModified, $idUser)
     {
         $modificationRepository = new ModificationRepository($this->getDoctrine());
         $modifications = $modificationRepository->findAll();
@@ -103,7 +103,8 @@ class ModificationPlanningController extends AbstractController
         foreach ($modifications as $modification) {
             $modifArray[] = array(
                 'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
-                'dateModified' => ($modification->getDatemodified()->format('Y-m-d'))
+                'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
+                'userId' => ($modification->getUser()->getId())
             );
             $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
             $interval = $datetimeModified->diff($dateToday);
@@ -113,12 +114,17 @@ class ModificationPlanningController extends AbstractController
             
             if($modifArray[$i]['dateModified']==$dateModified){
                 // ATTENTION, le timer doit être supérieur à celui du popup
-                if($intervalHour*60+$intervalMinutes < 30){
-                    echo "<script> 
-                        alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
-                        window.location.assign('/ConsultationPlanning');
-                    </script>";
-                    return false;
+                if($intervalHour*60+$intervalMinutes < 10){
+                    if($idUser == $modifArray[$i]['userId']){// Empeche d'envoyer une erreur si un user quitte et revient
+                        $modificationRepository->remove($modification, true);
+                    }
+                    else{
+                        echo "<script> 
+                            alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
+                            window.location.assign('/ConsultationPlanning');
+                        </script>";
+                        return false;
+                    }
                 }
                 else{
                     // Supprimer la modif dans BDD car trop vieille
@@ -139,7 +145,7 @@ class ModificationPlanningController extends AbstractController
         // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
         // A enlever plus tard car on est censé être connecté
         if(!$user){
-            //dd("Erreur, vous n'êtes pas connecté !");
+            //dd($user, "Erreur, vous n'êtes pas connecté !");
         }
         else{
             $userRepository->add($user, true);
@@ -218,7 +224,6 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanninEventsgGet(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
     }
-
 
     public function listAppointment(ManagerRegistry $doctrine,$date)
     {
