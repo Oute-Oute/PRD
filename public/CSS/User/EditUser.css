@@ -58,3 +58,9 @@ div#user{
 input {
     margin-left : 10px;
 }
+
+p1{
+    visibility: collapse;    
+    color: #ff0000;
+}
+

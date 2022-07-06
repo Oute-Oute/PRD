@@ -10,15 +10,15 @@
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
 	
 	<script src="js/jquery-3.6.0.js"></script>
-    <script src="js/popper.min.js"></script>
-	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf" crossorigin="anonymous"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY" crossorigin="anonymous"></script>
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 	<script src="js/planning/consultation-planning.js"></script>
 
 	<div class="all-container" id="all">
 		<h1>Consultation du Planning</h1>
 		<div class="flex">
-			<button class="btn-valide" onclick="modify({#{{app.user.getId()}}#}1)">Modifier le planning</button>
+			<button class="btn-valide" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
 			<select class="list-edit" id="displayList" onchange="changePlanning()">
 				<option value="0" selected disabled>Changer l'affichage
 				</option>

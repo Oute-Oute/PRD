@@ -35,8 +35,14 @@ function $_GET(param) {
 }
 
 //update the date with the date in url
-var dateStr = $_GET("date");
+dateStr = $_GET("date");
 date = new Date(dateStr);
+
+if ($_GET("headerResources") != null) {
+  headerResources = $_GET("headerResources"); //get the type of resources to display in the list
+  headerResources = headerResources.replaceAll("%20", " "); //remove the space in the header
+  console.log(headerResources);
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   createCalendar("Patients");
@@ -158,12 +164,13 @@ function createCalendar(resources) {
     slotDuration: "00:20:00", //set the duration of the slot
     locale: "fr", //set the language in french
     timeZone: "Europe/Paris", //set the timezone for France
-    selectable: true, //set the calendar to be selectable
+    selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
     contentHeight: (height * 12) / 16, //set the height of the calendar to fit with a standard display
     handleWindowResize: true, //set the calendar to be resizable
     eventDurationEditable: false, //set the event duration not to be editable
     nowIndicator: true, //display the current time
+    selectConstraint: "businessHours", //set the select constraint to be business hours
     headerToolbar: {
       //delete the toolbar
       start: null,
@@ -340,7 +347,12 @@ function changeDate() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -363,7 +375,12 @@ function PreviousDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -386,7 +403,12 @@ function NextDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -404,5 +426,10 @@ function Today() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
