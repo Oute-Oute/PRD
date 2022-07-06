@@ -1,3 +1,5 @@
+
+
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
 var modifAlertTime = 480000; // En millisecondes
@@ -29,7 +31,6 @@ function $_GET(param) {
   return vars;
 }
 
-console.log(dateStr);
 
 document.addEventListener("DOMContentLoaded", function () {
   //Créer le calendar sous les conditions que l'on souhaite
@@ -539,6 +540,7 @@ function createCalendar(typeResource) {
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var clickModify = false;
       updateEventsAppointment(oldEvent, newDelay, clickModify);
+      console.log(RessourcesAllocated(modifyEvent)); 
     }
   });
   switch (typeResource) {
@@ -674,4 +676,19 @@ function deleteModifInDB(popupClicked){
   } else {
     window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
   }
+}
+
+function RessourcesAllocated(event){
+    
+    if(event._def.resourceIds.includes('m-default')){
+        return 'red';  
+    }
+    else if(event._def.resourceIds.includes('h-default')){
+        return 'red'; 
+    }
+
+    else{
+      return 'green';
+    }
+
 }
