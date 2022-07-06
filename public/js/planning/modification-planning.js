@@ -1,10 +1,7 @@
-
-
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
-var popupClicked = false;
 var modifAlertTime = 480000; // En millisecondes
+var timer;
 setTimeout(showPopup, modifAlertTime);
-setTimeout(deleteModifInDB, modifAlertTime+60000);
 
 var calendar;
 var CoundAddEvent = 0;
@@ -661,21 +658,28 @@ function createCalendar(typeResource) {
 
 function showPopup() {
   $("#divPopup").show();
+
+  timer = setInterval(function() {
+    var count = $('span.countdown').html();
+    if (count > 1) {
+      $('span.countdown').html(count - 1);
+    }
+    else{
+        clearInterval(timer);
+        window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
+    }
+  }, 1000);
 }
 
 function closePopup() {
   $("#divPopup").hide();
-  popupClicked = true;
+  clearInterval(timer);
+  $('span.countdown').html(60);
   setTimeout(showPopup, modifAlertTime);
 }
 
-function deleteModifInDB(popupClicked){
-  if (popupClicked) {
-    popupClicked = false;
-    setTimeout(deleteModifInDB, modifAlertTime);
-  } else {
-    window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
-  }
+function deleteModifInDB(){
+  window.location.assign("/ModificationDeleteOnUnload?dateModified=" + $_GET('date'));
 }
 
 function RessourcesAllocated(event){
