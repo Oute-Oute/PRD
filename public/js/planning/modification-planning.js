@@ -418,6 +418,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+        calendar.getEventById(oldEvent._def.publicId).setStart(calendar.getEventById(oldEvent._def.publicId).start);
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
