@@ -420,9 +420,11 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
+            eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -432,6 +434,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
           }
           else if (eventAppointment._def.publicId != oldEvent._def.publicId)
           {
+            eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -449,6 +452,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         var endStr = formatDate(endDate).replace(" ", "T");
         calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
         calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
       }
 }
 
@@ -540,7 +544,8 @@ function createCalendar(typeResource) {
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var clickModify = false;
       updateEventsAppointment(oldEvent, newDelay, clickModify);
-      console.log(RessourcesAllocated(modifyEvent)); 
+      console.log(calendar.getEvents());
+      calendar.render();
     }
   });
   switch (typeResource) {
@@ -653,6 +658,10 @@ function createCalendar(typeResource) {
   for (var i = 0; i < eventsarray.length; i++) {
     calendar.addEvent(eventsarray[i]);
   }
+  let listCurrentEvent = calendar.getEvents();
+  listCurrentEvent.forEach((currentEvent) => {
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+  })
 
   //affiche le calendar
   calendar.gotoDate(date);
