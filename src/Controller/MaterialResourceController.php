@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\MaterialResource;
 use App\Entity\CategoryOfMaterialResource;
-use App\Form\MaterialResource1Type;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryOfMaterialResourceRepository;
-
+use App\Repository\MaterialResourceScheduledRepository;
+use App\Repository\UnavailabilityMaterialResourceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @Route("/material/resource")
@@ -167,9 +168,34 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
-    public function delete(Request $request, MaterialResource $materialResource, MaterialResourceRepository $materialResourceRepository): Response
+    public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
+            $listCategoryOfMaterialResource = $categoryOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+
+            foreach($listCategoryOfMaterialResource as $categoryOfMaterialResource)
+            {
+                $categoryOfMaterialResourceRepository->remove($categoryOfMaterialResource, true);
+            }
+
+            $listMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['materialresource' => $materialResource]);
+
+            foreach($listMaterialResourceScheduled as $materialResourceScheduled)
+            {
+                $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+            }
+
+            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+
+            foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
+            {
+                $unavailability = $unavailabilityMaterialResource->getUnavailability();
+                $unavailabilityMaterialResourceRepository->remove($unavailabilityMaterialResource, true);
+
+                $entityManager->persist($unavailability);
+                $entityManager->flush();
+            }
+
             $materialResourceRepository->remove($materialResource, true);
         }
 
