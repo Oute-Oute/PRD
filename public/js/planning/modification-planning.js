@@ -418,7 +418,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-        calendar.getEventById(oldEvent._def.publicId).setStart(calendar.getEventById(oldEvent._def.publicId).start);
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
@@ -433,6 +433,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
           else if (eventAppointment._def.publicId != oldEvent._def.publicId)
           {
             eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+            eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -445,6 +446,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
 
       else {
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
         var startStr = formatDate(startDate).replace(" ", "T");
         var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
@@ -658,6 +660,7 @@ function createCalendar(typeResource) {
   let listCurrentEvent = calendar.getEvents();
   listCurrentEvent.forEach((currentEvent) => {
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
   })
 
   //affiche le calendar
