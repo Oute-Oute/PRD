@@ -443,13 +443,13 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
       }
 
       else {
+        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
         var startStr = formatDate(startDate).replace(" ", "T");
         var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
         var endStr = formatDate(endDate).replace(" ", "T");
         calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
         calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
-        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
       }
 }
 
@@ -541,7 +541,6 @@ function createCalendar(typeResource) {
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var clickModify = false;
       updateEventsAppointment(oldEvent, newDelay, clickModify);
-      console.log(calendar.getEvents());
       calendar.render();
     }
   });
