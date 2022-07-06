@@ -105,11 +105,6 @@ a:hover{
     border : 1px solid black;
     height: auto;
 }
-.list-edit:hover{
-  color: #404040;
-  background : none;
-  border : 1px solid black;
-}
 
 .datepicker{
   width: 25%;
