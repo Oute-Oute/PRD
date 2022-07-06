@@ -8,7 +8,7 @@ var NB_ACTIVITY = 0;
  */
 document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
-    showNewModalForm()
+    //showNewModalForm()
 })
 
 
@@ -30,9 +30,11 @@ function handleAddActivity() {
     // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
     let div = document.createElement("div")
     div.setAttribute('class', 'activity-field')    
+    div.setAttribute('id', 'activity-field-'+SELECT_ID)
 
     let inputName = document.createElement('input')
     inputName.setAttribute('class', 'input-name')
+    //inputName.disabled = true
     inputName.setAttribute('placeholder', 'Nom')
     inputName.setAttribute('onchange', 'disableSubmit()')
     //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
@@ -62,7 +64,11 @@ function handleAddActivity() {
 
     // On l'affiche et on l'ajoute a la fin de la balise div activities-container
     //select.style.display = "block";
-    let divAddActivity = document.getElementById('activities-container')
+    let divAddActivity = document.getElementsByClassName('activities-container')[0]
+    divAddActivity.setAttribute('id', 'activities-container-'+SELECT_ID)
+    //let divAddActivity = document.getElementsByClassName('activities-container')
+
+    //divAddActivity.
 
     let divcontainer = document.createElement('div')
     //divcontainer.setAttribute('class', "title-container")
@@ -75,6 +81,7 @@ function handleAddActivity() {
     divcontainer.setAttribute('class', 'div-activity-'+SELECT_ID)
     divcontainer.appendChild(pTitle)
     divcontainer.appendChild(div)
+    divcontainer.appendChild(createDivEdit()) /* div edit  */
 
     let divEdit = document.createElement('div')
     divEdit.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
@@ -83,10 +90,10 @@ function handleAddActivity() {
 
     divAddActivity.appendChild(divcontainer)
 
+    // On appelle la methode : pour afficher la liste de ressources humaines par défaut 
+    handleHumanButton('bh-'+SELECT_ID)
+
     SELECT_ID++
-
-
-   
 } 
 
 
@@ -103,19 +110,19 @@ function deleteSelect(id) {
     // On peut donc recuperer la div
     let divToDelete = document.getElementsByClassName('div-activity-'+id)[0]
     // puis la supprimer
-    let divAddActivity = document.getElementById('activities-container')
+    let divAddActivity = document.getElementsByClassName('activities-container')[0]
     divAddActivity.removeChild(divToDelete)
     
     // On actusalise l'input qui contient le nb d'activité
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
-    SELECT_ID = SELECT_ID - 1;
+    //SELECT_ID = SELECT_ID - 1;
 }
 
 /**
- * Permet de modifier un select dans la liste déroulante 
- * @param {*} id : img-0, img-1
+ * Permet de modifier une activité  
+ * @param {*} id : XXX-0, XXX-1
  */
 function editSelect(id) {
     disableSubmit();
@@ -126,24 +133,25 @@ function editSelect(id) {
     // On peut donc recuperer la div
     //let divToEdit = document.getElementsByClassName('div-activity-'+id)[0]
     let divToEdit = document.getElementById('div-edit-activity-'+id)
-    console.log(divToEdit)
-    divToEdit.style.height = '100px'
-    divToEdit.style.border = "solid lightgrey 1px"
+
+    if (divToEdit.style.display == 'flex') {
+        divToEdit.style.display = 'none'
+        let divField = document.getElementById('activity-field-'+id)
+        divField.style.borderBottomLeftRadius = '10px'
+        divField.style.borderBottomRightRadius = '10px'
+
+    } else {
+        divToEdit.style.display = 'flex'
+        let divField = document.getElementById('activity-field-'+id)  
+        divField.style.borderBottomLeftRadius = '0px'
+        divField.style.borderBottomRightRadius = '0px'
+    }
 
 
-    p1 = document.createElement('p')
-    p1.innerHTML = 'Humaines'
+
+    //console.log(divToEdit)
+
     
-    p2 = document.createElement('p')
-    p2.innerHTML = 'Materielles'
-    divToEdit.appendChild(p1)
-    divToEdit.appendChild(p2)
-    
-    // On actusalise l'input qui contient le nb d'activité
-    NB_ACTIVITY = NB_ACTIVITY - 1;
-    document.getElementById('nbactivity').value = NB_ACTIVITY
-
-    SELECT_ID = SELECT_ID - 1;
 }
 
 /**
@@ -153,7 +161,7 @@ function verifyChanges() {
 
     let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
-    let activitiesContainer = document.getElementById('activities-container')
+    let activitiesContainer = document.getElementsByClassName('activities-container')[0]
 
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
@@ -205,3 +213,103 @@ function hideNewModalForm() {
     console.log('hide')
 }
 
+
+function createDivEdit() {
+
+    /* Div parent pour l'ajout de ressource */
+    divEditActivity = document.createElement('div')
+    divEditActivity.setAttribute('class', 'div-edit-activities')
+    divEditActivity.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
+    divEditActivity.style.display = 'none'
+
+    /* Premier enfant : les 2 boutons pour choisir materielles humaines */
+
+    divBtnsResources = document.createElement('div')
+    divBtnsResources.setAttribute('class', 'div-buttons-resources')
+    btnHuman = document.createElement('button')
+    btnHuman.innerText = 'Humaines'
+    btnHuman.setAttribute('type', 'button')
+    btnHuman.setAttribute('id', 'bh-'+SELECT_ID)
+    btnHuman.setAttribute('onclick', 'handleHumanButton(this.id)')
+
+    btnMaterial = document.createElement('button')
+    btnMaterial.innerText = 'Materielles'
+    btnMaterial.setAttribute('type', 'button')
+    btnMaterial.setAttribute('id', 'bm-'+SELECT_ID)
+    btnMaterial.setAttribute('onclick', 'handleMaterialButton(this.id)')
+
+    divBtnsResources.appendChild(btnHuman)
+    divBtnsResources.appendChild(btnMaterial)
+
+
+    /* Deuxieme enfant : Div qui contiendra la liste des ressources */
+
+    divResources = document.createElement('div')
+    divResources.setAttribute('class', 'div-resources')
+    divRH = document.createElement('div')
+    divRH.setAttribute('class', 'div-resources-h')
+    divRM = document.createElement('div')
+    divRM.setAttribute('class', 'div-resources-m')
+    divResources.appendChild(divRH)
+    let p1=document.createElement('p')
+    p1.innerText ='Numero 1 <br>'
+    divRM.appendChild(p1)
+    divResources.appendChild(divRM)
+
+
+    /* Troisieme enfant : select  */
+    divAddResources = document.createElement('div')
+    divAddResources.setAttribute('class', 'div-add-resources')
+    divAddResources.setAttribute('title', 'Choisissez la ressource à ajouter')
+    selectResources = document.createElement('select')
+    option = document.createElement('option')
+    option.value = '1'
+    option.text = 'oui'
+    selectResources.appendChild(option)
+    inputNbResources = document.createElement('input')
+    inputNbResources.setAttribute('type', 'number')
+    inputNbResources.setAttribute('title', 'Entrer le nombre de ressources')
+    inputNbResources.setAttribute('placeholder', 'Qte')
+    //title="Enter input here"
+    btnPlus = document.createElement('button')
+    btnPlus.setAttribute('type', 'button')
+    btnPlus.innerHTML = '+'
+    btnPlus.setAttribute('title', 'Ajouter la ressource a la liste')
+
+    divAddResources.appendChild(selectResources)
+    divAddResources.appendChild(inputNbResources)
+    divAddResources.appendChild(btnPlus)
+
+    /* Ajout de tous les enfants a la div parent */
+    divEditActivity.appendChild(divBtnsResources)
+    divEditActivity.appendChild(divResources)
+    divEditActivity.appendChild(divAddResources)
+
+    //
+
+    return divEditActivity
+}
+
+
+function handleHumanButton(id) {
+    id = id[id.length - 1] 
+    let bh = document.getElementById('bh-'+id)
+    bh.style.textDecoration = 'underline'
+    bh.style.fontWeight = '700'
+
+    let bm = document.getElementById('bm-'+id)
+    bm.style.textDecoration = 'none'
+    bm.style.fontWeight = 'normal'
+
+}
+
+function handleMaterialButton(id) {
+    id = id[id.length - 1] 
+    let bm = document.getElementById('bm-'+id)
+    bm.style.textDecoration = 'underline'
+    bm.style.fontWeight = '700'
+
+    let bh = document.getElementById('bh-'+id)
+    bh.style.textDecoration = 'none'
+    bh.style.fontWeight = 'normal'
+}
