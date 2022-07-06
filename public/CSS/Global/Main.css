@@ -32,7 +32,6 @@ h1#title {
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    border : 1px solid black;
     margin-left : 10px;
     margin-bottom : 5px;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
@@ -44,10 +43,10 @@ h1#title {
 
 
 .btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover{
-    color: #404040;
-    background : none;
+    background-color :  rgba(0,48,93,0.5);
     border : 1px solid black;
 }
+
 
 
 .btn-valide:hover{
@@ -56,12 +55,7 @@ h1#title {
     border: 1px solid green;
 }
 
-.btn-consult:hover, .btn-infos:hover, .btn-edit:hover, .btn-add:hover, .list-edit:hover  {
-    box-shadow: 0px 0px 5px blue;
-    color :blue;
-    border: 1px solid blue;
-    fill : blue
-}
+
 
 .btn-delete {
     margin-top : 10px;
@@ -70,17 +64,36 @@ h1#title {
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    border : 1px solid black;
+    border : 1px solid #DA4353;
     margin-left : 10px;
     margin-bottom : 5px;
 
     box-shadow: none;
     border: none;
-    background: var(--main-blue); 
+    background: #DA4353; 
     color: #ffffff;
 
 }
 
+.btn-delete {
+    background : #DA4353;
+    border : 1px solid #DA4353;
+
+}
+
+.btn-infos {
+    background : #3BAFDA;
+    border : 1px solid #3BAFDA;
+}
+
+.btn-infos:hover {
+    background : #27A2CF;
+    border : 1px solid #228EB6;
+}
+
+.btn-infos:active {
+    background : #228EB6;
+}
 
 .btn-add {
     margin-left : 50px;
@@ -88,19 +101,21 @@ h1#title {
     margin-bottom : 30px;
 }
 
+.btn-edit {
+    background : #37BC9B;
+    border : 1px solid #37BC9B;
 
-.btn-delete:hover {   
-    box-shadow: 0px 0px 5px red;
-    color :red;
-    border: 1px solid red;
-    background-color: transparent;
 }
 
-div#informations {
-    position : absolute;
-    right : 0px;
-    height : 100px;
-    width : 100px;
+.btn-edit:hover {
+    background : #30A487;
+    border : 1px solid #298D74;
+}
+
+
+.btn-delete:hover {   
+    background : #D52A3B;
+    border : 1px solid #BC2534;
 }
 
 div#conn-form {

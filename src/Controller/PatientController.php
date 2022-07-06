@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UnavailabilityMaterialResourceRepository;
+use App\Repository\UnavailabilityHumanResourceRepository;
 
 class PatientController extends AbstractController
 {
@@ -59,7 +61,7 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function patientDelete(Patient $patient, PatientRepository $patientRepository): Response
+    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository): Response
     {
         //suppression des données associées au patient de la table Appointment
         $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Appointment");
@@ -67,6 +69,8 @@ class PatientController extends AbstractController
 
         foreach($appointments as $appointment)
         {
+            $date = $appointment->getDayappointment()->format('Y-m-d');
+
             //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
             $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
             $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
@@ -80,6 +84,20 @@ class PatientController extends AbstractController
                 foreach($allMaterialResourceScheduled as $materialResourceScheduled)
                 {
                     $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+
+                    $strDate = substr($date, 0, 10);
+                    $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+
+                    $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
+
+                    foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
+                    {
+                        $unavailability = $unavailabilityMaterialResource->getUnavailability();
+                        $entityManager->remove($unavailabilityMaterialResource);
+                        $entityManager->flush($unavailabilityMaterialResource);
+                        $entityManager->remove($unavailability);
+                        $entityManager->flush($unavailability);
+                    }
                 }
 
 
@@ -90,6 +108,20 @@ class PatientController extends AbstractController
                 foreach($allHumanResourceScheduled as $humanResourceScheduled)
                 {
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+
+                    $strDate = substr($date, 0, 10);
+                    $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+
+                    $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
+
+                    foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
+                    {
+                        $unavailability = $unavailabilityHumanResource->getUnavailability();
+                        $entityManager->remove($unavailabilityHumanResource);
+                        $entityManager->flush($unavailabilityHumanResource);
+                        $entityManager->remove($unavailability);
+                        $entityManager->flush($unavailability);
+                    }
                 }
 
 

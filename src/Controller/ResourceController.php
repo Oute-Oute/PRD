@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Resource;
 use App\Form\ResourceType;
 use App\Repository\ResourceRepository;
+use App\Repository\HumanResourceRepository;
+use App\Repository\MaterialResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

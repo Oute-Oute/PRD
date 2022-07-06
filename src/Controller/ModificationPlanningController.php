@@ -21,7 +21,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
 use App\Repository\UnavailabilityHumanResourceRepository;
-use App\Repository\UnavailabilityRepository;
 use App\Repository\UserRepository;
 use DateInterval;
 use DateTime;
