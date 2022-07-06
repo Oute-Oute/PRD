@@ -372,6 +372,7 @@ function changePlanning() {
 function updateEventsAppointment(oldEvent, newDelay, clickModify) {
   //TODO : corrigé la modification de l'event modifié
   var listEvent = calendar.getEvents();
+  let listOldEvent = calendar.getEvents();
     var appointmentId = oldEvent._def.extendedProps.appointment;
     var listEventAppointment = [];
     listEvent.forEach((currentEvent) => {
@@ -413,6 +414,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
       appointment.latestappointmenttime.split("T")[1]
     );
 
+    var isEditable = true;
       if (
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
@@ -443,8 +445,11 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
           }
         })
       }
-
       else {
+        isEditable = false;
+      }
+      
+      if (!isEditable){
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
