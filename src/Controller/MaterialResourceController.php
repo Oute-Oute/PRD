@@ -44,8 +44,11 @@ class MaterialResourceController extends AbstractController
                     //dd( $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]]));
                     //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
                     //dd($listCategOf[$indexCategOf]);
-    
-                    array_push($categoriesByResource, $materialResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getMaterialresourcecategory()->getId()])[0]);
+                    $materialResourceCategories =  $materialResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getMaterialresourcecategory()->getId()]);
+                    //dd($materialResourceCategories);
+                    if($materialResourceCategories != null){
+                        array_push($categoriesByResource,$materialResourceCategories[0]);
+                    }
                     
                 }
                 array_push($categoriesByResources, $categoriesByResource);

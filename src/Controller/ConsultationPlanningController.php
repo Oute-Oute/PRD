@@ -46,7 +46,8 @@ class ConsultationPlanningController extends AbstractController
         $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $listeMaterialResourceScheduledJSON = $this->listeMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $listeHumanResourceScheduledJSON = $this->listeHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-
+        $listeMaterialResourcesUnavailables= $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
+        $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
         //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
@@ -56,6 +57,8 @@ class ConsultationPlanningController extends AbstractController
                 'listeAppointmentJSON' => $listeAppointmentJSON,
                 'listeMaterialResourceScheduledJSON' => $listeMaterialResourceScheduledJSON,
                 'listeHumanResourceScheduledJSON' => $listeHumanResourceScheduledJSON,
+                'listeMaterialResourcesUnavailables' => $listeMaterialResourcesUnavailables,
+                'listeHumanResourcesUnavailables' => $listeHumanResourcesUnavailables,
             ]
         );
     }
@@ -139,6 +142,7 @@ class ConsultationPlanningController extends AbstractController
                 'title' => ($scheduledActivity->getActivity()->getActivityname()),
                 'appointment' => ($scheduledActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
+                'description' => ($scheduledActivity->getActivity()->getActivityname()),
                 'extendedProps' => array(
                     'patient' => $patient,
                     'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
@@ -188,6 +192,7 @@ class ConsultationPlanningController extends AbstractController
                 'scheduled' => $appointment->isScheduled(),
                 'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId(), $businessHours),
                 'pathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+
             );
         }
         //Conversion des données ressources en json
@@ -236,7 +241,7 @@ class ConsultationPlanningController extends AbstractController
                     $materialCategories = $this->getMaterialCategory($doctrine, $MaterialResourceScheduled->getMaterialresource());
                     $materialCategoryArray = array();
                     foreach ($materialCategories as $materialCategory) {
-                        $MaterialResourceArray[] = array(
+                        $materialCategoryArray[] = array(
                             'category' => ($materialCategory),
                         );
                     }
@@ -246,15 +251,15 @@ class ConsultationPlanningController extends AbstractController
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                         'extendedProps' => array(
-                            'Categories' => ($MaterialResourceArray),
+                            'Categories' => ($materialCategoryArray),
                         ),
 
                     );
-                    unset($MaterialResourceArray);
+                    unset($materialCategoryArray);
                 }
             }
         }
-        unset($MaterialResourceArray);
+        unset($materialCategoryArray);
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
         return $MaterialResourceScheduledArrayJSON;
@@ -395,5 +400,49 @@ class ConsultationPlanningController extends AbstractController
 
         //Conversion des données ressources en json 
         return $patientArray;
+    }
+
+    public function listeMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
+        $materialResourcesUnavailableArray = array();
+        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
+            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
+            $resource = "materialresource_" . $resource;
+            $materialResourcesUnavailableArray[] = array(
+                'description' =>'Ressource Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        //Conversion des données ressources en json 
+        $materialResourcesUnavailableArrayJSON = new JsonResponse($materialResourcesUnavailableArray);
+        return $materialResourcesUnavailableArrayJSON;
+    }
+    
+    public function listeHumanResourceUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
+        $humanResourcesUnavailableArray = array();
+        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
+            $resource= $humanResourceUnavailable->getHumanresource()->getId();
+            $resource = "humanresource_" . $resource;
+            $humanResourcesUnavailableArray[] = array(
+                'description' =>'Employé Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        //Conversion des données ressources en json 
+        $humanResourcesUnavailableArrayJSON = new JsonResponse($humanResourcesUnavailableArray);
+        return $humanResourcesUnavailableArrayJSON;
     }
 }
