@@ -24,9 +24,9 @@ h1#title {
     flex-direction: column;
     width: 100%;
 }
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult,.btn-calendar-edit{
     margin-top : 10px;
-    border: none;
+    border: 1px solid transparent;
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
@@ -42,7 +42,7 @@ h1#title {
 
 
 
-.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover{
+.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover, .btn-calendar-edit:hover, .list-edit:hover{
     background-color :  rgba(0,48,93,0.5);
     border : 1px solid black;
 }
