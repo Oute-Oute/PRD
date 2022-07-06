@@ -9,7 +9,7 @@
             <form action="{{ path('PathwaysPost') }}" method="post">
                 <div class="modal-body">
                     <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
-                    <input style="display:none;" name="nbActivity" id="nbActivity">
+                    <input style="display:none;" name="nbactivity" id="nbactivity">
 
                     <div class="flex-col"> 
                         <label class="label" for='name'> Nom du parcours </label>        
@@ -29,6 +29,42 @@
                                 {% endfor %}
 
                             </select>#}
+
+                            <div class="div-activity-0" >
+                                <p class="label">Activité : </p>
+                                <div class="activity-field">
+                                    <input class="input-name" placeholder="Nom" onchange="disableSubmit()">
+                                    <img src="img/edit.svg" id="img-0" onclick="editSelect(this.id)">
+                                    <img src="img/delete.svg" id="img-0" onclick="deleteSelect(this.id)">
+                                </div>
+
+                                <div class="div-edit-activities" id="div-edit-activity-0" >
+                                    <div class="div-buttons-resources">                    
+                                        <button type="button"> Humaines </button>
+                                       <button type="button"> Materielles </button> 
+                                    </div>
+                                    <div class="div-resources"> 
+                                             <div class="div-resources-h"> 
+                                    
+                                        </div>
+                                        <div class="div-resources-m"> 
+                                    
+                                        </div>
+                                    </div>
+                 
+                                    <div class="div-add-resources"> 
+                                        <select> 
+                                            <option> Ressource 1 </option>
+                                            <option> Ressource 2</option>
+                                            <option> Ressource 3</option>
+                                            <option> Ressource 4</option>
+                                        </select>
+                                        <input type="number"> </input>
+                                        <button type="button"> + </button>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter </b> </button> 
 
@@ -37,8 +73,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
                     <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
-
+                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>0
                 </div>
     	    </form>
         </div>

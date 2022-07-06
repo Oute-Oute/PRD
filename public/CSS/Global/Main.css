@@ -76,7 +76,7 @@ h1#title {
 
     box-shadow: none;
     border: none;
-    background: #404040;
+    background: var(--main-blue); 
     color: #ffffff;
 
 }

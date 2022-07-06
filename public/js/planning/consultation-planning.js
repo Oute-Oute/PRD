@@ -35,8 +35,14 @@ function $_GET(param) {
 }
 
 //update the date with the date in url
-var dateStr = $_GET("date");
+dateStr = $_GET("date");
 date = new Date(dateStr);
+
+if ($_GET("headerResources") != null) {
+  headerResources = $_GET("headerResources"); //get the type of resources to display in the list
+  headerResources = headerResources.replaceAll("%20", " "); //remove the space in the header
+  console.log(headerResources);
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   createCalendar("Patients");
@@ -158,12 +164,13 @@ function createCalendar(resources) {
     slotDuration: "00:20:00", //set the duration of the slot
     locale: "fr", //set the language in french
     timeZone: "Europe/Paris", //set the timezone for France
-    selectable: true, //set the calendar to be selectable
+    selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
     contentHeight: (height * 12) / 16, //set the height of the calendar to fit with a standard display
     handleWindowResize: true, //set the calendar to be resizable
     eventDurationEditable: false, //set the event duration not to be editable
     nowIndicator: true, //display the current time
+    selectConstraint: "businessHours", //set the select constraint to be business hours
     headerToolbar: {
       //delete the toolbar
       start: null,
@@ -182,6 +189,15 @@ function createCalendar(resources) {
     resourceAreaWidth: "20%", //set the width of the resources area
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
     events: events, //set the events
+
+    eventDidMount: function (info) {
+      $(info.el).tooltip({
+        title: info.event.title,
+        placement: "top",
+        trigger: "hover",
+        container: "body",
+      });
+    },
 
     //when we click on an event, display a modal window with the event information
     eventClick: function (event) {
@@ -233,14 +249,16 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
         patient = temp["patient"]; //get the resources data
-        if (calendar.getResourceById(patient[0]["id"]) == null) {//if the resource is not already in the calendar
+        if (calendar.getResourceById(patient[0]["id"]) == null) {
+          //if the resource is not already in the calendar
           calendar.addResource({
             //add the resources to the calendar
-            id: patient[0]["id"],//set the id of the resource
-            title: patient[0]["title"],//set the title of the resource
-            businessHours: {//set the business hours of the resource
-              startTime: patient[0]["businessHours"]["startTime"],//set the start time of the business hours
-              endTime: patient[0]["businessHours"]["endTime"],//set the end time of the business hours
+            id: patient[0]["id"], //set the id of the resource
+            title: patient[0]["title"], //set the title of the resource
+            businessHours: {
+              //set the business hours of the resource
+              startTime: patient[0]["businessHours"]["startTime"], //set the start time of the business hours
+              endTime: patient[0]["businessHours"]["endTime"], //set the end time of the business hours
             },
           });
         }
@@ -253,11 +271,12 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
         pathway = temp["pathway"]; //get the resources data
-        if (calendar.getResourceById(pathway[0]['id']) == null) {//if the resource is not already in the calendar
+        if (calendar.getResourceById(pathway[0]["id"]) == null) {
+          //if the resource is not already in the calendar
           calendar.addResource({
             //add the resources to the calendar
-            id: pathway[0]["id"],//set the id of the resource
-            title: pathway[0]["title"],//set the title of the resource
+            id: pathway[0]["id"], //set the id of the resource
+            title: pathway[0]["title"], //set the title of the resource
           });
         }
       }
@@ -268,22 +287,23 @@ function createCalendar(resources) {
       ); //get the data of the resources
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
-        if (calendar.getResourceById(temp["id"]) == null) {//if the resource is not already in the calendar
-          console.log(temp["workingHours"]);
-          var businessHours = [];//create an array to store the working hours
+        if (calendar.getResourceById(temp["id"]) == null) {
+          //if the resource is not already in the calendar
+          var businessHours = []; //create an array to store the working hours
           for (var j = 0; j < temp["workingHours"].length; j++) {
-            businesstemp = {//create a new business hour
-              startTime: temp["workingHours"][j]["startTime"],//set the start time
-              endTime: temp["workingHours"][j]["endTime"],//set the end time
-              daysOfWeek: [temp["workingHours"][j]["day"]],//set the day
+            businesstemp = {
+              //create a new business hour
+              startTime: temp["workingHours"][j]["startTime"], //set the start time
+              endTime: temp["workingHours"][j]["endTime"], //set the end time
+              daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
             };
-            businessHours.push(businesstemp);//add the business hour to the array
+            businessHours.push(businesstemp); //add the business hour to the array
           }
           calendar.addResource({
             //add the resources to the calendar
-            id: temp["id"],//set the id
-            title: temp["title"],//set the title
-            businessHours: businessHours,//get the business hours
+            id: temp["id"], //set the id
+            title: temp["title"], //set the title
+            businessHours: businessHours, //get the business hours
           });
         }
       }
@@ -295,11 +315,12 @@ function createCalendar(resources) {
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {
-          if (calendar.getResourceById(temp["id"]) == null) {//if the resource is not already in the calendar
+          if (calendar.getResourceById(temp["id"]) == null) {
+            //if the resource is not already in the calendar
             calendar.addResource({
               //add the resources to the calendar
-              id: temp["id"],//set the id
-              title: temp["title"],//set the title
+              id: temp["id"], //set the id
+              title: temp["title"], //set the title
             });
           }
         }
@@ -326,7 +347,12 @@ function changeDate() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -349,7 +375,12 @@ function PreviousDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -372,7 +403,12 @@ function NextDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }
 
 /**
@@ -390,5 +426,10 @@ function Today() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ConsultationPlanning?date=" + dateStr); //rerender the page with a new date
+  window.location.assign(
+    "/ConsultationPlanning?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+  ); //rerender the page with a new date
 }

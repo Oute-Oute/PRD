@@ -6,7 +6,10 @@ use App\Entity\MaterialResourceScheduled;
 use App\Entity\HumanResourceScheduled;
 use App\Entity\ScheduledActivity;
 use App\Entity\Modification;
-use App\Entity\User;
+use App\Entity\Unavailability;
+use App\Entity\UnavailabilityHumanResource;
+use App\Entity\UnavailabilityMaterialResource;
+use App\Repository\UnavailabilityMaterialResourceRepository;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\ModificationRepository;
@@ -17,6 +20,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
+use App\Repository\UnavailabilityHumanResourceRepository;
+use App\Repository\UnavailabilityRepository;
 use App\Repository\UserRepository;
 use DateInterval;
 use DateTime;
@@ -56,13 +61,14 @@ class ModificationPlanningController extends AbstractController
         $listesuccessionJSON = $this->listSuccessorJSON($doctrine);
         $listeActivitiesJSON = $this->listActivityJSON($doctrine);
         $listAppointmentJSON = $this->listAppointmentJSON($doctrine,$dateModified);
-
         $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
+        $listActivityHumanResourcesJSON=$this->listActivityHumanResourcesJSON($doctrine); 
+        $listActivityMaterialResourcesJSON=$this->listActivityMaterialResourcesJSON($doctrine);
 
-        /*if($this->alertModif($dateModified)){
+        if($this->alertModif($dateModified, $idUser)){
             $this->modificationAdd($dateModified, $idUser);
-        }*/
+        }
 
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -76,11 +82,14 @@ class ModificationPlanningController extends AbstractController
             'listeAppointments' => $listeAppointment,
             'listeSuccessorsJSON' => $listesuccessionJSON,
             'listeActivitiesJSON' => $listeActivitiesJSON,
-            'listAppointmentsJSON' => $listAppointmentJSON
+            'listAppointmentsJSON' => $listAppointmentJSON,
+            'listeActivityHumanResourcesJSON'=>$listActivityHumanResourcesJSON,
+            'listeActivityMaterialResourcesJSON'=>$listActivityMaterialResourcesJSON
+
         ]);
     }
 
-    public function alertModif($dateModified)
+    public function alertModif($dateModified, $idUser)
     {
         $modificationRepository = new ModificationRepository($this->getDoctrine());
         $modifications = $modificationRepository->findAll();
@@ -94,7 +103,8 @@ class ModificationPlanningController extends AbstractController
         foreach ($modifications as $modification) {
             $modifArray[] = array(
                 'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
-                'dateModified' => ($modification->getDatemodified()->format('Y-m-d'))
+                'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
+                'userId' => ($modification->getUser()->getId())
             );
             $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
             $interval = $datetimeModified->diff($dateToday);
@@ -104,12 +114,17 @@ class ModificationPlanningController extends AbstractController
             
             if($modifArray[$i]['dateModified']==$dateModified){
                 // ATTENTION, le timer doit être supérieur à celui du popup
-                if($intervalHour*60+$intervalMinutes < 30){
-                    echo "<script> 
-                        alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
-                        window.location.assign('/ConsultationPlanning');
-                    </script>";
-                    return false;
+                if($intervalHour*60+$intervalMinutes < 10){
+                    if($idUser == $modifArray[$i]['userId']){// Empeche d'envoyer une erreur si un user quitte et revient
+                        $modificationRepository->remove($modification, true);
+                    }
+                    else{
+                        echo "<script> 
+                            alert('Une modification pour le ".$dateModified." est déjà en cours, vous allez être redirigé')
+                            window.location.assign('/ConsultationPlanning');
+                        </script>";
+                        return false;
+                    }
                 }
                 else{
                     // Supprimer la modif dans BDD car trop vieille
@@ -130,7 +145,7 @@ class ModificationPlanningController extends AbstractController
         // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
         // A enlever plus tard car on est censé être connecté
         if(!$user){
-            //dd("Erreur, vous n'êtes pas connecté !");
+            //dd($user, "Erreur, vous n'êtes pas connecté !");
         }
         else{
             $userRepository->add($user, true);
@@ -210,7 +225,6 @@ class ModificationPlanningController extends AbstractController
     {
     }
 
-
     public function listAppointment(ManagerRegistry $doctrine,$date)
     {
         
@@ -240,6 +254,7 @@ class ModificationPlanningController extends AbstractController
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
                 'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'scheduled'=>$appointment->isScheduled(),
             );
         }
         $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
@@ -292,12 +307,35 @@ class ModificationPlanningController extends AbstractController
                 $humanResourcesArray[] = array(
                     'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
+                    'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
                 );
             }
         }
         //Conversion des données ressources en json
         $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
         return $humanResourcesArrayJson;    
+    }
+     /*
+     * @brief This function is the getter of the working hours to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHoursArray = array();
+        foreach ($setOfWorkingHours as $workingHours) {
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = array(
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+
+            );
+        }
+        return $workingHoursArray;
     }
 
     public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
@@ -327,16 +365,46 @@ class ModificationPlanningController extends AbstractController
         $scheduledActivities = $SAR->findSchedulerActivitiesByDate($TodayDate);
         $scheduledActivitiesArray = array();
         foreach ($scheduledActivities as $scheduledActivity) {
-            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+            //Obtention du nombre de resources matérielles à renseigner pour cette activité
+            $activitiesMaterialResourcesByActivityId=$doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity'=>$scheduledActivity->getActivity()->getId()]); 
+            $quantityMaterialResources=0; 
+            foreach($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId ){
+                $quantityMaterialResources=$quantityMaterialResources+$activityMaterialResourcesByActivityId->getQuantity(); 
+            }
+
+             //Obtention du nombre de resources Humaines à renseigner pour cette activité
+             $activitiesHumanResourcesByActivityId=$doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity'=>$scheduledActivity->getActivity()->getId()]); 
+             $quantityHumanResources=0; 
+             foreach($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId ){
+                 $quantityHumanResources=$quantityHumanResources+$activityHumanResourcesByActivityId->getQuantity(); 
+             }
             $scheduledActivitiesResourcesArray = array();
+
+            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+           
             foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
+                $quantityHumanResources=$quantityHumanResources-1; 
                 array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
             }
 
             $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
             foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
+                $quantityMaterialResources=$quantityMaterialResources-1;
                 array_push($scheduledActivitiesResourcesArray, "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId());
             }
+
+    
+
+            //Put the number of undefined HumanResources in scheduledActivitiesResourcesArray
+            for($i=0; $i<$quantityHumanResources;$i++){
+                array_push($scheduledActivitiesResourcesArray,"h-default"); 
+            }
+
+             //Put the number of undefined MaterialResources in scheduledActivitiesResourcesArray
+            for($i=0; $i<$quantityMaterialResources;$i++){
+                array_push($scheduledActivitiesResourcesArray,"m-default"); 
+            }
+
 
             $patientId = $scheduledActivity->getAppointment()->getPatient()->getId();
             $start = $scheduledActivity->getStarttime();
@@ -364,7 +432,35 @@ class ModificationPlanningController extends AbstractController
         return $scheduledActivitiesArrayJson;
     }
 
-    public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine)
+    public function listActivityHumanResourcesJSON(ManagerRegistry $doctrine){
+        $activitiesHumanResources=$doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll(); 
+        $activitiesHumanResourcesArray=array(); 
+        foreach($activitiesHumanResources as $activityHumanResources){
+            $activitiesHumanResourcesArray[]=array(
+            'id'=>$activityHumanResources->getId(),
+            'activityId'=>$activityHumanResources->getActivity()->getId(),
+            'humanResourceCategoryId'=>$activityHumanResources->getHumanresourcecategory()->getId(), 
+            'quantity'=>$activityHumanResources->getQuantity(),
+            ); 
+        }
+        return new JsonResponse($activitiesHumanResourcesArray); 
+    }
+
+    public function listActivityMaterialResourcesJSON(ManagerRegistry $doctrine){
+        $activitiesMaterialResources=$doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll(); 
+        $activitiesMaterialResourcesArray=array(); 
+        foreach($activitiesMaterialResources as $activityMaterialResources){
+            $activitiesMaterialResourcesArray[]=array(
+            'id'=>$activityMaterialResources->getId(),
+            'activityId'=>$activityMaterialResources->getActivity()->getId(),
+            'materialResourceCategoryId'=>$activityMaterialResources->getMaterialresourcecategory()->getId(), 
+            'quantity'=>$activityMaterialResources->getQuantity(),
+            ); 
+        } 
+        return new JsonResponse($activitiesMaterialResourcesArray); 
+    }
+
+    public function modificationPlanningValidation(Request $request, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         //récupération des events et des ressources depuis le twig
         $listEvent = json_decode($request->request->get("events"));
@@ -432,6 +528,25 @@ class ModificationPlanningController extends AbstractController
                                 $newHumanResourceScheduled->setScheduledactivity($scheduledActivity);
 
                                 $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
+
+                                //ajout de unavailability
+                                $newUnavailability = new Unavailability();
+                                $strDate = substr($date, 0, 10);
+                                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+                                $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                                $entityManager->persist($newUnavailability);
+                                $entityManager->flush();
+
+                                //ajout de la relation entre les deux tables
+                                $newUnavailabilityHumanResource = new UnavailabilityHumanResource();
+                                $newUnavailabilityHumanResource->setHumanresource($humanResource);
+                                $newUnavailabilityHumanResource->setUnavailability($newUnavailability);
+
+                                $entityManager->persist($newUnavailabilityHumanResource);
+                                $entityManager->flush();
                             }
                         }
 
@@ -461,6 +576,25 @@ class ModificationPlanningController extends AbstractController
                                 $newMaterialResourceScheduled->setScheduledactivity($scheduledActivity);
 
                                 $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
+
+                                //ajout de unavailability
+                                $newUnavailability = new Unavailability();
+                                $strDate = substr($date, 0, 10);
+                                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+                                $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                                $entityManager->persist($newUnavailability);
+                                $entityManager->flush();
+
+                                //ajout de la relation entre les deux tables
+                                $newUnavailabilityMaterialResource = new UnavailabilityMaterialResource();
+                                $newUnavailabilityMaterialResource->setMaterialresource($materialResource);
+                                $newUnavailabilityMaterialResource->setUnavailability($newUnavailability);
+
+                                $entityManager->persist($newUnavailabilityMaterialResource);
+                                $entityManager->flush();
                             }
                         }
                     }
@@ -490,6 +624,20 @@ class ModificationPlanningController extends AbstractController
                         if (!$humanResourceExist) {
                             //on supprime la relation entre l'évènement programmé et la ressource humaine
                             $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+
+                            $strDate = substr($date, 0, 10);
+                            $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+
+                            $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
+
+                            foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
+                            {
+                                $unavailability = $unavailabilityHumanResource->getUnavailability();
+                                $entityManager->remove($unavailabilityHumanResource);
+                                $entityManager->flush($unavailabilityHumanResource);
+                                $entityManager->remove($unavailability);
+                                $entityManager->flush($unavailability);
+                            }
                         }
                     }
 
@@ -518,6 +666,20 @@ class ModificationPlanningController extends AbstractController
                         if (!$materialResourceExist) {
                             //on supprime la relation entre l'évènement programmé et la ressource matérielle
                             $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+
+                            $strDate = substr($date, 0, 10);
+                            $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+
+                            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
+
+                            foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
+                            {
+                                $unavailability = $unavailabilityMaterialResource->getUnavailability();
+                                $entityManager->remove($unavailabilityMaterialResource);
+                                $entityManager->flush($unavailabilityMaterialResource);
+                                $entityManager->remove($unavailability);
+                                $entityManager->flush($unavailability);
+                            }
                         }
                     }
                 }
@@ -550,6 +712,25 @@ class ModificationPlanningController extends AbstractController
                         $newHumanResourceScheduled->setScheduledactivity($newScheduledActivity);
 
                         $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
+
+                        //ajout de unavailability
+                        $newUnavailability = new Unavailability();
+                        $strDate = substr($date, 0, 10);
+                        $strStart = $strDate . " " . $newScheduledActivity->getStarttime()->format('H:i:s');
+                        $strEnd = $strDate . " " . $newScheduledActivity->getEndtime()->format('H:i:s');
+                        $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                        $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                        $entityManager->persist($newUnavailability);
+                        $entityManager->flush();
+
+                        //ajout de la relation entre les deux tables
+                        $newUnavailabilityHumanResource = new UnavailabilityHumanResource();
+                        $newUnavailabilityHumanResource->setHumanresource($humanResource);
+                        $newUnavailabilityHumanResource->setUnavailability($newUnavailability);
+
+                        $entityManager->persist($newUnavailabilityHumanResource);
+                        $entityManager->flush();
                     }
 
                     //on créer les relations avec les ressources de type matérielle
@@ -563,9 +744,49 @@ class ModificationPlanningController extends AbstractController
                         $newMaterialResourceScheduled->setScheduledactivity($newScheduledActivity);
 
                         $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
+
+                        //ajout de unavailability
+                        $newUnavailability = new Unavailability();
+                        $strDate = substr($date, 0, 10);
+                        $strStart = $strDate . " " . $newScheduledActivity->getStarttime()->format('H:i:s');
+                        $strEnd = $strDate . " " . $newScheduledActivity->getEndtime()->format('H:i:s');
+                        $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                        $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                        $entityManager->persist($newUnavailability);
+                        $entityManager->flush();
+
+                        //ajout de la relation entre les deux tables
+                        $newUnavailabilityMaterialResource = new UnavailabilityMaterialResource();
+                        $newUnavailabilityMaterialResource->setMaterialresource($materialResource);
+                        $newUnavailabilityMaterialResource->setUnavailability($newUnavailability);
+
+                        $entityManager->persist($newUnavailabilityMaterialResource);
+                        $entityManager->flush();
                     }
                 }
             }
+        }
+        $this->modificationDeleteOnUnload($request, $doctrine);
+        return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine){
+        $dateModified = $request->request->get("validation-date");
+        if(isset($_GET['dateModified'])){
+            $dateModified = $_GET['dateModified'];
+        }
+        $dateModified = str_replace('T12:00:00', '', $dateModified);
+
+        //$modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $modificationRepository = new ModificationRepository($doctrine);
+        $modifications = $modificationRepository->findAll();
+        $i = 0;
+        foreach ($modifications as $modification) {
+            if($modification->getDatemodified()->format('Y-m-d')==$dateModified){
+                $modificationRepository->remove($modification, true);
+            }
+            $i++;
         }
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }

@@ -7,6 +7,7 @@
         <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
         <!-- insertion des fichier js et css spécifique à modification planning -->
+        <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <script src="js/jquery-3.6.0.js"></script>
@@ -66,10 +67,10 @@
       </div>
       <form action="{{ path('AppointmentAdd') }}" method="post">
         <div class="modal-body">
-            <div>
-                <label for='idpatient'> Patient </label>
+            <div class="flex-col">
+                <label class="label" for='idpatient'> Patient </label>
                 <div id="select-container"> 
-                    <select class="select-patient-sample" name='idpatient' required="required"> 
+                    <select class="input select-patient-sample" name='idpatient' required="required"> 
 
                         <option value="" selected disabled hidden> Selectionner le patient </option>
                         {% for patient in patients %} 
@@ -82,10 +83,10 @@
                 </div>
             </div>
             </br>
-            <div>
-                <label for='idpathway'> Parcours </label>
+            <div class="flex-col">
+                <label class="label" for='idpathway'> Parcours </label>
                 <div id="select-container"> 
-                    <select class="select-pathway-sample" name='idpathway' required="required"> 
+                    <select style="width:100%;" class="input select-pathway-sample" name='idpathway' required="required"> 
 
                         <option value="" selected disabled hidden> Selectionner le parcours </option>
                         {% for pathway in pathways %} 
@@ -98,19 +99,19 @@
                 </div>
             </div>
             </br>
-            <div>
-                <label for='dayappointment'> Jour du rendez-vous </label>
-                <input type='date' name='dayappointment' required="required">
+            <div class="flex-col">
+                <label class="label" for='dayappointment'> Jour du rendez-vous </label>
+                <input class="input" type='date' name='dayappointment' required="required">
             </div>
             </br>
-            <div>
-                <label for='earliestappointmenttime'> Heure d'arrivé au plus tôt </label>
-                <input type='time' name='earliestappointmenttime' required="required">
+            <div class="flex-col">
+                <label class="label" for='earliestappointmenttime'> Heure d'arrivée au plus tôt </label>
+                <input class="input" type='time' name='earliestappointmenttime' required="required">
             </div>
             </br>
-            <div>
-                <label for='latestappointmenttime'> Heure d'arrivé au plus tard </label>
-                <input type='time' name='latestappointmenttime' required="required">
+            <div class="flex-col">
+                <label class="label" for='latestappointmenttime'> Heure d'arrivée au plus tard </label>
+                <input class="input" type='time' name='latestappointmenttime' required="required">
             </div>
             </br>
 

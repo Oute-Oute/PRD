@@ -39,6 +39,17 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findUnavailabilityMaterialResourceByDate($date, $id)
+    {   
+        $qb= $this->createQueryBuilder('umr')
+        ->join('umr.unavailability', 'u')
+        ->join('umr.materialresource', 'mr')
+        ->where('u.startdatetime = :date AND mr.id = :id')
+        ->setParameters(['date'=> $date, 'id'=> $id]);
+        $query=$qb->getQuery()->getResult();
+        return $query;
+    }
+
 //    /**
 //     * @return UnavailabilityMaterialResource[] Returns an array of UnavailabilityMaterialResource objects
 //     */

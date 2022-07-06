@@ -14,16 +14,17 @@
 
 /* ------------------ POUR TOUS LES FORMULAIRES ------------------*/
 /* Input pour tous les formulaires */
-input.input {
+.input {
     height: 35px;
     border-radius: 10px;
     border-width: 1px;
+    width: 100%;
 }
 /* Label pour tous les formulaires */
 .label {
     margin: 0px;
     margin-top: 10px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -33,7 +34,7 @@ div#edit--activities-container {
 }
 
 /* classe représentant un champ contenant une activité  */
-div.form-field {
+div.activity-field {
     display : flex;
     flex-direction: row;
     align-items: center;
@@ -44,17 +45,18 @@ div.form-field {
 }
 
 /* nom d'une activité */
-div.form-field .input-name {
+div.activity-field .input-name {
     height:35px;
     margin: 0;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     border: transparent;
     border-right: 1px lightgray solid;
+    width: 100%;
 }
 
 /* durée d'un activité */
-div.form-field .input-duration {
+div.activity-field .input-duration {
     height:35px;
     border: transparent;
     margin-left: 1px;
@@ -62,19 +64,19 @@ div.form-field .input-duration {
 }
 
 /* texte dans un champ de formulaire */
-div.form-field p.label {
+div.activity-field p.label {
     border-right: 1px solid lightgray;
     margin: 0;
 }
 
  /* image (delete) */
-div.form-field img{
+div.activity-field img{
     width:20px;
     cursor: pointer;
+    margin: 0px 6px;
 }
-
  
-div.form-field select {
+div.activity-field select {
     height: 35px;
     border-radius: 15px; 
     min-width: 300px;
@@ -89,3 +91,74 @@ p .label {
 
 
 
+/* ------------------ MODIFICATION RESOURCE IN DANS UN ACTIVITY ------------------ */
+
+.div-edit-activities {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    border: 1px solid lightgrey;
+
+}
+/* bouton de selection materielles / humaines */
+.div-buttons-resources {
+    display: flex;
+    flex-direction: row;
+}
+.div-buttons-resources button{
+    border: none;
+    width: 50%;
+    background-color: transparent;
+    border: 1px solid lightgrey;
+
+}
+
+/* div qui contient le tableau des resources */
+.div-resources {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    height: 100%;
+    position: relative;
+    padding: 10px;
+}
+.div-resources-h {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+    position: absolute;
+
+}
+.div-resources-m {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+    position: absolute;
+}
+/* div pour ajouter une ressource (avec le select) */
+.div-add-resources {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid lightgray; 
+}
+
+
+.div-add-resources select {
+    width: 70%;
+    border: none;
+}
+.div-add-resources input {
+    width: 30%;
+    border: none;
+    border-right: 1px solid lightgray; 
+    border-left: 1px solid lightgray; 
+
+}
+.div-add-resources button {
+    color: green;
+    background-color:transparent; 
+    border: none;
+    font-weight: 900;
+}
