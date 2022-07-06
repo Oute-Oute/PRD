@@ -1,6 +1,6 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var popupClicked = false;
-var modifAlertTime = 1680000; // En millisecondes
+var modifAlertTime = 480000; // En millisecondes
 setTimeout(showPopup, modifAlertTime);
 setTimeout(deleteModifInDB, modifAlertTime+60000);
 
@@ -483,12 +483,13 @@ function createCalendar(typeResource) {
     timeZone: "Europe/Paris",
 
     //permet de modifier les events dans le calendar
-    selectable: true,
+    selectable: false,
     editable: true,
     eventDurationEditable: false,
     contentHeight: (9 / 12) * height,
     handleWindowResize: true,
     nowIndicator: true,
+    selectConstraint: "businessHours", //set the select constraint to be business hours
 
     //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
     headerToolbar: {
