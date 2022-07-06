@@ -49,6 +49,112 @@
 			</tbody>
 		</table>
 
-		{{ include ('user/edit_user.html.twig') }}
-		{{ include ('user/new_user.html.twig') }}
+		<!-- add-user-modal -->
+
+		<div class="modal" id="add-user-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Ajouter un utilisateur</h2>
+					</div>
+					<form action="{{ path('UserAdd') }}" method="post">
+						<div class="modal-body">
+							<div>
+								<label for='usernameAdd'>
+									Nom d'utilisateur
+								</label>
+								<input type='text' oninput="usernameTestNew()" required="required" name='usernameAdd' id="usernameAdd">
+
+								<p1 id="ErrorUser">
+									Nom d'utilisateur deja pris</p1>
+
+							</div>
+							<div>
+								<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+							</div>
+
+							<div>
+								<label for='passwordAdd'>
+									Mot de passe Temporaire
+								</label>
+								<input type='passwordAdd' required="required" name='passwordAdd'>
+							</div>
+
+							<div>
+								<label for='roleAdd'>
+									Roles
+								</label>
+								<select name="roleAdd" id="roleAdd" required="required">
+									<option value="">--Choissisez le role de l'utilisateur--</option>
+									<option value="Admin">Admin</option>
+									<option value="Editeur">Editeur</option>
+									<option value="Visiteur">Visiteur</option>
+								</select>
+							</div>
+							<br>
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
+							<button type="submit" id="buttonConfirmAdd" class="btn-valide btn-secondary">
+								Ajouter
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- edit-user-modal -->
+
+		<div class="modal" id="edit-user-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 class="modal-title">Modifier un utilisateur</h2>
+					</div>
+					<form action="{{ path('UserEdit') }}" method="post">
+						<div class="modal-body">
+							<input type="hidden" name="iduserEdit" id="iduserEdit">
+							<div>
+								<label for='usernameEdit'>
+									Nom d'utilisateur
+								</label>
+								<input type='text' oninput="usernameTestEdit()" value="" name='usernameEdit' id='usernameEdit'>
+								<p1 id="ErrorUserEdit">
+									Nom d'utilisateur deja pris</p1>
+								<div>
+									<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+								</div>
+
+							</div>
+							<div>
+								<label for='passwordEdit'>
+									Nouveau mot de passe temporaire
+								</label>
+								<input type='passwordEdit' required="required" name='passwordEdit' id='passwordEdit'>
+							</div>
+							<div>
+								<label for='roleEdit'>
+									Roles
+								</label>
+								<select name="roleEdit" id="roleEdit" required="required">
+									<option value="">--Choissisez le role de l'utilisateur--</option>
+									<option value="Admin">Admin</option>
+									<option value="Editeur">Editeur</option>
+									<option value="Visiteur">Visiteur</option>
+
+								</select>
+							</div>
+
+							<br>
+
+							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
+							<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">
+								Modifier
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 	{% endblock %}
