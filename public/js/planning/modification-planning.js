@@ -372,6 +372,7 @@ function changePlanning() {
 function updateEventsAppointment(oldEvent, newDelay, clickModify) {
   //TODO : corrigé la modification de l'event modifié
   var listEvent = calendar.getEvents();
+  let listOldEvent = calendar.getEvents();
     var appointmentId = oldEvent._def.extendedProps.appointment;
     var listEventAppointment = [];
     listEvent.forEach((currentEvent) => {
@@ -413,6 +414,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
       appointment.latestappointmenttime.split("T")[1]
     );
 
+    var isEditable = true;
       if (
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
@@ -443,8 +445,11 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
           }
         })
       }
-
       else {
+        isEditable = false;
+      }
+      
+      if (!isEditable){
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
@@ -456,7 +461,37 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
       }
 }
 
+/**
+ * @brief This function create the list of events to display in the calendar
+ * @returns a list of the events of the calendar
+ */
+ function createUnavailabilities(){
+  var materialUnavailabilities
+  var humanUnavailabilities
+  var unavailabilities
+  if(document.getElementById("MaterialUnavailables")!=null){
+    materialUnavailabilities = JSON.parse(document.getElementById("MaterialUnavailables").value);
+  }
+  if(document.getElementById("HumanUnavailables")!=null){
+    humanUnavailabilities = JSON.parse(document.getElementById("HumanUnavailables").value);
+  }
+  if(humanUnavailabilities.length>0 && materialUnavailabilities.length>0){
+    unavailabilities = materialUnavailabilities.concat(humanUnavailabilities);
+  }
+  else if(humanUnavailabilities.length==0){
+    unavailabilities = materialUnavailabilities;
+  }
+  else if(materialUnavailabilities.length==0){
+    unavailabilities = humanUnavailabilities;
+  }
+  unavailabilities; //add the unavailabilities to the events
+
+  return unavailabilities;
+}
+
 function createCalendar(typeResource) {
+  var unavailabilities = createUnavailabilities();
+  console.log(unavailabilities);
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -476,7 +511,6 @@ function createCalendar(typeResource) {
       listResource.push(eventResources);
     });
   }
-
   calendar = new FullCalendar.Calendar(calendarEl, {
     //clé de la license pour utiliser la librairie à des fin non commerciale
     schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
@@ -548,38 +582,7 @@ function createCalendar(typeResource) {
     }
   });
   switch (typeResource) {
-    /*case "Patients": //if we want to display by the patients
-      var tempArray = JSON.parse(
-        document
-          .getElementById("listeAppointments")
-          .value.replaceAll("3aZt3r", " ")
-      ); //get the data of the appointments
-      for (var i = 0; i < tempArray.length; i++) {
-        var temp = tempArray[i];
-        patient = temp["idPatient"]; //get the resources data
-        calendar.addResource({
-          //add the resources to the calendar
-          id: patient[0]["id"],
-          title: patient[0]["title"],
-        });
-      }
-      break;
-    case "Parcours": //if we want to display by the parcours
-      var tempArray = JSON.parse(
-        document
-          .getElementById("listeAppointments")
-          .value.replaceAll("3aZt3r", " ")
-      ); //get the data of the appointments
-      for (var i = 0; i < tempArray.length; i++) {
-        var temp = tempArray[i];
-        pathway = temp["idPathway"]; //get the resources data
-        calendar.addResource({
-          //add the resources to the calendar
-          id: pathway[0]["id"],
-          title: pathway[0]["title"],
-        });
-      }
-      break;*/
+  
     case "Ressources Humaines": //if we want to display by the resources
       var resourcesArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
@@ -633,14 +636,18 @@ function createCalendar(typeResource) {
         .getElementById("listScheduledActivitiesJSON")
         .value.replaceAll("3aZt3r", " ")
     );
+    eventsarray=eventsarray.concat(unavailabilities);
   } else {
     let setEvents = [];
     var index = 0;
+    listEvent=listEvent.concat(unavailabilities);
     listEvent.forEach((eventModify) => {
       var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
       var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
-
-      setEvents.push({
+      if(eventModify.display != "background"){
+        var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
+        var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
+        setEvents.push({
         id: eventModify.id,
         start: formatDate(start).replace(" ", "T"),
         end: formatDate(end).replace(" ", "T"),
@@ -650,9 +657,13 @@ function createCalendar(typeResource) {
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
       });
+      }
+     
       index++;
     });
     eventsarray = setEvents;
+    eventsarray=eventsarray.concat(unavailabilities);
+    console.log(eventsarray);
   }
   for (var i = 0; i < eventsarray.length; i++) {
     calendar.addEvent(eventsarray[i]);
@@ -695,14 +706,17 @@ function deleteModifInDB(){
 }
 
 function RessourcesAllocated(event){
-    
+  console.log(event._def.ui.display);
     if(event._def.resourceIds.includes('m-default')){
         return 'rgba(173, 11, 11, 0.753)';  
     }
     else if(event._def.resourceIds.includes('h-default')){
       return 'rgba(173, 11, 11, 0.753)'; 
     }
-
+    
+    else if(event._def.ui.display == "background"){
+      return '#ff0000';
+    }
     else{
       return '#20c997';
     }

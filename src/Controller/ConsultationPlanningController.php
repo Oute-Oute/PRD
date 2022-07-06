@@ -46,8 +46,8 @@ class ConsultationPlanningController extends AbstractController
         $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $listeMaterialResourceScheduledJSON = $this->listeMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $listeHumanResourceScheduledJSON = $this->listeHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-        $listeMaterialResourcesUnavailables= $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr de la base de données
-        $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR de la base de données
+        $listeMaterialResourcesUnavailables= $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
+        $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
         //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
@@ -241,7 +241,7 @@ class ConsultationPlanningController extends AbstractController
                     $materialCategories = $this->getMaterialCategory($doctrine, $MaterialResourceScheduled->getMaterialresource());
                     $materialCategoryArray = array();
                     foreach ($materialCategories as $materialCategory) {
-                        $MaterialResourceArray[] = array(
+                        $materialCategoryArray[] = array(
                             'category' => ($materialCategory),
                         );
                     }
@@ -251,15 +251,15 @@ class ConsultationPlanningController extends AbstractController
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                         'extendedProps' => array(
-                            'Categories' => ($MaterialResourceArray),
+                            'Categories' => ($materialCategoryArray),
                         ),
 
                     );
-                    unset($MaterialResourceArray);
+                    unset($materialCategoryArray);
                 }
             }
         }
-        unset($MaterialResourceArray);
+        unset($materialCategoryArray);
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
         return $MaterialResourceScheduledArrayJSON;
