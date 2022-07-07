@@ -322,3 +322,10 @@ function handleMaterialButton(id) {
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
 }
+
+function showInfosPathway(id, name) {
+    document.getElementById('pathway-id').innerText = id;
+    document.getElementById('pathway-name').innerText = name;
+    $('#infos-pathway-modal').modal("show");
+
+}
