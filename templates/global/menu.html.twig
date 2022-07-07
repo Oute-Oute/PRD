@@ -1,5 +1,15 @@
 {#{% if app.user != null %}#}
-
+<script>
+$(document).ready(function(){
+    $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if(activeTab){
+        $('#myTab a[href="' + activeTab + '"]').tab('show');
+    }
+});
+</script>
 <div class="dashboard-nav">
 	<nav class="dashboard-nav-list">
 		<div id="menu-top">
@@ -7,7 +17,7 @@
 				<a href="#!" class="menu-toggle">
 					<i class="fas fa-bars"></i>
 				</a>
-				<a href="/" class="brand-logo">
+				<a id = "title" href="/" class="brand-logo" >
 					<i class="fas fa-anchor"></i>
 					<span>HOPITAL</span>
 				</a>
@@ -16,7 +26,7 @@
 				<i class="fas fa-file-upload"></i>
 				Planning
 			</a> 
-			<a href="/appointments" class="dashboard-nav-item">
+			<a href="/appointments" class="dashboard-nav-item" id = "appointment">
 				<i class="fas fa-tachometer-alt"></i>
 				Rendez-vous</a>
 			<a href="/pathways" class="dashboard-nav-item">

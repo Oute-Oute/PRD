@@ -39,6 +39,7 @@
 						<td>{{ patient.lastname }}</td>
 						<td>{{ patient.firstname }}</td>
 						<td>
+						    <button class = "btn-infos btn-secondary" onclick="showInfosPatient('{{patient.id}}', '{{patient.lastname}}' , '{{ patient.firstname }}')">Informations</a>
 							<button type="button" class="btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
 							<form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
 								<input type="hidden" name="patient" value="{{ patient.id }}">
@@ -56,6 +57,8 @@
 
     {{ include ('patient/edit_patient.html.twig') }}
 	{{ include ('patient/new_patient.html.twig') }}
+	{{ include ('patient/show_patient.html.twig') }}
+
 
 
 

@@ -18,6 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
     //console.log(HUMAN_RESOURCES)
 })
 
+/**
+ * Permet d'afficher la fenêtre modale d'informations
+ */
+function showInfosPathway(id, name) {
+    document.getElementById('pathway-id').innerText = id;
+    document.getElementById('pathway-name').innerText = name;
+    $('#infos-pathway-modal').modal("show");
+
+}
+
+/**
+ * Permet d'afficher la fenêtre modale d'ajout
+ */
+function showNewModalForm(){
+    $('#add-pathway-modal').modal("show");
+}
+
+/**
+ * Permet de fermer la fenêtre modale d'ajout
+ */
+function hideNewModalForm() {
+    $('#add-pathway-modal').modal("hide");
+}
 
 function disableSubmit() {
     let btnSubmit = document.getElementById('submit')
@@ -200,22 +223,6 @@ function verifyChanges() {
 
 
 
-
-/**
- * Permet d'afficher la fenêtre modale d'ajout
- */
-function showNewModalForm(){
-    $('#add-pathway-modal').modal("show");
-}
-
-/**
- * Permet de fermer la fenêtre modale d'ajout
- */
-function hideNewModalForm() {
-    $('#add-pathway-modal').modal("hide");
-}
-
-
 function createDivEdit() {
 
     /* Div parent pour l'ajout de ressource */
@@ -368,4 +375,6 @@ function handleMaterialButton(id) {
         option.text = HUMAN_RESOURCES[indexHR].humanresourcename
         select.appendChild(option)
     }
+
 }
+

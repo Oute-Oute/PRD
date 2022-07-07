@@ -44,7 +44,7 @@ function modifyEvent() {
   var oldEvent = calendar.getEventById(id);
 
   var today = $_GET("date").substring(0, 10);
-  var newStart = new Date(today + " " + document.getElementById("new-start").value);
+  var newStart = new Date(today + " " + document.getElementById("start").value);
   var newDelay = oldEvent.start.getTime()-(2*60*60*1000) - newStart.getTime();
   var clickModify = true;
 
@@ -259,7 +259,7 @@ function AddEventValider() {
       //countAddEvent pour avoir un id different pour chaque events ajoutes
       CoundAddEvent++;
       //Ajout d'un event au calendar
-      calendar.addEvent({
+      var event=calendar.addEvent({
         id: "new" + CoundAddEvent,
         resourceIds: activityResourcesArray,
         title: activitya.name.replaceAll("3aZt3r", " "),
@@ -268,6 +268,7 @@ function AddEventValider() {
         patient: appointment.idPatient,
         appointment: appointment.id,
         activity: activitya.id,
+        type:"activity",
       });
 
       //Detection de la dernière activite du parcours
@@ -277,6 +278,9 @@ function AddEventValider() {
       PathwayBeginDate = new Date(
         PathwayBeginDate.getTime() + activitya.duration * 60000
       );
+      event._def.ui.backgroundColor = RessourcesAllocated(event); 
+      event._def.ui.borderColor = RessourcesAllocated(event); 
+      calendar.render();
     } while (idactivityB != undefined);
     calendar.render();
 
@@ -419,12 +423,14 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
+
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
             eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+            eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -444,20 +450,61 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
             eventAppointment.setEnd(endStr);
           }
         })
+        listEventAppointment.forEach((newEventAppointment) => {
+          listOldEvent.forEach((oldEventSet) => {
+            oldEventSet._def.resourceIds.forEach((oldResource) => {
+              newEventAppointment._def.resourceIds.forEach((newResource) => {
+                if(newResource == oldResource) {
+                  if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                    if(newEventAppointment._def.publicId == oldEvent._def.publicId){
+                      var currentModifyEvent = calendar.getEventById(oldEvent._def.publicId);
+                      if(!(currentModifyEvent.start > oldEventSet.end || currentModifyEvent.end < oldEventSet.start) || (currentModifyEvent.start < oldEventSet.start && currentModifyEvent.end > oldEventSet.end)){
+                        isEditable = false;
+                      }
+                    }
+                    else{
+                      if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end)){
+                        isEditable = false;
+                      }
+                    }
+                  }
+                }
+              })
+            })
+          })
+        })
       }
       else {
         isEditable = false;
       }
       
       if (!isEditable){
-        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-        calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-        var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
-        var endStr = formatDate(endDate).replace(" ", "T");
-        calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
-        calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+        listEventAppointment.forEach((newEventAppointment) => {
+          listOldEvent.forEach((oldEventSet) => {
+            if(newEventAppointment._def.publicId == oldEventSet._def.publicId){
+              if(newEventAppointment._def.publicId == oldEvent._def.publicId){
+                calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+                calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+                var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
+                var startStr = formatDate(startDate).replace(" ", "T");
+                var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
+                var endStr = formatDate(endDate).replace(" ", "T");
+                calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
+                calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+              }
+              else {
+                newEventAppointment._def.ui.backgroundColor = RessourcesAllocated(oldEventSet);
+                newEventAppointment._def.ui.borderColor = RessourcesAllocated(oldEventSet);
+                var startDate = new Date(oldEventSet.start.getTime()-(2*60*60*1000));
+                var startStr = formatDate(startDate).replace(" ", "T");
+                var endDate = new Date(oldEventSet.end.getTime()-(2*60*60*1000));
+                var endStr = formatDate(endDate).replace(" ", "T");
+                newEventAppointment.setStart(startStr);
+                newEventAppointment.setEnd(endStr);
+              }
+            }
+          })
+        })
       }
 }
 
@@ -466,9 +513,9 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
  * @returns a list of the events of the calendar
  */
  function createUnavailabilities(){
-  var materialUnavailabilities
-  var humanUnavailabilities
-  var unavailabilities
+  var materialUnavailabilities;
+  var humanUnavailabilities;
+  var unavailabilities;
   if(document.getElementById("MaterialUnavailables")!=null){
     materialUnavailabilities = JSON.parse(document.getElementById("MaterialUnavailables").value);
   }
@@ -551,25 +598,43 @@ function createCalendar(typeResource) {
     resourceAreaHeaderContent: headerResources,
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
-    eventClick: function (event, element) {
-      //récupération des données
-      var id = event.event._def.publicId;
-      var activity = calendar.getEventById(id);
-      var start = activity.start;
-      var tmp = activity.end - start;
+    eventClick: function (event) {
+      var id = event.event._def.publicId; //get the id of the event
+      var activity = calendar.getEventById(id); //get the event with the id
+      var start = activity.start; //get the start date of the event
+      var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+      console.log(activity.extendedProps.humanResources); 
+      var humanResourcesNames = ""; //create a string with the human resources names
+      for (var i = 0; i < humanResources.length ; i++) {
+        //for each human resource except the last one
+        if (humanResources[i].resourceName != undefined) {
+          //if the human resource exist
+          humanResourcesNames += humanResources[i].resourceName + "; "; //add the human resource name to the string with a ; and a space
+        }
+      }
+      //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
 
-      //calcul de la durée de l'activité
-      length = Math.floor(tmp / 1000 / 60);
+      var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+      var materialResourcesNames = ""; //create a string with the material resources names
+      for (var i = 0; i < materialResources.length; i++) {
+        //for each material resource except the last one
+        if (materialResources[i].resourceName != undefined) {
+          //if the material resource exist
+          materialResourcesNames += materialResources[i].resourceName + "; "; //add the material resource name to the string with a ; and a space
+        }
+      }
+     // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
-      //set les données à afficher par défault
-      $("#new-start").val(start.toISOString().substring(11, 16));
-      document.getElementById("show-title").innerHTML = activity.title;
-      $("#title").val(activity.title);
-      $("#length").val(length);
+      //set data to display in the modal window
+      $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
+      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
+      $("#rh").val(humanResourcesNames); //set the human resources of the event
+      $("#rm").val(materialResourcesNames); //set the material resources of the event
       $("#id").val(id);
 
-      //ouvre la modal
-      $("#modify-planning-modal").modal("show");
+      $("#modify-planning-modal").modal("show"); //open the window
     },
 
     eventDrop: function (event) {
@@ -706,7 +771,6 @@ function deleteModifInDB(){
 }
 
 function RessourcesAllocated(event){
-  console.log(event._def.ui.display);
     if(event._def.resourceIds.includes('m-default')){
         return 'rgba(173, 11, 11, 0.753)';  
     }
