@@ -419,12 +419,14 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         earliestAppointmentDate <= new Date(eventFirst.start.getTime()-(2*60*60*1000)-newDelay) &&
         new Date(eventLast.end.getTime()-(2*60*60*1000)-newDelay) <= latestAppointmentDate
       ) {
+
         calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
         listEventAppointment.forEach((eventAppointment) => {
           if(clickModify)
           {
             eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+            eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
             var startDate = new Date(eventAppointment.start.getTime()-(2*60*60*1000)-newDelay);
             var startStr = formatDate(startDate).replace(" ", "T");
             var endDate = new Date(eventAppointment.end.getTime()-(2*60*60*1000)-newDelay);
@@ -444,20 +446,61 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
             eventAppointment.setEnd(endStr);
           }
         })
+        listEventAppointment.forEach((newEventAppointment) => {
+          listOldEvent.forEach((oldEventSet) => {
+            oldEventSet._def.resourceIds.forEach((oldResource) => {
+              newEventAppointment._def.resourceIds.forEach((newResource) => {
+                if(newResource == oldResource) {
+                  if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                    if(newEventAppointment._def.publicId == oldEvent._def.publicId){
+                      var currentModifyEvent = calendar.getEventById(oldEvent._def.publicId);
+                      if(!(currentModifyEvent.start > oldEventSet.end || currentModifyEvent.end < oldEventSet.start) || (currentModifyEvent.start < oldEventSet.start && currentModifyEvent.end > oldEventSet.end)){
+                        isEditable = false;
+                      }
+                    }
+                    else{
+                      if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end)){
+                        isEditable = false;
+                      }
+                    }
+                  }
+                }
+              })
+            })
+          })
+        })
       }
       else {
         isEditable = false;
       }
       
       if (!isEditable){
-        calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-        calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-        var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
-        var endStr = formatDate(endDate).replace(" ", "T");
-        calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
-        calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+        listEventAppointment.forEach((newEventAppointment) => {
+          listOldEvent.forEach((oldEventSet) => {
+            if(newEventAppointment._def.publicId == oldEventSet._def.publicId){
+              if(newEventAppointment._def.publicId == oldEvent._def.publicId){
+                calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+                calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+                var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
+                var startStr = formatDate(startDate).replace(" ", "T");
+                var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
+                var endStr = formatDate(endDate).replace(" ", "T");
+                calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
+                calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
+              }
+              else {
+                newEventAppointment._def.ui.backgroundColor = RessourcesAllocated(oldEventSet);
+                newEventAppointment._def.ui.borderColor = RessourcesAllocated(oldEventSet);
+                var startDate = new Date(oldEventSet.start.getTime()-(2*60*60*1000));
+                var startStr = formatDate(startDate).replace(" ", "T");
+                var endDate = new Date(oldEventSet.end.getTime()-(2*60*60*1000));
+                var endStr = formatDate(endDate).replace(" ", "T");
+                newEventAppointment.setStart(startStr);
+                newEventAppointment.setEnd(endStr);
+              }
+            }
+          })
+        })
       }
 }
 
@@ -466,9 +509,9 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
  * @returns a list of the events of the calendar
  */
  function createUnavailabilities(){
-  var materialUnavailabilities
-  var humanUnavailabilities
-  var unavailabilities
+  var materialUnavailabilities;
+  var humanUnavailabilities;
+  var unavailabilities;
   if(document.getElementById("MaterialUnavailables")!=null){
     materialUnavailabilities = JSON.parse(document.getElementById("MaterialUnavailables").value);
   }
@@ -706,7 +749,6 @@ function deleteModifInDB(){
 }
 
 function RessourcesAllocated(event){
-  console.log(event._def.ui.display);
     if(event._def.resourceIds.includes('m-default')){
         return 'rgba(173, 11, 11, 0.753)';  
     }
