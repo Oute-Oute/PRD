@@ -706,7 +706,6 @@ function deleteModifInDB(){
 }
 
 function RessourcesAllocated(event){
-  console.log(event._def.ui.display);
     if(event._def.resourceIds.includes('m-default')){
         return 'rgba(173, 11, 11, 0.753)';  
     }
@@ -714,7 +713,7 @@ function RessourcesAllocated(event){
       return 'rgba(173, 11, 11, 0.753)'; 
     }
     
-    else if(event._def.ui.display == "background"){
+    else if(event._def.ui.display == "background"){ //get the unavailabilities events
       return '#ff0000';
     }
     else{
