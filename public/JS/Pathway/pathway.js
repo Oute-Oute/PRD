@@ -2,6 +2,9 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
+var HUMAN_RESOURCE_CATEGORIES
+
+
 
 /**
  * Appelée au chargement de la page de création d'un parcours (circuit)
@@ -9,8 +12,35 @@ var NB_ACTIVITY = 0;
  document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
     //showNewModalForm()
+    HUMAN_RESOURCE_CATEGORIES = JSON.parse(
+        document.getElementById("json-human-resource-categories").value
+    );
+    //console.log(HUMAN_RESOURCES)
 })
 
+/**
+ * Permet d'afficher la fenêtre modale d'informations
+ */
+function showInfosPathway(id, name) {
+    document.getElementById('pathway-id').innerText = id;
+    document.getElementById('pathway-name').innerText = name;
+    $('#infos-pathway-modal').modal("show");
+
+}
+
+/**
+ * Permet d'afficher la fenêtre modale d'ajout
+ */
+function showNewModalForm(){
+    $('#add-pathway-modal').modal("show");
+}
+
+/**
+ * Permet de fermer la fenêtre modale d'ajout
+ */
+function hideNewModalForm() {
+    $('#add-pathway-modal').modal("hide");
+}
 
 function disableSubmit() {
     let btnSubmit = document.getElementById('submit')
@@ -136,22 +166,18 @@ function editSelect(id) {
 
     if (divToEdit.style.display == 'flex') {
         divToEdit.style.display = 'none'
+
         let divField = document.getElementById('activity-field-'+id)
         divField.style.borderBottomLeftRadius = '10px'
         divField.style.borderBottomRightRadius = '10px'
-
     } else {
-        divToEdit.style.display = 'flex'
+        divToEdit.style.display = 'flex';
+
         let divField = document.getElementById('activity-field-'+id)  
         divField.style.borderBottomLeftRadius = '0px'
         divField.style.borderBottomRightRadius = '0px'
     }
 
-
-
-    //console.log(divToEdit)
-
-    
 }
 
 /**
@@ -197,22 +223,6 @@ function verifyChanges() {
 
 
 
-
-/**
- * Permet d'afficher la fenêtre modale d'ajout
- */
-function showNewModalForm(){
-    $('#add-pathway-modal').modal("show");
-}
-
-/**
- * Permet de fermer la fenêtre modale d'ajout
- */
-function hideNewModalForm() {
-    $('#add-pathway-modal').modal("hide");
-}
-
-
 function createDivEdit() {
 
     /* Div parent pour l'ajout de ressource */
@@ -220,6 +230,7 @@ function createDivEdit() {
     divEditActivity.setAttribute('class', 'div-edit-activities')
     divEditActivity.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
     divEditActivity.style.display = 'none'
+    //divEditActivity.style.height = '0px'
 
     /* Premier enfant : les 2 boutons pour choisir materielles humaines */
 
@@ -251,40 +262,36 @@ function createDivEdit() {
     divRM.setAttribute('class', 'div-resources-m')
     //divResources.appendChild(divRH)
     ul = document.createElement('ul')
-    li1 = document.createElement('li')
-    li1.innerText = 'Chantal'
-    li2 = document.createElement('li')
-    li2.innerText = 'Marie'
-    li3 = document.createElement('li')
-    li3.innerText = 'Louise'
-    li4 = document.createElement('li')
-    li4.innerText = 'Clemence'
-    divRM.appendChild(li1)
-    divRM.appendChild(li2)
-    divRM.appendChild(li3)
-    divRM.appendChild(li4)
+    ul.setAttribute('id', 'list-resources-'+SELECT_ID)
+
+    divRM.appendChild(ul)
+
     divResources.appendChild(divRM)
 
 
     /* Troisieme enfant : select  */
+
     divAddResources = document.createElement('div')
     divAddResources.setAttribute('class', 'div-add-resources')
     divAddResources.setAttribute('title', 'Choisissez la ressource à ajouter')
     selectResources = document.createElement('select')
-    option = document.createElement('option')
-    option.value = '1'
-    option.text = 'oui'
-    selectResources.appendChild(option)
+    selectResources.setAttribute('id', 'select-resources-'+SELECT_ID)
+    //console.log(HUMAN_RESOURCES[0])
+    //for (let indexHR = 0; )
+
     inputNbResources = document.createElement('input')
     inputNbResources.setAttribute('type', 'number')
-    inputNbResources.setAttribute('title', 'Entrer le nombre de ressources')
+    inputNbResources.setAttribute('title', 'Entrer le nombre de ressources à ajouter')
     inputNbResources.setAttribute('placeholder', 'Qte')
+    inputNbResources.setAttribute('id', 'resource-nb-'+SELECT_ID)
     //title="Enter input here"
     btnPlus = document.createElement('button')
     btnPlus.setAttribute('type', 'button')
     btnPlus.innerHTML = '+'
     btnPlus.setAttribute('title', 'Ajouter la ressource a la liste')
-
+    btnPlus.setAttribute('id', 'btn-'+SELECT_ID)
+    btnPlus.setAttribute('onclick', 'addResources(this.id)')
+    
     divAddResources.appendChild(selectResources)
     divAddResources.appendChild(inputNbResources)
     divAddResources.appendChild(btnPlus)
@@ -299,33 +306,75 @@ function createDivEdit() {
     return divEditActivity
 }
 
+var resourcesByActivities = new Object()
+
+function addResources(id) {
+    // recuperation de l'id
+    id = id[id.length - 1] 
+
+    resourceNb = document.getElementById('resource-nb-'+id).value
+    resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+    let resourceName ='';
+    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+        }
+    }
+    
+    ul = document.getElementById('list-resources-'+id)
+
+    var li = document.createElement('li');
+    li.innerText = resourceName +' ('+resourceNb+')'
+    
+    ul.appendChild(li)
+}
 
 function handleHumanButton(id) {
+    // recuperation de l'id
     id = id[id.length - 1] 
+    
+    // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bh = document.getElementById('bh-'+id)
     bh.style.textDecoration = 'underline'
     bh.style.fontWeight = '700'
 
+    // mise en place du style pour le menu non selectionné (Humaines ou Materielles)
     let bm = document.getElementById('bm-'+id)
     bm.style.textDecoration = 'none'
     bm.style.fontWeight = 'normal'
 
+    // remplissage du select avec les données de la bd
+    let select = document.getElementById('select-resources-'+SELECT_ID)
+    for (let indexHR = 0; indexHR < HUMAN_RESOURCE_CATEGORIES.length; indexHR++) {
+        option = document.createElement('option')
+        option.value = HUMAN_RESOURCE_CATEGORIES[indexHR].id
+        option.text = HUMAN_RESOURCE_CATEGORIES[indexHR].categoryname
+        select.appendChild(option)
+    }
 }
 
 function handleMaterialButton(id) {
+    // recuperation de l'id
     id = id[id.length - 1] 
+
+    // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bm = document.getElementById('bm-'+id)
     bm.style.textDecoration = 'underline'
     bm.style.fontWeight = '700'
 
+    // mise en place du style pour le menu non selectionné (Humaines ou Materielles)
     let bh = document.getElementById('bh-'+id)
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
+
+    // remplissage du select avec les données de la bd
+    let select = document.getElementById('select-resources-'+SELECT_ID)
+    for (let indexHR = 0; indexHR < HUMAN_RESOURCES.length; indexHR++) {
+        option = document.createElement('option')
+        option.value = HUMAN_RESOURCES[indexHR].id
+        option.text = HUMAN_RESOURCES[indexHR].humanresourcename
+        select.appendChild(option)
+    }
+
 }
 
-function showInfosPathway(id, name) {
-    document.getElementById('pathway-id').innerText = id;
-    document.getElementById('pathway-name').innerText = name;
-    $('#infos-pathway-modal').modal("show");
-
-}
