@@ -130,7 +130,7 @@ app_activity_index:
 
 Pathways:
   path: /pathways
-  controller: App\Controller\PathwayController:index
+  controller: App\Controller\PathwayController:pathwayGet
   methods: [GET]
 
 PathwaysPost:

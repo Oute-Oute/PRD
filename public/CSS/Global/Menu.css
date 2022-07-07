@@ -157,7 +157,7 @@ h1, .h1 {
 
 
 #appointment:active {
-    background-color : red;
+    background-color : var(--main-green);
 }
 
 .dashboard-nav a#title:hover {

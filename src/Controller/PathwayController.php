@@ -24,7 +24,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
  */
 class PathwayController extends AbstractController
 {
-    public function index(PathwayRepository $pathwayRepository): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
 
         $activityRepository = new ActivityRepository($this->getDoctrine());
