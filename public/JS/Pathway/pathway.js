@@ -60,6 +60,7 @@ function handleAddActivity() {
     RESOURCES_BY_ACTIVITIES.push( new Object())
     RESOURCES_BY_ACTIVITIES[SELECT_ID].humanResourceCategories = new Array()
     RESOURCES_BY_ACTIVITIES[SELECT_ID].materialResourceCategories = new Array()
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].available = true
 
     NB_ACTIVITY = NB_ACTIVITY + 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -73,6 +74,7 @@ function handleAddActivity() {
 
     let inputName = document.createElement('input')
     inputName.setAttribute('class', 'input-name')
+    inputName.setAttribute('id', 'input-activity-name-'+SELECT_ID)
     //inputName.disabled = true
     inputName.setAttribute('placeholder', 'Nom')
     inputName.setAttribute('onchange', 'disableSubmit()')
@@ -156,6 +158,7 @@ function deleteSelect(id) {
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
+    RESOURCES_BY_ACTIVITIES[id].available = false
     //SELECT_ID = SELECT_ID - 1;
 }
 
@@ -193,16 +196,26 @@ function editSelect(id) {
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
  */
 function verifyChanges() {
-    console.log('oui')
+    console.log('Appel de la fonction verifyChanges')
+
     let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
     let activitiesContainer = document.getElementsByClassName('activities-container')[0]
 
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
-    for (let i = 0; i < NB_ACTIVITY; i++) {
+    let indexActivityAvailable = 0;
+    for (let i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
 
-        activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
+        // On ne considere que les activités qui n'ont pas été supprimées
+        if (RESOURCES_BY_ACTIVITIES[i].available === true) {
+            inputName  = document.getElementById('input-activity-name-'+i)
+            RESOURCES_BY_ACTIVITIES[i].activityname = inputName.value
+
+            indexActivityAvailable = indexActivityAvailable + 1
+        }
+
+        /*activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
         let name = activitiesContainer.children[i].children[1].children[0].value
         activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))
         let duration = activitiesContainer.children[i].children[1].children[1].value
@@ -216,13 +229,17 @@ function verifyChanges() {
         }
         if (Number(duration) < 0 ) {
             formOk = false
-        }
+        }*/
 
     }
 
-    if (document.getElementById('pathwayname').value === '') {
+    /*if (document.getElementById('pathwayname').value === '') {
         formOk = false
     }
+*/
+
+    console.log(JSON.stringify(RESOURCES_BY_ACTIVITIES))
+    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
 
     if (formOk) {
         let btnSubmit = document.getElementById('submit')

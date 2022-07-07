@@ -8,7 +8,9 @@
             </div>
             <form action="{{ path('PathwaysPost') }}" method="post">
                 <div class="modal-body">
-                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+
+                    <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
+                    <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
                     <input style="display:none;" name="nbactivity" id="nbactivity">
 
                     <div class="flex-col"> 

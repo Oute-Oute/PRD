@@ -27,6 +27,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 class PathwayController extends AbstractController
 {
 
+
     public function listHumanResourcesJSON()
     {
         $humanResourceCategoryRepo = new HumanResourceCategoryRepository($this->getDoctrine());
@@ -47,6 +48,7 @@ class PathwayController extends AbstractController
         $humanResourceCategoriesArrayJson = new JsonResponse($humanResourceCategoriesArray);
         return $humanResourceCategoriesArrayJson;    
     }
+
 
     public function listMaterialResourcesJSON()
     {
@@ -111,6 +113,11 @@ class PathwayController extends AbstractController
             // On recupere toutes les données de la requete
             $param = $request->request->all();
 
+            $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+
+            dd($resourcesByActivities);
+
+            dd($param);
 
             // Premierement on s'occupe d'ajouter le parcours dans la bd :
             // On crée l'objet parcours
