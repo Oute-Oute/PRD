@@ -56,13 +56,14 @@
             {% endfor %}
         {% endif %}
         
-        console.log(activitiesByPathways);
+        //console.log(activitiesByPathways);
 
     </script> 
 
     <div class="index">
     
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
+    <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
 
     <h1>Liste des parcours</h1>
     <button type="button" class ="btn-add" onclick="showNewModalForm()">Ajouter un nouveau parcours</button>
