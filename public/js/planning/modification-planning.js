@@ -259,7 +259,7 @@ function AddEventValider() {
       //countAddEvent pour avoir un id different pour chaque events ajoutes
       CoundAddEvent++;
       //Ajout d'un event au calendar
-      calendar.addEvent({
+      var event=calendar.addEvent({
         id: "new" + CoundAddEvent,
         resourceIds: activityResourcesArray,
         title: activitya.name.replaceAll("3aZt3r", " "),
@@ -268,6 +268,7 @@ function AddEventValider() {
         patient: appointment.idPatient,
         appointment: appointment.id,
         activity: activitya.id,
+        type:"activity",
       });
 
       //Detection de la dernière activite du parcours
@@ -277,6 +278,9 @@ function AddEventValider() {
       PathwayBeginDate = new Date(
         PathwayBeginDate.getTime() + activitya.duration * 60000
       );
+      event._def.ui.backgroundColor = RessourcesAllocated(event); 
+      event._def.ui.borderColor = RessourcesAllocated(event); 
+      calendar.render();
     } while (idactivityB != undefined);
     calendar.render();
 
