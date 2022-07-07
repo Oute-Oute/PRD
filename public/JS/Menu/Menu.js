@@ -1,5 +1,7 @@
 const mobileScreen = window.matchMedia("(max-width: 990px )");
 $(document).ready(function () {
+    document.body.style.backgroundColor = "red";
+
     $(".dashboard-nav-dropdown-toggle").click(function () {
         $(this).closest(".dashboard-nav-dropdown")
             .toggleClass("show")
@@ -16,4 +18,10 @@ $(document).ready(function () {
             $(".dashboard").toggleClass("dashboard-compact");
         }
     });
+});
+
+$(document).ready(function () {
+
+        let test = document.getElementById('appointment');
+        test.toggle("active");
 });

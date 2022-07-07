@@ -43,10 +43,10 @@ class HumanResourceController extends AbstractController
                     //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
                     //dd($listCategOf[$indexCategOf]);
     
-                    $humanResourceCategories =  $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()]);
+                    $humanResourceCategoriesBy =  $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()]);
                     //dd($materialResourceCategories);
-                    if($humanResourceCategories != null){
-                        array_push($categoriesByResource,$humanResourceCategories[0]);
+                    if($humanResourceCategoriesBy != null){
+                        array_push($categoriesByResource,$humanResourceCategoriesBy[0]);
                     }
                     //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()])[0]);
                     

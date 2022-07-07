@@ -155,6 +155,11 @@ h1, .h1 {
     background-color: var(--main-green);
 }
 
+
+#appointment:active {
+    background-color : red;
+}
+
 .dashboard-nav a#title:hover {
     background-color : transparent;
 }
