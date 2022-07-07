@@ -652,7 +652,7 @@ function createCalendar(typeResource) {
     resourceOrder: "title",
     resourceAreaWidth: "20%",
     resourceAreaHeaderContent: headerResources,
-    
+
     eventDidMount: function (info) {
       $(info.el).tooltip({
         title: info.event.extendedProps.description,
@@ -787,6 +787,7 @@ function createCalendar(typeResource) {
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
+        description:'test'
       });
       }
      

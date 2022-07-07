@@ -443,8 +443,8 @@ function createCalendar(resources) {
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-
-      console.log(temp);
+console.log( document.getElementById("material").value)
+      console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {

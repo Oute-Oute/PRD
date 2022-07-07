@@ -439,7 +439,8 @@ class ModificationPlanningController extends AbstractController
                 'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
                 'materialResources' => ($scheduledActivitiesMaterialResourceArray),
                 'humanResources' => ($scheduledActivitesHumanResourcesArray),
-                'type' => "activity"
+                'type' => "activity",
+                'description'=>''
             );
         }
         $scheduledActivitiesArrayJson = new JsonResponse($scheduledActivitiesArray);

@@ -251,7 +251,7 @@ class ConsultationPlanningController extends AbstractController
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                         'extendedProps' => array(
-                            'Categories' => ($materialCategoryArray),
+                            'Categories' => ($materialCategoryArray)
                         ),
 
                     );
