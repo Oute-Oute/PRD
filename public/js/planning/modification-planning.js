@@ -44,7 +44,7 @@ function modifyEvent() {
   var oldEvent = calendar.getEventById(id);
 
   var today = $_GET("date").substring(0, 10);
-  var newStart = new Date(today + " " + document.getElementById("new-start").value);
+  var newStart = new Date(today + " " + document.getElementById("start").value);
   var newDelay = oldEvent.start.getTime()-(2*60*60*1000) - newStart.getTime();
   var clickModify = true;
 
@@ -555,7 +555,6 @@ function createCalendar(typeResource) {
       var id = event.event._def.publicId; //get the id of the event
       var activity = calendar.getEventById(id); //get the event with the id
       var start = activity.start; //get the start date of the event
-      var end = activity.end; //get the end date of the event
       var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
       console.log(activity.extendedProps.humanResources); 
       var humanResourcesNames = ""; //create a string with the human resources names
@@ -580,13 +579,13 @@ function createCalendar(typeResource) {
      // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
       //set data to display in the modal window
-      $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
-      $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
+      $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
       document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
       $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
       $("#patient").val(activity.extendedProps.patient); //set the patient of the event
       $("#rh").val(humanResourcesNames); //set the human resources of the event
       $("#rm").val(materialResourcesNames); //set the material resources of the event
+      $("#id").val(id);
 
       $("#modify-planning-modal").modal("show"); //open the window
     },

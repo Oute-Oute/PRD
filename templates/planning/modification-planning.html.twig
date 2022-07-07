@@ -34,11 +34,17 @@
 				</div>
 				<div
 					<div class="modal-body">
-					<label class="label-event">Horaires de l'activité :
+					<label class="label-event">Début de l'activité
 					</label>
 					<div class="input-container onWhite">
-						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
-						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+					<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
+					<input name="form" type="hidden" value="modify">
+					<input id="id" name="id" type="hidden">
+					<input id="length" name="length" type="hidden">
+					<inputid="title" name="title" type="hidden">
+
+					<input class="input-modal-date" type="time" id="start" name="start" required>
+					</br>
 					<label class="label-event">Parcours :</label>
 					</br>
 					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
