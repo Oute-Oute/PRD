@@ -789,7 +789,6 @@ function createCalendar(typeResource) {
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
-        description:'test'
       });
       }
      

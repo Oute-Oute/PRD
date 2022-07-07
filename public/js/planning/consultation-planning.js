@@ -39,6 +39,7 @@ function $_GET(param) {
 dateStr = $_GET("date");
 date = new Date(dateStr);
 
+
 if ($_GET("headerResources") != null) {
   headerResources = $_GET("headerResources"); //get the type of resources to display in the list
   headerResources = headerResources.replaceAll("%20", " "); //set the space in the header
