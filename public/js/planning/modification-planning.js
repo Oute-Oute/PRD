@@ -508,20 +508,19 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
             eventAppointment.setEnd(endStr);
           }
         })
-        listEventAppointment.forEach((newEventAppointment) => {
+        listEventAppointment.forEach((currentModifyEvent) => {
           listOldEvent.forEach((oldEventSet) => {
+            var newEventAppointment = currentModifyEvent;
+            if(currentModifyEvent._def.publicId == oldEvent._def.publicId){
+              newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+            }
             oldEventSet._def.resourceIds.forEach((oldResource) => {
               newEventAppointment._def.resourceIds.forEach((newResource) => {
-                if(newResource == oldResource) {
-                  if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
-                    if(newEventAppointment._def.publicId == oldEvent._def.publicId){
-                      var currentModifyEvent = calendar.getEventById(oldEvent._def.publicId);
-                      if(!(currentModifyEvent.start > oldEventSet.end || currentModifyEvent.end < oldEventSet.start) || (currentModifyEvent.start < oldEventSet.start && currentModifyEvent.end > oldEventSet.end)){
-                        isEditable = false;
-                      }
-                    }
-                    else{
-                      if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end)){
+                if(newResource != "h-default" && newResource != "m-default"){
+                  if(newResource == oldResource) {
+                    if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                      if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
+                        console.log(oldEventSet._def.title + " est déjà prévu sur ce crénaux avec " + newResource + ", on ne peut donc pas mettre " + newEventAppointment._def.title);
                         isEditable = false;
                       }
                     }
@@ -533,6 +532,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         })
       }
       else {
+        console.log("Le parcours n'est pas compris entre : " + earliestAppointmentDate + " et " + latestAppointmentDate);
         isEditable = false;
       }
       
@@ -547,6 +547,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
                 var startStr = formatDate(startDate).replace(" ", "T");
                 var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
                 var endStr = formatDate(endDate).replace(" ", "T");
+                calendar.getEventById(oldEvent._def.publicId)._def.resourceIds = oldEvent._def.resourceIds;
                 calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
                 calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
               }
