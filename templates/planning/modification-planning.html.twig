@@ -33,21 +33,28 @@
 					</h2>
 				</div>
 				<div
-					class="modal-body">
-					<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
-					<input name="form" type="hidden" value="modify">
-					<input id="id" name="id" type="hidden">
-					<input id="length" name="length" type="hidden">
-					<input
-					id="title" name="title" type="hidden">
-
-					<!-- initialise l'heure de début de l'activité prévu et permet de la modifier -->
-					<label>Heure de début de l'activité :
+					<div class="modal-body">
+					<label class="label-event">Horaires de l'activité :
 					</label>
 					<div class="input-container onWhite">
-						<input class="input-field" type="time-local" id="new-start" name="new-start" required>
+						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+					<label class="label-event">Parcours :</label>
+					</br>
+					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+					</br>
+					<label class="label-event">Patient :</label>
+					</br>
+					<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+					</br>
+					<label class="label-event">Ressource Humaine :</label>
+					</br>
+					<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
+					</br>
+					<label class="label-event">Ressource Matérielle :</label>
+					</br>
+					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
 					</div>
-
 					<div
 						class="modal-footer">
 						<!-- bouton de suppression à revoir, permet pour le moment d'être redirigé vers la gestion des rendez-vous pour en supprimer un -->
