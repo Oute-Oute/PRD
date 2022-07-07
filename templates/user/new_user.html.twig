@@ -1,4 +1,4 @@
-		<div class="modal" id="add-user-modal">
+<div class="modal" id="add-user-modal">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -7,38 +7,40 @@
 					<form action="{{ path('UserAdd') }}" method="post">
 						<div class="modal-body">
 							<div>
-								<label for='username'>
+								<label for='usernameAdd'>
 									Nom d'utilisateur
 								</label>
-								<input type='text' required="required" name='username'>
+								<input type='text' oninput="usernameTestNew()" required="required" name='usernameAdd' id="usernameAdd">
+
+								<p1 id="ErrorUser">
+									Nom d'utilisateur deja pris</p1>
+
+							</div>
+							<div>
+								<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
 							</div>
 
 							<div>
-								<label for='password'>
+								<label for='passwordAdd'>
 									Mot de passe Temporaire
 								</label>
-								<input type='password' required="required" name='password'>
+								<input type='passwordAdd' required="required" name='passwordAdd'>
 							</div>
-
 							<div>
-								<label for='role'>
+								<label for='roleAdd'>
 									Roles
 								</label>
-								<select name="role" id="role">
+								<select name="roleAdd" id="roleAdd" required="required">
 									<option value="">--Choissisez le role de l'utilisateur--</option>
 									<option value="Admin">Admin</option>
 									<option value="Editeur">Editeur</option>
 									<option value="Visiteur">Visiteur</option>
-
 								</select>
 							</div>
-
-
 							<br>
-
-                            <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+							<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Retour</button>
 							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
-							<button type="submit" class="btn-valide btn-secondary">
+							<button type="submit" id="buttonConfirmAdd" class="btn-valide btn-secondary">
 								Ajouter
 							</button>
 						</div>

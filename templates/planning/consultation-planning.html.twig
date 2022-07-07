@@ -14,6 +14,7 @@
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY" crossorigin="anonymous"></script>
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 	<script src="js/planning/consultation-planning.js"></script>
+	<script src="js/planning/utils-planning.js"></script>
 
 	<div class="all-container" id="all">
 		<h1>Consultation du Planning</h1>
@@ -44,7 +45,7 @@
 			<button id="previousButton" class="btn-calendar-edit" onclick="NextDay()" title="Aller au jour d'après">
 				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
 			</button>
-			<input type="hidden" id="appointment" value='{{listeAppointmentJSON.content}}'/>
+			<input type="hidden" id="appointments" value='{{listeAppointmentJSON.content}}'/>
 			<input type="hidden" id="events" value='{{listeScheduledActivitiesJSON.content}}'/>
 			<input type="hidden" id="material" value='{{listeMaterialResourceScheduledJSON.content}}'/>
 			<input type="hidden" id="human" value='{{listeHumanResourceScheduledJSON.content}}'/>

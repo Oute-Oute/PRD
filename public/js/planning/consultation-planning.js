@@ -2,9 +2,10 @@
  * @file consultation-planning.js
  * @brief This file contains the js scripts for the consultation planning page, essentially the calendar.
  * @author Thomas Blumstein
- * @version 1.0
- * @date 2022/06
+ * @version 2.0
+ * @date 2022/07
  */
+
 
 var calendar; // var globale pour le calendrier
 var date = new Date(); //create a default date
@@ -38,137 +39,48 @@ function $_GET(param) {
 dateStr = $_GET("date");
 date = new Date(dateStr);
 
+
 if ($_GET("headerResources") != null) {
   headerResources = $_GET("headerResources"); //get the type of resources to display in the list
-  headerResources = headerResources.replaceAll("%20", " "); //remove the space in the header
+  headerResources = headerResources.replaceAll("%20", " "); //set the space in the header
+  headerResources = headerResources.replaceAll("%C3%A9", "é"); //set the comma in the header
   console.log(headerResources);
+} else {
+  headerResources = "Patients";
 }
-
 document.addEventListener("DOMContentLoaded", function () {
-  createCalendar("Patients");
+  createCalendar(headerResources); //create the calendar
 });
-
-/**
- * @brief This function is called when we want to change the type of the calendar (Patients, Resources...)
- */
-function changePlanning() {
-  var header =
-    document.getElementById("displayList").options[
-      document.getElementById("displayList").selectedIndex
-    ].text; //get the type of resources to display in the list
-  headerResources = header; //update the header of the list
-  createCalendar(header); //rerender the calendar with the new type of resources
-  let filter = document.getElementById("filterId"); //get the filter
-  filter.style.display = "none"; //hide the filter
-  while (filter.firstChild) {
-    //while there is something in the filter
-    filter.removeChild(filter.firstChild); //remove the old content
-  }
-}
-
-/**
- * @brief This function is called when we want to go to the modification page
- */
-function modify(id = 1) {
-  var day = calendar.getDate().getDate(); //get the day
-  var month = calendar.getDate().getMonth() + 1; //get the month (add 1 because it starts at 0)
-  var year = calendar.getDate().getFullYear(); //get the year
-  if (day < 10) {
-    day = "0" + day;
-  } //if the day is less than 10, add a 0 before to fit with DateTime format
-  if (month < 10) {
-    month = "0" + month;
-  } //if the month is less than 10, add a 0 before to fit with DateTime format
-  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id); //goto the modification page with the date and user id
-}
-
-/**
- * @brief This function is called when we want to go to display the filter window, called when click on the filter button
- */
-function filterShow() {
-  let filter = document.getElementById("filterId");
-  if (filter.style.display != "none") {
-    //if the filter is already displayed
-    filter.style.display = "none"; //hide the filter
-    while (filter.firstChild) {
-      //while there is something in the filter
-      filter.removeChild(filter.firstChild); //remove the old content
-    }
-  } else {
-    filter.style.display = "inline-block"; //display the filter
-    if (calendar.getResources().length == 0) {
-      //if there is no resource in the calendar
-      var label = document.createElement("label"); //display a label
-      label.innerHTML = "Aucune ressource à filtrer"; //telling "no resources"
-      filter.appendChild(label); //add the label to the filter
-    }
-    for (var i = 0; i < calendar.getResources().length; i++) {
-      //fo all the resources in the calendar
-      var input = document.createElement("input"); //create a input
-      input.type = "checkbox"; //set the type of the input to checkbox
-      input.id = calendar.getResources()[i].id; //set the id of the input to the id of the resource
-      input.name = calendar.getResources()[i].title; //set the name of the input to the title of the resource
-      input.checked = true; //set the checkbox to checked
-      input.onchange = function () {
-        //set the onchange event
-        changeFilter(this.id); //call the changeFilter function with the id of the resource
-      };
-      filter.appendChild(input); //add the input to the filter
-      var label = document.createElement("label"); //create a label
-      label.htmlFor = calendar.getResources()[i].id; //set the htmlFor of the label to the id of the resource
-      label.innerHTML = "&nbsp;" + calendar.getResources()[i].title; //set the text of the label to the title of the resource
-      filter.appendChild(label); //add the label to the filter
-      filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
-    }
-  }
-}
-
-/**
- * @brief This function is called when we want to filter the resources of the calendar
- * @param {*} id the id of resource to filter
- */
-function changeFilter(id) {
-  if (document.getElementById(id).checked == true) {
-    //if the resource is checked
-    calendar.addResource({
-      //add the resource to the calendar
-      id: id, //set the id of the resource
-      title: document.getElementById(id).name, //set the title of the resource
-    });
-  } else {
-    var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
-    resource.remove(); //remove the resource from the calendar
-  }
-}
 
 /**
  * @brief This function create the list of events to display in the calendar
  * @returns a list of the events of the calendar
  */
-function createEvents(){
+function createEvents() {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-  var materialUnavailabilities
-  var humanUnavailabilities
-  var unavailabilities
-  if(document.getElementById("MaterialUnavailables")!=null){
-    materialUnavailabilities = JSON.parse(document.getElementById("MaterialUnavailables").value);
+  var materialUnavailabilities;
+  var humanUnavailabilities;
+  var unavailabilities;
+  if (document.getElementById("MaterialUnavailables") != null) {
+    materialUnavailabilities = JSON.parse(
+      document.getElementById("MaterialUnavailables").value
+    );
   }
-  if(document.getElementById("HumanUnavailables")!=null){
-    humanUnavailabilities = JSON.parse(document.getElementById("HumanUnavailables").value);
+  if (document.getElementById("HumanUnavailables") != null) {
+    humanUnavailabilities = JSON.parse(
+      document.getElementById("HumanUnavailables").value
+    );
   }
-  if(humanUnavailabilities.length>0 && materialUnavailabilities.length>0){
+  if (humanUnavailabilities.length > 0 && materialUnavailabilities.length > 0) {
     unavailabilities = materialUnavailabilities.concat(humanUnavailabilities);
-  }
-  else if(humanUnavailabilities.length==0){
+  } else if (humanUnavailabilities.length == 0) {
     unavailabilities = materialUnavailabilities;
-  }
-  else if(materialUnavailabilities.length==0){
+  } else if (materialUnavailabilities.length == 0) {
     unavailabilities = humanUnavailabilities;
   }
-  events=events.concat(unavailabilities); //add the unavailabilities to the events
+  events = events.concat(unavailabilities); //add the unavailabilities to the events
 
   return events;
 }
@@ -178,7 +90,7 @@ function createEvents(){
  * @param {*} resources the type of resources to display (Patients, Resources...)
  */
 function createCalendar(resources) {
-  var events=createEvents()
+  var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -237,36 +149,33 @@ function createCalendar(resources) {
       var end = activity.end; //get the end date of the event
       var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
       var humanResourcesNames = ""; //create a string with the human resources names
-      if(humanResources.length >1) {
-      for (var i = 0; i < humanResources.length - 1; i++) {
-        //for each human resource except the last one
-        if (humanResources[i][1] != undefined) {
-          //if the human resource exist
-          humanResourcesNames += humanResources[i][1] + "; "; //add the human resource name to the string with a ; and a space
+      if (humanResources.length > 1) {
+        for (var i = 0; i < humanResources.length - 1; i++) {
+          //for each human resource except the last one
+          if (humanResources[i][1] != undefined) {
+            //if the human resource exist
+            humanResourcesNames += humanResources[i][1] + "; "; //add the human resource name to the string with a ; and a space
+          }
         }
-      }
-      humanResourcesNames += humanResources[i][1]; //add the last human resource name to the string
-    }
-    else(humanResourcesNames = "Aucune ressource associée");
+        humanResourcesNames += humanResources[i][1]; //add the last human resource name to the string
+      } else humanResourcesNames = "Aucune ressource associée";
 
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       var materialResourcesNames = ""; //create a string with the material resources names
       console.log(materialResources);
-      
-      if(materialResources.length >1) {
-        console.log("test")
-      for (var i = 0; i < materialResources.length-1; i++) {
-        //for each material resource except the last one
-        if (materialResources[i][1] != undefined) {
-          //if the material resource exist
-          materialResourcesNames += materialResources[i][1] + "; "; //add the material resource name to the string with a ; and a space
-        }
-      }
-      
-      materialResourcesNames += materialResources[i][1]; //add the last material resource name to the string
-      }
-      else(materialResourcesNames = "Aucune ressource associée");
 
+      if (materialResources.length > 1) {
+        console.log("test");
+        for (var i = 0; i < materialResources.length - 1; i++) {
+          //for each material resource except the last one
+          if (materialResources[i][1] != undefined) {
+            //if the material resource exist
+            materialResourcesNames += materialResources[i][1] + "; "; //add the material resource name to the string with a ; and a space
+          }
+        }
+
+        materialResourcesNames += materialResources[i][1]; //add the last material resource name to the string
+      } else materialResourcesNames = "Aucune ressource associée";
 
       //set data to display in the modal window
       $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
@@ -284,7 +193,7 @@ function createCalendar(resources) {
   switch (resources) {
     case "Patients": //if we want to display by the patients
       var tempArray = JSON.parse(
-        document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
       ); //get the data of the appointments
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
@@ -306,7 +215,7 @@ function createCalendar(resources) {
       break;
     case "Parcours": //if we want to display by the parcours
       var tempArray = JSON.parse(
-        document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
       ); //get the data of the appointments
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
@@ -351,10 +260,9 @@ function createCalendar(resources) {
     case "Ressources Matérielles": //if we want to display by the resources
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
-        
       ); //get the data of the resources
-      
-      console.log(temp);
+console.log( document.getElementById("material").value)
+      console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {
@@ -370,109 +278,8 @@ function createCalendar(resources) {
       }
       break;
   }
-
+  headerResources = resources;
   calendar.gotoDate(date); //go to the date we want to display
   calendar.render(); //display the calendar
 }
 
-/**
- * @brief This function is called when we want to change the date of the page
- */
-function changeDate() {
-  var date = new Date(document.getElementById("Date").value); //get the new date in the DatePicker
-  var day = date.getDate(); //get the day
-  var month = date.getMonth() + 1; //get the month (add 1 because it starts at 0)
-  var year = date.getFullYear(); //get the year
-  if (day < 10) {
-    day = "0" + day;
-  } //if the day is less than 10, add a 0 before to fit with DateTime format
-  if (month < 10) {
-    month = "0" + month;
-  } //if the month is less than 10, add a 0 before to fit with DateTime format
-  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
-  ); //rerender the page with a new date
-}
-
-/**
- * @brief This function is called when we want to go to the previous day
- */
-function PreviousDay() {
-  var oldDate = new Date(document.getElementById("Date").value); //get the old day in the calendar
-  var newDate = new Date(
-    oldDate.getFullYear(),
-    oldDate.getMonth(),
-    oldDate.getDate() - 1
-  ); //create a new day before the old one
-  var day = newDate.getDate(); //get the day
-  var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
-  var year = newDate.getFullYear(); //get the year
-  if (day < 10) {
-    day = "0" + day;
-  } //if the day is less than 10, add a 0 before to fit with DateTime format
-  if (month < 10) {
-    month = "0" + month;
-  } //if the month is less than 10, add a 0 before to fit with DateTime format
-  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
-  ); //rerender the page with a new date
-}
-
-/**
- * @brief This function is called when we want to go to the next day
- */
-function NextDay() {
-  var oldDate = new Date(document.getElementById("Date").value); //get the old day in the calendar
-  var newDate = new Date(
-    oldDate.getFullYear(),
-    oldDate.getMonth(),
-    oldDate.getDate() + 1
-  ); //create a new day after the old one
-  var day = newDate.getDate(); //get the day
-  var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
-  var year = newDate.getFullYear(); //get the year
-  if (day < 10) {
-    day = "0" + day;
-  } //if the day is less than 10, add a 0 before to fit with DateTime format
-  if (month < 10) {
-    month = "0" + month;
-  } //if the month is less than 10, add a 0 before to fit with DateTime format
-  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
-  ); //rerender the page with a new date
-}
-
-/**
- * @brief This function is called when we want to go to the date of today
- */
-function Today() {
-  var today = new Date(); //get the date of today
-  var day = today.getDate(); //get the day
-  var month = today.getMonth() + 1; //get the month (add 1 because it starts at 0)
-  var year = today.getFullYear(); //get the year
-  if (day < 10) {
-    day = "0" + day;
-  } //if the day is less than 10, add a 0 before to fit with DateTime format
-  if (month < 10) {
-    month = "0" + month;
-  } //if the month is less than 10, add a 0 before to fit with DateTime format
-  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
-  ); //rerender the page with a new date
-}
