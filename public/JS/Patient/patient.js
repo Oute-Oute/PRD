@@ -21,3 +21,11 @@ function showInfosPatient(id, lastname, firstname) {
     $('#infos-patient-modal').modal("show");
 
 }
+
+function hideNewModalForm() {
+    $('#add-patient-modal').modal("hide");
+  }
+  
+  function hideEditModalForm() {
+    $('#edit-patient-modal').modal("hide");
+  }

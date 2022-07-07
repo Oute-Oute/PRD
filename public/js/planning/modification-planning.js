@@ -823,6 +823,10 @@ function createCalendar(typeResource) {
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
+        type: eventModify.extendedProps.type,
+        humanResources: eventModify.extendedProps.humanResources,
+        materialResources: eventModify.extendedProps.materialResources,
+        pathway: eventModify.extendedProps.pathway,
       });
       }
 
