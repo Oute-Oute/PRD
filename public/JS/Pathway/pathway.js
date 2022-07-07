@@ -4,6 +4,7 @@ var NB_ACTIVITY = 0;
 
 var HUMAN_RESOURCE_CATEGORIES
 
+var RESOURCES_BY_ACTIVITIES = new Array()
 
 
 /**
@@ -51,6 +52,12 @@ function disableSubmit() {
  * Permet d'ajouter une liste déroulante pour choisir une activité lors de la cration d'un parcours (pathway)
  */
 function handleAddActivity() {
+
+    RESOURCES_BY_ACTIVITIES.push( new Object())
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].humanResourceCategories = new Array()
+
+    console.log(RESOURCES_BY_ACTIVITIES)
+    //RESOURCES_BY_ACTIVITIES[SELECT_ID].resources = 
 
     NB_ACTIVITY = NB_ACTIVITY + 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -306,14 +313,14 @@ function createDivEdit() {
     return divEditActivity
 }
 
-var resourcesByActivities = new Object()
 
 function addResources(id) {
     // recuperation de l'id
     id = id[id.length - 1] 
 
-    resourceNb = document.getElementById('resource-nb-'+id).value
-    resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+    let resourceNb = document.getElementById('resource-nb-'+id).value
+    let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+
     let resourceName ='';
     for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
         if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
@@ -321,12 +328,52 @@ function addResources(id) {
         }
     }
     
+    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.push(new Object())
+    let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
+    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].id = resourceId
+    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].name = resourceName
+    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].nb = resourceNb
+
+    fillHRCList(id)
+}
+
+/**
+ * Remplit la liste des ressources humaines 
+ * @param {*} id : id de l'activité dans laquelle on veut ajouter des ressources
+ */
+function fillHRCList(id) {
+
+    ul.innerHTML = ''
+    
+    // On recupere la liste dans laquelle on va ajouter notre ressource
     ul = document.getElementById('list-resources-'+id)
 
-    var li = document.createElement('li');
-    li.innerText = resourceName +' ('+resourceNb+')'
+    let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
+    for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
+        // On crée le li qui va stocker la ressource (visuellement) 
+        var li = document.createElement('li');
+
+        let resourceNb = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].nb 
+        let resourceName = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].name
+        console.log('oui')
+        console.log(resourceNb)
+        console.log(resourceName)
+        li.innerText = resourceName +' ('+resourceNb+')'
     
-    ul.appendChild(li)
+        ul.appendChild(li)
+    }
+
+
+
+}
+
+
+/**
+ * Remplit la liste des ressources humaines 
+ * @param {*} id : id de l'activité dans laquelle on veut ajouter des ressources
+ */
+function fillMRCList(id) {
+
 }
 
 function handleHumanButton(id) {
@@ -369,10 +416,10 @@ function handleMaterialButton(id) {
 
     // remplissage du select avec les données de la bd
     let select = document.getElementById('select-resources-'+SELECT_ID)
-    for (let indexHR = 0; indexHR < HUMAN_RESOURCES.length; indexHR++) {
+    for (let indexHR = 0; indexHR < HUMAN_RESOURCE_CATEGORIES.length; indexHR++) {
         option = document.createElement('option')
-        option.value = HUMAN_RESOURCES[indexHR].id
-        option.text = HUMAN_RESOURCES[indexHR].humanresourcename
+        option.value = HUMAN_RESOURCE_CATEGORIES[indexHR].id
+        option.text = HUMAN_RESOURCE_CATEGORIES[indexHR].categoryname
         select.appendChild(option)
     }
 
