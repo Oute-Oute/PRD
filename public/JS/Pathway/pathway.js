@@ -10,7 +10,7 @@ var RESOURCES_BY_ACTIVITIES = new Array()
 /**
  * Appelée au chargement de la page de création d'un parcours (circuit)
  */
-document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
     //showNewModalForm()
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(

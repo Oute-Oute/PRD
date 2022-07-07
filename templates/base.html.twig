@@ -19,16 +19,16 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
 
-        {% block javascripts %}
+        {% block javascripts %} 
             {{ encore_entry_script_tags('app') }}
             {{ encore_entry_script_tags('Menu') }}
 
              <!-- Include the compiled script-->
              <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
              <script type="text/javascript" src="{{ asset('build/JS/app.js') }}"></script>
-             <script type="text/javascript" src="{{ asset('JS/Menu/Menu.js') }}"></script>
 
         {% endblock %}
+             <script type="text/javascript" src="{{ asset('JS/Menu/Menu.js') }}"></script>
 
     </head>
 

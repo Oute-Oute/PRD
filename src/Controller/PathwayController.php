@@ -47,7 +47,7 @@ class PathwayController extends AbstractController
         return $humanResourceCategoriesArrayJson;    
     }
 
-    public function index(PathwayRepository $pathwayRepository): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
 
         $activityRepository = new ActivityRepository($this->getDoctrine());
