@@ -261,6 +261,7 @@ function AddEventValider() {
       //Ajout d'un event au calendar
       var event=calendar.addEvent({
         id: "new" + CoundAddEvent,
+        description:"",
         resourceIds: activityResourcesArray,
         title: activitya.name.replaceAll("3aZt3r", " "),
         start: PathwayBeginDate,
@@ -275,8 +276,9 @@ function AddEventValider() {
       if (idactivityB != undefined) {
         idactivitya = idactivityB;
       }
+      console.log(successoracivitya); 
       PathwayBeginDate = new Date(
-        PathwayBeginDate.getTime() + activitya.duration * 60000
+        PathwayBeginDate.getTime() + activitya.duration * 60000+successoracivitya.delaymin*60000
       );
       event._def.ui.backgroundColor = RessourcesAllocated(event); 
       event._def.ui.borderColor = RessourcesAllocated(event); 
