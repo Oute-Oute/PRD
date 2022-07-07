@@ -1,6 +1,6 @@
 const mobileScreen = window.matchMedia("(max-width: 990px )");
 $(document).ready(function () {
-    document.body.style.backgroundColor = "red";
+    let test = document.getElementById('appointment').focus();
 
     $(".dashboard-nav-dropdown-toggle").click(function () {
         $(this).closest(".dashboard-nav-dropdown")
@@ -22,6 +22,5 @@ $(document).ready(function () {
 
 $(document).ready(function () {
 
-        let test = document.getElementById('appointment');
-        test.toggle("active");
+  
 });
