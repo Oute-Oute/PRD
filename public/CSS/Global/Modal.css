@@ -83,17 +83,22 @@ div.activity-field select {
    /* margin: 10px 15px;*/
     padding-left: 15px;
 }
+
+div.activities-container {
+    width: 85%
+}
+
 p .label {
     margin: 0px;
     font-weight: 900;
 }
 
-/* ------------------ MODIFICATION RESOURCE IN DANS UN ACTIVITY ------------------ */
+/* ------------------ MODIFICATION RESOURCE DANS UNE ACTIVITY DANS UN PATHWAY ------------------ */
 
 .div-edit-activities {
     display: flex;
     flex-direction: column;
-    height: 100px;
+   /* height: 100px;*/
     border: 1px solid lightgrey;
 
 }
@@ -123,7 +128,7 @@ p .label {
     flex-direction: column;
     height: 90%;
     width: 90%;
-    position: absolute;
+    /*position: absolute;*/
 
 }
 .div-resources-m {
@@ -131,7 +136,7 @@ p .label {
     flex-direction: column;
     height: 90%;
     width: 90%;
-    position: absolute;
+   /* position: absolute;*/
 }
 /* div pour ajouter une ressource (avec le select) */
 .div-add-resources {
