@@ -70,7 +70,7 @@ class MaterialResourceController extends AbstractController
         if ($request->getMethod() === 'POST') {
             $materialResource = new MaterialResource();
             $param = $request->request->all();
-            $name = $param['categoryname'];
+            $name = $param['resourcename'];
             $materialResource->setAvailable(true);
             $materialResource->setMaterialresourcename($name);
             $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
@@ -94,7 +94,7 @@ class MaterialResourceController extends AbstractController
                 $linkCategRes = new CategoryOfMaterialResource();      
 
                 $linkCategRes->setMaterialresource($materialResource);
-                $linkCategRes->setMaterialResourcecategory($materialResourceCategoryRepository->findById($param['select-'.$i])[0]);
+                $linkCategRes->setMaterialResourcecategory($materialResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
                 $categoryOfMaterialResourceRepository->add($linkCategRes, true);
             }
             return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
