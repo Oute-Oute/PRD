@@ -103,7 +103,7 @@ function filterShow() {
       case "Patients": //if we want to display by the patients
         var tempArray = JSON.parse(
           document
-            .getElementById("appointment")
+            .getElementById("appointments")
             .value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
         for (var i = 0; i < tempArray.length; i++) {
@@ -114,7 +114,7 @@ function filterShow() {
       case "Parcours": //if we want to display by the patients
         var tempArray = JSON.parse(
           document
-            .getElementById("appointment")
+            .getElementById("appointments")
             .value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
         for (var i = 0; i < tempArray.length; i++) {
@@ -375,7 +375,7 @@ function createCalendar(resources) {
   switch (resources) {
     case "Patients": //if we want to display by the patients
       var tempArray = JSON.parse(
-        document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
       ); //get the data of the appointments
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
@@ -397,7 +397,7 @@ function createCalendar(resources) {
       break;
     case "Parcours": //if we want to display by the parcours
       var tempArray = JSON.parse(
-        document.getElementById("appointment").value.replaceAll("3aZt3r", " ")
+        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
       ); //get the data of the appointments
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i];
