@@ -64,3 +64,11 @@ function usernameTestEdit(){
       }
             
 }
+
+function hideNewModalForm() {
+  $('#add-user-modal').modal("hide");
+}
+
+function hideEditModalForm() {
+  $('#edit-user-modal').modal("hide");
+}
