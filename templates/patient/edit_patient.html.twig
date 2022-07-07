@@ -13,17 +13,17 @@
 								<label class="label" for='lastname'>
 									Nom
 								</label>
-								<input class="input" type='text' name='lastname' id='lastname'>
+								<input class="input" type='text' name='lastname' id='lastname' required="required">
 							</div>
 							<div class="flex-col">
 								<label class="label" for='firstname'>
 									Prénom
 								</label>
-								<input class="input" type='text' name='firstname' id='firstname'>
+								<input class="input" type='text' name='firstname' id='firstname' required="required">
 							</div>
 							<br>
 							<div class="modal-footer">
-                            <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+                            <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
 							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('Patients') }}'">Consulter les patients</button>
 							<button type="submit" class="btn-valide btn-secondary">
 								Modifier
