@@ -2,8 +2,8 @@
  * @file consultation-planning.js
  * @brief This file contains the js scripts for the consultation planning page, essentially the calendar.
  * @author Thomas Blumstein
- * @version 1.0
- * @date 2022/06
+ * @version 2.0
+ * @date 2022/07
  */
 
 
