@@ -302,7 +302,7 @@ function showSelectDate() {
 /**
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
  */
-function filterShow() {
+ function filterShow() {
   let filter = document.getElementById("filterId");
   if (filter.style.display != "none") {
     //if the filter is already displayed
@@ -312,30 +312,83 @@ function filterShow() {
       filter.removeChild(filter.firstChild); //remove the old content
     }
   } else {
+    var resourcesToDisplay = []; //create an array to store the resources to display
+    switch (headerResources) {
+      case "Patients": //if we want to display by the patients
+        var tempArray = JSON.parse(
+          document
+            .getElementById("appointments")
+            .value.replaceAll("3aZt3r", " ")
+        ); //get the data of the appointments
+        for (var i = 0; i < tempArray.length; i++) {
+          var temp = tempArray[i];
+          resourcesToDisplay.push(temp["patient"][0]); //get the resources data
+        }
+        break;
+      case "Parcours": //if we want to display by the patients
+        var tempArray = JSON.parse(
+          document
+            .getElementById("appointments")
+            .value.replaceAll("3aZt3r", " ")
+        ); //get the data of the appointments
+        for (var i = 0; i < tempArray.length; i++) {
+          var temp = tempArray[i];
+          resourcesToDisplay.push(temp["pathway"][0]); //get the resources data
+        }
+        break;
+      case "Ressources Humaines": //if we want to display by the patients
+        var tempArray = JSON.parse(
+          document.getElementById("human").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the appointments
+        for (var i = 0; i < tempArray.length; i++) {
+          var temp = tempArray[i];
+          resourcesToDisplay.push(temp); //get the resources data
+        }
+        break;
+      case "Ressources Matérielles": //if we want to display by the patients
+        var tempArray = JSON.parse(
+          document.getElementById("material").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the appointments
+        for (var i = 0; i < tempArray.length; i++) {
+          var temp = tempArray[i];
+          resourcesToDisplay.push(temp); //get the resources data
+        }
+        break;
+    }
     filter.style.display = "inline-block"; //display the filter
-    if (calendar.getResources().length == 0) {
+    if (resourcesToDisplay.length == 0) {
       //if there is no resource in the calendar
       var label = document.createElement("label"); //display a label
       label.innerHTML = "Aucune ressource à filtrer"; //telling "no resources"
       filter.appendChild(label); //add the label to the filter
-    }
-    for (var i = 0; i < calendar.getResources().length; i++) {
+    } else {
       //fo all the resources in the calendar
-      var input = document.createElement("input"); //create a input
-      input.type = "checkbox"; //set the type of the input to checkbox
-      input.id = calendar.getResources()[i].id; //set the id of the input to the id of the resource
-      input.name = calendar.getResources()[i].title; //set the name of the input to the title of the resource
-      input.checked = true; //set the checkbox to checked
-      input.onchange = function () {
-        //set the onchange event
-        changeFilter(this.id); //call the changeFilter function with the id of the resource
-      };
-      filter.appendChild(input); //add the input to the filter
-      var label = document.createElement("label"); //create a label
-      label.htmlFor = calendar.getResources()[i].id; //set the htmlFor of the label to the id of the resource
-      label.innerHTML = "&nbsp;" + calendar.getResources()[i].title; //set the text of the label to the title of the resource
-      filter.appendChild(label); //add the label to the filter
-      filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+      console.log(resourcesToDisplay);
+      for (var i = 0; i < resourcesToDisplay.length; i++) {
+        if (document.getElementById(resourcesToDisplay[i].id) == null) {
+          var input = document.createElement("input"); //create a input
+          input.type = "checkbox"; //set the type of the input to checkbox
+          input.id = resourcesToDisplay[i].id; //set the id of the input to the id of the resource
+          input.name = resourcesToDisplay[i].title; //set the name of the input to the title of the resource
+          input.value = i; //set the value of the input to the title of the resource
+          if (calendar.getResourceById(resourcesToDisplay[i].id) == null) {
+          input.checked = false; //set the checkbox to unchecked
+          }
+          else{
+            input.checked = true; //set the checkbox to checked
+          }
+          input.onchange = function () {
+            //set the onchange event
+            changeFilter(this.id,resourcesToDisplay); //call the changeFilter function with the id of the resource
+          };
+          filter.appendChild(input); //add the input to the filter
+          var label = document.createElement("label"); //create a label
+          label.htmlFor = resourcesToDisplay[i].id; //set the htmlFor of the label to the id of the resource
+          label.innerHTML = "&nbsp;" + resourcesToDisplay[i].title; //set the text of the label to the title of the resource
+          filter.appendChild(label); //add the label to the filter
+          filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+        }
+      }
     }
   }
 }
@@ -344,19 +397,22 @@ function filterShow() {
  * @brief This function is called when we want to filter the resources of the calendar
  * @param {*} id the id of resource to filter
  */
-function changeFilter(id) {
+function changeFilter(id,resourcesToDisplay) {
   if (document.getElementById(id).checked == true) {
     //if the resource is checked
-    calendar.addResource({
-      //add the resource to the calendar
-      id: id, //set the id of the resource
-      title: document.getElementById(id).name, //set the title of the resource
-    });
-  } else {
+    
+  calendar.addResource({
+    //add the resource to the calendar
+    id: id, //set the id of the resource
+    title: document.getElementById(id).name, //set the title of the resource
+  });
+  }
+  else {
     var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
     resource.remove(); //remove the resource from the calendar
   }
 }
+
 
 function changePlanning() {
   var header =
