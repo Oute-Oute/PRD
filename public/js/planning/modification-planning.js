@@ -660,12 +660,15 @@ function createCalendar(typeResource) {
 
     //permet de modifier les events dans le calendar
     selectable: false,
+    eventConstraint:"businessHours",
+    eventOverlap: false,
     editable: true,
     eventDurationEditable: false,
     contentHeight: (9 / 12) * height,
     handleWindowResize: true,
     nowIndicator: true,
     selectConstraint: "businessHours", //set the select constraint to be business hours
+    eventMinWidth: 1, //set the minimum width of the event
 
     //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
     headerToolbar: {
