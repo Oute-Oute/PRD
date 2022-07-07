@@ -2,8 +2,8 @@
  * @file consultation-planning.js
  * @brief This file contains the js scripts for the consultation planning page, essentially the calendar.
  * @author Thomas Blumstein
- * @version 1.0
- * @date 2022/06
+ * @version 2.0
+ * @date 2022/07
  */
 
 
@@ -38,6 +38,7 @@ function $_GET(param) {
 //update the date with the date in url
 dateStr = $_GET("date");
 date = new Date(dateStr);
+
 
 if ($_GET("headerResources") != null) {
   headerResources = $_GET("headerResources"); //get the type of resources to display in the list

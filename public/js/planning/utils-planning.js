@@ -1,4 +1,10 @@
-
+/**
+ * @file utils-planning.js
+ * @brief This file contains the js scripts used to modify the window or the calendar in consultation mode
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @date 2022/07
+ */
 
 /**
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
