@@ -77,7 +77,6 @@
             <tr>
                 <th>Identifiant</th>
                 <th>Nom</th>
-                <th>Activités</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -88,7 +87,7 @@
                 <td> {{ pathway.id }} </td>
                 <td> {{ pathway.pathwayname }} </td>
 
-               {#  #}
+               {#  
                <td> 
                     {% if (activitiesByPathways[indexPathway]) %}
                         <select>
@@ -101,7 +100,7 @@
                         <p> Pas d'activites créées ! </p> 
                     {% endif %}
                 </td>
-                
+                #}
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosPathway('{{pathway.id}}', '{{pathway.pathwayname}}')">Informations</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{pathway.id}}', '{{pathway.pathwayname}}', '{{indexPathway}}')">Éditer</a>
