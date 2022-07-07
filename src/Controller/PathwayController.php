@@ -9,13 +9,14 @@ use App\Entity\AP;
 use App\Form\PathwayType;
 use App\Repository\PathwayRepository;
 use App\Repository\ActivityRepository;
-use App\Repository\HumanResourceRepository;
+use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
@@ -24,13 +25,38 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
  */
 class PathwayController extends AbstractController
 {
-    public function index(PathwayRepository $pathwayRepository): Response
+
+    public function listHumanResourcesJSON()
+    {
+        $humanResourceCategoryRepo = new HumanResourceCategoryRepository($this->getDoctrine());
+        $humanResourceCategories = $humanResourceCategoryRepo->findAll();
+        //dd($humanResourceCategories);
+        $humanResourceCategoriesArray = array();
+
+        //dd($humanResources);
+        if ($humanResourceCategories != null) {
+            foreach ($humanResourceCategories as $humanResourceCategory) {
+                $humanResourceCategoriesArray[] = array(
+                    'id' => strval($humanResourceCategory->getId()),
+                    'categoryname' => $humanResourceCategory->getCategoryname(),
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $humanResourceCategoriesArrayJson = new JsonResponse($humanResourceCategoriesArray);
+        return $humanResourceCategoriesArrayJson;    
+    }
+
+    public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
 
         $activityRepository = new ActivityRepository($this->getDoctrine());
 
-        $humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
-        $humanResources = $humanResourceRepo->findAll();
+        //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
+        //$humanResources = $humanResourceRepo->findAll();
+        // dd($humanResources);
+        $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
+        //dd($humanResourcesJson[0]);
 
         $materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
         $materialResources = $materialResourceRepo->findAll();
@@ -48,10 +74,12 @@ class PathwayController extends AbstractController
         return $this->render('pathway/index.html.twig', [
             'pathways' => $pathways,
             'activitiesByPathways' => $activitiesByPathways,
-            'humanResources' => $humanResources,
+            'humanResourceCategories' => $humanResourceCategoriesJson,
             'materialResources' => $materialResources,
         ]);
     }
+
+
 
     public function new(Request $request, PathwayRepository $pathwayRepository): Response
     {

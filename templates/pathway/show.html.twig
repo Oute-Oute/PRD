@@ -1,29 +1,22 @@
-{% extends 'base.html.twig' %}
-{% block stylesheets %}
-                <link rel="stylesheet" href="{{ asset('CSS/Global/ShowCrud.css') }}">
-        {% endblock %}
-{% block title %}Circuit{% endblock %}
-
-{% block body %}
-<div id ="show-user">
-    <h1>Informations du circuit {{ circuit.id }}</h1>
+<div class="modal" id="infos-pathway-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+    <h1>Parcours</h1>
 
     <table class="table table-striped">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ circuit.id }}</td>
+            <tr> 
+                <th>Identifiant</th>
+                <td id ="pathway-id"></td>
             </tr>
             <tr>
-                <th>Name</th>
-                <td>{{ circuit.circuitname }}</td>
+                <th>Nom</th>
+                <td id ="pathway-name"></td>
             </tr>
         </tbody>
     </table>
-
- <button class = "btn-consult btn-secondary" onclick="window.location.href='{{ path('app_user_index') }}'">Consulter les circuits</a>
-
- <button class = "btn-edit btn-secondary" onclick="window.location.href='{{ path('app_user_edit', {'id': circuit.id}) }}'">Éditer</a>
-
-    {{ include('circuit/_delete_form.html.twig') }}
-{% endblock %}
+</div>
+</div>
+</div>
+</div>

@@ -58,10 +58,9 @@ $('#edit-material-resource-category-modal').modal("show");
  * Permet d'ajouter une ou plusieurs catégories de ressources à une ressource humaine lors de sa création.
  */
 function handleAddHumanCategory() {
-
+    
     let selectSample = document.getElementsByClassName('select-category-sample')[0];
     let newSelect = document.createElement('select');
-    
     //Boucle pour remplir toutes les categs dans chaque select
     for (let i = 0; i < selectSample.length; i++){
         let option = document.createElement('option')

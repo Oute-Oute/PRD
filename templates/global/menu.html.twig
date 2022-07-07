@@ -1,5 +1,4 @@
 {#{% if app.user != null %}#}
-
 <div class="dashboard-nav">
 	<nav class="dashboard-nav-list">
 		<div id="menu-top">
@@ -7,7 +6,7 @@
 				<a href="#!" class="menu-toggle">
 					<i class="fas fa-bars"></i>
 				</a>
-				<a href="/" class="brand-logo">
+				<a id = "title" href="/" class="brand-logo" >
 					<i class="fas fa-anchor"></i>
 					<span>HOPITAL</span>
 				</a>
@@ -15,31 +14,31 @@
 			<a href="/ConsultationPlanning" class="dashboard-nav-item">
 				<i class="fas fa-file-upload"></i>
 				Planning
-			</a> 
-			<a href="/appointments" class="dashboard-nav-item">
+			</a>
+			<a href="/appointments" class="dashboard-nav-item" id = "appointment">
 				<i class="fas fa-tachometer-alt"></i>
 				Rendez-vous</a>
-			<a href="/pathways" class="dashboard-nav-item">
+			<a href="/pathways" class="dashboard-nav-item" id = "pathways">
 				<i class="fas fa-tachometer-alt"></i>
 				Parcours</a>
-			<a href="/patients" class="dashboard-nav-item">
+			<a href="/patients" class="dashboard-nav-item" id = "patients">
 				<i class="fas fa-tachometer-alt"></i>
 				Patients</a>
-			<a href="#" class="dashboard-nav-item">
+			<a href="#" class="dashboard-nav-item" id = "ethics">
 				<i class="fas fa-file-upload"></i>
 				Éthique
 			</a>
-			<a href="/human-resources" class="dashboard-nav-item">
+			<a href="/human-resources" class="dashboard-nav-item" id = "human-resources">
 				<i class="fas fa-file-upload"></i>
 				Ressources humaines</a>
-			<a href="/material-resources" class="dashboard-nav-item">
+			<a href="/material-resources" class="dashboard-nav-item" id = "material-resources">
 				<i class="fas fa-file-upload"></i>
 				Ressources matérielles
 			</a>
 		</div>
 		<div id='menu-bottom'>
 			<div class="nav-item-divider"></div>
-			<a href="/user" class="dashboard-nav-item">
+			<a href="/user" class="dashboard-nav-item" id = "user">
 				<i class="fas fa-user"></i>
 				Utilisateurs
 			</a>

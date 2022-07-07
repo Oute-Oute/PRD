@@ -154,6 +154,15 @@ h1, .h1 {
     color: #fff;
     background-color: var(--main-green);
 }
+
+
+#appointment:active {
+    background-color : var(--main-green);
+}
+
+.dashboard-nav a#title:hover {
+    background-color : transparent;
+}
 .dashboard-compact .dashboard-nav {
     display: none;
 }
