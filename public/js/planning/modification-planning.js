@@ -44,7 +44,7 @@ function modifyEvent() {
   var oldEvent = calendar.getEventById(id);
 
   var today = $_GET("date").substring(0, 10);
-  var newStart = new Date(today + " " + document.getElementById("new-start").value);
+  var newStart = new Date(today + " " + document.getElementById("start").value);
   var newDelay = oldEvent.start.getTime()-(2*60*60*1000) - newStart.getTime();
   var clickModify = true;
 
@@ -551,25 +551,43 @@ function createCalendar(typeResource) {
     resourceAreaHeaderContent: headerResources,
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
-    eventClick: function (event, element) {
-      //récupération des données
-      var id = event.event._def.publicId;
-      var activity = calendar.getEventById(id);
-      var start = activity.start;
-      var tmp = activity.end - start;
+    eventClick: function (event) {
+      var id = event.event._def.publicId; //get the id of the event
+      var activity = calendar.getEventById(id); //get the event with the id
+      var start = activity.start; //get the start date of the event
+      var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+      console.log(activity.extendedProps.humanResources); 
+      var humanResourcesNames = ""; //create a string with the human resources names
+      for (var i = 0; i < humanResources.length ; i++) {
+        //for each human resource except the last one
+        if (humanResources[i].resourceName != undefined) {
+          //if the human resource exist
+          humanResourcesNames += humanResources[i].resourceName + "; "; //add the human resource name to the string with a ; and a space
+        }
+      }
+      //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
 
-      //calcul de la durée de l'activité
-      length = Math.floor(tmp / 1000 / 60);
+      var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+      var materialResourcesNames = ""; //create a string with the material resources names
+      for (var i = 0; i < materialResources.length; i++) {
+        //for each material resource except the last one
+        if (materialResources[i].resourceName != undefined) {
+          //if the material resource exist
+          materialResourcesNames += materialResources[i].resourceName + "; "; //add the material resource name to the string with a ; and a space
+        }
+      }
+     // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
-      //set les données à afficher par défault
-      $("#new-start").val(start.toISOString().substring(11, 16));
-      document.getElementById("show-title").innerHTML = activity.title;
-      $("#title").val(activity.title);
-      $("#length").val(length);
+      //set data to display in the modal window
+      $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
+      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
+      $("#rh").val(humanResourcesNames); //set the human resources of the event
+      $("#rm").val(materialResourcesNames); //set the material resources of the event
       $("#id").val(id);
 
-      //ouvre la modal
-      $("#modify-planning-modal").modal("show");
+      $("#modify-planning-modal").modal("show"); //open the window
     },
 
     eventDrop: function (event) {

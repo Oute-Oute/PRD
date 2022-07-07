@@ -384,14 +384,23 @@ class ModificationPlanningController extends AbstractController
             $scheduledActivitiesResourcesArray = array();
 
             $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
-           
+            $scheduledActivitesHumanResourcesArray=array(); 
             foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
+                $scheduledActivitesHumanResourcesArray[]=array(
+                    'id'=> $scheduledActivitiesHumanResource->getHumanresource()->getId(),
+                    'resourceName'=>$scheduledActivitiesHumanResource->getHumanresource()->getHumanresourcename(),
+                );
                 $quantityHumanResources=$quantityHumanResources-1; 
                 array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
             }
 
             $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+            $scheduledActivitiesMaterialResourceArray=array(); 
             foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
+                $scheduledActivitiesMaterialResourceArray[]=array(
+                    'id'=> $scheduledActivitiesMaterialResource->getMaterialresource()->getId(),
+                    'resourceName'=>$scheduledActivitiesMaterialResource->getMaterialresource()->getMaterialresourcename(),
+                );
                 $quantityMaterialResources=$quantityMaterialResources-1;
                 array_push($scheduledActivitiesResourcesArray, "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId());
             }
@@ -429,6 +438,10 @@ class ModificationPlanningController extends AbstractController
                 'patient' => $patientId,
                 'appointment' => $idAppointment,
                 'activity' => $idActivity,
+                'patient' => $scheduledActivity->getAppointment()->getPatient()->getLastname()." ".$scheduledActivity->getAppointment()->getPatient()->getFirstname() ,
+                'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
+                'materialResources' => ($scheduledActivitiesMaterialResourceArray),
+                'humanResources' => ($scheduledActivitesHumanResourcesArray),
             );
         }
         $scheduledActivitiesArrayJson = new JsonResponse($scheduledActivitiesArray);
