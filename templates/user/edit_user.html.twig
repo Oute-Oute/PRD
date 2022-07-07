@@ -1,7 +1,4 @@
-
-		<!-- edit-user-modal -->
-
-		<div class="modal" id="edit-user-modal">
+<div class="modal" id="edit-user-modal">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -9,24 +6,30 @@
 					</div>
 					<form action="{{ path('UserEdit') }}" method="post">
 						<div class="modal-body">
-							<input type="hidden" name="iduser" id="iduser">
+							<input type="hidden" name="iduserEdit" id="iduserEdit">
 							<div>
-								<label for='username'>
+								<label for='usernameEdit'>
 									Nom d'utilisateur
 								</label>
-								<input type='text' name='username' id='username'>
+								<input type='text' oninput="usernameTestEdit()" value="" name='usernameEdit' id='usernameEdit'>
+								<p1 id="ErrorUserEdit">
+									Nom d'utilisateur deja pris</p1>
+								<div>
+									<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+								</div>
+
 							</div>
 							<div>
-								<label for='password'>
+								<label for='passwordEdit'>
 									Nouveau mot de passe temporaire
 								</label>
-								<input type='password' required="required" name='password' id='password'>
+								<input type='passwordEdit' required="required" name='passwordEdit' id='passwordEdit'>
 							</div>
 							<div>
-								<label for='role'>
+								<label for='roleEdit'>
 									Roles
 								</label>
-								<select name="role" id="role">
+								<select name="roleEdit" id="roleEdit" required="required">
 									<option value="">--Choissisez le role de l'utilisateur--</option>
 									<option value="Admin">Admin</option>
 									<option value="Editeur">Editeur</option>
@@ -37,9 +40,8 @@
 
 							<br>
 
-                            <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
 							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
-							<button type="submit" class="btn-valide btn-secondary">
+							<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">
 								Modifier
 							</button>
 						</div>
