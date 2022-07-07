@@ -77,7 +77,7 @@
                     {% endif %} 
                 </td> #}
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Infos</a>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Informations</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('human_resource/delete_resource.html.twig') }}
                 </td>
@@ -111,7 +111,7 @@
                 <td>{{ human_resource_category.id }}</td>
                 <td>{{ human_resource_category.categoryname }}</td>
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Infos</a>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Informations</a>
                    <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
                     {{ include('human_resource/delete_category.html.twig') }}
 

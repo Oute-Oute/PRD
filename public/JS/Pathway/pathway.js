@@ -245,14 +245,24 @@ function createDivEdit() {
 
     divResources = document.createElement('div')
     divResources.setAttribute('class', 'div-resources')
-    divRH = document.createElement('div')
-    divRH.setAttribute('class', 'div-resources-h')
+    //divRH = document.createElement('div')
+    //divRH.setAttribute('class', 'div-resources-h')
     divRM = document.createElement('div')
     divRM.setAttribute('class', 'div-resources-m')
-    divResources.appendChild(divRH)
-    let p1=document.createElement('p')
-    p1.innerText ='Numero 1 <br>'
-    divRM.appendChild(p1)
+    //divResources.appendChild(divRH)
+    ul = document.createElement('ul')
+    li1 = document.createElement('li')
+    li1.innerText = 'Chantal'
+    li2 = document.createElement('li')
+    li2.innerText = 'Marie'
+    li3 = document.createElement('li')
+    li3.innerText = 'Louise'
+    li4 = document.createElement('li')
+    li4.innerText = 'Clemence'
+    divRM.appendChild(li1)
+    divRM.appendChild(li2)
+    divRM.appendChild(li3)
+    divRM.appendChild(li4)
     divResources.appendChild(divRM)
 
 
@@ -311,4 +321,11 @@ function handleMaterialButton(id) {
     let bh = document.getElementById('bh-'+id)
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
+}
+
+function showInfosPathway(id, name) {
+    document.getElementById('pathway-id').innerText = id;
+    document.getElementById('pathway-name').innerText = name;
+    $('#infos-pathway-modal').modal("show");
+
 }
