@@ -70,7 +70,6 @@ class ModificationPlanningController extends AbstractController
         if ($this->alertModif($dateModified, $idUser)) {
             $this->modificationAdd($dateModified, $idUser);
         }
-
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
             'listePathWaypatients' => $listePathWayPatients,
@@ -230,14 +229,14 @@ class ModificationPlanningController extends AbstractController
     {
 
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date, 'scheduled' => 0]);
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
         return $appointments;
     }
 
     public function listAppointmentJSON(ManagerRegistry $doctrine, $date)
     {
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date, 'scheduled' => 0]);
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
         $appointmentsArray = array();
         foreach ($appointments as $appointment) {
             $earliestappointmenttime = "";
