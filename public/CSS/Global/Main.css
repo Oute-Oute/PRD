@@ -24,9 +24,9 @@ h1#title {
     flex-direction: column;
     width: 100%;
 }
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult,.btn-calendar-edit{
     margin-top : 10px;
-    border: none;
+    border: 1px solid transparent;
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
@@ -40,22 +40,22 @@ h1#title {
     color: #ffffff;
 }
 
+.btn-valide {
+    background-color : #37BC9B;
+    border : 1px solid #37BC9B;
+}
+
+.btn-valide:hover {
+    background : #30A487;
+    border : 1px solid #298D74;
+}
 
 
-.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-valide:hover, .btn-consult:hover{
+
+.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-consult:hover{
     background-color :  rgba(0,48,93,0.5);
     border : 1px solid black;
 }
-
-
-
-.btn-valide:hover{
-    box-shadow: 0px 0px 5px green;
-    color :green;
-    border: 1px solid green;
-}
-
-
 
 .btn-delete {
     margin-top : 10px;
@@ -143,3 +143,10 @@ div#conn-form div#container form {
     flex-direction : column;
 }
 
+
+.btn-valide:hover:disabled{
+    color : #fff;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    background-color : #6c757d;
+    cursor : not-allowed;
+}

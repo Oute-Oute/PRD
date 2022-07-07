@@ -143,13 +143,42 @@ function changeFilter(id) {
 }
 
 /**
+ * @brief This function create the list of events to display in the calendar
+ * @returns a list of the events of the calendar
+ */
+function createEvents(){
+  var events = JSON.parse(
+    document.getElementById("events").value.replaceAll("3aZt3r", " ")
+  ); //get the events from the hidden input
+  var materialUnavailabilities
+  var humanUnavailabilities
+  var unavailabilities
+  if(document.getElementById("MaterialUnavailables")!=null){
+    materialUnavailabilities = JSON.parse(document.getElementById("MaterialUnavailables").value);
+  }
+  if(document.getElementById("HumanUnavailables")!=null){
+    humanUnavailabilities = JSON.parse(document.getElementById("HumanUnavailables").value);
+  }
+  if(humanUnavailabilities.length>0 && materialUnavailabilities.length>0){
+    unavailabilities = materialUnavailabilities.concat(humanUnavailabilities);
+  }
+  else if(humanUnavailabilities.length==0){
+    unavailabilities = materialUnavailabilities;
+  }
+  else if(materialUnavailabilities.length==0){
+    unavailabilities = humanUnavailabilities;
+  }
+  events=events.concat(unavailabilities); //add the unavailabilities to the events
+
+  return events;
+}
+
+/**
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} resources the type of resources to display (Patients, Resources...)
  */
 function createCalendar(resources) {
-  var events = JSON.parse(
-    document.getElementById("events").value.replaceAll("3aZt3r", " ")
-  ); //get the events from the hidden input
+  var events=createEvents()
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -192,7 +221,7 @@ function createCalendar(resources) {
 
     eventDidMount: function (info) {
       $(info.el).tooltip({
-        title: info.event.title,
+        title: info.event.extendedProps.description,
         placement: "top",
         trigger: "hover",
         container: "body",
@@ -208,6 +237,7 @@ function createCalendar(resources) {
       var end = activity.end; //get the end date of the event
       var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
       var humanResourcesNames = ""; //create a string with the human resources names
+      if(humanResources.length >1) {
       for (var i = 0; i < humanResources.length - 1; i++) {
         //for each human resource except the last one
         if (humanResources[i][1] != undefined) {
@@ -216,17 +246,27 @@ function createCalendar(resources) {
         }
       }
       humanResourcesNames += humanResources[i][1]; //add the last human resource name to the string
+    }
+    else(humanResourcesNames = "Aucune ressource associée");
 
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       var materialResourcesNames = ""; //create a string with the material resources names
-      for (var i = 0; i < materialResources.length - 1; i++) {
+      console.log(materialResources);
+      
+      if(materialResources.length >1) {
+        console.log("test")
+      for (var i = 0; i < materialResources.length-1; i++) {
         //for each material resource except the last one
         if (materialResources[i][1] != undefined) {
           //if the material resource exist
           materialResourcesNames += materialResources[i][1] + "; "; //add the material resource name to the string with a ; and a space
         }
       }
+      
       materialResourcesNames += materialResources[i][1]; //add the last material resource name to the string
+      }
+      else(materialResourcesNames = "Aucune ressource associée");
+
 
       //set data to display in the modal window
       $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
@@ -311,7 +351,10 @@ function createCalendar(resources) {
     case "Ressources Matérielles": //if we want to display by the resources
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
+        
       ); //get the data of the resources
+      
+      console.log(temp);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {

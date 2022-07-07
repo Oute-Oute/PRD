@@ -56,6 +56,14 @@
         
         console.log(activitiesByPathways);
 
+       var humanResources = new Array();
+        {% if (humanResources) %}
+            {% for indexResource in 0..(humanResources|length - 1) %}
+                console.log('e')
+            {% else %}
+            {% endfor %}
+        {% endif %}
+
     </script> 
 
     <div class="index">
@@ -68,7 +76,7 @@
             <tr>
                 <th>Identifiant</th>
                 <th>Nom</th>
-                <th> Activités</th>
+                <th>Activités</th>
                 <th>Actions</th>
             </tr>
         </thead>

@@ -9,6 +9,8 @@ use App\Entity\AP;
 use App\Form\PathwayType;
 use App\Repository\PathwayRepository;
 use App\Repository\ActivityRepository;
+use App\Repository\HumanResourceRepository;
+use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +29,12 @@ class PathwayController extends AbstractController
 
         $activityRepository = new ActivityRepository($this->getDoctrine());
 
+        $humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
+        $humanResources = $humanResourceRepo->findAll();
+
+        $materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
+        $materialResources = $materialResourceRepo->findAll();
+
         $pathways = $pathwayRepository->findAll();
         $nbPathway = count($pathways);
 
@@ -40,6 +48,8 @@ class PathwayController extends AbstractController
         return $this->render('pathway/index.html.twig', [
             'pathways' => $pathways,
             'activitiesByPathways' => $activitiesByPathways,
+            'humanResources' => $humanResources,
+            'materialResources' => $materialResources,
         ]);
     }
 
