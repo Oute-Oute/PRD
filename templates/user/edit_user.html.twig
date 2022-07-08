@@ -11,7 +11,7 @@
 								<label for='usernameEdit'>
 									Nom d'utilisateur
 								</label>
-								<input type='text' oninput="usernameTestEdit()" value="" name='usernameEdit' id='usernameEdit'>
+								<input type='text' oninput="usernameEdit()" value="" name='usernameEdit' id='usernameEdit'>
 								<p1 id="ErrorUserEdit">
 									Nom d'utilisateur deja pris</p1>
 								<div>
@@ -40,7 +40,6 @@
 
 							<br>
 							<button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Retour</button>
-							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
 							<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">
 								Modifier
 							</button>
