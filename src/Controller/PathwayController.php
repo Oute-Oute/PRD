@@ -13,6 +13,7 @@ use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\ActivityHumanResourceRepository;
 use App\Repository\ActivityMaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
+use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use App\Form\PathwayType;
@@ -378,17 +379,117 @@ class PathwayController extends AbstractController
     {
         if ($request->getMethod() === 'POST') {
             
-            // On supprime toutes les activités et leurs successor
+            /*
+            Ordre des suppressions :
+            1)
+                HumanResourceScheduled
+                MaterialResourceScheduled
+                ActivityHumanResource
+                ActvityMaterialResource
+                Successor
+            2)
+                ScheduledActivity
+            3)
+                Appointment
+                Activity
+            4)
+                Pathway
+            */
+
             $em = $this->getDoctrine()->getManager();
 
             $activityRepository = new ActivityRepository($this->getDoctrine());
             $pathwayRepository = new PathwayRepository($this->getDoctrine());
             $successorRepository = new SuccessorRepository($this->getDoctrine());
-            
+            $appointmentRepository = new AppointmentRepository($this->getDoctrine());
+
+            $activityHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
+            $activityMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
+
+            // On recupere toutes les informations de la requete 
             $param = $request->request->all();
+
+            // recuperation du parcours que l'on veut supprimer 
             $pathway = $pathwayRepository->findById($param['pathwayid'])[0];
+
+
+            // --------- SUPPRESSION DES RDV --------- //
+
+            $appointmentsInPathway = $appointmentRepository->findBy(['pathway' => $pathway]);
+            //dd($appointmentsInPathway);
+
+            foreach ($appointmentsInPathway as $appointment) {
+                //on récupère toutes les activités programmées associées au rendez-vous
+                $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+                $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+                foreach($scheduledActivities as $scheduledActivity)
+                {
+                    $date = $appointment->getDayappointment()->format('Y-m-d');
+
+                    //suppression des données associées au rendez-vous de la table MaterialResourceScheduled
+                    $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                    $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                    foreach($allMaterialResourceScheduled as $materialResourceScheduled)
+                    {
+                        $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+                        $strDate = substr($date, 0, 10);
+                        $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+
+                        $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
+
+                        foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
+                        {
+                            $unavailability = $unavailabilityMaterialResource->getUnavailability();
+                            $entityManager->remove($unavailabilityMaterialResource);
+                            $entityManager->flush($unavailabilityMaterialResource);
+                            $entityManager->remove($unavailability);
+                            $entityManager->flush($unavailability);
+                        }
+                    }
+
+
+                    //suppression des données associées au rendez-vous de la table HumanResourceScheduled
+                    $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                    $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                    foreach($allHumanResourceScheduled as $humanResourceScheduled)
+                    {
+                        $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+
+                        $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
+
+                        foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
+                        {
+                            $unavailability = $unavailabilityHumanResource->getUnavailability();
+                            $entityManager->remove($unavailabilityHumanResource);
+                            $entityManager->flush($unavailabilityHumanResource);
+                            $entityManager->remove($unavailability);
+                            $entityManager->flush($unavailability);
+                        }
+                    }
+
+
+                    //suppression des données associées au rendez-vous de la table ScheduledActivity
+                    $scheduledActivityRepository->remove($scheduledActivity, true);
+                }
+
+                //suppression du rendez-vous
+                $appointmentRepository->remove($appointment, true);
+
+            }
+
+            
+            // recuperation des activités du parcours 
             $activitiesInPathway = $activityRepository->findBy(['pathway' => $pathway]);
             
+
+
+            // --------- SUPPRESSION DES SUCCESSOR --------- //
+            // --------- SUPPRESSION DES LIENS ENTRE LES ACTIVITY ET LES CATEGORIES --------- //
+
+        
             for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
 
                 $successorsa = $successorRepository->findBy(['activitya' => $activitiesInPathway[$indexActivity]]);
@@ -402,8 +503,23 @@ class PathwayController extends AbstractController
                 }
                 $em->flush();
 
-               // $em->remove($activitiesInPathway[$indexActivity]);
+                $activityHumanResources = $activityHumanResourceRepository->findBy(['activity' => $activitiesInPathway[$indexActivity]]);
+                for ($indexAHR = 0; $indexAHR < count($activityHumanResources); $indexAHR++) {
+                    echo 'on supprime'.$indexAHR;
+                    $em->remove($activityHumanResources[$indexAHR]);
+                }
+
+                $activityMaterialResources = $activityMaterialResourceRepository->findBy(['activity' => $activitiesInPathway[$indexActivity]]);
+                for ($indexAMR = 0; $indexAMR < count($activityMaterialResources); $indexAMR++) {
+                    $em->remove($activityMaterialResources[$indexAMR]);
+                }
+                $em->flush();
+
             }
+
+
+            // --------- SUPPRESSION DES ACTIVITY --------- //
+
             for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
                 $em->remove($activitiesInPathway[$indexActivity]);
                 $em->flush();
