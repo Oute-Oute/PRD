@@ -80,26 +80,30 @@ function handleAddActivity() {
     inputName.setAttribute('onchange', 'disableSubmit()')
     //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
 
-    /*let inputDuration = document.createElement('input')
+    let inputDuration = document.createElement('input')
     inputDuration.setAttribute('class', 'input-duration')
     inputDuration.setAttribute('placeholder', 'Durée (min)')
     inputDuration.setAttribute('type', 'number')
     inputDuration.setAttribute('min', '0')
-    inputDuration.setAttribute('onchange', 'disableSubmit()')*/
-    //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
+    inputDuration.setAttribute('onchange', 'disableSubmit()')
+    inputDuration.setAttribute('id', 'input-activity-duration-'+SELECT_ID)
 
-    let imgDelete = new Image();
-    imgDelete.src = 'img/delete.svg'
-    imgDelete.setAttribute('id','img-'+SELECT_ID)
-    imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+    //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
 
     let imgEdit = new Image();
     imgEdit.src = 'img/edit.svg'
     imgEdit.setAttribute('id','img-'+SELECT_ID)
     imgEdit.setAttribute('onclick', 'editSelect(this.id)')
+    imgEdit.setAttribute('title', 'Éditer les ressources de l\'activité')
+
+    let imgDelete = new Image();
+    imgDelete.src = 'img/delete.svg'
+    imgDelete.setAttribute('id','img-'+SELECT_ID)
+    imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+    imgEdit.setAttribute('title', 'Supprimer l\'activité du parcours')
 
     div.appendChild(inputName)
-    //div.appendChild(inputDuration)
+    div.appendChild(inputDuration)
     div.appendChild(imgEdit)
     div.appendChild(imgDelete)
 
@@ -210,7 +214,9 @@ function verifyChanges() {
         // On ne considere que les activités qui n'ont pas été supprimées
         if (RESOURCES_BY_ACTIVITIES[i].available === true) {
             inputName  = document.getElementById('input-activity-name-'+i)
+            inputDuration  = document.getElementById('input-activity-duration-'+i)
             RESOURCES_BY_ACTIVITIES[i].activityname = inputName.value
+            RESOURCES_BY_ACTIVITIES[i].activityduration = inputDuration.value
 
             indexActivityAvailable = indexActivityAvailable + 1
         }
