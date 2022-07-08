@@ -163,7 +163,6 @@ class HumanResourceController extends AbstractController
 
                 for($i = 0; $i < $nbCategories; $i++)
                 {
-                    
                     $categOf = new CategoryOfHumanResource();
                     $categOf->setHumanresource($humanResource);
                     $categOf->setHumanresourcecategory($humanResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
