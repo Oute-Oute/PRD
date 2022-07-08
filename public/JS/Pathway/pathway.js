@@ -100,7 +100,7 @@ function handleAddActivity() {
     imgDelete.src = 'img/delete.svg'
     imgDelete.setAttribute('id','img-'+SELECT_ID)
     imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
-    imgEdit.setAttribute('title', 'Supprimer l\'activité du parcours')
+    imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
 
     div.appendChild(inputName)
     div.appendChild(inputDuration)
@@ -117,13 +117,13 @@ function handleAddActivity() {
 
     let divcontainer = document.createElement('div')
     //divcontainer.setAttribute('class', "title-container")
-    divcontainer.setAttribute('class', 'flex-row')
+    //divcontainer.setAttribute('class', 'flex-row')
     divcontainer.style.justifyContent = "center"
     let pTitle = document.createElement("p")
     pTitle.innerHTML = 'Activité : '
     pTitle.setAttribute('class', 'label')
     //let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde activity-field a div
-    divcontainer.setAttribute('class', 'div-activity-'+SELECT_ID)
+    divcontainer.setAttribute('id', 'div-activity-'+SELECT_ID)
     divcontainer.appendChild(pTitle)
     divcontainer.appendChild(div)
     divcontainer.appendChild(createDivEdit()) /* div edit  */
@@ -153,7 +153,7 @@ function deleteSelect(id) {
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
     id = id[id.length - 1] 
     // On peut donc recuperer la div
-    let divToDelete = document.getElementsByClassName('div-activity-'+id)[0]
+    let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
     let divAddActivity = document.getElementsByClassName('activities-container')[0]
     divAddActivity.removeChild(divToDelete)
