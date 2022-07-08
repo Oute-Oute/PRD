@@ -67,8 +67,8 @@ class ModificationPlanningController extends AbstractController
         $listeMaterialResourcesUnavailables = $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
         $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
 
-        if ($this->alertModif($dateModified, $idUser)) {
-            $this->modificationAdd($dateModified, $idUser);
+        if ($this->alertModif($dateModified, $idUser, $doctrine)) {
+            $this->modificationAdd($dateModified, $idUser, $doctrine);
         }
         return $this->render('planning/modification-planning.html.twig', [
             'listepatients' => $listePatients,
@@ -91,9 +91,9 @@ class ModificationPlanningController extends AbstractController
         ]);
     }
 
-    public function alertModif($dateModified, $idUser)
+    public function alertModif($dateModified, $idUser, $doctrine)
     {
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modifications = $modificationRepository->findAll();
 
         $dateModified = str_replace('T12:00:00', '', $dateModified);
@@ -136,11 +136,10 @@ class ModificationPlanningController extends AbstractController
         return true;
     }
 
-    public function modificationAdd($dateModified, $idUser)
+    public function modificationAdd($dateModified, $idUser, $doctrine)
     {
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
-
-        $userRepository = new UserRepository($this->getDoctrine());
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $userRepository = $doctrine->getRepository("App\Entity\User");
         $user = $userRepository->findOneBy(['id' => $idUser]);
 
         // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
