@@ -500,41 +500,33 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
     new Date(eventLast.end.getTime() - 2 * 60 * 60 * 1000 - newDelay) <=
       latestAppointmentDate
   ) {
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor =
-      RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor =
-      RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+    calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+    calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+    calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
     listEventAppointment.forEach((eventAppointment) => {
       if (clickModify) {
-        eventAppointment._def.ui.backgroundColor =
-          RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor =
-          RessourcesAllocated(eventAppointment);
-        var startDate = new Date(
-          eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay
-        );
+        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
         var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(
-          eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay
-        );
+        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
         var endStr = formatDate(endDate).replace(" ", "T");
         eventAppointment.setStart(startStr);
         eventAppointment.setEnd(endStr);
-      } else if (eventAppointment._def.publicId != oldEvent._def.publicId) {
-        eventAppointment._def.ui.backgroundColor =
-          RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor =
-          RessourcesAllocated(eventAppointment);
-        var startDate = new Date(
-          eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay
-        );
+        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
+      } 
+      else if (eventAppointment._def.publicId != oldEvent._def.publicId) {
+        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
         var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(
-          eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay
-        );
+        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
         var endStr = formatDate(endDate).replace(" ", "T");
         eventAppointment.setStart(startStr);
         eventAppointment.setEnd(endStr);
+        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
+      }
+      else {
+        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
+        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
       }
     });
         listEventAppointment.forEach((currentModifyEvent) => {
