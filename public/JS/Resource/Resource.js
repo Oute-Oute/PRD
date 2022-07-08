@@ -60,6 +60,7 @@ $('#edit-material-resource-category-modal').modal("show");
 function handleAddHumanCategory() {
 
     let selectSample = document.getElementsByClassName('select-category-sample')[0];
+    if(selectSample.length != 0) {
     let newSelect = document.createElement('select');
     let btnSubmit = document.getElementById('submit')
     newSelect.addEventListener('change', function() {
@@ -94,6 +95,11 @@ function handleAddHumanCategory() {
 
     NB_CATEGORY = NB_CATEGORY +1;
     nbCategory.value = NB_CATEGORY;
+}
+
+else {
+    alert('Il n\'y a pas de catégories existantes !')
+}
 
 }
 /** Permet de supprimer un select dans la liste déroulante */
@@ -133,20 +139,14 @@ function deleteSelect(id) {
         categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-'+ Number(i-1))        
     }
     let categoriesCheckDuplicata = []
-    var isEmptyCateg = new Boolean(false)
+
     for (let i = 1; i < NB_CATEGORY+1; i++) {
         let category = document.getElementById('id-category-'+ Number(i-1))
         categoriesCheckDuplicata.push(category.value);
     }
-    let checkEmptyCateg = document.getElementById('id-category-0')
-    if(checkEmptyCateg.value == 0) {
-        isEmptyCateg = true;
-    }
 
-    if(isEmptyCateg === true) {
-        alert("Il y a un champ 'catégorie' vide !")
-    }
-    else {
+
+    
     if(hasDuplicates(categoriesCheckDuplicata) == false) {
         if (document.getElementById('resourcename').value === '') {
             formOk = false
@@ -162,7 +162,7 @@ function deleteSelect(id) {
     else {
         alert("Il y a plusieurs fois la même catégorie !")
     }
-}
+
     
     
 }
