@@ -28,14 +28,15 @@ class PathwayController extends AbstractController
 {
 
 
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
     public function listHumanResourcesJSON()
     {
         $humanResourceCategoryRepo = new HumanResourceCategoryRepository($this->getDoctrine());
         $humanResourceCategories = $humanResourceCategoryRepo->findAll();
-        //dd($humanResourceCategories);
         $humanResourceCategoriesArray = array();
 
-        //dd($humanResources);
         if ($humanResourceCategories != null) {
             foreach ($humanResourceCategories as $humanResourceCategory) {
                 $humanResourceCategoriesArray[] = array(
@@ -49,15 +50,15 @@ class PathwayController extends AbstractController
         return $humanResourceCategoriesArrayJson;    
     }
 
-
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
+     */
     public function listMaterialResourcesJSON()
     {
         $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
         $materialResourceCategories = $materialResourceCategoryRepo->findAll();
-        //dd($humanResourceCategories);
         $materialResourceCategoriesArray = array();
 
-        //dd($humanResources);
         if ($materialResourceCategories != null) {
             foreach ($materialResourceCategories as $materialResourceCategory) {
                 $materialResourceCategoriesArray[] = array(
@@ -71,6 +72,10 @@ class PathwayController extends AbstractController
         return $materialResourceCategoriesArrayJson;    
     }
 
+
+    /**
+     * Redirige vers la page qui liste les utilisateurs 
+     */
     public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
 
@@ -91,7 +96,6 @@ class PathwayController extends AbstractController
 
         for ($i = 0; $i < $nbPathway; $i++) {
             array_push($activitiesByPathways, $activityRepository->findBy(['pathway' => $pathways[$i]]));
-            //dd($activitiesByPathway[$i]);
         }
 
         return $this->render('pathway/index.html.twig', [
@@ -103,8 +107,10 @@ class PathwayController extends AbstractController
     }
 
 
-
-    public function new(Request $request, PathwayRepository $pathwayRepository): Response
+    /**
+     * Redirige vers la page qui liste les utilisateurs 
+     */
+    public function pathwayAdd(Request $request, PathwayRepository $pathwayRepository): Response
     {
 
         // Méthode POST pour ajouter un circuit
@@ -115,9 +121,9 @@ class PathwayController extends AbstractController
 
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
 
-            dd($resourcesByActivities);
+            //dd($resourcesByActivities);
 
-            dd($param);
+            //dd($param);
 
             // Premierement on s'occupe d'ajouter le parcours dans la bd :
             // On crée l'objet parcours
@@ -136,49 +142,55 @@ class PathwayController extends AbstractController
             $successorRepository = new SuccessorRepository($this->getDoctrine());
 
             // On récupère le nombre d'activité
-            $nbActivity = $param['nbactivity'];
+            $nbActivity = count($resourcesByActivities);
 
-
-            //$activityArray = array();
             if ($nbActivity != 0) {
-                $activity_old = new Activity();      
+                //$activity_old;   //pour ne pas que la variable soit locale au    
                 
-                $activity_old->setActivityname($param["name-activity-0"]);
-                $activity_old->setDuration($param[ "duration-activity-0"]);
-                $activity_old->setPathway($pathway);
+                $firstActivityAvailableFound = false;
+                for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
 
-                $activityRepository->add($activity_old, true);
+                    if ($resourcesByActivities[$indexActivity]->available) {
+                        
+                        // On cherche la premiere activité available = true
+                        if ($firstActivityAvailableFound === false) {
+                            $firstActivityAvailableFound = true;
+                            $activity_old = new Activity();
+                            $activity_old->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                            $activity_old->setDuration($resourcesByActivities[$indexActivity]->activityduration);
+                            $activity_old->setPathway($pathway);
 
-                for($i = 1; $i < $nbActivity; $i++)
-                {
-                    $activity = new Activity();
-                    $strName = "name-activity-" . $i;
-                    $strDuration = "duration-activity-" . $i;
-    
-                    $activity->setActivityname($param[$strName]);
-                    $activity->setDuration($param[$strDuration]);
-                    $activity->setPathway($pathway);
-                    $activityRepository->add($activity, true);
-    
-                    $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
+                            $activityRepository->add($activity_old, true);
 
-                    $successor = new Successor();
-                    $successor->setActivitya($activity_old);
-                    $successor->setActivityb($activity);
-                    $successor->setDelaymin(0);
-                    $successor->setDelaymax(1);
-                    $successorRepository->add($successor, true);
-    
-                    $activity_old = $activityRepository->findById($activity->getId())[0];
+                        } else {
+                            // cas ou la premiere activité à déjà été trouvée 
+
+                            $activity = new Activity();
+                            $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                            $activity->setDuration($resourcesByActivities[$indexActivity]->activityduration);
+                            $activity->setPathway($pathway);
+                            $activityRepository->add($activity, true);
+            
+                            $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
+        
+                            $successor = new Successor();
+                            $successor->setActivitya($activity_old);
+                            $successor->setActivityb($activity);
+                            $successor->setDelaymin(0);
+                            $successor->setDelaymax(1);
+                            $successorRepository->add($successor, true);
+            
+                            $activity_old = $activityRepository->findById($activity->getId())[0];
+                        }
+                    }
 
                 }
             
-            return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+            }
         }
     }
-        
-        
-    }
+
 
     /**
      * @Route("/{id}", name="app_circuit_show", methods={"GET"})
