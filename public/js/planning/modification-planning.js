@@ -575,9 +575,9 @@ function updateEventsAppointment(oldEventModified, newDelay, editByClick) {
         listEventAppointment.forEach((newEventAppointment) => {
           listOldEvent.forEach((oldEventSet) => {
             if(newEventAppointment._def.publicId == oldEventSet._def.publicId){
-              if(newEventAppointment._def.publicId == oldEvent._def.publicId){
-                calendar.getEventById(oldEventModified._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-                calendar.getEventById(oldEventModified._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+              if(newEventAppointment._def.publicId == oldEventModified._def.publicId){
+                calendar.getEventById(oldEventModified._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEventModified._def.publicId));
+                calendar.getEventById(oldEventModified._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEventModified._def.publicId));
                 var startDate = new Date(oldEventModified.start.getTime()-(2*60*60*1000));
                 var startStr = formatDate(startDate).replace(" ", "T");
                 var endDate = new Date(oldEventModified.end.getTime()-(2*60*60*1000));
