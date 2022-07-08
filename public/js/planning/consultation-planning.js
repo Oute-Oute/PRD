@@ -112,6 +112,7 @@ function createCalendar(resources) {
     eventDurationEditable: false, //set the event duration not to be editable
     nowIndicator: true, //display the current time
     selectConstraint: "businessHours", //set the select constraint to be business hours
+    eventMinWidth: 1, //set the minimum width of the event
     headerToolbar: {
       //delete the toolbar
       start: null,
