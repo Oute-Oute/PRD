@@ -126,19 +126,25 @@ class PathwayController extends AbstractController
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
+            // Création de tous les repository
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $successorRepository = new SuccessorRepository($this->getDoctrine());
+            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
+            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
+            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+
+
             // On recupere toutes les données de la requete
             $param = $request->request->all();
 
+            // On recupere le json qui contient la liste de ressources par activités 
+            // et on le transforme en tableau PHP
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
 
-            //var_dump($resourcesByActivities[0]->humanResourceCategories[0]->id);
-            //dd($resourcesByActivities[0]->humanResourceCategories[0]);
-
-            //dd($resourcesByActivities);
-
-            //dd($param);
 
             // Premierement on s'occupe d'ajouter le parcours dans la bd :
+            
             // On crée l'objet parcours
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
@@ -150,22 +156,12 @@ class PathwayController extends AbstractController
             // On s'occupe ensuite ds liens entre le parcours et les activités :
 
             // On récupère toutes les activités
-            $activityRepository = new ActivityRepository($this->getDoctrine());
             $activities = $activityRepository->findAll();
-            $successorRepository = new SuccessorRepository($this->getDoctrine());
-
-            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
-            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-
-            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
-            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
-            
 
             // On récupère le nombre d'activité
             $nbActivity = count($resourcesByActivities);
 
             if ($nbActivity != 0) {
-                //$activity_old;   //pour ne pas que la variable soit locale au    
                 
                 $firstActivityAvailableFound = false;
                 for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
@@ -207,39 +203,46 @@ class PathwayController extends AbstractController
                             $activity_old = $activityRepository->findById($activity->getId())[0];
                         }
 
+
                         // Ajout des liens activity - ressources humaines
-                        // id name nb
+                        
                         $nbHRC = count($resourcesByActivities[$indexActivity]->humanResourceCategories);
                     
                         if ($nbHRC != 0) {
                             for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
 
-                                // Premierement on recupere la categorie 
+                                // Premierement on recupere la categorie de la bd
                                 $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
-                                
+                                                                
+                                // Ensuite on crée l'objet ActivityMaterialResource
                                 $activityHumanResource = new ActivityHumanResource();
                                 $activityHumanResource->setActivity($activity_old);
                                 $activityHumanResource->setHumanresourcecategory($HRC);
                                 $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
-                                
+                                                                
+                                // Puis on l'ajoute dans la bd
                                 $AHRRepository->add($activityHumanResource , true);
                             }
                         }
                     
+
                         // Ajout des liens activity - ressources materielles
+                        
                         $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
                     
                         if ($nbMRC != 0) {
                             for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
 
-                                // Premierement on recupere la categorie 
+                                // Premierement on recupere la categorie de la bd
                                 $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
                                 
+                                // Ensuite on crée l'objet ActivityMaterialResource
                                 $activityMaterialResource = new ActivityMaterialResource();
                                 $activityMaterialResource->setActivity($activity_old);
-                                $activityMaterialResource->setHumanresourcecategory($MRC);
+                                $activityMaterialResource->setMaterialresourcecategory($MRC);
                                 $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                 
+                                // Puis on l'ajoute dans la bd
                                 $AMRRepository->add($activityMaterialResource , true);
                             }
                         }
@@ -371,7 +374,7 @@ class PathwayController extends AbstractController
     }
 
 
-    public function delete(Request $request): Response
+    public function pathwayDelete(Request $request): Response
     {
         if ($request->getMethod() === 'POST') {
             
