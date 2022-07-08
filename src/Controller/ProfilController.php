@@ -36,14 +36,13 @@ class ProfilController extends AbstractController
         $password1 = $request->request->get('old_password');
         $password2 = $request->request->get('new_password');
         $user = $userRepository->findOneBy(['username' => $username]);
-        dd($username);
         if (password_verify($password1, $user->getPassword())) {
             //Succes et MAJ de la base de donnée
             $user->setPassword(password_hash($password2, PASSWORD_DEFAULT));
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $messageSucces = "Modification effectué avec succès";
+            $messageSucces = "Modification effectuée avec succès";
             return $this->renderForm('profil/index.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
         } else {
             // Pas le bon mot de passe 
