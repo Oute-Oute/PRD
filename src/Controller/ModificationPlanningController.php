@@ -46,38 +46,38 @@ class ModificationPlanningController extends AbstractController
         //Récupération des données via la base de donnée avec Doctrine
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
         $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available' => true]);
-        $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-        $listeAppointment = $this->getAppointment($doctrine, $dateModified);
-        $listescheduledActivity = $this->getScehduledActivity($doctrine, $SAR, $dateModified);
-        $listesuccessionJSON = $this->getSuccessorJSON($doctrine);
-        $listeActivitiesJSON = $this->getActivityJSON($doctrine);
+        $listPatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
+        $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
+        $listAppointment = $this->getAppointment($doctrine, $dateModified);
+        $listscheduledActivity = $this->getScehduledActivity($doctrine, $SAR, $dateModified);
+        $listsuccessionJSON = $this->getSuccessorJSON($doctrine);
+        $listActivitiesJSON = $this->getActivityJSON($doctrine);
         $listAppointmentJSON = $this->getAppointmentJSON($doctrine, $dateModified);
         $listMaterialResourceJSON = $this->getMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
         $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
         $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
-        $listeMaterialResourcesUnavailables = $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
-        $listeHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
+        $listMaterialResourcesUnavailables = $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
+        $listHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
 
         //On redirige sur la page html modification planning et on envoie toutes les données dont on a besoin
         return $this->render('planning/modification-planning.html.twig', [
-            'listepatients' => $listePatients,
-            'listePathWaypatients' => $listePathWayPatients,
+            'listPatients' => $listPatients,
+            'listPathWaypatients' => $listPathWayPatients,
             'listMaterialResourceJSON' => $listMaterialResourceJSON,
             'listHumanResourceJSON' => $listHumanResourceJSON,
             'listHumanResources' => $listHumanResources,
             'listMaterialResources' => $listMaterialResources,
             'datetoday' => $dateModified,
-            'listScheduledActivitiesJSON' => $listescheduledActivity,
-            'listeAppointments' => $listeAppointment,
-            'listeSuccessorsJSON' => $listesuccessionJSON,
-            'listeActivitiesJSON' => $listeActivitiesJSON,
+            'listScheduledActivitiesJSON' => $listscheduledActivity,
+            'listAppointments' => $listAppointment,
+            'listSuccessorsJSON' => $listsuccessionJSON,
+            'listActivitiesJSON' => $listActivitiesJSON,
             'listAppointmentsJSON' => $listAppointmentJSON,
-            'listeActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
-            'listeActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
-            'listeMaterialResourcesUnavailables' => $listeMaterialResourcesUnavailables,
-            'listeHumanResourcesUnavailables' => $listeHumanResourcesUnavailables,
+            'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
+            'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
+            'listMaterialResourcesUnavailables' => $listMaterialResourcesUnavailables,
+            'listHumanResourcesUnavailables' => $listHumanResourcesUnavailables,
 
         ]);
     }
