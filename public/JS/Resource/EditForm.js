@@ -58,7 +58,10 @@ function showEditModalForm(id, name, index){
     for(let j = 0; j < categoriesByResources[index].categories.length; j++) {
         NB_CATEGORY_EDIT = NB_CATEGORY_EDIT + 1;
         let newSelect = document.createElement('select');
-
+        let btnSubmit = document.getElementById('edit--submit')
+        newSelect.addEventListener('change', function() {
+                btnSubmit.disabled = true;
+          });
         //Boucle pour remplir toutes les categs dans chaque select
         for (let i = 0; i < selectSample.length; i++){
             let option = document.createElement('option')
@@ -122,7 +125,10 @@ function showEditModalFormMaterial(id, name, index){
    for(let j = 0; j < categoriesByResources[index].categories.length; j++) {
        NB_CATEGORY_EDIT = NB_CATEGORY_EDIT + 1;
        let newSelect = document.createElement('select');
-
+       let btnSubmit = document.getElementById('edit--submit')
+       newSelect.addEventListener('change', function() {
+               btnSubmit.disabled = true;
+         });
        //Boucle pour remplir toutes les categs dans chaque select
        for (let i = 0; i < selectSample.length; i++){
            let option = document.createElement('option')
@@ -167,7 +173,10 @@ function edit__handleAddCategory() {
 
     let selectSample = document.getElementsByClassName('select-category-sample')[0];
     let newSelect = document.createElement('select');
-    
+    let btnSubmit = document.getElementById('edit--submit')
+    newSelect.addEventListener('change', function() {
+            btnSubmit.disabled = true;
+      });
     //Boucle pour remplir toutes les categs dans chaque select
     for (let i = 0; i < selectSample.length; i++){
         let option = document.createElement('option')
@@ -189,7 +198,6 @@ function edit__handleAddCategory() {
     formField.appendChild(image);
     categoriesContainer.appendChild(formField);
     SELECT_ID_EDIT = SELECT_ID_EDIT +1;
-    console.log(SELECT_ID_EDIT)
 
     NB_CATEGORY_EDIT = NB_CATEGORY_EDIT +1;
     document.getElementById('edit--nbcategory').value = NB_CATEGORY_EDIT;
@@ -206,19 +214,29 @@ function edit__handleAddCategory() {
 
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
-    console.log(NB_CATEGORY_EDIT);
     for (let i = 0; i < NB_CATEGORY_EDIT; i++) {
-        console.log(categoriesContainer)
         categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ Number(i))
-
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-'+ Number(i))          
     }
 
-    if (document.getElementById('edit--resourcename').value === '') {
-        formOk = false
+    let categoriesCheckDuplicata = []
+    for (let i = 0; i < NB_CATEGORY_EDIT; i++) {
+        let category = document.getElementById('id-category-'+ Number(i))
+        categoriesCheckDuplicata.push(category.value)
+    }
+    console.table(categoriesCheckDuplicata)
+    if(hasDuplicates(categoriesCheckDuplicata) == false) {
+        if (document.getElementById('edit--resourcename').value === '') {
+            formOk = false
+        }
+    
+        if (formOk) {
+            let btnSubmit = document.getElementById('edit--submit')
+            btnSubmit.disabled = false;
+        }
     }
 
-    if (formOk) {
-        let btnSubmit = document.getElementById('edit--submit')
-        btnSubmit.disabled = false;
+    else {
+        alert("Il y a plusieurs fois la même catégorie !")
     }
 }
