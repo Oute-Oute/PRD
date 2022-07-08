@@ -133,11 +133,20 @@ function deleteSelect(id) {
         categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-'+ Number(i-1))        
     }
     let categoriesCheckDuplicata = []
+    var isEmptyCateg = new Boolean(false)
     for (let i = 1; i < NB_CATEGORY+1; i++) {
         let category = document.getElementById('id-category-'+ Number(i-1))
         categoriesCheckDuplicata.push(category.value);
     }
+    let checkEmptyCateg = document.getElementById('id-category-0')
+    if(checkEmptyCateg.value == 0) {
+        isEmptyCateg = true;
+    }
 
+    if(isEmptyCateg === true) {
+        alert("Il y a un champ 'catégorie' vide !")
+    }
+    else {
     if(hasDuplicates(categoriesCheckDuplicata) == false) {
         if (document.getElementById('resourcename').value === '') {
             formOk = false
@@ -152,6 +161,7 @@ function deleteSelect(id) {
     else {
         alert("Il y a plusieurs fois la même catégorie !")
     }
+}
     
     
 }
