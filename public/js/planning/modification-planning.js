@@ -660,7 +660,7 @@ function createCalendar(typeResource) {
 
     //permet de modifier les events dans le calendar
     selectable: false,
-    eventConstraint:"businessHours",
+    //eventConstraint:"businessHours",
     eventOverlap: false,
     editable: true,
     eventDurationEditable: false,
