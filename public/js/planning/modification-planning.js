@@ -1,16 +1,15 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
 var modifAlertTime = 480000; // En millisecondes
-var timer;
+var timerAlert;
 setTimeout(showPopup, modifAlertTime);
 
 var calendar;
-var CoundAddEvent = 0;
+var countAddEvent = 0;
 var headerResources = "Ressources Humaines";
-var dateStr = $_GET("date").replaceAll("%3A", ":");
-var date = new Date(dateStr);
+var currentDateStr = $_GET("date").replaceAll("%3A", ":");
+var currentDate = new Date(currentDateStr);
 
-var resourcearray;
-var eventsarray;
+var listEvents;
 
 function $_GET(param) {
   var vars = {};
@@ -39,16 +38,15 @@ function unshowDiv(id) {
 
 //function permettant la modification de l'activité
 function modifyEvent() {
-  var id = document.getElementById("id").value;
-  var oldEvent = calendar.getEventById(id);
+  var idEvent = document.getElementById("id-modified-event").value;
+  var oldEvent = calendar.getEventById(idEvent);
 
-  var today = $_GET("date").substring(0, 10);
-  var newStart = new Date(today + " " + document.getElementById("start").value);
-  var newDelay =
-    oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
-  var clickModify = true;
+  var currentDateModified = $_GET("date").substring(0, 10);
+  var newStart = new Date(currentDateModified + " " + document.getElementById("start-modified-event").value);
+  var newDelay = oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
+  var editByClick = true;
 
-  updateEventsAppointment(oldEvent, newDelay, clickModify);
+  updateEventsAppointment(oldEvent, newDelay, editByClick);
   $("#modify-planning-modal").modal("toggle");
 }
 
@@ -161,7 +159,7 @@ function AddEventValider() {
   //Date de début du parcours
   var PathwayBeginTime = document.getElementById("timeBegin").value;
   var PathwayBeginDate = new Date(
-    new Date(dateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
+    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
       2 * 60 * 60000
   );
 
@@ -267,10 +265,10 @@ function AddEventValider() {
         }
       }
       //countAddEvent pour avoir un id different pour chaque events ajoutes
-      CoundAddEvent++;
+      countAddEvent++;
       //Ajout d'un event au calendar
       var event = calendar.addEvent({
-        id: "new" + CoundAddEvent,
+        id: "new" + countAddEvent,
         description: "",
         resourceIds: activityResourcesArray,
         title: activitya.name.replaceAll("3aZt3r", " "),
@@ -446,7 +444,7 @@ function changePlanning() {
   }
 }
 
-function updateEventsAppointment(oldEvent, newDelay, clickModify) {
+function updateEventsAppointment(oldEvent, newDelay, editByClick) {
   //TODO : corrigé la modification de l'event modifié
   var listEvent = calendar.getEvents();
   let listOldEvent = calendar.getEvents();
@@ -485,12 +483,12 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
     }
   }
   let earliestAppointmentDate = new Date(
-    dateStr.split("T")[0] +
+    currentDateStr.split("T")[0] +
       " " +
       appointment.earliestappointmenttime.split("T")[1]
   );
   let latestAppointmentDate = new Date(
-    dateStr.split("T")[0] +
+    currentDateStr.split("T")[0] +
       " " +
       appointment.latestappointmenttime.split("T")[1]
   );
@@ -506,7 +504,7 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
     calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
     calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
     listEventAppointment.forEach((eventAppointment) => {
-      if (clickModify) {
+      if (editByClick) {
         var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
         var startStr = formatDate(startDate).replace(" ", "T");
         var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
@@ -644,7 +642,7 @@ function createCalendar(typeResource) {
   var listEvent;
 
   let listResource = [];
-  if (eventsarray == undefined) {
+  if (listEvents == undefined) {
     first = true;
   } else {
     first = false;
@@ -742,13 +740,13 @@ function createCalendar(typeResource) {
       // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
       //set data to display in the modal window
-      $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
-      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
-      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
-      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
-      $("#rh").val(humanResourcesNames); //set the human resources of the event
-      $("#rm").val(materialResourcesNames); //set the material resources of the event
-      $("#id").val(id);
+      $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
+      document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
+      $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
+      $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
+      $("#id-modified-event").val(id);
 
       $("#modify-planning-modal").modal("show"); //open the window
     },
@@ -757,8 +755,8 @@ function createCalendar(typeResource) {
       var oldEvent = event.oldEvent;
       var modifyEvent = event.event;
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
-      var clickModify = false;
-      updateEventsAppointment(oldEvent, newDelay, clickModify);
+      var editByClick = false;
+      updateEventsAppointment(oldEvent, newDelay, editByClick);
       calendar.render();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
@@ -834,12 +832,12 @@ function createCalendar(typeResource) {
   }
 
   if (first == true) {
-    eventsarray = JSON.parse(
+    listEvents = JSON.parse(
       document
         .getElementById("listScheduledActivitiesJSON")
         .value.replaceAll("3aZt3r", " ")
     );
-    eventsarray = eventsarray.concat(unavailabilities);
+    listEvents = listEvents.concat(unavailabilities);
   } else {
     let setEvents = [];
     var index = 0;
@@ -868,12 +866,11 @@ function createCalendar(typeResource) {
 
       index++;
     });
-    eventsarray = setEvents;
-    eventsarray = eventsarray.concat(unavailabilities);
-    console.log(eventsarray);
+    listEvents = setEvents;
+    listEvents = listEvents.concat(unavailabilities);
   }
-  for (var i = 0; i < eventsarray.length; i++) {
-    calendar.addEvent(eventsarray[i]);
+  for (var i = 0; i < listEvents.length; i++) {
+    calendar.addEvent(listEvents[i]);
   }
   let listCurrentEvent = calendar.getEvents();
   listCurrentEvent.forEach((currentEvent) => {
@@ -882,19 +879,19 @@ function createCalendar(typeResource) {
   });
 
   //affiche le calendar
-  calendar.gotoDate(date);
+  calendar.gotoDate(currentDate);
   calendar.render();
 }
 
 function showPopup() {
   $("#divPopup").show();
 
-  timer = setInterval(function () {
+  timerAlert = setInterval(function () {
     var count = $("span.countdown").html();
     if (count > 1) {
       $("span.countdown").html(count - 1);
     } else {
-      clearInterval(timer);
+      clearInterval(timerAlert);
       window.location.assign(
         "/ModificationDeleteOnUnload?dateModified=" + $_GET("date")
       );
@@ -904,7 +901,7 @@ function showPopup() {
 
 function closePopup() {
   $("#divPopup").hide();
-  clearInterval(timer);
+  clearInterval(timerAlert);
   $("span.countdown").html(60);
   setTimeout(showPopup, modifAlertTime);
 }

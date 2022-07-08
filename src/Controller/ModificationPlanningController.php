@@ -38,14 +38,9 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
         $dateModified = array();
-        $idUser = 1;
         //Récupération de la date à laquelle on modifie le planning
         if (isset($_GET['date'])) {
             $dateModified = $_GET["date"];
-        }
-        //Récupération de l'id de l'utilisateur
-        if (isset($_GET['id'])) {
-            $idUser = $_GET["id"];
         }
 
         //Récupération des données via la base de donnée avec Doctrine
@@ -88,7 +83,7 @@ class ModificationPlanningController extends AbstractController
     }
 
     //Fonction vérifiant si une modification a lieu ou non pour le jour souhaité, si c'est le cas l'utilisateur ne peut pas accéder à la page. 
-    public function alertModif($dateModified, $idUser)
+    public function alertModif($dateModified, $idUser, $doctrine)
     {
         $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modifications = $modificationRepository->findAll();
