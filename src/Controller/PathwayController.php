@@ -5,14 +5,17 @@ namespace App\Controller;
 use App\Entity\Pathway;
 use App\Entity\Activity;
 use App\Entity\Successor;
-use App\Entity\AP;
-use App\Form\PathwayType;
+use App\Entity\ActivityHumanResource;
+use App\Entity\ActivityMaterialResource;
 use App\Repository\PathwayRepository;
 use App\Repository\ActivityRepository;
 use App\Repository\HumanResourceCategoryRepository;
+use App\Repository\ActivityHumanResourceRepository;
+use App\Repository\ActivityMaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
+use App\Form\PathwayType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,6 +78,7 @@ class PathwayController extends AbstractController
 
     /**
      * Redirige vers la page qui liste les utilisateurs 
+     * route : "/pathways"
      */
     public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
@@ -108,7 +112,13 @@ class PathwayController extends AbstractController
 
 
     /**
-     * Redirige vers la page qui liste les utilisateurs 
+     * Ajoute dans la base de données :
+     * Ajoute un parcours  
+     * Ajoute les activités liées a ce parcours
+     * Ajoute les successors liés aux activités
+     * Ajoute les ressources humaines et materielles liées aux activités 
+     * 
+     * route : "/pathwayAdd"
      */
     public function pathwayAdd(Request $request, PathwayRepository $pathwayRepository): Response
     {
@@ -120,6 +130,9 @@ class PathwayController extends AbstractController
             $param = $request->request->all();
 
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+
+            //var_dump($resourcesByActivities[0]->humanResourceCategories[0]->id);
+            //dd($resourcesByActivities[0]->humanResourceCategories[0]);
 
             //dd($resourcesByActivities);
 
@@ -140,6 +153,13 @@ class PathwayController extends AbstractController
             $activityRepository = new ActivityRepository($this->getDoctrine());
             $activities = $activityRepository->findAll();
             $successorRepository = new SuccessorRepository($this->getDoctrine());
+
+            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
+            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
+
+            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            
 
             // On récupère le nombre d'activité
             $nbActivity = count($resourcesByActivities);
@@ -163,31 +183,73 @@ class PathwayController extends AbstractController
                             $activityRepository->add($activity_old, true);
 
                         } else {
-                            // cas ou la premiere activité à déjà été trouvée 
+                            // Dans le cas ou la premiere activité à déjà été trouvée 
 
+                            // Création de l'activité
                             $activity = new Activity();
                             $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
-                            $activity->setDuration($resourcesByActivities[$indexActivity]->activityduration);
+                            $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
                             $activity->setPathway($pathway);
                             $activityRepository->add($activity, true);
             
                             $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
         
+                            // Création du successor entre les 2 activités
                             $successor = new Successor();
                             $successor->setActivitya($activity_old);
                             $successor->setActivityb($activity);
                             $successor->setDelaymin(0);
                             $successor->setDelaymax(1);
                             $successorRepository->add($successor, true);
-            
+
+
+                            // Récupération de la nouvelle activity_old qui est l'activity en cours
                             $activity_old = $activityRepository->findById($activity->getId())[0];
                         }
+
+                        // Ajout des liens activity - ressources humaines
+                        // id name nb
+                        $nbHRC = count($resourcesByActivities[$indexActivity]->humanResourceCategories);
+                    
+                        if ($nbHRC != 0) {
+                            for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
+
+                                // Premierement on recupere la categorie 
+                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                
+                                $activityHumanResource = new ActivityHumanResource();
+                                $activityHumanResource->setActivity($activity_old);
+                                $activityHumanResource->setHumanresourcecategory($HRC);
+                                $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                
+                                $AHRRepository->add($activityHumanResource , true);
+                            }
+                        }
+                    
+                        // Ajout des liens activity - ressources materielles
+                        $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
+                    
+                        if ($nbMRC != 0) {
+                            for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
+
+                                // Premierement on recupere la categorie 
+                                $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                
+                                $activityMaterialResource = new ActivityMaterialResource();
+                                $activityMaterialResource->setActivity($activity_old);
+                                $activityMaterialResource->setHumanresourcecategory($MRC);
+                                $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                
+                                $AMRRepository->add($activityMaterialResource , true);
+                            }
+                        }
+
                     }
 
                 }
             
-                return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
-            }
+            }                
+            return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
     }
 
