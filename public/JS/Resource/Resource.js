@@ -150,6 +150,7 @@ function deleteSelect(id) {
     if(hasDuplicates(categoriesCheckDuplicata) == false) {
         if (document.getElementById('resourcename').value === '') {
             formOk = false
+            alert('Veuillez saisir un nom pour la ressource !')
         }
     
         if (formOk) {
