@@ -134,8 +134,8 @@ Pathways:
   methods: [GET]
 
 PathwaysPost:
-  path: /pathways
-  controller: App\Controller\PathwayController:new
+  path: /pathwayAdd
+  controller: App\Controller\PathwayController:pathwayAdd
   methods: [POST]
 
 PathwayEdit:
