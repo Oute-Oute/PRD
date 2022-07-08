@@ -90,7 +90,7 @@ class ModificationPlanningController extends AbstractController
     //Fonction vérifiant si une modification a lieu ou non pour le jour souhaité, si c'est le cas l'utilisateur ne peut pas accéder à la page. 
     public function alertModif($dateModified, $idUser)
     {
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modifications = $modificationRepository->findAll();
 
         $dateModified = str_replace('T12:00:00', '', $dateModified);

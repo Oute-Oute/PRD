@@ -128,15 +128,12 @@ p .label {
     flex-direction: column;
     height: 90%;
     width: 90%;
-    /*position: absolute;*/
-
 }
 .div-resources-m {
     display: flex;
     flex-direction: column;
     height: 90%;
     width: 90%;
-   /* position: absolute;*/
 }
 /* div pour ajouter une ressource (avec le select) */
 .div-add-resources {

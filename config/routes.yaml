@@ -145,7 +145,7 @@ PathwayEdit:
 
 PathwayDelete:
   path: /pathway/delete
-  controller: App\Controller\PathwayController:delete
+  controller: App\Controller\PathwayController:pathwayDelete
   methods: [POST]
 
 HumanResourceEdit:

@@ -10,7 +10,7 @@
 								<label for='usernameAdd'>
 									Nom d'utilisateur
 								</label>
-								<input type='text' oninput="usernameTestNew()" required="required" name='usernameAdd' id="usernameAdd">
+								<input type='text' oninput="usernameNew()" required="required" name='usernameAdd' id="usernameAdd">
 
 								<p1 id="ErrorUser">
 									Nom d'utilisateur deja pris</p1>
@@ -39,7 +39,6 @@
 							</div>
 							<br>
 							<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Retour</button>
-							<button type="button" class="btn-consult btn-secondary" onclick="window.location.href='{{ path('User') }}'">Consulter les utilisateurs</button>
 							<button type="submit" id="buttonConfirmAdd" class="btn-valide btn-secondary">
 								Ajouter
 							</button>
