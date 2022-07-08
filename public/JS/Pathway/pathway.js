@@ -3,20 +3,24 @@ var NB_ACTIVITY = 0;
 
 
 var HUMAN_RESOURCE_CATEGORIES
-
+var MATERIAL_RESOURCE_CATEGORIES
 var RESOURCES_BY_ACTIVITIES = new Array()
 
 
 /**
  * Appelée au chargement de la page de création d'un parcours (circuit)
  */
- document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
     //showNewModalForm()
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-human-resource-categories").value
     );
-    //console.log(HUMAN_RESOURCES)
+
+    MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
+        document.getElementById("json-material-resource-categories").value
+    );
+
 })
 
 /**
@@ -55,9 +59,8 @@ function handleAddActivity() {
 
     RESOURCES_BY_ACTIVITIES.push( new Object())
     RESOURCES_BY_ACTIVITIES[SELECT_ID].humanResourceCategories = new Array()
-
-    console.log(RESOURCES_BY_ACTIVITIES)
-    //RESOURCES_BY_ACTIVITIES[SELECT_ID].resources = 
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].materialResourceCategories = new Array()
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].available = true
 
     NB_ACTIVITY = NB_ACTIVITY + 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -66,11 +69,12 @@ function handleAddActivity() {
     
     // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
     let div = document.createElement("div")
-    div.setAttribute('class', 'activity-field')    
+    div.setAttribute('class', 'form-field')    
     div.setAttribute('id', 'activity-field-'+SELECT_ID)
 
     let inputName = document.createElement('input')
     inputName.setAttribute('class', 'input-name')
+    inputName.setAttribute('id', 'input-activity-name-'+SELECT_ID)
     //inputName.disabled = true
     inputName.setAttribute('placeholder', 'Nom')
     inputName.setAttribute('onchange', 'disableSubmit()')
@@ -154,6 +158,7 @@ function deleteSelect(id) {
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
+    RESOURCES_BY_ACTIVITIES[id].available = false
     //SELECT_ID = SELECT_ID - 1;
 }
 
@@ -191,6 +196,7 @@ function editSelect(id) {
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
  */
 function verifyChanges() {
+    console.log('Appel de la fonction verifyChanges')
 
     let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
@@ -198,9 +204,18 @@ function verifyChanges() {
 
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
-    for (let i = 0; i < NB_ACTIVITY; i++) {
+    let indexActivityAvailable = 0;
+    for (let i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
 
-        activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
+        // On ne considere que les activités qui n'ont pas été supprimées
+        if (RESOURCES_BY_ACTIVITIES[i].available === true) {
+            inputName  = document.getElementById('input-activity-name-'+i)
+            RESOURCES_BY_ACTIVITIES[i].activityname = inputName.value
+
+            indexActivityAvailable = indexActivityAvailable + 1
+        }
+
+        /*activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
         let name = activitiesContainer.children[i].children[1].children[0].value
         activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))
         let duration = activitiesContainer.children[i].children[1].children[1].value
@@ -214,13 +229,17 @@ function verifyChanges() {
         }
         if (Number(duration) < 0 ) {
             formOk = false
-        }
+        }*/
 
     }
 
-    if (document.getElementById('pathwayname').value === '') {
+    /*if (document.getElementById('pathwayname').value === '') {
         formOk = false
     }
+*/
+
+    console.log(JSON.stringify(RESOURCES_BY_ACTIVITIES))
+    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
 
     if (formOk) {
         let btnSubmit = document.getElementById('submit')
@@ -255,6 +274,8 @@ function createDivEdit() {
     btnMaterial.setAttribute('id', 'bm-'+SELECT_ID)
     btnMaterial.setAttribute('onclick', 'handleMaterialButton(this.id)')
 
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].btnHM= 'human'
+
     divBtnsResources.appendChild(btnHuman)
     divBtnsResources.appendChild(btnMaterial)
 
@@ -266,7 +287,7 @@ function createDivEdit() {
     //divRH = document.createElement('div')
     //divRH.setAttribute('class', 'div-resources-h')
     divRM = document.createElement('div')
-    divRM.setAttribute('class', 'div-resources-m')
+    //divRM.setAttribute('class', 'div-resources-m')
     //divResources.appendChild(divRH)
     ul = document.createElement('ul')
     ul.setAttribute('id', 'list-resources-'+SELECT_ID)
@@ -283,7 +304,6 @@ function createDivEdit() {
     divAddResources.setAttribute('title', 'Choisissez la ressource à ajouter')
     selectResources = document.createElement('select')
     selectResources.setAttribute('id', 'select-resources-'+SELECT_ID)
-    //console.log(HUMAN_RESOURCES[0])
     //for (let indexHR = 0; )
 
     inputNbResources = document.createElement('input')
@@ -318,23 +338,48 @@ function addResources(id) {
     // recuperation de l'id
     id = id[id.length - 1] 
 
-    let resourceNb = document.getElementById('resource-nb-'+id).value
-    let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
-
-    let resourceName ='';
-    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
-        }
-    }
+    // ! Si le bouton human est activé !
+    if (RESOURCES_BY_ACTIVITIES[id].btnHM == 'human') {
+        let resourceNb = document.getElementById('resource-nb-'+id).value
+        let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
     
-    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.push(new Object())
-    let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
-    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].id = resourceId
-    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].name = resourceName
-    RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].nb = resourceNb
+        let resourceName ='';
+        for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+            if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+            }
+        }
+        
+        RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.push(new Object())
+        let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
+        RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].id = resourceId
+        RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].name = resourceName
+        RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[len-1].nb = resourceNb
+    
+        fillHRCList(id)
+    } else {
+        // ! Si le bouton material est activé !
 
-    fillHRCList(id)
+        let resourceNb = document.getElementById('resource-nb-'+id).value
+        let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+    
+        let resourceName ='';
+        for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+            if (HUMAN_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+            }
+        }
+        
+        RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.push(new Object())
+        let len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
+        RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[len-1].id = resourceId
+        RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[len-1].name = resourceName
+        RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[len-1].nb = resourceNb
+    
+        fillMRCList(id)
+    }
+
+
 }
 
 /**
@@ -343,26 +388,29 @@ function addResources(id) {
  */
 function fillHRCList(id) {
 
-    ul.innerHTML = ''
     
     // On recupere la liste dans laquelle on va ajouter notre ressource
     ul = document.getElementById('list-resources-'+id)
+    ul.innerHTML = ''
 
     let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
-    for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
-        // On crée le li qui va stocker la ressource (visuellement) 
-        var li = document.createElement('li');
 
-        let resourceNb = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].nb 
-        let resourceName = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].name
-        console.log('oui')
-        console.log(resourceNb)
-        console.log(resourceName)
-        li.innerText = resourceName +' ('+resourceNb+')'
+    if (len > 0) {
+        for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
+            // On crée le li qui va stocker la ressource (visuellement) 
+            var li = document.createElement('li');
     
+            let resourceNb = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].nb 
+            let resourceName = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHRC].name
+            li.innerText = resourceName +' ('+resourceNb+')'
+        
+            ul.appendChild(li)
+        }
+    } else {
+        var li = document.createElement('li');
+        li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
     }
-
 
 
 }
@@ -373,7 +421,29 @@ function fillHRCList(id) {
  * @param {*} id : id de l'activité dans laquelle on veut ajouter des ressources
  */
 function fillMRCList(id) {
+    
+    // On recupere la liste dans laquelle on va ajouter notre ressource
+    ul = document.getElementById('list-resources-'+id)
+    ul.innerHTML = ''
 
+    let len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
+
+    if (len > 0) {
+        for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
+            // On crée le li qui va stocker la ressource (visuellement) 
+            var li = document.createElement('li');
+    
+            let resourceNb = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMRC].nb 
+            let resourceName = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMRC].name
+            li.innerText = resourceName +' ('+resourceNb+')'
+        
+            ul.appendChild(li)
+        }
+    } else {
+        var li = document.createElement('li');
+        li.innerText = 'Aucune ressource materielles pour le moment !'
+        ul.appendChild(li)
+    }
 }
 
 function handleHumanButton(id) {
@@ -391,14 +461,22 @@ function handleHumanButton(id) {
     bm.style.fontWeight = 'normal'
 
     // remplissage du select avec les données de la bd
-    let select = document.getElementById('select-resources-'+SELECT_ID)
+    let select = document.getElementById('select-resources-'+id)
+    removeOptions(select)
+
     for (let indexHR = 0; indexHR < HUMAN_RESOURCE_CATEGORIES.length; indexHR++) {
         option = document.createElement('option')
         option.value = HUMAN_RESOURCE_CATEGORIES[indexHR].id
         option.text = HUMAN_RESOURCE_CATEGORIES[indexHR].categoryname
         select.appendChild(option)
     }
+    
+    // human / material
+    RESOURCES_BY_ACTIVITIES[id].btnHM = 'human'
+
+    fillHRCList(id)
 }
+
 
 function handleMaterialButton(id) {
     // recuperation de l'id
@@ -413,15 +491,37 @@ function handleMaterialButton(id) {
     let bh = document.getElementById('bh-'+id)
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
-
+ 
     // remplissage du select avec les données de la bd
-    let select = document.getElementById('select-resources-'+SELECT_ID)
-    for (let indexHR = 0; indexHR < HUMAN_RESOURCE_CATEGORIES.length; indexHR++) {
+    let select = document.getElementById('select-resources-'+id)
+    removeOptions(select)
+
+    for (let indexMR = 0; indexMR < MATERIAL_RESOURCE_CATEGORIES.length; indexMR++) {
         option = document.createElement('option')
-        option.value = HUMAN_RESOURCE_CATEGORIES[indexHR].id
-        option.text = HUMAN_RESOURCE_CATEGORIES[indexHR].categoryname
+        option.value = MATERIAL_RESOURCE_CATEGORIES[indexMR].id
+        option.text = MATERIAL_RESOURCE_CATEGORIES[indexMR].categoryname
         select.appendChild(option)
     }
+
+    // human / material
+    RESOURCES_BY_ACTIVITIES[id].btnHM = 'material'
+
+    fillMRCList(id)
+}
+
+
+/**
+ * Supprime tous les options d'un select
+ * @param {*} selectElement 
+ * 
+ * Source: https://prograide.com/pregunta/37784/comment-effacer-toutes-les-options-dune-liste-deroulante
+ */
+function removeOptions(selectElement) {
+    var i, L = selectElement.options.length - 1;
+    
+    for (i = L; i >= 0; i--) {
+        selectElement.remove(i); 
+    } 
 
 }
 

@@ -660,12 +660,15 @@ function createCalendar(typeResource) {
 
     //permet de modifier les events dans le calendar
     selectable: false,
+    //eventConstraint:"businessHours",
+    eventOverlap: false,
     editable: true,
     eventDurationEditable: false,
     contentHeight: (9 / 12) * height,
     handleWindowResize: true,
     nowIndicator: true,
     selectConstraint: "businessHours", //set the select constraint to be business hours
+    eventMinWidth: 1, //set the minimum width of the event
 
     //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
     headerToolbar: {
@@ -687,14 +690,14 @@ function createCalendar(typeResource) {
     resourceAreaWidth: "20%",
     resourceAreaHeaderContent: headerResources,
 
-    eventDidMount: function (info) {
+    /*eventDidMount: function (info) {
       $(info.el).tooltip({
         title: info.event.extendedProps.description,
         placement: "top",
         trigger: "hover",
         container: "body",
       });
-    },
+    },*/
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
     eventClick: function (event) {
@@ -823,6 +826,10 @@ function createCalendar(typeResource) {
         patient: eventModify.extendedProps.patient,
         appointment: eventModify.extendedProps.appointment,
         activity: eventModify.extendedProps.activity,
+        type: eventModify.extendedProps.type,
+        humanResources: eventModify.extendedProps.humanResources,
+        materialResources: eventModify.extendedProps.materialResources,
+        pathway: eventModify.extendedProps.pathway,
       });
       }
 

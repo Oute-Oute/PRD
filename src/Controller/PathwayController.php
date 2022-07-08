@@ -10,6 +10,7 @@ use App\Form\PathwayType;
 use App\Repository\PathwayRepository;
 use App\Repository\ActivityRepository;
 use App\Repository\HumanResourceCategoryRepository;
+use App\Repository\MaterialResourceCategoryRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
  */
 class PathwayController extends AbstractController
 {
+
 
     public function listHumanResourcesJSON()
     {
@@ -47,6 +49,28 @@ class PathwayController extends AbstractController
         return $humanResourceCategoriesArrayJson;    
     }
 
+
+    public function listMaterialResourcesJSON()
+    {
+        $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $materialResourceCategories = $materialResourceCategoryRepo->findAll();
+        //dd($humanResourceCategories);
+        $materialResourceCategoriesArray = array();
+
+        //dd($humanResources);
+        if ($materialResourceCategories != null) {
+            foreach ($materialResourceCategories as $materialResourceCategory) {
+                $materialResourceCategoriesArray[] = array(
+                    'id' => strval($materialResourceCategory->getId()),
+                    'categoryname' => $materialResourceCategory->getCategoryname(),
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $materialResourceCategoriesArrayJson = new JsonResponse($materialResourceCategoriesArray);
+        return $materialResourceCategoriesArrayJson;    
+    }
+
     public function pathwayGet(PathwayRepository $pathwayRepository): Response
     {
 
@@ -56,10 +80,9 @@ class PathwayController extends AbstractController
         //$humanResources = $humanResourceRepo->findAll();
         // dd($humanResources);
         $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
-        //dd($humanResourcesJson[0]);
-
-        $materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
-        $materialResources = $materialResourceRepo->findAll();
+        $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+        //$materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
+        //$materialResources = $materialResourceRepo->findAll();
 
         $pathways = $pathwayRepository->findAll();
         $nbPathway = count($pathways);
@@ -75,7 +98,7 @@ class PathwayController extends AbstractController
             'pathways' => $pathways,
             'activitiesByPathways' => $activitiesByPathways,
             'humanResourceCategories' => $humanResourceCategoriesJson,
-            'materialResources' => $materialResources,
+            'materialResourceCategories' => $materialResourceCategoriesJson,
         ]);
     }
 
@@ -90,6 +113,11 @@ class PathwayController extends AbstractController
             // On recupere toutes les données de la requete
             $param = $request->request->all();
 
+            $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+
+            dd($resourcesByActivities);
+
+            dd($param);
 
             // Premierement on s'occupe d'ajouter le parcours dans la bd :
             // On crée l'objet parcours

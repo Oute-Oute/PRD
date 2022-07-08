@@ -34,7 +34,7 @@ div#edit--activities-container {
 }
 
 /* classe représentant un champ contenant une activité  */
-div.activity-field {
+div.form-field {
     display : flex;
     flex-direction: row;
     align-items: center;
@@ -45,7 +45,7 @@ div.activity-field {
 }
 
 /* nom d'une activité */
-div.activity-field .input-name {
+div.form-field .input-name {
     height:35px;
     margin: 0;
     border-top-left-radius: 10px;
@@ -56,7 +56,7 @@ div.activity-field .input-name {
 }
 
 /* durée d'un activité */
-div.activity-field .input-duration {
+div.form-field .input-duration {
     height:35px;
     border: transparent;
     margin-left: 1px;
@@ -64,19 +64,19 @@ div.activity-field .input-duration {
 }
 
 /* texte dans un champ de formulaire */
-div.activity-field p.label {
+div.form-field p.label {
     border-right: 1px solid lightgray;
     margin: 0;
 }
 
  /* image (delete) */
-div.activity-field img{
+div.form-field img{
     width:20px;
     cursor: pointer;
     margin: 0px 6px;
 }
  
-div.activity-field select {
+div.form-field select {
     height: 35px;
     border-radius: 15px; 
     min-width: 300px;
