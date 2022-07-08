@@ -237,6 +237,7 @@ function edit__handleAddCategory() {
     if(hasDuplicates(categoriesCheckDuplicata) == false) {
         if (document.getElementById('edit--resourcename').value === '') {
             formOk = false
+            alert('Veuillez saisir un nom pour la ressource !')
         }
     
         if (formOk) {
