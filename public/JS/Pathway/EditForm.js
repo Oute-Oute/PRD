@@ -132,6 +132,12 @@ function showEditModalForm(id, name, index){
         SELECT_ID_EDIT = SELECT_ID_EDIT + 1
     }
 }
+/**
+ * Permet de cacher la fenêtre modale d'édition
+ */
+function hideEditModalForm() {
+    $('#edit--pathway-modal').modal("hide");
+  }
 
 
 /**
