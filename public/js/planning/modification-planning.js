@@ -451,6 +451,8 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
   var listEvent = calendar.getEvents();
   let listOldEvent = calendar.getEvents();
   var appointmentId = oldEvent._def.extendedProps.appointment;
+  var materialResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   var listEventAppointment = [];
   listEvent.forEach((currentEvent) => {
     if (currentEvent._def.extendedProps.appointment == appointmentId) {
@@ -529,33 +531,48 @@ function updateEventsAppointment(oldEvent, newDelay, clickModify) {
         eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
       }
     });
-        listEventAppointment.forEach((currentModifyEvent) => {
-          listOldEvent.forEach((oldEventSet) => {
-            var newEventAppointment = currentModifyEvent;
-            if(currentModifyEvent._def.publicId == oldEvent._def.publicId){
-              newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
-            }
-            oldEventSet._def.resourceIds.forEach((oldResource) => {
-              newEventAppointment._def.resourceIds.forEach((newResource) => {
-                if(newResource != "h-default" && newResource != "m-default"){
-                  if(newResource == oldResource) {
-                    if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
-                      if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
-                        console.log(oldEventSet._def.title + " est déjà prévu sur ce crénaux avec " + newResource + ", on ne peut donc pas mettre " + newEventAppointment._def.title);
-                        isEditable = false;
-                      }
+    listEventAppointment.forEach((currentModifyEvent) => {
+      listOldEvent.forEach((oldEventSet) => {
+        var newEventAppointment = currentModifyEvent;
+        if(currentModifyEvent._def.publicId == oldEvent._def.publicId){
+          newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+        }
+        oldEventSet._def.resourceIds.forEach((oldResource) => {
+          newEventAppointment._def.resourceIds.forEach((newResource) => {
+            if(newResource != "h-default" && newResource != "m-default"){
+              if(newResource == oldResource) {
+                if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                  if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
+                    var resourceTitle = "";
+                    if (newResource.substring(0, 8) == "material"){
+                      materialResources.forEach((material) => {
+                        if(material.id == newResource){
+                          resourceTitle = material.title;
+                        }
+                      })
                     }
+                    else if (newResource.substring(0, 5) == "human"){
+                      humanResources.forEach((human) => {
+                        if(human.id == newResource){
+                          resourceTitle = human.title;
+                        }
+                      })
+                    }
+                    alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", on ne peut donc pas mettre " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
+                    isEditable = false;
                   }
                 }
-              })
-            })
+              }
+            }
           })
         })
-      }
-      else {
-        console.log("Le parcours n'est pas compris entre : " + earliestAppointmentDate + " et " + latestAppointmentDate);
-        isEditable = false;
-      }
+      })
+    })
+  }
+  else {
+    alert("Le parcours doit être compris entre : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
+    isEditable = false;
+  }
       
       if (!isEditable){
         listEventAppointment.forEach((newEventAppointment) => {
