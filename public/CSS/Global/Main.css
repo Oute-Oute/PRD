@@ -24,7 +24,7 @@ h1#title {
     flex-direction: column;
     width: 100%;
 }
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult,.btn-calendar-edit{
+.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
     margin-top : 10px;
     border: 1px solid transparent;
     padding: 10px 20px;
