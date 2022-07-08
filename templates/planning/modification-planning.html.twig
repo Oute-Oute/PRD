@@ -29,7 +29,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-title">Modifier
-						<span id="show-title"></span>
+						<span id="show-modified-event-title"></span>
 					</h2>
 				</div>
 				<div
@@ -38,28 +38,25 @@
 					</label>
 					<div class="input-container onWhite">
 					<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
-					<input name="form" type="hidden" value="modify">
-					<input id="id" name="id" type="hidden">
-					<input id="length" name="length" type="hidden">
-					<inputid="title" name="title" type="hidden">
+					<input id="id-modified-event" name="id-modified-event" type="hidden">
 
-					<input class="input-modal-date" type="time" id="start" name="start" required>
+					<input class="input-modal-date" type="time" id="start-modified-event" name="start-modified-event" required>
 					</br>
 					<label class="label-event">Parcours :</label>
 					</br>
-					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+					<input class="input-modal" type="text" id="parcours-modified-event" name="parcours-modified-event" disabled></input>
 					</br>
 					<label class="label-event">Patient :</label>
 					</br>
-					<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+					<input class="input-modal" type="text" id="patient-modified-event" name="patient-modified-event" disabled></input>
 					</br>
 					<label class="label-event">Ressource Humaine :</label>
 					</br>
-					<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
+					<input class="input-modal" type="text" id="human-resource-modified-event" name="human-resource-modified-event" disabled></input>
 					</br>
 					<label class="label-event">Ressource Matérielle :</label>
 					</br>
-					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
+					<input class="input-modal" type="text" id="material-resource-modified-event" name="material-resource-modified-event" disabled></input>
 					</div>
 					<div
 						class="modal-footer">
@@ -99,8 +96,8 @@
 					<!-- sépare le body de la modal -->
 					<input id="date" name="date" type="hidden" value={{datetoday}}>
 					<input id="listeAppointments" name="listeAppointments" type='hidden' value={{listAppointmentsJSON.content}}>
-					<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listeSuccessorsJSON.content}}>
-					<input id="listeActivities" name="listeActivities" type='hidden' value={{listeActivitiesJSON.content}}>
+					<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listSuccessorsJSON.content}}>
+					<input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
 
 					<div
 						id="select-container-patient">
@@ -138,12 +135,12 @@
 <input type='hidden' id="listeAppointments" name="listeAppointments" value='{{listAppointmentsJSON.content}}'>
 <input type="hidden" id="listScheduledActivitiesJSON" value='{{listScheduledActivitiesJSON.content}}'/>
 <input id="date" name="date" type="hidden" value={{datetoday}}>
-<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listeSuccessorsJSON.content}}>
-<input id="listeActivities" name="listeActivities" type='hidden' value={{listeActivitiesJSON.content}}>
-<input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value={{listeActivityHumanResourcesJSON.content}}>
-<input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value={{listeActivityMaterialResourcesJSON.content}}>
-<input type="hidden" id="MaterialUnavailables" value='{{listeMaterialResourcesUnavailables.content}}'/>
-<input type="hidden" id="HumanUnavailables" value='{{listeHumanResourcesUnavailables.content}}'/>
+<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listSuccessorsJSON.content}}>
+<input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
+<input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value={{listActivityHumanResourcesJSON.content}}>
+<input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value={{listActivityMaterialResourcesJSON.content}}>
+<input type="hidden" id="MaterialUnavailables" value='{{listMaterialResourcesUnavailables.content}}'/>
+<input type="hidden" id="HumanUnavailables" value='{{listHumanResourcesUnavailables.content}}'/>
 
 <div class="all-container">
 	<h1>Modification du Planning</h1>

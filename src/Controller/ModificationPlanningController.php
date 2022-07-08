@@ -38,62 +38,54 @@ class ModificationPlanningController extends AbstractController
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
         $dateModified = array();
-        $idUser = 1;
-        if (isset($_POST['form'])) {
-            $this->modificationPlanningPost($request, $doctrine, $entityManager);
-            $dateModified = $_POST['date'];
-        }
+        //Récupération de la date à laquelle on modifie le planning
         if (isset($_GET['date'])) {
             $dateModified = $_GET["date"];
         }
-        if (isset($_GET['id'])) {
-            $idUser = $_GET["id"];
-        }
 
-        //Récupération des données nécessaires
+        //Récupération des données via la base de donnée avec Doctrine
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
         $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available' => true]);
-        $listePatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $listePathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-        $listeAppointment = $this->listAppointment($doctrine, $dateModified);
-        $listescheduledActivity = $this->listScehduledActivity($doctrine, $SAR, $dateModified);
-        $listesuccessionJSON = $this->listSuccessorJSON($doctrine);
-        $listeActivitiesJSON = $this->listActivityJSON($doctrine);
-        $listAppointmentJSON = $this->listAppointmentJSON($doctrine, $dateModified);
-        $listMaterialResourceJSON = $this->listMaterialResourcesJSON($doctrine);
-        $listHumanResourceJSON = $this->listHumanResourcesJSON($doctrine);
-        $listActivityHumanResourcesJSON = $this->listActivityHumanResourcesJSON($doctrine);
-        $listActivityMaterialResourcesJSON = $this->listActivityMaterialResourcesJSON($doctrine);
-        $listeMaterialResourcesUnavailables = $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
-        $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
+        $listPatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
+        $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
+        $listAppointment = $this->getAppointment($doctrine, $dateModified);
+        $listscheduledActivity = $this->getScehduledActivity($doctrine, $SAR, $dateModified);
+        $listsuccessionJSON = $this->getSuccessorJSON($doctrine);
+        $listActivitiesJSON = $this->getActivityJSON($doctrine);
+        $listAppointmentJSON = $this->getAppointmentJSON($doctrine, $dateModified);
+        $listMaterialResourceJSON = $this->getMaterialResourcesJSON($doctrine);
+        $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
+        $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
+        $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
+        $listMaterialResourcesUnavailables = $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
+        $listHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
 
-        if ($this->alertModif($dateModified, $idUser)) {
-            $this->modificationAdd($dateModified, $idUser);
-        }
+        //On redirige sur la page html modification planning et on envoie toutes les données dont on a besoin
         return $this->render('planning/modification-planning.html.twig', [
-            'listepatients' => $listePatients,
-            'listePathWaypatients' => $listePathWayPatients,
+            'listPatients' => $listPatients,
+            'listPathWaypatients' => $listPathWayPatients,
             'listMaterialResourceJSON' => $listMaterialResourceJSON,
             'listHumanResourceJSON' => $listHumanResourceJSON,
             'listHumanResources' => $listHumanResources,
             'listMaterialResources' => $listMaterialResources,
             'datetoday' => $dateModified,
-            'listScheduledActivitiesJSON' => $listescheduledActivity,
-            'listeAppointments' => $listeAppointment,
-            'listeSuccessorsJSON' => $listesuccessionJSON,
-            'listeActivitiesJSON' => $listeActivitiesJSON,
+            'listScheduledActivitiesJSON' => $listscheduledActivity,
+            'listAppointments' => $listAppointment,
+            'listSuccessorsJSON' => $listsuccessionJSON,
+            'listActivitiesJSON' => $listActivitiesJSON,
             'listAppointmentsJSON' => $listAppointmentJSON,
-            'listeActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
-            'listeActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
-            'listeMaterialResourcesUnavailables' => $listeMaterialResourcesUnavailables,
-            'listeHumanResourcesUnavailables' => $listeHumanResourcesUnavailables,
+            'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
+            'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
+            'listMaterialResourcesUnavailables' => $listMaterialResourcesUnavailables,
+            'listHumanResourcesUnavailables' => $listHumanResourcesUnavailables,
 
         ]);
     }
 
-    public function alertModif($dateModified, $idUser)
+    //Fonction vérifiant si une modification a lieu ou non pour le jour souhaité, si c'est le cas l'utilisateur ne peut pas accéder à la page. 
+    public function alertModif($dateModified, $idUser, $doctrine)
     {
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modifications = $modificationRepository->findAll();
 
         $dateModified = str_replace('T12:00:00', '', $dateModified);
@@ -136,59 +128,10 @@ class ModificationPlanningController extends AbstractController
         return true;
     }
 
-    public function modificationAdd($dateModified, $idUser)
-    {
-        $modificationRepository = new ModificationRepository($this->getDoctrine());
+    
 
-        $userRepository = new UserRepository($this->getDoctrine());
-        $user = $userRepository->findOneBy(['id' => $idUser]);
-
-        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
-        // A enlever plus tard car on est censé être connecté
-        if (!$user) {
-            //dd($user, "Erreur, vous n'êtes pas connecté !");
-        } else {
-            $userRepository->add($user, true);
-
-            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
-            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
-
-            $modification = new Modification();
-            $modification->setUser($user);
-            $modification->setDatemodif($datetimeModified);
-            $modification->setDatetimemodification($dateToday);
-
-            // ajout dans la bdd
-            $modificationRepository->add($modification, true);
-        }
-    }
-
-    public function modificationPlanningPost(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
-    {
-        $form = $request->get('form');
-
-        if ($form == 'add') {
-            $idAppointment = $request->get('select-appointment');
-            $AppointmentBegin = $request->get('time_begin');
-            $Appointment = $doctrine->getRepository('App\Entity\Appointment')->findOneBy(['id' => $idAppointment]);
-            $activities = $doctrine->getRepository('App\Entity\Activity')->findBy(['pathway' => $Appointment->getPathway()->getId()]);
-            foreach ($activities as $activity) {
-                $findfirst = $doctrine->getRepository('App\Entity\Successor')->findBy(['activityb' => $activity->getId()]);
-                if ($findfirst == null) {
-                    $idfirst = $activity->getId();
-                }
-            }
-            $activitya = $doctrine->getRepository('App\Entity\Successor')->findOneBy(['id' => $idfirst])->getActivitya();
-
-            do {
-                $succesor = $doctrine->getRepository('App\Entity\Successor')->findOneBy(['activitya' => $activitya->getId()]);
-                dd($succesor);
-                $activityB = $succesor->getActivityb();
-            } while ($activityB != null);
-        }
-    }
-    public function listSuccessorJSON(ManagerRegistry $doctrine)
+    //Renvoie la liste de tous les successors en format JSON
+    public function getSuccessorJSON(ManagerRegistry $doctrine)
     {
         $successors = $doctrine->getRepository('App\Entity\Successor')->findAll();
         $successorsArray = array();
@@ -206,7 +149,8 @@ class ModificationPlanningController extends AbstractController
         return $successorsArrayJSON;
     }
 
-    public function listActivityJSON(ManagerRegistry $doctrine)
+    //Renvoie a liste de toutes les Activity en format JSON
+    public function getActivityJSON(ManagerRegistry $doctrine)
     {
         $activities = $doctrine->getRepository('App\Entity\Activity')->findAll();
         $activitiesArray = array();
@@ -221,11 +165,9 @@ class ModificationPlanningController extends AbstractController
         $activitiesArrayJSON = new JsonResponse($activitiesArray);
         return $activitiesArrayJSON;
     }
-    public function modificationPlanninEventsgGet(Request $request, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
-    {
-    }
-
-    public function listAppointment(ManagerRegistry $doctrine, $date)
+ 
+    //Renvoie la liste de tous les rendez-vous pour un jour donné
+    public function getAppointment(ManagerRegistry $doctrine, $date)
     {
 
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
@@ -233,7 +175,8 @@ class ModificationPlanningController extends AbstractController
         return $appointments;
     }
 
-    public function listAppointmentJSON(ManagerRegistry $doctrine, $date)
+    //Renvoie la liste de tous les rendez-vous pour un jour donné en JSON
+    public function getAppointmentJSON(ManagerRegistry $doctrine, $date)
     {
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
@@ -261,9 +204,10 @@ class ModificationPlanningController extends AbstractController
         return $appointmentsArrayJSON;
     }
 
+
     public function getPatient(ManagerRegistry $doctrine, $id)
     {
-        //recuperation du patient depuis la base de données
+        //recuperation d'un patient depuis la base de données
         $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
         $patientArray = array();
         $lastname = $patient->getLastname();
@@ -282,6 +226,7 @@ class ModificationPlanningController extends AbstractController
         return $patientArray;
     }
 
+    //Récupération d'un parcour dans la base dee donnée
     public function getPathway(ManagerRegistry $doctrine, $id)
     {
         //recuperation du pathway depuis la base de données
@@ -297,7 +242,8 @@ class ModificationPlanningController extends AbstractController
         return $pathwayArray;
     }
 
-    public function listHumanResourcesJSON(ManagerRegistry $doctrine)
+    //Retourne la liste des HumanResources en format JSON. 
+    public function getHumanResourcesJSON(ManagerRegistry $doctrine)
     {
         $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
         $humanResourcesArray = array();
@@ -338,7 +284,8 @@ class ModificationPlanningController extends AbstractController
         return $workingHoursArray;
     }
 
-    public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
+    //Retourne la liste des MaterialResources en nformat JSON
+    public function getMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
         $materialResourcesArray = array();
@@ -357,7 +304,8 @@ class ModificationPlanningController extends AbstractController
         return $materialResourcesArrayJson;
     }
 
-    public function listScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
+    //Retourne la liste des Scheduled Activity en format JSON pour un jour donné
+    public function getScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
     {
         $TodayDate = substr($date, 0, 10);
 
@@ -378,8 +326,9 @@ class ModificationPlanningController extends AbstractController
             foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
                 $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
             }
+            //Tableau contenant toutes les ressources déja plannifiées pour une activité
             $scheduledActivitiesResourcesArray = array();
-
+            //Recherche des ressources Humaines déja plannifiées 
             $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
             $scheduledActivitesHumanResourcesArray = array();
             foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
@@ -390,7 +339,7 @@ class ModificationPlanningController extends AbstractController
                 $quantityHumanResources = $quantityHumanResources - 1;
                 array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
             }
-
+            //Recherche des ressources matérielles déjà plannifiées. 
             $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
             $scheduledActivitiesMaterialResourceArray = array();
             foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
@@ -413,9 +362,7 @@ class ModificationPlanningController extends AbstractController
             for ($i = 0; $i < $quantityMaterialResources; $i++) {
                 array_push($scheduledActivitiesResourcesArray, "m-default");
             }
-
-
-            $patientId = $scheduledActivity->getAppointment()->getPatient()->getId();
+            //formatage des informations à rentrer dans le tableau
             $start = $scheduledActivity->getStarttime();
             $day = $scheduledActivity->getAppointment()->getDayappointment();
             $day = $day->format('Y-m-d');
@@ -446,7 +393,8 @@ class ModificationPlanningController extends AbstractController
         return $scheduledActivitiesArrayJson;
     }
 
-    public function listActivityHumanResourcesJSON(ManagerRegistry $doctrine)
+    //Retourne les ActivityHuman Ressource en format JSON
+    public function getActivityHumanResourcesJSON(ManagerRegistry $doctrine)
     {
         $activitiesHumanResources = $doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll();
         $activitiesHumanResourcesArray = array();
@@ -461,7 +409,8 @@ class ModificationPlanningController extends AbstractController
         return new JsonResponse($activitiesHumanResourcesArray);
     }
 
-    public function listActivityMaterialResourcesJSON(ManagerRegistry $doctrine)
+    //Retouorne les ActivityMaterialResources en format JSON
+    public function getActivityMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
         $activitiesMaterialResources = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();
         $activitiesMaterialResourcesArray = array();
@@ -476,6 +425,8 @@ class ModificationPlanningController extends AbstractController
         return new JsonResponse($activitiesMaterialResourcesArray);
     }
 
+    //Appelée lors de l'appui du bouton valider
+    //Sauvegarde en nBDD les modifications de l'utilisateur
     public function modificationPlanningValidation(Request $request, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         //récupération des events et des ressources depuis le twig
@@ -838,8 +789,8 @@ class ModificationPlanningController extends AbstractController
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
 
-
-    public function listeMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    //Retouorne la liste des MaterialResourcesUnavailable en format JSON
+    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
         $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
@@ -861,7 +812,8 @@ class ModificationPlanningController extends AbstractController
         return $materialResourcesUnavailableArrayJSON;
     }
 
-    public function listeHumanResourceUnavailables(ManagerRegistry $doctrine)
+    //Retourne la liste des HumanResourcesUnavailable en format JSON. 
+    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
         $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();

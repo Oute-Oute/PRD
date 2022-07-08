@@ -42,23 +42,23 @@ class ConsultationPlanningController extends AbstractController
             $date = str_replace('T12:00:00', '', $date);
         }
         //Récupération des données ressources de la base de données
-        $listeAppointmentJSON = $this->listeAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
-        $listeScheduledActivitiesJSON = $this->listeScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
-        $listeMaterialResourceScheduledJSON = $this->listeMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
-        $listeHumanResourceScheduledJSON = $this->listeHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-        $listeMaterialResourcesUnavailables= $this->listeMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
-        $listeHumanResourcesUnavailables = $this->listeHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
+        $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
+        $getScheduledActivitiesJSON = $this->getScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
+        $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
+        $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
+        $getMaterialResourcesUnavailables= $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
+        $getHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
         //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
                 'datetoday' => $date,
-                'listeScheduledActivitiesJSON' => $listeScheduledActivitiesJSON,
-                'listeAppointmentJSON' => $listeAppointmentJSON,
-                'listeMaterialResourceScheduledJSON' => $listeMaterialResourceScheduledJSON,
-                'listeHumanResourceScheduledJSON' => $listeHumanResourceScheduledJSON,
-                'listeMaterialResourcesUnavailables' => $listeMaterialResourcesUnavailables,
-                'listeHumanResourcesUnavailables' => $listeHumanResourcesUnavailables,
+                'getScheduledActivitiesJSON' => $getScheduledActivitiesJSON,
+                'getAppointmentJSON' => $getAppointmentJSON,
+                'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
+                'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
+                'getMaterialResourcesUnavailables' => $getMaterialResourcesUnavailables,
+                'getHumanResourcesUnavailables' => $getHumanResourcesUnavailables,
             ]
         );
     }
@@ -68,7 +68,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array all the data of the activites to display
      */
-    public function listeScheduledActivitiesJSON(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR)
+    public function getScheduledActivitiesJSON(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR)
     {
         global $date;
         global $scheduledActivities;
@@ -168,7 +168,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array of the Appointments's data
      */
-    public function listeAppointmentJSON(ManagerRegistry $doctrine)
+    public function getAppointmentJSON(ManagerRegistry $doctrine)
     {
         //recuperation de la date dont on veut le planning
         global $date;
@@ -225,7 +225,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
      */
-    public function listeMaterialResourceScheduledJSON(ManagerRegistry $doctrine)
+    public function getMaterialResourceScheduledJSON(ManagerRegistry $doctrine)
     {
         //tilisation de la variable globale $scheduledActivities pour recuperer les activites programmées du jour
         global $scheduledActivities;
@@ -291,7 +291,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
      */
-    public function listeHumanResourceScheduledJSON(ManagerRegistry $doctrine)
+    public function getHumanResourceScheduledJSON(ManagerRegistry $doctrine)
     {
         //tilisation de la variable globale $scheduledActivities pour recuperer les activites programmées du jour
         global $scheduledActivities;
@@ -402,7 +402,7 @@ class ConsultationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    public function listeMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
     $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
@@ -424,7 +424,7 @@ class ConsultationPlanningController extends AbstractController
         return $materialResourcesUnavailableArrayJSON;
     }
     
-    public function listeHumanResourceUnavailables(ManagerRegistry $doctrine)
+    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
     $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
