@@ -37,10 +37,10 @@
 							<td> </td>
 						{% endif %}
 						<td>
-							<button type="button" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}' )">Éditer</a>
+							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}' )">Éditer </a>
 							<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer cet utilisateur ?');">
 								<input type="hidden" name="user" value="{{ user.id }}">
-								<button class="btn-delete btn-secondary">Supprimer</button>
+								<button id='buttonErase{{user.username }}' class="btn-delete btn-secondary">Supprimer</button>
 							</form>
 						</td>
 					</tr>
@@ -53,5 +53,6 @@
 		</table>
 {{ include ('user/edit_user.html.twig') }}
 {{ include ('user/new_user.html.twig') }}
+
  
 	{% endblock %}
