@@ -427,7 +427,7 @@ class ModificationPlanningController extends AbstractController
 
     //Appelée lors de l'appui du bouton valider
     //Sauvegarde en nBDD les modifications de l'utilisateur
-    public function modificationPlanningValidation(Request $request, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         //récupération des events et des ressources depuis le twig
         $listEvent = json_decode($request->request->get("events"));
@@ -484,19 +484,21 @@ class ModificationPlanningController extends AbstractController
                                     if ($humanResourceScheduled->getHumanresource() == $humanResource) {
                                         //on précise au booléen que la relation existe déjà et qu'on a pas à le créer
                                         $humanResourceExist = true;
+                                        $unavailability = $doctrine->getRepository("App\Entity\Unavailability")->findOneBy(["id" => $humanResourceScheduled->getUnavailability()->getId()]);
+                                        $strDate = substr($date, 0, 10);
+                                        $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+                                        $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                        $unavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                        $unavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                                        $entityManager->persist($unavailability);
+                                        $entityManager->flush();
                                     }
                                 }
 
                                 //si la relation n'est pas déjà existante, on la créer
                                 if (!$humanResourceExist) {
                                     //ajout de la nouvelle relation en bdd
-                                    $newHumanResourceScheduled = new HumanResourceScheduled();
-                                    $newHumanResourceScheduled->setHumanresource($humanResource);
-                                    $newHumanResourceScheduled->setScheduledactivity($scheduledActivity);
-
-                                    $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
-
-                                    /*//ajout de unavailability
                                     $newUnavailability = new Unavailability();
                                     $strDate = substr($date, 0, 10);
                                     $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
@@ -507,13 +509,12 @@ class ModificationPlanningController extends AbstractController
                                     $entityManager->persist($newUnavailability);
                                     $entityManager->flush();
 
-                                    //ajout de la relation entre les deux tables
-                                    $newUnavailabilityHumanResource = new UnavailabilityHumanResource();
-                                    $newUnavailabilityHumanResource->setHumanresource($humanResource);
-                                    $newUnavailabilityHumanResource->setUnavailability($newUnavailability);
+                                    $newHumanResourceScheduled = new HumanResourceScheduled();
+                                    $newHumanResourceScheduled->setHumanresource($humanResource);
+                                    $newHumanResourceScheduled->setScheduledactivity($scheduledActivity);
+                                    $newHumanResourceScheduled->setUnavailability($newUnavailability);
 
-                                    $entityManager->persist($newUnavailabilityHumanResource);
-                                    $entityManager->flush();*/
+                                    $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
                                 }
                             }
 
@@ -532,19 +533,21 @@ class ModificationPlanningController extends AbstractController
                                     if ($materialResourceScheduled->getMaterialresource() == $materialResource) {
                                         //on précise au booléen que la relation existe déjà et qu'on a pas à le créer
                                         $materialResourceExist = true;
+                                        $unavailability = $doctrine->getRepository("App\Entity\Unavailability")->findOneBy(["id" => $materialResourceScheduled->getUnavailability()->getId()]);
+                                        $strDate = substr($date, 0, 10);
+                                        $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+                                        $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                        $unavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                        $unavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                                        $entityManager->persist($unavailability);
+                                        $entityManager->flush();
                                     }
                                 }
 
                                 //si la relation n'est pas déjà existante, on la créer
                                 if (!$materialResourceExist) {
                                     //ajout de la nouvelle relation en bdd
-                                    $newMaterialResourceScheduled = new MaterialResourceScheduled();
-                                    $newMaterialResourceScheduled->setMaterialresource($materialResource);
-                                    $newMaterialResourceScheduled->setScheduledactivity($scheduledActivity);
-
-                                    $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
-
-                                    /*//ajout de unavailability
                                     $newUnavailability = new Unavailability();
                                     $strDate = substr($date, 0, 10);
                                     $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
@@ -555,13 +558,12 @@ class ModificationPlanningController extends AbstractController
                                     $entityManager->persist($newUnavailability);
                                     $entityManager->flush();
 
-                                    //ajout de la relation entre les deux tables
-                                    $newUnavailabilityMaterialResource = new UnavailabilityMaterialResource();
-                                    $newUnavailabilityMaterialResource->setMaterialresource($materialResource);
-                                    $newUnavailabilityMaterialResource->setUnavailability($newUnavailability);
+                                    $newMaterialResourceScheduled = new MaterialResourceScheduled();
+                                    $newMaterialResourceScheduled->setMaterialresource($materialResource);
+                                    $newMaterialResourceScheduled->setScheduledactivity($scheduledActivity);
+                                    $newMaterialResourceScheduled->setUnavailability($newUnavailability);
 
-                                    $entityManager->persist($newUnavailabilityMaterialResource);
-                                    $entityManager->flush();*/
+                                    $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
                                 }
                             }
                         }
@@ -583,6 +585,15 @@ class ModificationPlanningController extends AbstractController
                                     if ($humanResourceScheduled->getHumanresource() == $humanResource) {
                                         //on précise au booléen que la relation est toujours présente
                                         $humanResourceExist = true;
+
+                                        $strDate = substr($date, 0, 10);
+                                        $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
+                                        $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                        $unavailability = $humanResourceScheduled->getUnavailability();
+                                        $unavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                        $unavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+                                        $entityManager->persist($unavailability);
+                                        $entityManager->flush();
                                     }
                                 }
                             }
@@ -590,37 +601,12 @@ class ModificationPlanningController extends AbstractController
                             //si la relation n'est plus présente dans la liste des relations modifiés
                             if (!$humanResourceExist) {
                                 //on supprime la relation entre l'évènement programmé et la ressource humaine
+                                $unavailability = $humanResourceScheduled->getUnavailability();
                                 $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
 
-                                /*$strDate = substr($date, 0, 10);
-                                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                                $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
-
-                                foreach ($listUnavailabilityHumanResource as $unavailabilityHumanResource) {
-                                    $unavailability = $unavailabilityHumanResource->getUnavailability();
-                                    $entityManager->remove($unavailabilityHumanResource);
-                                    $entityManager->flush($unavailabilityHumanResource);
-                                    $entityManager->remove($unavailability);
-                                    $entityManager->flush($unavailability);
-                                }*/
+                                $entityManager->remove($unavailability);
+                                $entityManager->flush();
                             }
-                            /*else 
-                            {
-                                $strDate = substr($date, 0, 10);
-                                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                                $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
-
-                                foreach ($listUnavailabilityHumanResource as $unavailabilityHumanResource) {
-                                    $unavailability = $unavailabilityHumanResource->getUnavailability();
-                                    $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
-                                    $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
-                                    $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
-                                    $entityManager->persist($unavailability);
-                                    $entityManager->flush();
-                                }
-                            }*/
                         }
 
                         //on parcours la liste des relation entre ressource matérielle et évènement programmé de la bdd
@@ -641,39 +627,25 @@ class ModificationPlanningController extends AbstractController
                                         //on précise au booléen que la relation est toujours présente
                                         $materialResourceExist = true;
                                         
-                                        /*$strDate = substr($date, 0, 10);
+                                        $strDate = substr($date, 0, 10);
                                         $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                                        $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
-                                        foreach ($listUnavailabilityMaterialResource as $unavailabilityMaterialResource) {
-                                            $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                                            $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
-                                            $unavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
-                                            $unavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
-                                            $entityManager->persist($unavailability);
-                                            $entityManager->flush();
-                                        }*/
+                                        $strEnd = $strDate . " " . $scheduledActivity->getEndtime()->format('H:i:s');
+                                        $unavailability = $materialResourceScheduled->getUnavailability();
+                                        $unavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                                        $unavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+                                        $entityManager->persist($unavailability);
+                                        $entityManager->flush();
                                     }
                                 }
                             }
 
                             //si la relation n'est plus présente dans la liste des relations modifiés
                             if (!$materialResourceExist) {
-                                //on supprime la relation entre l'évènement programmé et la ressource matérielle
+                                $unavailability = $materialResourceScheduled->getUnavailability();
                                 $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
 
-                                /*$strDate = substr($date, 0, 10);
-                                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                                $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
-                                
-                                foreach ($listUnavailabilityMaterialResource as $unavailabilityMaterialResource) {
-                                    $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                                    $entityManager->remove($unavailabilityMaterialResource);
-                                    $entityManager->flush($unavailabilityMaterialResource);
-                                    $entityManager->remove($unavailability);
-                                    $entityManager->flush($unavailability);
-                                }*/
+                                $entityManager->remove($unavailability);
+                                $entityManager->flush();
                             }
                         }
                     }
@@ -701,47 +673,33 @@ class ModificationPlanningController extends AbstractController
                         //on créer les relations avec les ressources de type humaine
                         if (substr($resource, 0, 5) == "human") {
                             $idResource = explode("-", $resource);
+
+                            //ajout de unavailability
+                            $newUnavailability = new Unavailability();
+                            $strDate = substr($date, 0, 10);
+                            $strStart = $strDate . " " . $newScheduledActivity->getStarttime()->format('H:i:s');
+                            $strEnd = $strDate . " " . $newScheduledActivity->getEndtime()->format('H:i:s');
+                            $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
+                            $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
+
+                            $entityManager->persist($newUnavailability);
+                            $entityManager->flush();
+
                             //on créer la nouvelle relation entre la ressource humaine et le nouvel évènement
                             $humanResource = $doctrine->getRepository("App\Entity\HumanResource")->findOneBy(["id" => $idResource[1]]);
                             $newHumanResourceScheduled = new HumanResourceScheduled();
                             $newHumanResourceScheduled->setHumanresource($humanResource);
                             $newHumanResourceScheduled->setScheduledactivity($newScheduledActivity);
+                            $newHumanResourceScheduled->setUnavailability($newUnavailability);
 
                             $humanResourceScheduledRepository->add($newHumanResourceScheduled, true);
-
-                            /*//ajout de unavailability
-                            $newUnavailability = new Unavailability();
-                            $strDate = substr($date, 0, 10);
-                            $strStart = $strDate . " " . $newScheduledActivity->getStarttime()->format('H:i:s');
-                            $strEnd = $strDate . " " . $newScheduledActivity->getEndtime()->format('H:i:s');
-                            $newUnavailability->setStartdatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strStart));
-                            $newUnavailability->setEnddatetime(\DateTime::createFromFormat('Y-m-d H:i:s', $strEnd));
-
-                            $entityManager->persist($newUnavailability);
-                            $entityManager->flush();
-
-                            //ajout de la relation entre les deux tables
-                            $newUnavailabilityHumanResource = new UnavailabilityHumanResource();
-                            $newUnavailabilityHumanResource->setHumanresource($humanResource);
-                            $newUnavailabilityHumanResource->setUnavailability($newUnavailability);
-
-                            $entityManager->persist($newUnavailabilityHumanResource);
-                            $entityManager->flush();*/
                         }
 
                         //on créer les relations avec les ressources de type matérielle
                         else if (substr($resource, 0, 8) == "material") {
                             $idResource = explode("-", $resource);
-                            //on créer la nouvelle relation entre la ressource matérielle et le nouvel évènement
-                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => $idResource[1]]);
 
-                            $newMaterialResourceScheduled = new MaterialResourceScheduled();
-                            $newMaterialResourceScheduled->setMaterialresource($materialResource);
-                            $newMaterialResourceScheduled->setScheduledactivity($newScheduledActivity);
-
-                            $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
-
-                            /*//ajout de unavailability
+                            //ajout de unavailability
                             $newUnavailability = new Unavailability();
                             $strDate = substr($date, 0, 10);
                             $strStart = $strDate . " " . $newScheduledActivity->getStarttime()->format('H:i:s');
@@ -752,13 +710,14 @@ class ModificationPlanningController extends AbstractController
                             $entityManager->persist($newUnavailability);
                             $entityManager->flush();
 
-                            //ajout de la relation entre les deux tables
-                            $newUnavailabilityMaterialResource = new UnavailabilityMaterialResource();
-                            $newUnavailabilityMaterialResource->setMaterialresource($materialResource);
-                            $newUnavailabilityMaterialResource->setUnavailability($newUnavailability);
+                            //on créer la nouvelle relation entre la ressource matérielle et le nouvel évènement
+                            $materialResource = $doctrine->getRepository("App\Entity\MaterialResource")->findOneBy(["id" => $idResource[1]]);
+                            $newMaterialResourceScheduled = new MaterialResourceScheduled();
+                            $newMaterialResourceScheduled->setMaterialresource($materialResource);
+                            $newMaterialResourceScheduled->setScheduledactivity($newScheduledActivity);
+                            $newMaterialResourceScheduled->setUnavailability($newUnavailability);
 
-                            $entityManager->persist($newUnavailabilityMaterialResource);
-                            $entityManager->flush();*/
+                            $materialResourceScheduledRepository->add($newMaterialResourceScheduled, true);
                         }
                     }
                 }
