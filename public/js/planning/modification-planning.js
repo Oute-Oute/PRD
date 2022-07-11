@@ -204,36 +204,35 @@ function AddEventValider() {
       successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
     }
 
-    //get the forst activity of the pathway
+    //get the first activities of the pathway
+    var firstActivitiesPathway=[]; 
     for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
       if (
-        successorsActivitybIdList.includes(
-          activitiesInPathwayAppointment[i].id
-        ) == false
-      ) {
-        var firstActivityPathway = activitiesInPathwayAppointment[i];
+        successorsActivitybIdList.includes(activitiesInPathwayAppointment[i].id) == false) {
+        firstActivitiesPathway.push(activitiesInPathwayAppointment[i]);
       }
     }
-
-    var idactivitya = firstActivityPathway.id;
-    var activitya;
-    var successoracivitya;
-
-    //Début de la création des events
-    do {
-      var idactivityB = undefined;
-      var quantityHumanResources = 0;
-      var quantityMaterialResources = 0;
-      var activityResourcesArray = [];
-      //trouver l'activité correspondant à l'idactivitya
-      for (let i = 0; i < listeActivities.length; i++) {
-        if (listeActivities[i].id == idactivitya) {
-          activitya = listeActivities[i];
+    //On récupère tous les id des premières activités 
+    var idActivitiesA=[]; 
+    for(let i=0; i<firstActivitiesPathway.length; i++){
+      idActivitiesA.push(firstActivitiesPathway.id);
+    }
+    //On récupère les Activités correspondantes à chaque id
+    var activitiesA=[];
+    for(let i=0; i<listeActivities.length; i++){
+        if(idActivitiesA==listeActivities[i].id){
+          activitiesA.push(listeActivities[i]); 
         }
-      }
+    }
 
-      //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
-      for (let i = 0; i < listeActivitHumanResource.length; i++) {
+    //Création des activités daans FullCalendar
+    
+    for(let i=0; i<activitiesA.length; i++){
+      var quantityHumanResources = 0;
+      var quantityMaterialResources = 0; 
+      var activityResourcesArray=[]; 
+       //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+       for (let i = 0; i < listeActivitHumanResource.length; i++) {
         if (listeActivitHumanResource[i].activityId == idactivitya) {
           quantityHumanResources += listeActivitHumanResource[i].quantity;
         }
@@ -251,60 +250,63 @@ function AddEventValider() {
             listeActivityMaterialResource[i].quantity;
         }
       }
-
-      //Rentrer le nombre de resources materielles dans le tableau de Resources de l'event
-      for (let i = 0; i < quantityMaterialResources; i++) {
-        activityResourcesArray.push("m-default");
-      }
-
-      //trouver dans la table successor le correspondant au activiteida
-      for (let i = 0; i < listeSuccessors.length; i++) {
-        if (listeSuccessors[i].idactivitya == idactivitya) {
-          successoracivitya = listeSuccessors[i];
-          idactivityB = listeSuccessors[i].idactivityb;
-        }
-      }
-      //countAddEvent pour avoir un id different pour chaque events ajoutes
       countAddEvent++;
       //Ajout d'un event au calendar
       var event = calendar.addEvent({
         id: "new" + countAddEvent,
         description: "",
         resourceIds: activityResourcesArray,
-        title: activitya.name.replaceAll("3aZt3r", " "),
+        title: activitiesA[i].name.replaceAll("3aZt3r", " "),
         start: PathwayBeginDate,
-        end: PathwayBeginDate.getTime() + activitya.duration * 60000,
-        patient:
-          appointment.idPatient[0].lastname +
-          " " +
-          appointment.idPatient[0].firstname,
+        end: PathwayBeginDate.getTime() + activitiesA[i].duration * 60000,
+        patient:appointment.idPatient[0].lastname +" " +appointment.idPatient[0].firstname,
         appointment: appointment.id,
-        activity: activitya.id,
+        activity: activitiesA[i].id,
         type: "activity",
         humanResources: [],
         materialResources: [],
         pathway: appointment.idPathway[0].title,
       });
-      console.log();
+    }
 
-      //Detection de la dernière activite du parcours
-      if (idactivityB != undefined) {
-        idactivitya = idactivityB;
+    //Récupération de chaque idActivityB pour chaque Activités A 
+    var successorsActivitiesA=[]; 
+    for(let i=0; i<idActivitiesA.length; i++){
+      for(let j=0; j<listeSuccessors.length; j++){
+        if(idActivitiesA[i]==listeSuccessors[j].activityA){
+          let successor={delaymin:listeSuccesors[j].delaymin,activityB:listeSuccessors[j].activityB}; 
+          successorsActivitiesA.push(successor); 
+        }
       }
-      console.log(successoracivitya);
-      PathwayBeginDate = new Date(
-        PathwayBeginDate.getTime() +
-          activitya.duration * 60000 +
-          successoracivitya.delaymin * 60000
-      );
-      event._def.ui.backgroundColor = RessourcesAllocated(event);
-      event._def.ui.borderColor = RessourcesAllocated(event);
-      calendar.render();
+    }
+
+    //On garde pour chaque activityB différentes dans successorsActivitiesA celle qui a le delaymin le plus grand
+    for(let i=0; i<successorsActivitiesA.length; i++){
+      for(let j=0; j<successorsActivitiesA.length;j++){
+        if(successorsActivitiesA[i].activityB==successorsActivitiesA[j].activityB && i!=j){
+          if(successorsActivitiesA[i].delaymin<successorsActivitiesA[j].delaymin){
+            successorsActivitiesA.deleteRow(i); 
+          }
+          else{
+            successorsActivitiesA.deleteRow(j); 
+          }
+        }
+      }
+    }
+
+    //création des events à partir de successorsActivitiesB 
+
+    //Début de la création des events
+    do {
+
+    
     } while (idactivityB != undefined);
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
-  } else {
+  } 
+  
+  else {
     let selectContainerErrorTime = document.getElementById(
       "time-selected-error"
     );
@@ -861,7 +863,7 @@ function showPopup() {
     } else {
       clearInterval(timerAlert);
       window.location.assign(
-        "/ModificationDeleteOnUnload?dateModified=" + $_GET("date") + "&id=" + $_GET("id")
+        "/ModificationDeleteOnUnload?dateModified=" + $_GET("date")
       );
     }
   }, 1000);
@@ -872,6 +874,12 @@ function closePopup() {
   clearInterval(timerAlert);
   $("span.countdown").html(60);
   setTimeout(showPopup, modifAlertTime);
+}
+
+function deleteModifInDB() {
+  window.location.assign(
+    "/ModificationDeleteOnUnload?dateModified=" + $_GET("date")
+  );
 }
 
 function RessourcesAllocated(event) {
@@ -892,4 +900,3 @@ function clearArray(array){
     array.pop();
   }
 }
-
