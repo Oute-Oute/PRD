@@ -189,3 +189,13 @@ app_activity_new:
   path: /activities/new
   controller: App\Controller\ActivityController:new
   methods: [POST]
+
+Settings:
+  path: /settings
+  controller: App\Controller\SettingsController:settingsGet
+  methods: [GET]
+
+SettingsEdit:
+  path: /settings/edit
+  controller: App\Controller\SettingsController:settingsEdit
+  methods: [POST]

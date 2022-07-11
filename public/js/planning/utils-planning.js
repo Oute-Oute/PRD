@@ -1,7 +1,7 @@
 /**
  * @file utils-planning.js
  * @brief This file contains the js scripts used to modify the window or the calendar in consultation mode
- * @author Thomas Blumstein
+ * @author Luc Chereau
  * @version 1.0
  * @date 2022/07
  */

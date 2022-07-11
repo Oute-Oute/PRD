@@ -67,11 +67,9 @@ class HumanResourceController extends AbstractController
      */
     public function new(Request $request, HumanResourceRepository $humanResourceRepository): Response
     {
-        
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
-            $param = $request->request->all();
-            $name = $param['resourcename'];
+            $param = $request->request->all();            $name = $param['resourcename'];
             $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
