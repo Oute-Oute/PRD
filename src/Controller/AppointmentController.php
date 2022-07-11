@@ -16,9 +16,18 @@ class AppointmentController extends AbstractController
 {
     public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
+        global $date;
+        $date = date(('Y-m-d'));
+        if (isset($_GET["date"])) {
+            $date = $_GET["date"];
+            $date = str_replace('T12:00:00', '', $date);
+        }
+        
+        $currentDateTime = new \DateTime($date);
         //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
-            'appointments' => $appointmentRepository->findAll(),
+            'currentappointments' => $appointmentRepository->findBy(["dayappointment" => $currentDateTime]),
+            'currentdate' => $date,
             'patients' => $doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),
             'pathways' => $doctrine->getManager()->getRepository("App\Entity\Pathway")->findall()
         ]);

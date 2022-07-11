@@ -15,7 +15,7 @@
         
 {% block body %}
     <div class="index">    
-    <h1 id="title">Liste des rendez-vous</h1>
+    <h1 id="title">Liste des rendez-vous du {{ currentdate|date("d/m/Y") }}</h1>
 
     <!-- bouton pour l'ajout d'un nouveau rendez-vous -->
     <button type="button" class ="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
@@ -27,26 +27,30 @@
                 <th>Identifiant</th>
                 <th>Patient</th>
                 <th>Parcours</th>
-                <th>Jour du rendez-vous</th>
+                <th>Jour du rendez-vous 
+                    <div class="datepicker">
+                        <input type='date' required class="form-control" id="Date" onchange="changeDate()"  value="{{ currentdate|date("Y-m-d") }}" .str_replace('t12:00:00','')></input>
+                    </div>
+                </th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for appointment in appointments %}
-            <tr>
-                <td>{{ appointment.id }}</td>
-                <td>{{ appointment.patient.lastname }} {{ appointment.patient.firstname }}</td>
-                <td>{{ appointment.pathway.pathwayname }}</td>
-                <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
-                <td>
-                    <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
-                    <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.id }}', '{{ appointment.pathway.id }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
-                    <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
-                        <input type="hidden" name="appointment" value="{{ appointment.id }}">
-                        <button class="btn-delete btn-secondary">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
+            {% for appointment in currentappointments %}
+                <tr>
+                    <td>{{ appointment.id }}</td>
+                    <td>{{ appointment.patient.lastname }} {{ appointment.patient.firstname }}</td>
+                    <td>{{ appointment.pathway.pathwayname }}</td>
+                    <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
+                    <td>
+                        <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
+                        <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.id }}', '{{ appointment.pathway.id }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+                        <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
+                            <input type="hidden" name="appointment" value="{{ appointment.id }}">
+                            <button class="btn-delete btn-secondary">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
             {% else %}
             <tr>
                 <td colspan="5">Pas de rendez-vous créés !</td>
