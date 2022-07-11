@@ -168,8 +168,8 @@
 		</div>
 		<!-- liste des boutons pour annuler ou valider les modifications -->
 		<div id='container-top-right'>
-			<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date'))">Annuler</button>
-			<form method="post" action="{{ path('ModificationPlanningValidation') }}">
+			<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
+			<form method="post" action="{{ path('ModificationPlanningValidation', {username: app.user.userIdentifier}) }}">
 				<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
 				<input type="hidden" id='events' name="events"/>
 				<input type="hidden" id='validation-date' name="validation-date"/>

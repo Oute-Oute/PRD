@@ -131,38 +131,24 @@ function deleteSelect(id) {
     let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
-    
+    let categoriesChecked = []
+    let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let nbCategory = document.getElementById('nbCategory');
+    var nbCateg = 0;
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
-    for (let i = 1; i <= NB_CATEGORY; i++) {
-        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ Number(i-1))
-        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-'+ Number(i-1))        
-    }
-    let categoriesCheckDuplicata = []
-
-    for (let i = 1; i < NB_CATEGORY+1; i++) {
-        let category = document.getElementById('id-category-'+ Number(i-1))
-        categoriesCheckDuplicata.push(category.value);
-    }
-
-
-    
-    if(hasDuplicates(categoriesCheckDuplicata) == false) {
-        if (document.getElementById('resourcename').value === '') {
-            formOk = false
-            alert('Veuillez saisir un nom pour la ressource !')
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
         }
-    
-        if (formOk) {
-            let btnSubmit = document.getElementById('submit')
-            btnSubmit.disabled = false;
-        }
-    }
-
-    else {
-        alert("Il y a plusieurs fois la même catégorie !")
-    }
-
+        
+    } 
+        
+    nbCategory.value = nbCateg;
+    btnAdd.click();
     
     
 }

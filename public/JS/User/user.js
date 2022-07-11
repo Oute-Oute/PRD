@@ -1,6 +1,3 @@
-const { format } = require("core-js/core/date");
-const { random } = require("core-js/core/number");
-
 function addUser(){
     $('#add-user-modal').modal("show");
 }
@@ -12,6 +9,16 @@ function editUser(idEdit, usernameEdit ) {
     $('#edit-user-modal').modal("show");   
     
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  
+ 
+  actualUser = document.getElementById('OwnUsernameEdit').innerHTML;  
+  actualUser = actualUser.replace(' ','')
+  document.getElementById('buttonEdit'+actualUser).disabled = true
+  document.getElementById('buttonErase'+actualUser).disabled = true
+})
+
 
 function showPatient(id) {
     document.getElementById('iduser').value = id;

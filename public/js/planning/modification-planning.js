@@ -893,7 +893,7 @@ function showPopup() {
     } else {
       clearInterval(timerAlert);
       window.location.assign(
-        "/ModificationDeleteOnUnload?dateModified=" + $_GET("date")
+        "/ModificationDeleteOnUnload?dateModified=" + $_GET("date") + "&id=" + $_GET("id")
       );
     }
   }, 1000);
@@ -904,12 +904,6 @@ function closePopup() {
   clearInterval(timerAlert);
   $("span.countdown").html(60);
   setTimeout(showPopup, modifAlertTime);
-}
-
-function deleteModifInDB() {
-  window.location.assign(
-    "/ModificationDeleteOnUnload?dateModified=" + $_GET("date")
-  );
 }
 
 function RessourcesAllocated(event) {
@@ -930,3 +924,4 @@ function clearArray(array){
     array.pop();
   }
 }
+
