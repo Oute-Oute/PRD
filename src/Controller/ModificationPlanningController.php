@@ -42,6 +42,9 @@ class ModificationPlanningController extends AbstractController
         if (isset($_GET['date'])) {
             $dateModified = $_GET["date"];
         }
+        if (isset($_GET['id'])) {
+            $idUser = $_GET["id"];
+        }
 
         //Récupération des données via la base de donnée avec Doctrine
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
@@ -59,6 +62,10 @@ class ModificationPlanningController extends AbstractController
         $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
         $listMaterialResourcesUnavailables = $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
         $listHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
+
+        if ($this->alertModif($dateModified, $idUser, $doctrine)) {
+            $this->modificationAdd($dateModified, $idUser, $doctrine);
+        }
 
         //On redirige sur la page html modification planning et on envoie toutes les données dont on a besoin
         return $this->render('planning/modification-planning.html.twig', [
@@ -100,6 +107,8 @@ class ModificationPlanningController extends AbstractController
                 'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
                 'userId' => ($modification->getUser()->getId())
             );
+            $usernameModifiying = $doctrine->getRepository("App\Entity\User")->findOneBy(['id' => $modifArray[$i]['userId']])->getUsername();
+
             $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
             $interval = $datetimeModified->diff($dateToday);
 
@@ -111,14 +120,21 @@ class ModificationPlanningController extends AbstractController
                 if ($intervalHour * 60 + $intervalMinutes < 10) {
                     if ($idUser == $modifArray[$i]['userId']) { // Empeche d'envoyer une erreur si un user quitte et revient
                         $modificationRepository->remove($modification, true);
-                    } else {
-                        echo "<script> 
-                            alert('Une modification pour le " . $dateModified . " est déjà en cours, vous allez être redirigé')
-                            window.location.assign('/ConsultationPlanning');
-                        </script>";
-                        return false;
                     }
-                } else {
+                    else {
+                        echo "<script>
+                            if(confirm('Une modification de ".$usernameModifiying." pour le ".$dateModified." est déjà en cours, voulez-vous continuer ?')){
+                                redirect = 1;
+                            }
+                            else{
+                                redirect = 0;
+                                window.location.assign('/ConsultationPlanning');
+                            }
+                        </script>";
+                        return "<script>document.write(redirect);</script>";
+                    }
+                } 
+                else {
                     // Supprimer la modif dans BDD car trop vieille
                     $modificationRepository->remove($modification, true);
                 }
@@ -128,7 +144,32 @@ class ModificationPlanningController extends AbstractController
         return true;
     }
 
-    
+    public function modificationAdd($dateModified, $idUser, $doctrine)
+    {
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $userRepository = $doctrine->getRepository("App\Entity\User");
+        $user = $userRepository->findOneBy(['id' => $idUser]);
+
+        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
+        // A enlever plus tard car on est censé être connecté
+        if (!$user) {
+            //dd($user, "Erreur, vous n'êtes pas connecté !");
+        } else {
+            $userRepository->add($user, true);
+
+            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
+            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+
+            $modification = new Modification();
+            $modification->setUser($user);
+            $modification->setDatemodif($datetimeModified);
+            $modification->setDatetimemodification($dateToday);
+
+            // ajout dans la bdd
+            $modificationRepository->add($modification, true);
+        }
+    }
 
     //Renvoie la liste de tous les successors en format JSON
     public function getSuccessorJSON(ManagerRegistry $doctrine)
@@ -723,15 +764,21 @@ class ModificationPlanningController extends AbstractController
                 }
             }
         }
-        $this->modificationDeleteOnUnload($request, $doctrine);
+        $this->modificationDeleteOnUnload($request, $doctrine, $_GET['username']);
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine)
+    public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')
     {
         $dateModified = $request->request->get("validation-date");
         if (isset($_GET['dateModified'])) {
             $dateModified = $_GET['dateModified'];
+        }
+        if(isset($_GET['id'])){
+            $id = $_GET['id'];
+        }
+        else{
+            $id = 0;
         }
         $dateModified = str_replace('T12:00:00', '', $dateModified);
 
@@ -740,7 +787,7 @@ class ModificationPlanningController extends AbstractController
         $modifications = $modificationRepository->findAll();
         $i = 0;
         foreach ($modifications as $modification) {
-            if ($modification->getDatemodified()->format('Y-m-d') == $dateModified) {
+            if ($modification->getDatemodified()->format('Y-m-d') == $dateModified && ($modification->getUser()->getId() == $id || $modification->getUser()->getUserIdentifier() == $username)) {
                 $modificationRepository->remove($modification, true);
             }
             $i++;
