@@ -194,23 +194,6 @@ function createCalendar(resources) {
         }
       }
       break;
-    case "Parcours": //if we want to display by the parcours
-      var tempArray = JSON.parse(
-        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
-      ); //get the data of the appointments
-      for (var i = 0; i < tempArray.length; i++) {
-        var temp = tempArray[i];
-        pathway = temp["pathway"]; //get the resources data
-        if (calendar.getResourceById(pathway[0]["id"]) == null) {
-          //if the resource is not already in the calendar
-          calendar.addResource({
-            //add the resources to the calendar
-            id: pathway[0]["id"], //set the id of the resource
-            title: pathway[0]["title"], //set the title of the resource
-          });
-        }
-      }
-      break;
     case "Ressources Humaines": //if we want to display by the resources
       var tempArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
