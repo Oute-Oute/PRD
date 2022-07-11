@@ -18,32 +18,25 @@ class MaterialResourceScheduled
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
+     */
+    private $scheduledactivity;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Unavailability::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $unavailability;
+
+    /**
      * @ORM\ManyToOne(targetEntity=MaterialResource::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $materialresource;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $scheduledactivity;
-
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getMaterialresource(): ?MaterialResource
-    {
-        return $this->materialresource;
-    }
-
-    public function setMaterialresource(?MaterialResource $materialresource): self
-    {
-        $this->materialresource = $materialresource;
-
-        return $this;
     }
 
     public function getScheduledactivity(): ?ScheduledActivity
@@ -54,6 +47,30 @@ class MaterialResourceScheduled
     public function setScheduledactivity(?ScheduledActivity $scheduledactivity): self
     {
         $this->scheduledactivity = $scheduledactivity;
+
+        return $this;
+    }
+
+    public function getUnavailability(): ?Unavailability
+    {
+        return $this->unavailability;
+    }
+
+    public function setUnavailability(?Unavailability $unavailability): self
+    {
+        $this->unavailability = $unavailability;
+
+        return $this;
+    }
+
+    public function getMaterialresource(): ?MaterialResource
+    {
+        return $this->materialresource;
+    }
+
+    public function setMaterialresource(?MaterialResource $materialresource): self
+    {
+        $this->materialresource = $materialresource;
 
         return $this;
     }

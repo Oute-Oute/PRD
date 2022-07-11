@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SettingsRepository;
+use App\Repository\UserSettingsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=SettingsRepository::class)
+ * @ORM\Entity(repositoryClass=UserSettingsRepository::class)
  */
-class Settings
+class UserSettings
 {
     /**
      * @ORM\Id
@@ -20,28 +20,11 @@ class Settings
     /**
      * @ORM\Column(type="integer")
      */
-    private $alertmodificationtimer;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
     private $zoommultiplier;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getAlertmodificationtimer(): ?int
-    {
-        return $this->alertmodificationtimer;
-    }
-
-    public function setAlertmodificationtimer(int $alertmodificationtimer): self
-    {
-        $this->alertmodificationtimer = $alertmodificationtimer;
-
-        return $this;
     }
 
     public function getZoommultiplier(): ?int
