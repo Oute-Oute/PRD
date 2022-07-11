@@ -603,39 +603,9 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
       }
 }
 
-/**
- * @brief This function create the list of events to display in the calendar
- * @returns a list of the events of the calendar
- */
-function createUnavailabilities() {
-  var materialUnavailabilities;
-  var humanUnavailabilities;
-  var unavailabilities;
-  if (document.getElementById("MaterialUnavailables") != null) {
-    materialUnavailabilities = JSON.parse(
-      document.getElementById("MaterialUnavailables").value
-    );
-  }
-  if (document.getElementById("HumanUnavailables") != null) {
-    humanUnavailabilities = JSON.parse(
-      document.getElementById("HumanUnavailables").value
-    );
-  }
-  if (humanUnavailabilities.length > 0 && materialUnavailabilities.length > 0) {
-    unavailabilities = materialUnavailabilities.concat(humanUnavailabilities);
-  } else if (humanUnavailabilities.length == 0) {
-    unavailabilities = materialUnavailabilities;
-  } else if (materialUnavailabilities.length == 0) {
-    unavailabilities = humanUnavailabilities;
-  }
-  unavailabilities; //add the unavailabilities to the events
 
-  return unavailabilities;
-}
 
 function createCalendar(typeResource) {
-  var unavailabilities = createUnavailabilities();
-  console.log(unavailabilities);
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -837,11 +807,9 @@ function createCalendar(typeResource) {
         .getElementById("listScheduledActivitiesJSON")
         .value.replaceAll("3aZt3r", " ")
     );
-    listEvents = listEvents.concat(unavailabilities);
   } else {
     let setEvents = [];
     var index = 0;
-    listEvent = listEvent.concat(unavailabilities);
     listEvent.forEach((eventModify) => {
       var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
       var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);

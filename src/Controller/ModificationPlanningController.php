@@ -60,8 +60,7 @@ class ModificationPlanningController extends AbstractController
         $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
         $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
         $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
-        $listMaterialResourcesUnavailables = $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
-        $listHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
+        
 
         if ($this->alertModif($dateModified, $idUser, $doctrine)) {
             $this->modificationAdd($dateModified, $idUser, $doctrine);
@@ -83,8 +82,6 @@ class ModificationPlanningController extends AbstractController
             'listAppointmentsJSON' => $listAppointmentJSON,
             'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
             'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
-            'listMaterialResourcesUnavailables' => $listMaterialResourcesUnavailables,
-            'listHumanResourcesUnavailables' => $listHumanResourcesUnavailables,
 
         ]);
     }
@@ -795,49 +792,5 @@ class ModificationPlanningController extends AbstractController
         return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
     }
 
-    //Retouorne la liste des MaterialResourcesUnavailable en format JSON
-    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-        $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
-        $materialResourcesUnavailableArray = array();
-        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
-            $resource = $materialResourceUnavailable->getMaterialresource()->getId();
-            $resource = "material-" . $resource;
-            $materialResourcesUnavailableArray[] = array(
-                'description' => 'Ressource Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display' => 'background',
-                'type' => "unavailability"
-            );
-        }
-        //Conversion des données ressources en json 
-        $materialResourcesUnavailableArrayJSON = new JsonResponse($materialResourcesUnavailableArray);
-        return $materialResourcesUnavailableArrayJSON;
-    }
 
-    //Retourne la liste des HumanResourcesUnavailable en format JSON. 
-    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-        $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
-        $humanResourcesUnavailableArray = array();
-        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
-            $resource = $humanResourceUnavailable->getHumanresource()->getId();
-            $resource = "human-" . $resource;
-            $humanResourcesUnavailableArray[] = array(
-                'description' => 'Employé Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display' => 'background',
-                'type' => "unavailability"
-            );
-        }
-        //Conversion des données ressources en json 
-        $humanResourcesUnavailableArrayJSON = new JsonResponse($humanResourcesUnavailableArray);
-        return $humanResourcesUnavailableArrayJSON;
-    }
 }
