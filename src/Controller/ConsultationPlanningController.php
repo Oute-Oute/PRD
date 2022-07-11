@@ -6,9 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\displayedActivityRepository;
 use App\Repository\ScheduledActivityRepository;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\Length;
 
 class ConsultationPlanningController extends AbstractController
 {
@@ -21,10 +23,10 @@ class ConsultationPlanningController extends AbstractController
      */
 
     /*
-     * @var $scheduledActivities
+     * @var $displayedActivities
      * @brief This variable contains the list of scheduled activities used in several function of the Controller.
      * */
-    public $scheduledActivities;
+    public $displayedActivities;
     public $date;
 
     /*
@@ -43,24 +45,140 @@ class ConsultationPlanningController extends AbstractController
         }
         //Récupération des données ressources de la base de données
         $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
-        $getScheduledActivitiesJSON = $this->getScheduledActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
+        $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-        $getMaterialResourcesUnavailables= $this->getMaterialResourcesUnavailables($doctrine); //Récupération des données mr indisponibles de la base de données
-        $getHumanResourcesUnavailables = $this->getHumanResourceUnavailables($doctrine); //Récupération des données HR indisponibles de la base de données
-        //envoi sous forme de JSON
+       //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
                 'datetoday' => $date,
-                'getScheduledActivitiesJSON' => $getScheduledActivitiesJSON,
+                'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
                 'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
                 'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
-                'getMaterialResourcesUnavailables' => $getMaterialResourcesUnavailables,
-                'getHumanResourcesUnavailables' => $getHumanResourcesUnavailables,
-            ]
+                ]
         );
+    }
+
+    public function getResourcesScheduled(ManagerRegistry $doctrine,$displayedActivity){
+         //recuperation des id des ressources pour fullcalendar
+         $patientId = $displayedActivity->getAppointment()->getPatient()->getId();
+         $patientId = "patient_" . $patientId; //nommage particulier pour séparer les types de ressources
+         $pathwayId = $displayedActivity->getAppointment()->getPathway()->getId();
+         $pathwayId = "pathway_" . $pathwayId;
+         //récuperations des id rh et rm dans une table différente
+        $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")
+        ->findBy(array("scheduledactivity" => $displayedActivity));
+    $humanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")
+        ->findBy(array("scheduledactivity" => $displayedActivity));
+    $HumanResourceScheduledArray[] = array();
+    $MaterialResourceScheduledArray[] = array();
+    /*  plusieurs ressources peuvent être associées à une activité programmée
+        on récupère les ressources associées à une activité programmée
+        on les met dans un tableau pour les affecter à l'activité programmée */
+    foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
+        $id = $MaterialResourceScheduled->getMaterialresource()->getId();
+        $id = "materialresource_" . $id;
+        $MaterialResourceScheduledArray[] = array(
+            $id,
+            $MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename(),
+        );
+    }
+    foreach ($humanResourceScheduleds as $humanResourceScheduled) {
+        $id = $humanResourceScheduled->getHumanresource()->getId();
+        $id = "humanresource_" . $id;
+        $HumanResourceScheduledArray[] = array(
+            $id,
+            $humanResourceScheduled->getHumanresource()->getHumanresourcename(),
+        );
+    }
+    //factorisation de toutes les ressources en un unique tableau
+    $resourceArray[] = array(
+        $patientId,
+        $pathwayId,
+    );
+    for ($i = 1; $i < count($MaterialResourceScheduledArray); $i++) {
+
+        array_push($resourceArray[0], $MaterialResourceScheduledArray[$i][0]);
+    }
+    for ($i = 1; $i < count($HumanResourceScheduledArray); $i++) {
+        array_push($resourceArray[0], $HumanResourceScheduledArray[$i][0]);
+    }
+    //stockage également des ressources dans un autre champ du tableau pour récupérerer uniquement les ressources humaines  OU matérielles
+    
+    if(count($MaterialResourceScheduledArray) > 0){
+        $resourceArray[1]=[];
+        for ($i = 1; $i < count($MaterialResourceScheduledArray); $i++) {
+            array_push($resourceArray[1], $MaterialResourceScheduledArray[$i][1]);
+        }
+    }
+    else{
+        $resourceArray[1] = "Aucune Ressource Matérielle";
+    }
+    if(count($HumanResourceScheduledArray) > 0){
+        $resourceArray[2]=[];
+        for ($i = 1; $i < count($HumanResourceScheduledArray); $i++) {
+            array_push($resourceArray[2], $HumanResourceScheduledArray[$i][1]);
+        }
+    }
+    else{
+        $resourceArray[2] = "Aucune Ressource Humaine";
+    }
+    
+    return $resourceArray;
+    }
+
+    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
+        $materialResourcesUnavailableArray = array();
+        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
+            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
+            $resource = "materialresource_" . $resource;
+            $materialResourcesUnavailableArray[] = array(
+                'description' =>'Ressource Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        return $materialResourcesUnavailableArray;
+    }
+    
+    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
+        $humanResourcesUnavailableArray = array();
+        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
+            $resource= $humanResourceUnavailable->getHumanresource()->getId();
+            $resource = "humanresource_" . $resource;
+            $humanResourcesUnavailableArray[] = array(
+                'description' =>'Employé Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        return $humanResourcesUnavailableArray;
+    }
+    public function getUnavailabity(ManagerRegistry $doctrine){
+        $humanUnavailabity = $this->getHumanResourceUnavailables($doctrine);
+        $materialUnavailabity = $this->getMaterialResourcesUnavailables($doctrine);
+        $unavailabityArray = array();
+        foreach ($humanUnavailabity as $humanUnavailabity) {
+            array_push($unavailabityArray, $humanUnavailabity);
+        }
+        foreach ($materialUnavailabity as $materialUnavailabity) {
+            array_push($unavailabityArray, $materialUnavailabity);
+        }
+        return $unavailabityArray;
     }
 
     /*
@@ -68,99 +186,58 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array all the data of the activites to display
      */
-    public function getScheduledActivitiesJSON(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR)
+    public function getDisplayedActivitiesJSON(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR)
     {
         global $date;
-        global $scheduledActivities;
-        $scheduledActivities = $SAR->findSchedulerActivitiesByDate($date);
-        $scheduledActivitiesArray = array();
-        foreach ($scheduledActivities as $scheduledActivity) {
-            //recuperation des id des ressources pour fullcalendar
-            $patientId = $scheduledActivity->getAppointment()->getPatient()->getId();
-            $patientId = "patient_" . $patientId; //nommage particulier pour séparer les types de ressources
-            $pathwayId = $scheduledActivity->getAppointment()->getPathway()->getId();
-            $pathwayId = "pathway_" . $pathwayId;
-            //récuperations des id rh et rm dans une table différente
-            $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")
-                ->findBy(array("scheduledactivity" => $scheduledActivity));
-            $humanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")
-                ->findBy(array("scheduledactivity" => $scheduledActivity));
-            $HumanResourceScheduledArray[] = array();
-            $MaterialResourceScheduledArray[] = array();
-            /*  plusieurs ressources peuvent être associées à une activité programmée
-                on récupère les ressources associées à une activité programmée
-                on les met dans un tableau pour les affecter à l'activité programmée */
-            foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
-                $id = $MaterialResourceScheduled->getMaterialresource()->getId();
-                $id = "materialresource_" . $id;
-                $MaterialResourceScheduledArray[] = array(
-                    $id,
-                    $MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename(),
-                );
-            }
-            foreach ($humanResourceScheduleds as $humanResourceScheduled) {
-                $id = $humanResourceScheduled->getHumanresource()->getId();
-                $id = "humanresource_" . $id;
-                $HumanResourceScheduledArray[] = array(
-                    $id,
-                    $humanResourceScheduled->getHumanresource()->getHumanresourcename(),
-                );
-            }
-            //factorisation de toutes les ressources en un unique tableau
-            $resourceArray[] = array(
-                $patientId,
-                $pathwayId,
-            );
-            for ($i = 1; $i < count($MaterialResourceScheduledArray); $i++) {
-
-                array_push($resourceArray[0], $MaterialResourceScheduledArray[$i][0]);
-            }
-            for ($i = 1; $i < count($HumanResourceScheduledArray); $i++) {
-                array_push($resourceArray[0], $HumanResourceScheduledArray[$i][0]);
-            }
-
+        global $displayedActivities;
+        $displayedActivities = $SAR->findSchedulerActivitiesByDate($date);
+        $displayedActivitiesArray = array();
+        foreach ($displayedActivities as $displayedActivity) {
+           
+           //recuperation des ressources associées à une activité programmée
+           $resourceArray=$this->getResourcesScheduled($doctrine,$displayedActivity);
+            if(count($resourceArray[0])>2){            
             //récupération des données de l'activité programmée
             //jour de l'activité
-            $day = $scheduledActivity->getAppointment()->getDayappointment();
+            $day = $displayedActivity->getAppointment()->getDayappointment();
             $day = $day->format('Y-m-d');
             //heure de début de l'activité programmée
-            $start = $scheduledActivity->getStarttime();
+            $start = $displayedActivity->getStarttime();
             $start = $start->format('H:i:s');
             $start = $day . "T" . $start; //formatage sous forme de DateTime pour fullcalendar
             //heure de fin de l'activité programmée
-            $end = $scheduledActivity->getEndtime();
+            $end = $displayedActivity->getEndtime();
             $end = $end->format('H:i:s');
             $end = $day . "T" . $end; //formatage sous forme de DateTime pour fullcalendar
-            $patientLastName = $scheduledActivity->getAppointment()->getPatient()->getLastname();
-            $patientFirstName = $scheduledActivity->getAppointment()->getPatient()->getFirstname();
+            $patientLastName = $displayedActivity->getAppointment()->getPatient()->getLastname();
+            $patientFirstName = $displayedActivity->getAppointment()->getPatient()->getFirstname();
             $patient = $patientLastName . " " . $patientFirstName;
             //ajout des données de l'activité programmée dans un tableau pour etre converti en JSON
-            $scheduledActivitiesArray[] = array(
-                'id' => (str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
+            $displayedActivitiesArray[] = array(
+                'id' => (str_replace(" ", "3aZt3r", $displayedActivity->getId())),
                 'start' => $start,
                 'end' => $end,
-                'title' => ($scheduledActivity->getActivity()->getActivityname()),
-                'appointment' => ($scheduledActivity->getAppointment()->getId()),
+                'title' => ($displayedActivity->getActivity()->getActivityname()),
+                'appointment' => ($displayedActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
-                'description' => ($scheduledActivity->getActivity()->getActivityname()),
+                'description' => ($displayedActivity->getActivity()->getActivityname()),
                 'extendedProps' => array(
                     'patient' => $patient,
-                    'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
-                    'materialResources' => ($MaterialResourceScheduledArray),
-                    'humanResources' => ($HumanResourceScheduledArray),
+                    'pathway' => ($displayedActivity->getAppointment()->getPathway()->getPathwayname()),
+                    'materialResources' => ($resourceArray[1]),
+                    'humanResources' => ($resourceArray[2]),
                 ),
-
-
             );
             //reset des tableaux de stockage temporaire des données
-            unset($MaterialResourceScheduledArray);
-            unset($HumanResourceScheduledArray);
             unset($resourceArray);
         }
+    }
+    $unavailabityArray = $this->getUnavailabity($doctrine);
+    $displayedActivitiesArray = array_merge($displayedActivitiesArray, $unavailabityArray);
 
         //Conversion des données ressources en json
-        $scheduledActivitiesArrayJSON = new JsonResponse($scheduledActivitiesArray);
-        return $scheduledActivitiesArrayJSON;
+        $displayedActivitiesArrayJSON = new JsonResponse($displayedActivitiesArray);
+        return $displayedActivitiesArrayJSON;
     }
 
     /*
@@ -227,15 +304,15 @@ class ConsultationPlanningController extends AbstractController
      */
     public function getMaterialResourceScheduledJSON(ManagerRegistry $doctrine)
     {
-        //tilisation de la variable globale $scheduledActivities pour recuperer les activites programmées du jour
-        global $scheduledActivities;
+        //tilisation de la variable globale $displayedActivities pour recuperer les activites programmées du jour
+        global $displayedActivities;
         $MaterialResourceScheduledArray = array();
 
-        if ($scheduledActivities != null) { //si il y a des données dans la base de données
-            for ($i = 0; $i < count($scheduledActivities); $i++) {
+        if ($displayedActivities != null) { //si il y a des données dans la base de données
+            for ($i = 0; $i < count($displayedActivities); $i++) {
                 //recuperation des ressources de l'activité programmée
                 $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")
-                    ->findBy(array("scheduledactivity" => $scheduledActivities[$i]));
+                    ->findBy(array("scheduledactivity" => $displayedActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
                     $materialCategories = $this->getMaterialCategory($doctrine, $MaterialResourceScheduled->getMaterialresource());
@@ -293,14 +370,14 @@ class ConsultationPlanningController extends AbstractController
      */
     public function getHumanResourceScheduledJSON(ManagerRegistry $doctrine)
     {
-        //tilisation de la variable globale $scheduledActivities pour recuperer les activites programmées du jour
-        global $scheduledActivities;
+        //tilisation de la variable globale $displayedActivities pour recuperer les activites programmées du jour
+        global $displayedActivities;
         $HumanResourceScheduledArray = array();
-        if ($scheduledActivities != null) { //si il y a des données dans la base de données
-            for ($i = 0; $i < count($scheduledActivities); $i++) {
+        if ($displayedActivities != null) { //si il y a des données dans la base de données
+            for ($i = 0; $i < count($displayedActivities); $i++) {
                 //recuperation des ressources de l'activité programmée
                 $HumanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")
-                    ->findBy(array("scheduledactivity" => $scheduledActivities[$i]));
+                    ->findBy(array("scheduledactivity" => $displayedActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($HumanResourceScheduleds as $HumanResourceScheduled) {
                     $humanCategories = $this->getHumanCategory($doctrine, $HumanResourceScheduled->getHumanresource());
@@ -402,47 +479,5 @@ class ConsultationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
-        $materialResourcesUnavailableArray = array();
-        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
-            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
-            $resource = "materialresource_" . $resource;
-            $materialResourcesUnavailableArray[] = array(
-                'description' =>'Ressource Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display'=>'background',
-                'color'=>'#ff0000',
-            );
-        }
-        //Conversion des données ressources en json 
-        $materialResourcesUnavailableArrayJSON = new JsonResponse($materialResourcesUnavailableArray);
-        return $materialResourcesUnavailableArrayJSON;
     }
     
-    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
-        $humanResourcesUnavailableArray = array();
-        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
-            $resource= $humanResourceUnavailable->getHumanresource()->getId();
-            $resource = "humanresource_" . $resource;
-            $humanResourcesUnavailableArray[] = array(
-                'description' =>'Employé Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display'=>'background',
-                'color'=>'#ff0000',
-            );
-        }
-        //Conversion des données ressources en json 
-        $humanResourcesUnavailableArrayJSON = new JsonResponse($humanResourcesUnavailableArray);
-        return $humanResourcesUnavailableArrayJSON;
-    }
-}
