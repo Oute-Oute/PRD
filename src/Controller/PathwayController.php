@@ -112,6 +112,48 @@ class PathwayController extends AbstractController
     }
 
 
+
+    /**
+     * Redirige vers la page d'ajout d'un parcours
+     * route : "/pathway/add"
+     */
+    public function pathwayAddPage(Request $request, PathwayRepository $pathwayRepository): Response
+    {
+
+
+        // Méthode GET pour aller vers la page d'ajout d'un parcours 
+        if ($request->getMethod() === 'GET' ) {
+
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+
+            //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
+            //$humanResources = $humanResourceRepo->findAll();
+            // dd($humanResources);
+            $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
+            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+            //$materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
+            //$materialResources = $materialResourceRepo->findAll();
+    
+            $pathways = $pathwayRepository->findAll();
+            $nbPathway = count($pathways);
+    
+            $activitiesByPathways = array();
+    
+            for ($i = 0; $i < $nbPathway; $i++) {
+                array_push($activitiesByPathways, $activityRepository->findBy(['pathway' => $pathways[$i]]));
+            }
+
+            return $this->render('pathway/add.html.twig', [
+                'pathways' => $pathways,
+                'activitiesByPathways' => $activitiesByPathways,
+                'humanResourceCategories' => $humanResourceCategoriesJson,
+                'materialResourceCategories' => $materialResourceCategoriesJson,
+            ]);
+        }
+            
+    }
+
+    
     /**
      * Ajoute dans la base de données :
      * Ajoute un parcours  
@@ -119,12 +161,12 @@ class PathwayController extends AbstractController
      * Ajoute les successors liés aux activités
      * Ajoute les ressources humaines et materielles liées aux activités 
      * 
-     * route : "/pathwayAdd"
+     * route : "/pathway/add"
      */
     public function pathwayAdd(Request $request, PathwayRepository $pathwayRepository): Response
     {
 
-        // Méthode POST pour ajouter un circuit
+        // Méthode POST pour ajouter un parcours
         if ($request->getMethod() === 'POST' ) {
             
             // Création de tous les repository

@@ -133,10 +133,15 @@ Pathways:
   controller: App\Controller\PathwayController:pathwayGet
   methods: [GET]
 
-PathwaysPost:
-  path: /pathwayAdd
+PathwayAdd:
+  path: /pathway/add
   controller: App\Controller\PathwayController:pathwayAdd
   methods: [POST]
+
+PathwayAddPage:
+  path: /pathway/add
+  controller: App\Controller\PathwayController:pathwayAddPage
+  methods: [GET]
 
 PathwayEdit:
   path: /pathway/edit
