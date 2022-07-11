@@ -140,6 +140,11 @@
 <input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value={{listActivityHumanResourcesJSON.content}}>
 <input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value={{listActivityMaterialResourcesJSON.content}}>
 
+{% set i = 1 %}
+{% for setting in settingsRepository %}
+	<input type="hidden" id="modifAlertTime{{i}}" value='{{setting.getAlertmodificationtimer}}'/>
+	{% set i = i + 1 %}
+{% endfor %}
 
 <div class="all-container">
 	<h1>Modification du Planning</h1>
