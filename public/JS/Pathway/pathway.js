@@ -20,14 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
-
-    console.log('oui')
-    let modals = document.getElementsByClassName('modal-dialog')
-    let len = modals.length
-    console.log(len)
-    for (let i = 0; i < len; i++) {
-        modals[i].style.maxWidth = '70%'
-    }
+    addActivity()
 })
 
 
@@ -42,19 +35,12 @@ function showInfosPathway(id, name) {
 
 }
 
-function showResourcesEditing() {
-
-    let div = createDivEdit(0)
-
-    let divres = document.getElementById('resources-editing')
-    divres.appendChild(div)
-}
 
 /**
  * Permet d'afficher la fenêtre modale d'ajout
  */
 function showNewModalForm(){
-    console.log("non")
+    //console.log("non")
     $('#add-pathway-modal').modal("show");
     //$('#add-pathway-resources-modal').modal("show");
     //document.getElementById('add-pathway-resources-modal').style.display = 'flex'
@@ -73,66 +59,96 @@ function disableSubmit() {
     btnSubmit.disabled=true
 }
 
+function addActivity() {
+
+    disableSubmit();
+
+    RESOURCES_BY_ACTIVITIES.push(new Object())
+    let len = RESOURCES_BY_ACTIVITIES.length
+    RESOURCES_BY_ACTIVITIES[len-1].humanResourceCategories = new Array()
+    RESOURCES_BY_ACTIVITIES[len-1].materialResourceCategories = new Array()
+    RESOURCES_BY_ACTIVITIES[len-1].available = true
+    NB_ACTIVITY = NB_ACTIVITY + 1;
+    document.getElementById('nbactivity').value = NB_ACTIVITY
+
+    //handleAddActivity()
+    fillActivityList()
+    RESOURCES_BY_ACTIVITIES[SELECT_ID].btnHM = 'human'
+    let id = Number(RESOURCES_BY_ACTIVITIES.length - 1)
+    handleHumanButton(id)
+
+}
+
+function fillActivityList() {
+
+    let divActivitiesList = document.getElementById('activities-list')
+    divActivitiesList.innerHTML = ''
+
+    let indexActivityAvailable = 0
+    for (let indexActivity = 0; indexActivity < RESOURCES_BY_ACTIVITIES.length; indexActivity++) {
+        if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
+            let activity = document.createElement('p')
+            activity.innerHTML =  'Activité '+Number(indexActivityAvailable+1) 
+            activity.innerHTML += RESOURCES_BY_ACTIVITIES[indexActivity].name
+            divActivitiesList.appendChild(activity)
+            
+            
+        }
+    }
+
+}
+
 /**
  * Permet d'ajouter une liste déroulante pour choisir une activité lors de la cration d'un parcours (pathway)
  */
 function handleAddActivity() {
 
-    RESOURCES_BY_ACTIVITIES.push( new Object())
-    RESOURCES_BY_ACTIVITIES[SELECT_ID].humanResourceCategories = new Array()
-    RESOURCES_BY_ACTIVITIES[SELECT_ID].materialResourceCategories = new Array()
-    RESOURCES_BY_ACTIVITIES[SELECT_ID].available = true
 
-    NB_ACTIVITY = NB_ACTIVITY + 1;
-    document.getElementById('nbactivity').value = NB_ACTIVITY
-
-    disableSubmit();
-    
     // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
-    let div = document.createElement("div")
+    /*let div = document.createElement("div")
     div.setAttribute('class', 'form-field')    
-    div.setAttribute('id', 'activity-field-'+SELECT_ID)
+    div.setAttribute('id', 'activity-field-'+SELECT_ID)*/
 
-    let inputName = document.createElement('input')
+    /*let inputName = document.createElement('input')
     inputName.setAttribute('class', 'input-name')
     inputName.setAttribute('id', 'input-activity-name-'+SELECT_ID)
     //inputName.disabled = true
     inputName.setAttribute('placeholder', 'Nom')
-    inputName.setAttribute('onchange', 'disableSubmit()')
+    inputName.setAttribute('onchange', 'disableSubmit()')*/
     //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
 
-    let inputDuration = document.createElement('input')
+  /*  let inputDuration = document.createElement('input')
     inputDuration.setAttribute('class', 'input-duration')
     inputDuration.setAttribute('placeholder', 'Durée (min)')
     inputDuration.setAttribute('type', 'number')
     inputDuration.setAttribute('min', '0')
     inputDuration.setAttribute('onchange', 'disableSubmit()')
-    inputDuration.setAttribute('id', 'input-activity-duration-'+SELECT_ID)
+    inputDuration.setAttribute('id', 'input-activity-duration-'+SELECT_ID)*/
 
     //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
 
-    let imgEdit = new Image();
+   /* let imgEdit = new Image();
     imgEdit.src = '../img/edit.svg'
     imgEdit.setAttribute('id','img-'+SELECT_ID)
     //imgEdit.setAttribute('onclick', 'showResourcesEditing(this.id)')
     imgEdit.setAttribute('onclick', 'editSelect(this.id)')
-    imgEdit.setAttribute('title', 'Éditer les ressources de l\'activité')
+    imgEdit.setAttribute('title', 'Éditer les ressources de l\'activité')*/
 
-    let imgDelete = new Image();
+   /* let imgDelete = new Image();
     imgDelete.src = '../img/delete.svg'
     imgDelete.setAttribute('id','img-'+SELECT_ID)
     imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
-    imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
+    imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')*/
 
-    div.appendChild(inputName)
+   /* div.appendChild(inputName)
     div.appendChild(inputDuration)
-    div.appendChild(imgEdit)
-    div.appendChild(imgDelete)
+    //div.appendChild(imgEdit)
+    div.appendChild(imgDelete)*/
 
     // On l'affiche et on l'ajoute a la fin de la balise div activities-container
     //select.style.display = "block";
     let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.setAttribute('id', 'activities-container-'+SELECT_ID)
+    //divAddActivity.setAttribute('id', 'activities-container-'+SELECT_ID)
     //let divAddActivity = document.getElementsByClassName('activities-container')
 
     //divAddActivity.
@@ -157,14 +173,16 @@ function handleAddActivity() {
     let div_res_edit = document.getElementById('resources-editing')
     //console.log(div_res_edit)
     //console.log(divEdit)
-    div_res_edit.appendChild(createDivEdit())
+    //div_res_edit.appendChild(createDivEdit())
+
+    divcontainer.appendChild(createDivEdit())
 
  //   divcontainer.appendChild(divEdit)
 
     divAddActivity.appendChild(divcontainer)
 
     // On appelle la methode : pour afficher la liste de ressources humaines par défaut 
-    handleHumanButton('bh-'+SELECT_ID)
+    handleHumanButton()
 
     SELECT_ID++
 } 
@@ -179,7 +197,8 @@ function deleteSelect(id) {
 
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
-    id = id[id.length - 1] 
+    id = getId(id)
+    
     // On peut donc recuperer la div
     let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
@@ -192,8 +211,12 @@ function deleteSelect(id) {
 
     RESOURCES_BY_ACTIVITIES[id].available = false
     //SELECT_ID = SELECT_ID - 1;
+    fillActivityList()
 }
 
+
+var showedit = false;
+var DIV_TO_EDIT_OLD
 /**
  * Permet de modifier une activité  
  * @param {*} id : XXX-0, XXX-1
@@ -201,26 +224,28 @@ function deleteSelect(id) {
 function editSelect(id) {
     disableSubmit();
 
+    document.getElementById('name').innerHTML = 'oui'
+    //RESOURCES_BY_ACTIVITIES.length
+
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
-    id = id[id.length - 1] 
+    id = getId(id)
+
     // On peut donc recuperer la div
     //let divToEdit = document.getElementsByClassName('div-activity-'+id)[0]
     let divToEdit = document.getElementById('div-edit-activity-'+id)
 
-    if (divToEdit.style.display == 'flex') {
-        divToEdit.style.display = 'none'
-
-        let divField = document.getElementById('activity-field-'+id)
-        divField.style.borderBottomLeftRadius = '10px'
-        divField.style.borderBottomRightRadius = '10px'
+    if (DIV_TO_EDIT_OLD == undefined) {
+        divToEdit.style.display = 'flex'
+        DIV_TO_EDIT_OLD = divToEdit
     } else {
-        divToEdit.style.display = 'flex';
-
-        let divField = document.getElementById('activity-field-'+id)  
-        divField.style.borderBottomLeftRadius = '0px'
-        divField.style.borderBottomRightRadius = '0px'
+        if (divToEdit != DIV_TO_EDIT_OLD) {
+            divToEdit.style.display = 'flex'
+            DIV_TO_EDIT_OLD.style.display = 'none'
+            DIV_TO_EDIT_OLD = divToEdit
+        }
     }
+
 
 }
 
@@ -343,6 +368,13 @@ function createDivEdit() {
     inputNbResources.setAttribute('placeholder', 'Qte')
     inputNbResources.setAttribute('id', 'resource-nb-'+SELECT_ID)
     //title="Enter input here"
+    imgAdd = new Image()
+    imgAdd.src = '../img/plus.png'
+    imgAdd.setAttribute('onclick', 'addResources(this.id)')
+    imgAdd.setAttribute('title', 'Ajouter la ressource a la liste')
+    imgAdd.style.width = '20px'
+    imgAdd.style.height = '20px'
+    //imgAdd.src = '../'
     btnPlus = document.createElement('button')
     btnPlus.setAttribute('type', 'button')
     btnPlus.innerHTML = '+'
@@ -352,8 +384,8 @@ function createDivEdit() {
     
     divAddResources.appendChild(selectResources)
     divAddResources.appendChild(inputNbResources)
-    divAddResources.appendChild(btnPlus)
-
+    divAddResources.appendChild(imgAdd)
+    
     /* Ajout de tous les enfants a la div parent */
     divEditActivity.appendChild(divBtnsResources)
     divEditActivity.appendChild(divResources)
@@ -365,14 +397,21 @@ function createDivEdit() {
 }
 
 
+function getId(str) {
+    str = str.toString()
+    id = str.split('-')
+    return id[id.length - 1]
+}
+
 function addResources(id) {
     // recuperation de l'id
-    id = id[id.length - 1] 
+    //id = id[id.length - 1] 
+    //id = getId(id)
 
     // ! Si le bouton human est activé !
     if (RESOURCES_BY_ACTIVITIES[id].btnHM == 'human') {
-        let resourceNb = document.getElementById('resource-nb-'+id).value
-        let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+        let resourceNb = document.getElementById('resource-nb').value
+        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
 
         let resourceName ='';
         for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
@@ -391,8 +430,8 @@ function addResources(id) {
     } else {
         // ! Si le bouton material est activé !
 
-        let resourceNb = document.getElementById('resource-nb-'+id).value
-        let resourceId = document.getElementById('select-resources-'+id).value //pas utilisé pour l'instant
+        let resourceNb = document.getElementById('resource-nb').value
+        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
 
         let resourceName ='';
         for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
@@ -421,7 +460,7 @@ function fillHRCList(id) {
 
     
     // On recupere la liste dans laquelle on va ajouter notre ressource
-    ul = document.getElementById('list-resources-'+id)
+    ul = document.getElementById('list-resources')
     ul.style.listStyle='none'
     ul.innerHTML = ''
 
@@ -437,7 +476,7 @@ function fillHRCList(id) {
         
 
             let imgDelete = new Image();
-            imgDelete.src = 'img/delete.svg'
+            imgDelete.src = '../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'
@@ -469,7 +508,7 @@ function fillHRCList(id) {
 function fillMRCList(id) {
     
     // On recupere la liste dans laquelle on va ajouter notre ressource
-    ul = document.getElementById('list-resources-'+id)
+    ul = document.getElementById('list-resources')
     ul.innerHTML = ''
 
     let len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
@@ -484,7 +523,7 @@ function fillMRCList(id) {
             li.innerText = resourceName +' ('+resourceNb+')'
         
             let imgDelete = new Image();
-            imgDelete.src = 'img/delete.svg'
+            imgDelete.src = '../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'
@@ -508,24 +547,25 @@ function fillMRCList(id) {
 
 /**
  * Gestion du clic sur le bouton 'humaines' dans les ressources d'une activité
- * @param {id de l'activité donc on veut afficher les ressources humaines} id 
  */
 function handleHumanButton(id) {
     // recuperation de l'id
-    id = id[id.length - 1] 
-    
+    //id = id[id.length - 1] 
+    console.log('id av '+id)
+    id = getId(id)
+    console.log('id a '+id)
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
-    let bh = document.getElementById('bh-'+id)
+    let bh = document.getElementById('human-button')
     bh.style.textDecoration = 'underline'
     bh.style.fontWeight = '700'
 
     // mise en place du style pour le menu non selectionné (Humaines ou Materielles)
-    let bm = document.getElementById('bm-'+id)
+    let bm = document.getElementById('material-button')
     bm.style.textDecoration = 'none'
     bm.style.fontWeight = 'normal'
 
     // remplissage du select avec les données de la bd
-    let select = document.getElementById('select-resources-'+id)
+    let select = document.getElementById('select-resources')
     removeOptions(select)
 
     for (let indexHR = 0; indexHR < HUMAN_RESOURCE_CATEGORIES.length; indexHR++) {
@@ -548,20 +588,21 @@ function handleHumanButton(id) {
  */
 function handleMaterialButton(id) {
     // recuperation de l'id
-    id = id[id.length - 1] 
+    //id = id[id.length - 1] 
+    id = getId(id)
 
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
-    let bm = document.getElementById('bm-'+id)
+    let bm = document.getElementById('material-button')
     bm.style.textDecoration = 'underline'
     bm.style.fontWeight = '700'
 
     // mise en place du style pour le menu non selectionné (Humaines ou Materielles)
-    let bh = document.getElementById('bh-'+id)
+    let bh = document.getElementById('human-button')
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
  
     // remplissage du select avec les données de la bd
-    let select = document.getElementById('select-resources-'+id)
+    let select = document.getElementById('select-resources')
     removeOptions(select)
 
     for (let indexMR = 0; indexMR < MATERIAL_RESOURCE_CATEGORIES.length; indexMR++) {
