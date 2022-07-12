@@ -525,73 +525,74 @@ function updateEventsAppointment(oldEvent) {
 
   var newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
 
-
-  humanResources.forEach((resource) => {
-    newEventAppointment._def.resourceIds.forEach((resourceId => {
-      if(resource.id == resourceId){
-        var isOld = false;
-        oldEvent._def.resourceIds.forEach((oldResourceId) => {
-          if(resource.id == oldResourceId){
-            isOld = true;
-          }
-        })
-        if(isOld == false){
-          workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
-          workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
-          if(!(workingHoursStart <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) && 
-          new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
-            alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
-          }
-        }
-      }
-    }))
-  })
-
-  if (
-    earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
-    new Date(newEvent.end.getTime() - 2 * 60 * 60 * 1000) <= latestAppointmentDate
-  ) {
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-    calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
-
-    listOldEvent.forEach((oldEventSet) => {
-        oldEventSet._def.resourceIds.forEach((oldResource) => {
-          newEventAppointment._def.resourceIds.forEach((newResource) => {
-            if(newResource != "h-default" && newResource != "m-default"){
-                if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
-                  if(newResource == oldResource) {
-                    var resourceTitle = "";
-                    if (newResource.substring(0, 8) == "material"){
-                      materialResources.forEach((material) => {
-                        if(material.id == newResource){
-                          resourceTitle = material.title;
-                        }
-                      })
-                    }
-                    else if (newResource.substring(0, 5) == "human"){
-                      humanResources.forEach((human) => {
-                        if(human.id == newResource){
-                          resourceTitle = human.title;
-                        }
-                      })
-                    }
-                    if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
-                      alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", il risque d'y avoir un conflit avec " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
-                    }
-                    else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
-                      alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
-                    }
-                  }
-              }
+    humanResources.forEach((resource) => {
+      newEventAppointment._def.resourceIds.forEach((resourceId => {
+        if(resource.id == resourceId){
+          var isOld = false;
+          oldEvent._def.resourceIds.forEach((oldResourceId) => {
+            if(resource.id == oldResourceId){
+              isOld = true;
             }
           })
+          if(isOld == false){
+            workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
+            workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+            if(!(workingHoursStart <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) && 
+            new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+              alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
+            }
+          }
+        }
+      }))
+    })
+
+    if (
+      earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
+      new Date(newEvent.end.getTime() - 2 * 60 * 60 * 1000) <= latestAppointmentDate
+    ) {
+      calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+      calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+      calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
+
+      listOldEvent.forEach((oldEventSet) => {
+        if(oldEventSet._def.extendedProps.type == "activity"){
+          oldEventSet._def.resourceIds.forEach((oldResource) => {
+            newEventAppointment._def.resourceIds.forEach((newResource) => {
+              if(newResource != "h-default" && newResource != "m-default"){
+                  if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
+                    if(newResource == oldResource) {
+                      var resourceTitle = "";
+                      if (newResource.substring(0, 8) == "material"){
+                        materialResources.forEach((material) => {
+                          if(material.id == newResource){
+                            resourceTitle = material.title;
+                          }
+                        })
+                      }
+                      else if (newResource.substring(0, 5) == "human"){
+                        humanResources.forEach((human) => {
+                          if(human.id == newResource){
+                            resourceTitle = human.title;
+                          }
+                        })
+                      }
+                      if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                        alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", il risque d'y avoir un conflit avec " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
+                      }
+                      else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
+                        alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
+                      }
+                    }
+                }
+              }
+            })
+          })
+        }
         })
-      })
-  }
-  else {
-    alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
-  }
+    }
+    else {
+      alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
+    }
 }
 
 
@@ -843,7 +844,6 @@ function createCalendar(typeResource) {
     });
     listEvents = setEvents;
   }
-  console.log(listEvents);
   for (var i = 0; i < listEvents.length; i++) {
     calendar.addEvent(listEvents[i]);
   }
