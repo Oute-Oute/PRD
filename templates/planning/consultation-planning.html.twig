@@ -17,7 +17,7 @@
 	<script src="js/planning/utils-planning.js"></script>
 
 	<div class="all-container" id="all">
-		<h1>Consultation du Planning</h1>
+		<h1>Consultation du Planning du {{ currentdate|date("d/m/Y") }}</h1>
 		<div class="flex">
 			<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
@@ -34,7 +34,7 @@
 			</button>
 			<div id="filterId" class="filter-container" style="display:none"></div>
 			<div class="datepicker">
-				<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{datetoday}}" .str_replace('t12:00:00','')></input>
+				<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
 		</div>
 		<div class="date-button">
 			<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay()" title="Aller au jour d'avant">
