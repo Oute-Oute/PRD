@@ -573,7 +573,6 @@ function handleMaterialButton(id) {
 
     // human / material
     RESOURCES_BY_ACTIVITIES[id].btnHM = 'material'
-
     fillMRCList(id)
 }
 

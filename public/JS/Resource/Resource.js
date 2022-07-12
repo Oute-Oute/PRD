@@ -176,5 +176,23 @@ function hideEditModalForm() {
     $('#edit--material-resource-category-modal').modal("hide");
     $('#edit--material-resource-modal').modal("hide");
 }
+
+function change_tab(id)
+{
+  document.getElementById("resources").className="notselected";
+  document.getElementById("categories").className="notselected";
+  document.getElementById(id).className="selected";
+  let resources = document.getElementById("list-material-resources")
+  let categories = document.getElementById("list-material-categories")
+  if(id == 'resources') {
+    categories.style.display = 'none'
+    resources.style.display = 'block'
+  }
+  else {
+    categories.style.display = 'block'
+    resources.style.display = 'none'
+
+  }
+}
 // #container-modal 
 // .modal-form             #form-add-activity
