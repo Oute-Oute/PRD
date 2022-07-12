@@ -267,7 +267,10 @@ function AddEventValider() {
           materialResources: [],
           pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
         });
-        
+
+        event._def.ui.backgroundColor = RessourcesAllocated(event);
+        event._def.ui.borderColor = RessourcesAllocated(event);
+        event.setEnd(event.end); 
       }
       
       var successorsActivitiesA=[]; 
@@ -945,4 +948,8 @@ function clearArray(array){
   while (array.length) {
     array.pop();
   }
+}
+
+function undoEvent(){
+  console.log(calendar.getEvents()); 
 }
