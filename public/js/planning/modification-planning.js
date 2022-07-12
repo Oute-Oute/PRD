@@ -1,5 +1,5 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
-var modifAlertTime = document.getElementById('modifAlertTime1'); // En millisecondes
+var modifAlertTime = 4800000; // En millisecondes
 console.log(modifAlertTime); 
 var timerAlert;
 setTimeout(showPopup, modifAlertTime);
@@ -618,6 +618,7 @@ function createCalendar(typeResource) {
   } else {
     first = false;
     listEvent = calendar.getEvents();
+    console.log(listEvent);
     listEvent.forEach((event) => {
       let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
@@ -832,12 +833,27 @@ function createCalendar(typeResource) {
         pathway: eventModify.extendedProps.pathway,
       });
       }
-
+      else{
+        var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
+        var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
+        setEvents.push({
+        id: eventModify.id,
+        start: formatDate(start).replace(" ", "T"),
+        end: formatDate(end).replace(" ", "T"),
+        resourceIds: listResource[index],
+        type: eventModify.extendedProps.type,
+        description: eventModify.extendedProps.description,
+        display : eventModify.display,
+        color : eventModify.color,
+        }
+        );
+        }
+      console.log(setEvents);
       index++;
     });
     listEvents = setEvents;
-    listEvents = listEvents.concat(unavailabilities);
   }
+  console.log(listEvents);
   for (var i = 0; i < listEvents.length; i++) {
     calendar.addEvent(listEvents[i]);
   }

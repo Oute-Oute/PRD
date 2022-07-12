@@ -52,7 +52,7 @@ class ModificationPlanningController extends AbstractController
         $listPatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listAppointment = $this->getAppointment($doctrine, $dateModified);
-        $listscheduledActivity = $this->getScehduledActivity($doctrine, $SAR, $dateModified);
+        $listscheduledActivity = $this->getScheduledActivity($doctrine, $SAR, $dateModified);
         $listsuccessionJSON = $this->getSuccessorJSON($doctrine);
         $listActivitiesJSON = $this->getActivityJSON($doctrine);
         $listAppointmentJSON = $this->getAppointmentJSON($doctrine, $dateModified);
@@ -347,8 +347,76 @@ class ModificationPlanningController extends AbstractController
         return $materialResourcesArrayJson;
     }
 
+/*
+     * @brief This function get the unavailabitity of the material resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the material resources.
+     */
+    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
+        $materialResourcesUnavailableArray = array();
+        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
+            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
+            $resource = "material-" . $resource;
+            $materialResourcesUnavailableArray[] = array(
+                'description' =>'Ressource Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        return $materialResourcesUnavailableArray;
+    }
+    
+        /*
+     * @brief This function get the unavailabitity of the human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the human resources.
+     */
+    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
+        $humanResourcesUnavailableArray = array();
+        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
+            $resource= $humanResourceUnavailable->getHumanresource()->getId();
+            $resource = "human-" . $resource;
+            $humanResourcesUnavailableArray[] = array(
+                'description' =>'Employé Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+            );
+        }
+        return $humanResourcesUnavailableArray;
+    }
+
+    /*
+     * @brief This function get all the unavailabitity of the material and human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability
+     */
+    public function getUnavailabity(ManagerRegistry $doctrine){
+        $humanUnavailabity = $this->getHumanResourceUnavailables($doctrine);
+        $materialUnavailabity = $this->getMaterialResourcesUnavailables($doctrine);
+        $unavailabityArray = array();
+        foreach ($humanUnavailabity as $humanUnavailabity) {
+            array_push($unavailabityArray, $humanUnavailabity);
+        }
+        foreach ($materialUnavailabity as $materialUnavailabity) {
+            array_push($unavailabityArray, $materialUnavailabity);
+        }
+        return $unavailabityArray;
+    }
+
     //Retourne la liste des Scheduled Activity en format JSON pour un jour donné
-    public function getScehduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
+    public function getScheduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
     {
         $TodayDate = substr($date, 0, 10);
 
@@ -432,6 +500,8 @@ class ModificationPlanningController extends AbstractController
                 'description'=>''
             );
         }
+        $unavailabityArray = $this->getUnavailabity($doctrine);
+        $scheduledActivitiesArray = array_merge($scheduledActivitiesArray, $unavailabityArray);
         $scheduledActivitiesArrayJson = new JsonResponse($scheduledActivitiesArray);
         return $scheduledActivitiesArrayJson;
     }
