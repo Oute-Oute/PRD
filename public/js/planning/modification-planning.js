@@ -1,14 +1,10 @@
-// Timeout pour afficher le popup (pour éviter une modif trop longue)
-var modifAlertTime = 4800000; // En millisecondes
-console.log(modifAlertTime); 
-var timerAlert;
-setTimeout(showPopup, modifAlertTime);
-
 var calendar;
 var countAddEvent = 0;
 var headerResources = "Ressources Humaines";
 var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
+var timerAlert;
+var modifAlertTime = 480000;
 
 var listEvents;
 
@@ -26,6 +22,14 @@ function $_GET(param) {
     return vars[param] ? vars[param] : null;
   }
   return vars;
+}
+
+function alertOnload(){ 
+  // Timeout pour afficher le popup (pour éviter une modif trop longue)
+  if(document.getElementById('modifAlertTime')!=null){
+    modifAlertTime = document.getElementById('modifAlertTime').value; // En millisecondes
+  }
+  setTimeout(showPopup, modifAlertTime);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
