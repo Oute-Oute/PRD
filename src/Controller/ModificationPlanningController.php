@@ -74,7 +74,7 @@ class ModificationPlanningController extends AbstractController
             'listHumanResourceJSON' => $listHumanResourceJSON,
             'listHumanResources' => $listHumanResources,
             'listMaterialResources' => $listMaterialResources,
-            'datetoday' => $dateModified,
+            'currentdate' => $dateModified,
             'listScheduledActivitiesJSON' => $listscheduledActivity,
             'listAppointments' => $listAppointment,
             'listSuccessorsJSON' => $listsuccessionJSON,
