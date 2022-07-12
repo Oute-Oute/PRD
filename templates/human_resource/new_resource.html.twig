@@ -31,6 +31,36 @@
                             </div>
                     </fieldset>
                 </div>
+                <fieldset id="fs-add-working-hours">
+                <legend id = "lgd-working-hours">Choisissez les heures de disponibilités</legend>
+                <div id = 'working-hours-parent'>
+                <div id = 'working-hours-label'>
+                <label> Lundi :</label>
+                <label> Mardi :</label>
+                <label> Mercredi :</label>
+                <label> Jeudi :</label>
+                <label> Vendredi :</label>
+                <label> Samedi :</label>
+                <label> Dimanche :</label>
+                </div>
+                <div id = 'working-hours-input'>
+                    <input type="time" id="monday" name="monday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="tuesday" name="tuesday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="wednesday" name="wednesday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="thursday" name="thursday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="friday" name="friday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="saturday" name="saturday"
+                    min="00:00" max="23:59">
+                    <input type="time" id="sunday" name="sunday"
+                    min="00:00" max="23:59">
+                    </div>
+                    </div>
+                    </fieldset>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
                     <button type = "button" onclick="verifyChanges()" class="btn-valide btn-secondary"> Ajouter </button>
