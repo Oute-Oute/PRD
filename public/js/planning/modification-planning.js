@@ -1,13 +1,10 @@
-// Timeout pour afficher le popup (pour éviter une modif trop longue)
-var modifAlertTime = 480000; // En millisecondes
-var timerAlert;
-setTimeout(showPopup, modifAlertTime);
-
 var calendar;
 var countAddEvent = 0;
 var headerResources = "Ressources Humaines";
 var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
+var timerAlert;
+var modifAlertTime = 480000;
 
 var listEvents;
 
@@ -25,6 +22,14 @@ function $_GET(param) {
     return vars[param] ? vars[param] : null;
   }
   return vars;
+}
+
+function alertOnload(){ 
+  // Timeout pour afficher le popup (pour éviter une modif trop longue)
+  if(document.getElementById('modifAlertTime')!=null){
+    modifAlertTime = document.getElementById('modifAlertTime').value; // En millisecondes
+  }
+  setTimeout(showPopup, modifAlertTime);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -654,6 +659,7 @@ function createCalendar(typeResource) {
   } else {
     first = false;
     listEvent = calendar.getEvents();
+    console.log(listEvent);
     listEvent.forEach((event) => {
       let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
@@ -868,12 +874,27 @@ function createCalendar(typeResource) {
         pathway: eventModify.extendedProps.pathway,
       });
       }
-
+      else{
+        var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
+        var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
+        setEvents.push({
+        id: eventModify.id,
+        start: formatDate(start).replace(" ", "T"),
+        end: formatDate(end).replace(" ", "T"),
+        resourceIds: listResource[index],
+        type: eventModify.extendedProps.type,
+        description: eventModify.extendedProps.description,
+        display : eventModify.display,
+        color : eventModify.color,
+        }
+        );
+        }
+      console.log(setEvents);
       index++;
     });
     listEvents = setEvents;
-    listEvents = listEvents.concat(unavailabilities);
   }
+  console.log(listEvents);
   for (var i = 0; i < listEvents.length; i++) {
     calendar.addEvent(listEvents[i]);
   }
