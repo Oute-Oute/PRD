@@ -69,7 +69,8 @@ class HumanResourceController extends AbstractController
     {
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
-            $param = $request->request->all();            $name = $param['resourcename'];
+            $param = $request->request->all();            
+            $name = $param['resourcename'];
             $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
@@ -118,7 +119,7 @@ class HumanResourceController extends AbstractController
     { 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
-            
+
             // On recupere toutes les données de la requete
             $param = $request->request->all();
             // On récupère l'objet parcours que l'on souhaite modifier grace a son id

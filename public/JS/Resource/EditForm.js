@@ -40,63 +40,36 @@ function edit__deleteSelect(id) {
  * Les noms et durée des activités déjà présentes dans le pathway
  */
 function showEditModalForm(id, name, index){
+        
     SELECT_ID_EDIT = 0;
     // Affichage de la fenetre modale 
     $('#edit--human-resource-modal').modal("show");
+    let categoriesContainer = document.getElementById('edit--categories-container');
 
     document.getElementById('edit--resourceid').value = id;
     document.getElementById('edit--resourcename').value = name
     NB_CATEGORY_EDIT = 0;
-
-    let selectSample = document.getElementsByClassName('select-category-sample')[0];
-
-
-    // On recupère la div qui contient nos activités
-    let categoriesContainer = document.getElementById('edit--categories-container');
-    categoriesContainer.innerHTML = ''   // On supprime toutes les activités qui existent dans cette div
-    for(let j = 0; j < categoriesByResources[index].categories.length; j++) {
-        NB_CATEGORY_EDIT = NB_CATEGORY_EDIT + 1;
-        let newSelect = document.createElement('select');
-        let btnSubmit = document.getElementById('edit--submit')
-        newSelect.addEventListener('change', function() {
-                btnSubmit.disabled = true;
-          });
-        //Boucle pour remplir toutes les categs dans chaque select
-        for (let i = 0; i < selectSample.length; i++){
-            let option = document.createElement('option')
-            option.value = selectSample.options[i].value;
-            option.text = selectSample.options[i].text;
-            newSelect.add(option);        
-        }
-        //console.log(categoriesByResources[index].categories[j].idCategory)
-        newSelect.value = categoriesByResources[index].categories[j].idCategory;
-
-        newSelect.setAttribute('name' , 'select-'+SELECT_ID_EDIT);
-
-        let formField = document.createElement("div");
-        formField.setAttribute('class', 'form-field category-'+SELECT_ID_EDIT);
-
-        //style pour le select
-        newSelect.style.border = 'none';
-        //Image pour delete une categ
-        let image = new Image();
-        image.src = 'img/delete.svg';
-        image.style.marginLeft = '30px';
-        image.setAttribute('id','img-'+SELECT_ID_EDIT)
-        image.setAttribute('onclick', 'edit__deleteSelect(this.id)')
-        formField.appendChild(newSelect);
-        formField.appendChild(image);
-        categoriesContainer.appendChild(formField);
-
-        SELECT_ID_EDIT = SELECT_ID_EDIT +1;
-
+    let categoriesId = []
+    
+    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
+        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
     }
 
-    document.getElementById('edit--nbcategory').value = NB_CATEGORY_EDIT
+    for (let i = 0; i <= categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
+
+        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+            categoriesContainer.children[i].children[0].checked = true;
+        }
+    }
+
+    
+    }
+
 
 
     
-}
+
 
 /**
 * Permet d'afficher la fenêtre modale d'édition
@@ -107,61 +80,27 @@ function showEditModalForm(id, name, index){
 * Les noms et durée des activités déjà présentes dans le pathway
 */
 function showEditModalFormMaterial(id, name, index){
-   SELECT_ID_EDIT = 0;
-   // Affichage de la fenetre modale 
-   $('#edit--material-resource-modal').modal("show");
+    SELECT_ID_EDIT = 0;
+    // Affichage de la fenetre modale 
+    $('#edit--material-resource-modal').modal("show");
+    let categoriesContainer = document.getElementById('edit--categories-container');
 
-   document.getElementById('edit--resourceid').value = id;
-   document.getElementById('edit--resourcename').value = name
-   NB_CATEGORY_EDIT = 0;
+    document.getElementById('edit--resourceid').value = id;
+    document.getElementById('edit--resourcename').value = name
+    NB_CATEGORY_EDIT = 0;
+    let categoriesId = []
+    
+    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
+        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
+    }
 
-   let selectSample = document.getElementsByClassName('select-category-sample')[0];
+    for (let i = 0; i <= categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
 
-
-   // On recupère la div qui contient nos activités
-   let categoriesContainer = document.getElementById('edit--categories-container');
-   categoriesContainer.innerHTML = ''   // On supprime toutes les activités qui existent dans cette div
-   for(let j = 0; j < categoriesByResources[index].categories.length; j++) {
-       NB_CATEGORY_EDIT = NB_CATEGORY_EDIT + 1;
-       let newSelect = document.createElement('select');
-       let btnSubmit = document.getElementById('edit--submit')
-       newSelect.addEventListener('change', function() {
-               btnSubmit.disabled = true;
-         });
-       //Boucle pour remplir toutes les categs dans chaque select
-       for (let i = 0; i < selectSample.length; i++){
-           let option = document.createElement('option')
-           option.value = selectSample.options[i].value;
-           option.text = selectSample.options[i].text;
-           newSelect.add(option);        
-       }
-       //console.log(categoriesByResources[index].categories[j].idCategory)
-       newSelect.value = categoriesByResources[index].categories[j].idCategory;
-
-       newSelect.setAttribute('name' , 'select-'+SELECT_ID_EDIT);
-
-       let formField = document.createElement("div");
-       formField.setAttribute('class', 'form-field category-'+SELECT_ID_EDIT);
-
-       //style pour le select
-       newSelect.style.border = 'none';
-       //Image pour delete une categ
-       let image = new Image();
-       image.src = 'img/delete.svg';
-       image.style.marginLeft = '30px';
-       image.setAttribute('id','img-'+SELECT_ID_EDIT)
-       image.setAttribute('onclick', 'edit__deleteSelect(this.id)')
-       formField.appendChild(newSelect);
-       formField.appendChild(image);
-       categoriesContainer.appendChild(formField);
-
-       SELECT_ID_EDIT = SELECT_ID_EDIT +1;
-
-   }
-
-   document.getElementById('edit--nbcategory').value = NB_CATEGORY_EDIT
-
-
+        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+            categoriesContainer.children[i].children[0].checked = true;
+        }
+    }
    
 }
 
@@ -212,40 +151,24 @@ function edit__handleAddCategory() {
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
  */
  function edit__verifyChanges() {
-    let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('edit--categories-container')
-
+    let btnAdd = document.getElementById('btn-none-edit-resource')
+    let nbCategory = document.getElementById('edit--nbcategory');
+    var nbCateg = 0;
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
-    for (let i = 0; i < NB_CATEGORY_EDIT; i++) {
-        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ Number(i))
-        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-'+ Number(i))          
-    }
-
-    let categoriesCheckDuplicata = []
-    for (let i = 0; i < NB_CATEGORY_EDIT; i++) {
-        let category = document.getElementById('id-category-'+ Number(i))
-        categoriesCheckDuplicata.push(category.value)
-    }
-    
-
-    if(hasDuplicates(categoriesCheckDuplicata) == false) {
-        if (document.getElementById('edit--resourcename').value === '') {
-            formOk = false
-            alert('Veuillez saisir un nom pour la ressource !')
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
         }
-    
-        if (formOk) {
-            let btnSubmit = document.getElementById('edit--submit')
-            btnSubmit.disabled = false;
-        }
-    
-
-    
-    }
-    else {
-        alert("Il y a plusieurs fois la même catégorie !")
-    }
+        
+    } 
+        
+    nbCategory.value = nbCateg;
+    btnAdd.click();
 
 }

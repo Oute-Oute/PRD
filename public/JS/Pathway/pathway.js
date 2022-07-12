@@ -20,7 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
+    console.log('oui')
+    let modals = document.getElementsByClassName('modal-dialog')
+    let len = modals.length
+    console.log(len)
+    for (let i = 0; i < len; i++) {
+        modals[i].style.maxWidth = '70%'
+    }
 })
+
 
 /**
  * Permet d'afficher la fenêtre modale d'informations
@@ -29,14 +38,27 @@ function showInfosPathway(id, name) {
     document.getElementById('pathway-id').innerText = id;
     document.getElementById('pathway-name').innerText = name;
     $('#infos-pathway-modal').modal("show");
+    
 
+}
+
+function showResourcesEditing() {
+
+    let div = createDivEdit(0)
+
+    let divres = document.getElementById('resources-editing')
+    divres.appendChild(div)
 }
 
 /**
  * Permet d'afficher la fenêtre modale d'ajout
  */
 function showNewModalForm(){
+    console.log("non")
     $('#add-pathway-modal').modal("show");
+    //$('#add-pathway-resources-modal').modal("show");
+    //document.getElementById('add-pathway-resources-modal').style.display = 'flex'
+
 }
 
 /**
@@ -90,13 +112,14 @@ function handleAddActivity() {
     //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
 
     let imgEdit = new Image();
-    imgEdit.src = 'img/edit.svg'
+    imgEdit.src = '../img/edit.svg'
     imgEdit.setAttribute('id','img-'+SELECT_ID)
+    //imgEdit.setAttribute('onclick', 'showResourcesEditing(this.id)')
     imgEdit.setAttribute('onclick', 'editSelect(this.id)')
     imgEdit.setAttribute('title', 'Éditer les ressources de l\'activité')
 
     let imgDelete = new Image();
-    imgDelete.src = 'img/delete.svg'
+    imgDelete.src = '../img/delete.svg'
     imgDelete.setAttribute('id','img-'+SELECT_ID)
     imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
     imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
@@ -125,12 +148,18 @@ function handleAddActivity() {
     divcontainer.setAttribute('id', 'div-activity-'+SELECT_ID)
     divcontainer.appendChild(pTitle)
     divcontainer.appendChild(div)
-    divcontainer.appendChild(createDivEdit()) /* div edit  */
+    //divcontainer.appendChild(createDivEdit()) /* div edit  */
 
-    let divEdit = document.createElement('div')
-    divEdit.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
-    //divcontainer.appendChild(divEdit)
-    divcontainer.appendChild(divEdit)
+    //let divEdit = document.createElement('div')
+    //divEdit.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
+    //divEdit.appendChild(createDivEdit())
+    //divcontainer.appendChild(createDivEdit())
+    let div_res_edit = document.getElementById('resources-editing')
+    //console.log(div_res_edit)
+    //console.log(divEdit)
+    div_res_edit.appendChild(createDivEdit())
+
+ //   divcontainer.appendChild(divEdit)
 
     divAddActivity.appendChild(divcontainer)
 
