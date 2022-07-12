@@ -128,10 +128,8 @@ function deleteSelect(id) {
  */
  function verifyChanges() {
 
-    let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
-    let categoriesChecked = []
     let btnAdd = document.getElementById('btn-none-add-human-resource')
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
@@ -149,7 +147,6 @@ function deleteSelect(id) {
         
     nbCategory.value = nbCateg;
     btnAdd.click();
-    
     
 }
 
@@ -173,6 +170,7 @@ function hideNewModalForm() {
 }
 
 function hideEditModalForm() {
+
     $('#edit-human-resource-category-modal').modal("hide");
     $('#edit--human-resource-modal').modal("hide");
     $('#edit--material-resource-category-modal').modal("hide");
