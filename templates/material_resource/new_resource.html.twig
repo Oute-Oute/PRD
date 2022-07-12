@@ -21,25 +21,22 @@
                     <fieldset id="fs-add-material-category">
                         <legend>Choisissez les catégories de votre ressource</legend>
                 
-                        <div id="categories-container"> 
-                            <select style="display:none;" class="select-category-sample" class="slct-add-category" > 
-
+                         <div id="categories-container"> 
                                 {% for material_resource_category in material_resources_categories %} 
-                                    <option value="{{ material_resource_category.id }}"> {{ material_resource_category.categoryname }} </option>
+                                <div>
+                                <input value = '{{material_resource_category.id }}'type="checkbox" id="category" name="category">
+                                <label id = "lbl-category" for="category">{{ material_resource_category.categoryname }}</label>
+                                </div>
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>
                                 {% endfor %}
-
-                            </select>
-                        </div>
-                        <button type="button" id='btn-add-category' onclick="handleAddHumanCategory()"> <b> Ajouter une catégorie </b> </button> 
-
+                            </div>
                     </fieldset>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                    <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+                    <button type = "button" onclick="verifyChanges()" class="btn-valide btn-secondary"> Ajouter </button>
+                    <button id = 'btn-none-add-human-resource' style = "display : none" type = "submit"></button>
 
                 </div>
     	    </form>

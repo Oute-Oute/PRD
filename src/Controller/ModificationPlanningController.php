@@ -60,9 +60,9 @@ class ModificationPlanningController extends AbstractController
         $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
         $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
         $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
-        
+        $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
 
-        if ($this->alertModif($dateModified, $idUser, $doctrine)) {
+        if ($this->alertModif($dateModified, $idUser, $doctrine, $settingsRepository)) {
             $this->modificationAdd($dateModified, $idUser, $doctrine);
         }
 
@@ -82,12 +82,12 @@ class ModificationPlanningController extends AbstractController
             'listAppointmentsJSON' => $listAppointmentJSON,
             'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
             'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
-
+            'settingsRepository' => $settingsRepository,
         ]);
     }
 
     //Fonction vérifiant si une modification a lieu ou non pour le jour souhaité, si c'est le cas l'utilisateur ne peut pas accéder à la page. 
-    public function alertModif($dateModified, $idUser, $doctrine)
+    public function alertModif($dateModified, $idUser, $doctrine, $settingsRepository)
     {
         $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modifications = $modificationRepository->findAll();
@@ -95,6 +95,11 @@ class ModificationPlanningController extends AbstractController
         $dateModified = str_replace('T12:00:00', '', $dateModified);
         $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
         $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+
+        $modifAlertTime = 8;
+        foreach($settingsRepository as $setting){
+            $modifAlertTime = intdiv($setting->getAlertmodificationtimer(), 60000);
+        }
 
         $modifArray = array();
         $i = 0;
@@ -114,7 +119,7 @@ class ModificationPlanningController extends AbstractController
 
             if ($modifArray[$i]['dateModified'] == $dateModified) {
                 // ATTENTION, le timer doit être supérieur à celui du popup
-                if ($intervalHour * 60 + $intervalMinutes < 10) {
+                if ($intervalHour * 60 + $intervalMinutes < $modifAlertTime + 2) {
                     if ($idUser == $modifArray[$i]['userId']) { // Empeche d'envoyer une erreur si un user quitte et revient
                         $modificationRepository->remove($modification, true);
                     }

@@ -1,5 +1,6 @@
 // Timeout pour afficher le popup (pour éviter une modif trop longue)
-var modifAlertTime = 480000; // En millisecondes
+var modifAlertTime = document.getElementById('modifAlertTime1'); // En millisecondes
+console.log(modifAlertTime); 
 var timerAlert;
 setTimeout(showPopup, modifAlertTime);
 
