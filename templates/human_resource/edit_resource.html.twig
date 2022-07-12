@@ -26,7 +26,7 @@
                                 {% for human_resource_category in human_resources_categories %} 
                                 <div>
                                 <input value = '{{human_resource_category.id }}'type="checkbox" id="category" name="category">
-                                <label id = "lbl-category" for="category">{{ human_resource_category.categoryname }}</label>
+                                <label id = "lbl-category">{{ human_resource_category.categoryname }}</label>
                                 </div>
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>

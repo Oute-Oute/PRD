@@ -29,7 +29,7 @@
                                 {% for material_resource_category in material_resources_categories %} 
                                 <div>
                                 <input value = '{{material_resource_category.id }}'type="checkbox" id="category" name="category">
-                                <label id = "lbl-category" for="category">{{ material_resource_category.categoryname }}</label>
+                                <label id = "lbl-category">{{ material_resource_category.categoryname }}</label>
                                 </div>
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>
