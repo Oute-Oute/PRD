@@ -52,7 +52,7 @@ class ConsultationPlanningController extends AbstractController
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
-                'datetoday' => $date,
+                'currentdate' => $date,
                 'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
                 'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
@@ -129,6 +129,11 @@ class ConsultationPlanningController extends AbstractController
     return $resourceArray;
     }
 
+    /*
+     * @brief This function get the unavailabitity of the material resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the material resources.
+     */
     public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
@@ -149,6 +154,11 @@ class ConsultationPlanningController extends AbstractController
         return $materialResourcesUnavailableArray;
     }
     
+        /*
+     * @brief This function get the unavailabitity of the human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the human resources.
+     */
     public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
@@ -168,6 +178,12 @@ class ConsultationPlanningController extends AbstractController
         }
         return $humanResourcesUnavailableArray;
     }
+
+    /*
+     * @brief This function get all the unavailabitity of the material and human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability
+     */
     public function getUnavailabity(ManagerRegistry $doctrine){
         $humanUnavailabity = $this->getHumanResourceUnavailables($doctrine);
         $materialUnavailabity = $this->getMaterialResourcesUnavailables($doctrine);
