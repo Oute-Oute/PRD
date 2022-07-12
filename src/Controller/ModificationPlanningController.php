@@ -367,6 +367,7 @@ class ModificationPlanningController extends AbstractController
                 'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
                 'display'=>'background',
                 'color'=>'#ff0000',
+                'type'=>'unavailability'
             );
         }
         return $materialResourcesUnavailableArray;
@@ -392,6 +393,7 @@ class ModificationPlanningController extends AbstractController
                 'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
                 'display'=>'background',
                 'color'=>'#ff0000',
+                'type'=>'unavailability'
             );
         }
         return $humanResourcesUnavailableArray;
