@@ -90,8 +90,6 @@ function setEvents() {
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent() {
-  let selectContainerErrorTime = document.getElementById("time-selected-error");
-  selectContainerErrorTime.style.display = "none";
   let listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
@@ -199,10 +197,9 @@ function AddEventValider() {
     );
   }
 
-  if (
-    earliestAppointmentDate <= choosenAppointmentDate &&
-    EndPathwayDate <= latestAppointmentDate
-  ) {
+  if (earliestAppointmentDate >= choosenAppointmentDate || EndPathwayDate >= latestAppointmentDate) {
+      alert("l'heure de début définie ne correspond pas avec les paramètres du rendez-vous")
+    }
 
     //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
     var successorsActivitybIdList = [];
@@ -344,15 +341,8 @@ function AddEventValider() {
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
-  } 
   
-  else {
-    let selectContainerErrorTime = document.getElementById(
-      "time-selected-error"
-    );
-    selectContainerErrorTime.style.display = "block";
   }
-}
 
 function showSelectDate() {
   let selectContainerDate = document.getElementById("select-container-date");
