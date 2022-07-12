@@ -46,7 +46,7 @@ function modifyEvent() {
   var newDelay = oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
   var editByClick = true;
 
-  updateEventsAppointment(oldEvent, newDelay, editByClick);
+  updateEventsAppointment(oldEvent);
   $("#modify-planning-modal").modal("toggle");
 }
 
@@ -445,7 +445,7 @@ function changePlanning() {
 }
 
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
-function updateEventsAppointment(oldEvent, newDelay, editByClick) {
+function updateEventsAppointment(oldEvent) {
   var listEvent = calendar.getEvents();
   let listOldEvent = calendar.getEvents();
   var appointmentId = oldEvent._def.extendedProps.appointment;
@@ -462,16 +462,7 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
     }
   });
 
-  var eventFirst = listEventAppointment[0];
-  var eventLast = listEventAppointment[0];
-  listEventAppointment.forEach((eventAppointment) => {
-    if (eventAppointment.end > eventLast.end) {
-      eventLast = eventAppointment;
-    }
-    if (eventAppointment.start < eventFirst.start) {
-      eventFirst = eventAppointment;
-    }
-  });
+  var newEvent = calendar.getEventById(oldEvent._def.publicId);
 
   var listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value
@@ -493,54 +484,48 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
       appointment.latestappointmenttime.split("T")[1]
   );
 
-  var isEditable = true;
+  var currentDate = new Date(currentDateStr.split("T")[0] + " 00:00:00");
+  var workingHoursStart = new Date(currentDateStr.split("T")[0] + " 00:00:00");
+  var workingHoursEnd = new Date(currentDateStr.split("T")[0] + " 23:59:00");
+
+  var newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+
+
+  humanResources.forEach((resource) => {
+    newEventAppointment._def.resourceIds.forEach((resourceId => {
+      if(resource.id == resourceId){
+        var isOld = false;
+        oldEvent._def.resourceIds.forEach((oldResourceId) => {
+          if(resource.id == oldResourceId){
+            isOld = true;
+          }
+        })
+        if(isOld == false){
+          workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
+          workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+          if(!(workingHoursStart <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) && 
+          new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+            alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
+          }
+        }
+      }
+    }))
+  })
+
   if (
-    earliestAppointmentDate <=
-      new Date(eventFirst.start.getTime() - 2 * 60 * 60 * 1000 - newDelay) &&
-    new Date(eventLast.end.getTime() - 2 * 60 * 60 * 1000 - newDelay) <=
-      latestAppointmentDate
+    earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
+    new Date(newEvent.end.getTime() - 2 * 60 * 60 * 1000) <= latestAppointmentDate
   ) {
     calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
     calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
     calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
-    listEventAppointment.forEach((eventAppointment) => {
-      if (editByClick) {
-        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var endStr = formatDate(endDate).replace(" ", "T");
-        eventAppointment.setStart(startStr);
-        eventAppointment.setEnd(endStr);
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      } 
-      else if (eventAppointment._def.publicId != oldEvent._def.publicId) {
-        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var endStr = formatDate(endDate).replace(" ", "T");
-        eventAppointment.setStart(startStr);
-        eventAppointment.setEnd(endStr);
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      }
-      else {
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      }
-    });
-    listEventAppointment.forEach((currentModifyEvent) => {
-      listOldEvent.forEach((oldEventSet) => {
-        var newEventAppointment = currentModifyEvent;
-        if(currentModifyEvent._def.publicId == oldEvent._def.publicId){
-          newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
-        }
+
+    listOldEvent.forEach((oldEventSet) => {
         oldEventSet._def.resourceIds.forEach((oldResource) => {
           newEventAppointment._def.resourceIds.forEach((newResource) => {
             if(newResource != "h-default" && newResource != "m-default"){
-              if(newResource == oldResource) {
-                if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
-                  if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
+                if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
+                  if(newResource == oldResource) {
                     var resourceTitle = "";
                     if (newResource.substring(0, 8) == "material"){
                       materialResources.forEach((material) => {
@@ -556,51 +541,22 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
                         }
                       })
                     }
-                    alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", on ne peut donc pas mettre " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
-                    isEditable = false;
+                    if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                      alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", il risque d'y avoir un conflit avec " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
+                    }
+                    else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
+                      alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
+                    }
                   }
-                }
               }
             }
           })
         })
       })
-    })
   }
   else {
-    alert("Le parcours doit être compris entre : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
-    isEditable = false;
+    alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
   }
-      
-      if (!isEditable){
-        listEventAppointment.forEach((newEventAppointment) => {
-          listOldEvent.forEach((oldEventSet) => {
-            if(newEventAppointment._def.publicId == oldEventSet._def.publicId){
-              if(newEventAppointment._def.publicId == oldEvent._def.publicId){
-                calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-                calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-                var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
-                var startStr = formatDate(startDate).replace(" ", "T");
-                var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
-                var endStr = formatDate(endDate).replace(" ", "T");
-                calendar.getEventById(oldEvent._def.publicId)._def.resourceIds = oldEvent._def.resourceIds;
-                calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
-                calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
-              }
-              else {
-                newEventAppointment._def.ui.backgroundColor = RessourcesAllocated(oldEventSet);
-                newEventAppointment._def.ui.borderColor = RessourcesAllocated(oldEventSet);
-                var startDate = new Date(oldEventSet.start.getTime()-(2*60*60*1000));
-                var startStr = formatDate(startDate).replace(" ", "T");
-                var endDate = new Date(oldEventSet.end.getTime()-(2*60*60*1000));
-                var endStr = formatDate(endDate).replace(" ", "T");
-                newEventAppointment.setStart(startStr);
-                newEventAppointment.setEnd(endStr);
-              }
-            }
-          })
-        })
-      }
 }
 
 
@@ -726,7 +682,7 @@ function createCalendar(typeResource) {
       var modifyEvent = event.event;
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var editByClick = false;
-      updateEventsAppointment(oldEvent, newDelay, editByClick);
+      updateEventsAppointment(oldEvent);
       calendar.render();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
