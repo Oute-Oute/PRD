@@ -88,7 +88,7 @@ function addEvent() {
   let selectContainerErrorTime = document.getElementById("time-selected-error");
   selectContainerErrorTime.style.display = "none";
   let listeAppointments = JSON.parse(
-    document.getElementById("listeAppointments").value
+    document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
   let appointmentSelection = document.getElementById("select-appointment");
 
@@ -198,6 +198,7 @@ function AddEventValider() {
     earliestAppointmentDate <= choosenAppointmentDate &&
     EndPathwayDate <= latestAppointmentDate
   ) {
+
     //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
     var successorsActivitybIdList = [];
     for (let i = 0; i < listeSuccessors.length; i++) {
@@ -212,95 +213,129 @@ function AddEventValider() {
         firstActivitiesPathway.push(activitiesInPathwayAppointment[i]);
       }
     }
-    //On récupère tous les id des premières activités 
-    var idActivitiesA=[]; 
-    for(let i=0; i<firstActivitiesPathway.length; i++){
-      idActivitiesA.push(firstActivitiesPathway.id);
-    }
-    //On récupère les Activités correspondantes à chaque id
+
     var activitiesA=[];
-    for(let i=0; i<listeActivities.length; i++){
-        if(idActivitiesA==listeActivities[i].id){
-          activitiesA.push(listeActivities[i]); 
-        }
+    //Tableau permettant de vérifier qu'il n'y ai pas la même activityB qui est push dans le tableau activtiesA
+    var allActivtiesA=[]; 
+    for(let i=0; i<firstActivitiesPathway.length; i++){
+      let activityA={activity:firstActivitiesPathway[i],delaymin:0}; 
+      activitiesA.push(activityA); 
+      allActivtiesA.push(firstActivitiesPathway[i].id); 
     }
+    do{
 
-    //Création des activités daans FullCalendar
-    
-    for(let i=0; i<activitiesA.length; i++){
-      var quantityHumanResources = 0;
-      var quantityMaterialResources = 0; 
-      var activityResourcesArray=[]; 
-       //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
-       for (let i = 0; i < listeActivitHumanResource.length; i++) {
-        if (listeActivitHumanResource[i].activityId == idactivitya) {
-          quantityHumanResources += listeActivitHumanResource[i].quantity;
-        }
-      }
-
-      //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
-      for (let i = 0; i < quantityHumanResources; i++) {
-        activityResourcesArray.push("h-default");
-      }
-
-      //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
-      for (let i = 0; i < listeActivityMaterialResource.length; i++) {
-        if (listeActivityMaterialResource[i].activityId == idactivitya) {
-          quantityMaterialResources +=
-            listeActivityMaterialResource[i].quantity;
-        }
-      }
-      countAddEvent++;
-      //Ajout d'un event au calendar
-      var event = calendar.addEvent({
-        id: "new" + countAddEvent,
-        description: "",
-        resourceIds: activityResourcesArray,
-        title: activitiesA[i].name.replaceAll("3aZt3r", " "),
-        start: PathwayBeginDate,
-        end: PathwayBeginDate.getTime() + activitiesA[i].duration * 60000,
-        patient:appointment.idPatient[0].lastname +" " +appointment.idPatient[0].firstname,
-        appointment: appointment.id,
-        activity: activitiesA[i].id,
-        type: "activity",
-        humanResources: [],
-        materialResources: [],
-        pathway: appointment.idPathway[0].title,
-      });
-    }
-
-    //Récupération de chaque idActivityB pour chaque Activités A 
-    var successorsActivitiesA=[]; 
-    for(let i=0; i<idActivitiesA.length; i++){
-      for(let j=0; j<listeSuccessors.length; j++){
-        if(idActivitiesA[i]==listeSuccessors[j].activityA){
-          let successor={delaymin:listeSuccesors[j].delaymin,activityB:listeSuccessors[j].activityB}; 
-          successorsActivitiesA.push(successor); 
-        }
-      }
-    }
-
-    //On garde pour chaque activityB différentes dans successorsActivitiesA celle qui a le delaymin le plus grand
-    for(let i=0; i<successorsActivitiesA.length; i++){
-      for(let j=0; j<successorsActivitiesA.length;j++){
-        if(successorsActivitiesA[i].activityB==successorsActivitiesA[j].activityB && i!=j){
-          if(successorsActivitiesA[i].delaymin<successorsActivitiesA[j].delaymin){
-            successorsActivitiesA.deleteRow(i); 
+      //Création des activités dans FullCalendar
+      for(let i=0; i<activitiesA.length; i++){
+        var quantityHumanResources = 0;
+        var quantityMaterialResources = 0; 
+        var activityResourcesArray=[]; 
+        //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+        for (let j = 0; j < listeActivitHumanResource.length; j++) {
+          if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+            quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
-          else{
-            successorsActivitiesA.deleteRow(j); 
+        }
+
+        //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
+        for (let j = 0; j< quantityHumanResources; j++) {
+          activityResourcesArray.push("h-default");
+        }
+
+        //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
+        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+            quantityMaterialResources +=
+            listeActivityMaterialResource[j].quantity;
+          }
+        }
+        countAddEvent++;
+        //Ajout d'un event au calendar
+        var event = calendar.addEvent({
+          id: "new" + countAddEvent,
+          description: "",
+          resourceIds: activityResourcesArray,
+          title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
+          start: PathwayBeginDate.getTime()+activitiesA[i].delaymin*60000,
+          end: PathwayBeginDate.getTime() + activitiesA[i].activity.duration * 60000,
+          patient:appointment.idPatient[0].lastname +" " +appointment.idPatient[0].firstname,
+          appointment: appointment.id,
+          activity: activitiesA[i].activity.id,
+          type: "activity",
+          humanResources: [],
+          materialResources: [],
+          pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+        });
+        
+      }
+      
+      var successorsActivitiesA=[]; 
+       //On reset le tableau successorsActivitiesA
+       for(let i=successorsActivitiesA.length-1; i>0; i--){
+        successorsActivitiesA.splice(i);
+      }
+      //Récupération de chaque idActivityB pour chaque Activités A 
+      
+      for(let i=0; i<activitiesA.length; i++){
+        for(let j=0; j<listeSuccessors.length; j++){
+          if(activitiesA[i].activity.id==listeSuccessors[j].idactivitya){
+            let successor={delaymin:listeSuccessors[j].delaymin,activityB:listeSuccessors[j].idactivityb}; 
+            successorsActivitiesA.push(successor); 
           }
         }
       }
-    }
 
-    //création des events à partir de successorsActivitiesB 
+      //On garde pour chaque activityB différentes dans successorsActivitiesA celle qui a le delaymin le plus grand
+      for(let i=0; i<successorsActivitiesA.length; i++){
+        for(let j=0; j<successorsActivitiesA.length;j++){
+          if(successorsActivitiesA[i].activityB==successorsActivitiesA[j].activityB && i!=j){
+            if(successorsActivitiesA[i].delaymin<successorsActivitiesA[j].delaymin){
+              successorsActivitiesA.splice(i); 
+            }
+            else{
+              successorsActivitiesA.splice(j); 
+            }
+          }
+        }
+      }
 
-    //Début de la création des events
-    do {
+      //On passe les SuccessorsActivitiesA dans le tableau ActivitiesA
+      //on récupère tout d'aboprd la plus longue activité pour toutes les Activities A
+      var biggerDuration=0; 
+      for(let i=0; i<activitiesA.length; i++){ 
+          if(biggerDuration<activitiesA[i].activity.duration){
+            biggerDuration=activitiesA[i].activity.duration; 
+          }
+      }
+      //On supprime les éléments de ActivitiesA
+      for(let i=activitiesA.length-1;i>=0;i--){
+        activitiesA.splice(i); 
+      }
+      
+      //On retrouve les Activités dans la liste d'activités et on les ajoutes au tableau
+      for(let i=0; i<successorsActivitiesA.length; i++){
+        for(let j=0; j<listeActivities.length; j++){
+          
+          if(successorsActivitiesA[i].activityB==listeActivities[j].id){ 
+            
+            for(let k=0; k<allActivtiesA.length;k++){
+              if(allActivtiesA.includes(listeActivities[j].id)==false){
+                let activityA={activity:listeActivities[j],delaymin:successorsActivitiesA[i].delaymin}
+                activitiesA.push(activityA); 
+                allActivtiesA.push(listeActivities[j].id); 
+              }
+            }
+          }
+        }
+      }
+      let biggerdelay=0; 
+      for(let i=0; i<activitiesA.length; i++){
+          if(activitiesA[i].delaymin>biggerdelay){
+            biggerdelay=activitiesA[i].delaymin; 
+          }
+      }
+      PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
 
-    
-    } while (idactivityB != undefined);
+    } while (successorsActivitiesA.length!=0);
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
