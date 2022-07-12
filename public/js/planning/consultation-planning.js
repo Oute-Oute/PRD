@@ -60,27 +60,7 @@ function createEvents() {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-  var materialUnavailabilities;
-  var humanUnavailabilities;
-  var unavailabilities;
-  if (document.getElementById("MaterialUnavailables") != null) {
-    materialUnavailabilities = JSON.parse(
-      document.getElementById("MaterialUnavailables").value
-    );
-  }
-  if (document.getElementById("HumanUnavailables") != null) {
-    humanUnavailabilities = JSON.parse(
-      document.getElementById("HumanUnavailables").value
-    );
-  }
-  if (humanUnavailabilities.length > 0 && materialUnavailabilities.length > 0) {
-    unavailabilities = materialUnavailabilities.concat(humanUnavailabilities);
-  } else if (humanUnavailabilities.length == 0) {
-    unavailabilities = materialUnavailabilities;
-  } else if (materialUnavailabilities.length == 0) {
-    unavailabilities = humanUnavailabilities;
-  }
-  events = events.concat(unavailabilities); //add the unavailabilities to the events
+
 
   return events;
 }
@@ -149,33 +129,33 @@ function createCalendar(resources) {
       var start = activity.start; //get the start date of the event
       var end = activity.end; //get the end date of the event
       var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+      console.log(humanResources);
       var humanResourcesNames = ""; //create a string with the human resources names
-      if (humanResources.length > 1) {
+      if (humanResources.length > 0) {
         for (var i = 0; i < humanResources.length - 1; i++) {
           //for each human resource except the last one
           if (humanResources[i][1] != undefined) {
             //if the human resource exist
-            humanResourcesNames += humanResources[i][1] + "; "; //add the human resource name to the string with a ; and a space
+            humanResourcesNames += humanResources[i] + "; "; //add the human resource name to the string with a ; and a space
           }
         }
-        humanResourcesNames += humanResources[i][1]; //add the last human resource name to the string
+        humanResourcesNames += humanResources[i]; //add the last human resource name to the string
       } else humanResourcesNames = "Aucune ressource associée";
-
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       var materialResourcesNames = ""; //create a string with the material resources names
       console.log(materialResources);
 
-      if (materialResources.length > 1) {
+      if (materialResources.length > 0) {
         console.log("test");
         for (var i = 0; i < materialResources.length - 1; i++) {
           //for each material resource except the last one
-          if (materialResources[i][1] != undefined) {
+          if (materialResources[i] != undefined) {
             //if the material resource exist
-            materialResourcesNames += materialResources[i][1] + "; "; //add the material resource name to the string with a ; and a space
+            materialResourcesNames += materialResources[i] + "; "; //add the material resource name to the string with a ; and a space
           }
         }
 
-        materialResourcesNames += materialResources[i][1]; //add the last material resource name to the string
+        materialResourcesNames += materialResources[i]; //add the last material resource name to the string
       } else materialResourcesNames = "Aucune ressource associée";
 
       //set data to display in the modal window
@@ -210,23 +190,6 @@ function createCalendar(resources) {
               startTime: patient[0]["businessHours"]["startTime"], //set the start time of the business hours
               endTime: patient[0]["businessHours"]["endTime"], //set the end time of the business hours
             },
-          });
-        }
-      }
-      break;
-    case "Parcours": //if we want to display by the parcours
-      var tempArray = JSON.parse(
-        document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
-      ); //get the data of the appointments
-      for (var i = 0; i < tempArray.length; i++) {
-        var temp = tempArray[i];
-        pathway = temp["pathway"]; //get the resources data
-        if (calendar.getResourceById(pathway[0]["id"]) == null) {
-          //if the resource is not already in the calendar
-          calendar.addResource({
-            //add the resources to the calendar
-            id: pathway[0]["id"], //set the id of the resource
-            title: pathway[0]["title"], //set the title of the resource
           });
         }
       }

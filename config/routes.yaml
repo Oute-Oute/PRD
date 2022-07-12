@@ -133,10 +133,15 @@ Pathways:
   controller: App\Controller\PathwayController:pathwayGet
   methods: [GET]
 
-PathwaysPost:
-  path: /pathwayAdd
+PathwayAdd:
+  path: /pathway/add
   controller: App\Controller\PathwayController:pathwayAdd
   methods: [POST]
+
+PathwayAddPage:
+  path: /pathway/add
+  controller: App\Controller\PathwayController:pathwayAddPage
+  methods: [GET]
 
 PathwayEdit:
   path: /pathway/edit
@@ -183,4 +188,14 @@ index_mon_profil:
 app_activity_new:
   path: /activities/new
   controller: App\Controller\ActivityController:new
+  methods: [POST]
+
+Settings:
+  path: /settings
+  controller: App\Controller\SettingsController:settingsGet
+  methods: [GET]
+
+SettingsEdit:
+  path: /settings/edit
+  controller: App\Controller\SettingsController:settingsEdit
   methods: [POST]
