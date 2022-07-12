@@ -10,10 +10,8 @@
             </div>
             <form id = "edit-form-resource" action="{{ path('MaterialResourceEdit') }}" method="post">
                 <div class="modal-body">
-
                     <input style="display:none;" name="nbcategory" id="edit--nbcategory">
                     <input style="display:none;" name="id" id="edit--resourceid">
-    
                     <div class='flex-row'>
                         <div class="form-field-label flex-col">
                             <h4><label for='name'> Nom de la ressource </label></h4>
@@ -27,26 +25,23 @@
                     <fieldset id="fs-add-material-category">
                         <legend>Choisissez les catégories de votre ressource</legend>
                 
-                        <div id="edit--categories-container"> 
-                            <select style="display:none;" class="select-category-sample" class="slct-add-category" > 
- 
+                         <div id="edit--categories-container"> 
                                 {% for material_resource_category in material_resources_categories %} 
-                                    <option value="{{ material_resource_category.id }}"> {{ material_resource_category.categoryname }} </option>
+                                <div>
+                                <input value = '{{material_resource_category.id }}'type="checkbox" id="category" name="category">
+                                <label id = "lbl-category">{{ material_resource_category.categoryname }}</label>
+                                </div>
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>
                                 {% endfor %}
-
-                            </select>
-                        </div>
-                        <button type="button" id='btn-add-category' onclick="edit__handleAddCategory()"> <b> Ajouter une catégorie </b> </button> 
-
+                            </div>
                     </fieldset>
                 </div>
                 <div class="modal-footer">
                 
                     <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
-                    <button type='button' onclick="edit__verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                    <button id='edit--submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+                    <button type='button' onclick="edit__verifyChanges()" class="btn-consult btn-secondary"> Ajouter  </button>
+                    <button id = 'btn-none-edit-resource' style = "display : none" type = "submit"></button>
                 </div>
     	    </form>
         </div>

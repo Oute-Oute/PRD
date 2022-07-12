@@ -111,6 +111,8 @@ function createCalendar(resources) {
     resourceAreaWidth: "20%", //set the width of the resources area
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
     events: events, //set the events
+    filterResourcesWithEvents: true,    
+    
 
     eventDidMount: function (info) {
       $(info.el).tooltip({

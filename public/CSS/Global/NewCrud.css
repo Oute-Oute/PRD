@@ -128,3 +128,7 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     flex-direction : column;
 
 }
+
+#lgd-working-hours{
+    margin-left : 100px;
+}
