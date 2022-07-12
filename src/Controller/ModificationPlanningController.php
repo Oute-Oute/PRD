@@ -32,12 +32,14 @@ use Symfony\Component\Validator\Constraints\Length;
  */
 class ModificationPlanningController extends AbstractController
 {
+    public $dateModified;
+
     /**
      * Fonction pour l'affichage de la page modification planning par la méthode GET
      */
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
-        $dateModified = array();
+        global $dateModified;
         //Récupération de la date à laquelle on modifie le planning
         if (isset($_GET['date'])) {
             $dateModified = $_GET["date"];
@@ -311,19 +313,20 @@ class ModificationPlanningController extends AbstractController
      */
     public function getWorkingHours(ManagerRegistry $doctrine, $resource)
     {
+        global $dateModified;
+        $dateTimeModified = explode("T", $dateModified);
+        $dayWeek = date('w', strtotime($dateTimeModified[0]));
         //recuperation du pathway depuis la base de données
-        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findOneBy(['humanresource' => $resource, 'dayweek' => $dayWeek]);
         $workingHoursArray = array();
-        foreach ($setOfWorkingHours as $workingHours) {
-            $dayWorkingHours = $workingHours->getDayweek();
-            //ajout des données du pathway dans un tableau
-            $workingHoursArray[] = array(
-                'day' => $dayWorkingHours,
-                'startTime' => ($workingHours->getStarttime()->format('H:i')),
-                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+        $dayWorkingHours = $workingHours->getDayweek();
+        //ajout des données du pathway dans un tableau
+        $workingHoursArray[] = [
+            'day' => $dayWorkingHours,
+            'startTime' => ($workingHours->getStarttime()->format('H:i')),
+            'endTime' => ($workingHours->getEndtime()->format('H:i')),
+        ];
 
-            );
-        }
         return $workingHoursArray;
     }
 
