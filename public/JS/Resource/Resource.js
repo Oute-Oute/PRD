@@ -177,13 +177,31 @@ function hideEditModalForm() {
     $('#edit--material-resource-modal').modal("hide");
 }
 
-function change_tab(id)
+function change_tab_material(id)
 {
   document.getElementById("resources").className="notselected";
   document.getElementById("categories").className="notselected";
   document.getElementById(id).className="selected";
   let resources = document.getElementById("list-material-resources")
   let categories = document.getElementById("list-material-categories")
+  if(id == 'resources') {
+    categories.style.display = 'none'
+    resources.style.display = 'block'
+  }
+  else {
+    categories.style.display = 'block'
+    resources.style.display = 'none'
+
+  }
+}
+
+function change_tab_human(id)
+{
+  document.getElementById("resources").className="notselected";
+  document.getElementById("categories").className="notselected";
+  document.getElementById(id).className="selected";
+  let resources = document.getElementById("list-human-resources")
+  let categories = document.getElementById("list-human-categories")
   if(id == 'resources') {
     categories.style.display = 'none'
     resources.style.display = 'block'
