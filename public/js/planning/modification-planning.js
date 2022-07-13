@@ -74,7 +74,7 @@ function formatDate(date) {
   );
 }
 
-function setEvents(array) {
+function setEvents() {
   var listCurrentEvents = calendar.getEvents();
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
@@ -84,9 +84,7 @@ function setEvents(array) {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("listScheduledActivitiesJSON").value = JSON.stringify(
-    array
-  );
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
   document.getElementById("list-resource").value = JSON.stringify(listResources);
   document.getElementById("validation-date").value = $_GET("date");
 }
