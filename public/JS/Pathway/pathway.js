@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHumanButton()
     fillActivityList()
 
+    console.log('hello')
+    let heightTitle = document.getElementById('name').offsetHeight
+    console.log(heightTitle)
+    let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
+    heightCreationDiv = heightCreationDiv - heightTitle
+    console.log(heightCreationDiv)
+    document.getElementById('list').style.height = heightCreationDiv+'px'
+
 })
 
 
@@ -38,6 +46,7 @@ function showInfosPathway(id, name) {
     $('#infos-pathway-modal').modal("show");
     
 
+     
 }
 
 
@@ -59,14 +68,7 @@ function hideNewModalForm() {
     $('#add-pathway-modal').modal("hide");
 }
 
-function disableSubmit() {
-    let btnSubmit = document.getElementById('submit')
-    btnSubmit.disabled=true
-}
-
 function initActivity() {
-    disableSubmit();
-
     ACTIVITY_IN_PROGRESS = new Object()
     ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
     ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
@@ -104,8 +106,6 @@ function addArray() {
 }
 
 function addActivity() {
-
-    disableSubmit();
 
     let verif = true
 
@@ -146,20 +146,34 @@ function addActivity() {
 
 function fillActivityList() {
 
-    let divActivitiesList = document.getElementById('activities-list')
+    let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
+    /*divActivitiesList.innerHTML = ''
     let label = document.createElement('label')
     label.setAttribute('class', 'label')
     label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)
+    divActivitiesList.appendChild(label)*/
 
     let indexActivityAvailable = 0
     for (let indexActivity = 0; indexActivity < RESOURCES_BY_ACTIVITIES.length; indexActivity++) {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
-            let activity = document.createElement('p')
-            activity.innerHTML +=  'Activité '+Number(indexActivityAvailable+1) +' : '
-            activity.innerHTML += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
-            activity.innerHTML += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
+            let activity = document.createElement('div')
+            activity.setAttribute('class', 'div-activity')
+            //activity.setAttribute('disabled', 'disabled')
+            let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
+            str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
+            str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
+            let p = document.createElement('p')
+            p.innerHTML = str
+            let imgDelete = new Image();
+            imgDelete.src = '../img/delete.svg'
+            imgDelete.setAttribute('id','img-'+indexActivity)
+            imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+            imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
+            imgDelete.style.width = '20px'
+            imgDelete.style.cursor = 'pointer'
+            activity.appendChild(p)
+            activity.appendChild(imgDelete)
             divActivitiesList.appendChild(activity)
             indexActivityAvailable++
         }
@@ -262,17 +276,16 @@ function handleAddActivity() {
  * @param {*} id : img-0, img-1
  */
 function deleteSelect(id) {
-    disableSubmit();
 
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
     id = getId(id)
     
     // On peut donc recuperer la div
-    let divToDelete = document.getElementById('div-activity-'+id)
+    /*let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
     let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.removeChild(divToDelete)
+    divAddActivity.removeChild(divToDelete)*/
     
     // On actusalise l'input qui contient le nb d'activité
     NB_ACTIVITY = NB_ACTIVITY - 1;
@@ -291,7 +304,6 @@ var DIV_TO_EDIT_OLD
  * @param {*} id : XXX-0, XXX-1
  */
 function editSelect(id) {
-    disableSubmit();
 
     document.getElementById('name').innerHTML = 'oui'
     //RESOURCES_BY_ACTIVITIES.length
@@ -366,10 +378,6 @@ function verifyChanges() {
 
     document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
 
-    if (formOk) {
-        let btnSubmit = document.getElementById('submit')
-        btnSubmit.disabled = false;
-    }
 }
 
 

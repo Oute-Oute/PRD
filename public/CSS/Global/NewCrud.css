@@ -7,7 +7,7 @@ div#pathway-form-body {
     margin: 20px 0px;
 }
 div#create-activity-container {
-    width: 50%;
+    width: 55%;
     /*border: 1px solid lightgray;*/
     border: 1px solid var(--main-blue);
     padding: 10px;
@@ -29,9 +29,26 @@ div#create-activity-container {
 
 
 div#activities-list {
-    width: 40%;
+    width: 35%;
     border: 1px solid var(--main-blue);
     padding: 10px;
+}
+div#activities-list #list{
+    display: flex;
+    flex-direction: column;
+    overflow-y:scroll; 
+}
+
+.div-activity {
+    margin: 5px 0px;
+    height: 35px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid lightgray;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 15px;
 }
 
 /* bouton pour ajouter des activités au parcours */
