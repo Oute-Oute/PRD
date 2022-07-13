@@ -9,7 +9,9 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        <script src="js/jquery-3.6.0.js"></script>
+        <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+        <link rel="stylesheet" href="{{ asset('CSS/Global/AppointmentCalendar.css') }}">
+        <script src='js/fullcalendar-scheduler/lib/main.js'></script>
         
         {% endblock %}
         
@@ -44,7 +46,7 @@
                     <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
                     <td>
                         <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
-                        <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.id }}', '{{ appointment.pathway.id }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+                        <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
                         <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
                             <input type="hidden" name="appointment" value="{{ appointment.id }}">
                             <button class="btn-delete btn-secondary">Supprimer</button>
@@ -61,4 +63,5 @@
 
 {{ include ('appointment/add_appointment.html.twig') }}
 {{ include ('appointment/edit_appointment.html.twig') }}
+{{ include ('appointment/select_day.html.twig')}}
 {% endblock %}

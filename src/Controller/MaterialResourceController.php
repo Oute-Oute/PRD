@@ -31,6 +31,7 @@ class MaterialResourceController extends AbstractController
         $materialResources = $materialResourceRepository->findAll();
         $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
         $nbMaterialResource = count($materialResources);
+        $nbMaterialResourceCategory = count($materialResourceCategories);
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
 
@@ -54,11 +55,26 @@ class MaterialResourceController extends AbstractController
                 array_push($categoriesByResources, $categoriesByResource);
             }
         }
+
+        $resourcesByCategories = array();
+        for($indexCategory = 0; $indexCategory< $nbMaterialResourceCategory; $indexCategory++) {
+            $listMaterialOf = $categOfMaterialResourceRepository->findBy(['materialresourcecategory' => $materialResourceCategories[$indexCategory]]);
+        
+            $resourcesByCategory = array();
+            for($indexMaterialOf = 0; $indexMaterialOf < count($listMaterialOf); $indexMaterialOf++) {
+                $materialResourceBy =  $materialResourceRepository->findBy(['id' => $listMaterialOf[$indexMaterialOf]->getMaterialresource()->getId()]);
+                if($materialResourceBy != null){
+                    array_push($resourcesByCategory,$materialResourceBy[0]);
+                }
+            }
+            array_push($resourcesByCategories, $resourcesByCategory);
+        }
         //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $materialResourceRepository->findBy(['available' => true]),
             'material_resources_categories' => $materialResourceCategories,
-            'categoriesByResources' => $categoriesByResources
+            'categoriesByResources' => $categoriesByResources,
+            'resourcesByCategories' => $resourcesByCategories
         ]); 
     }
 

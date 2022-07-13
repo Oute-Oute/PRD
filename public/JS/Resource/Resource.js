@@ -4,14 +4,10 @@ var NB_CATEGORY = 0;
 function showInfosModalHuman(resourceName, categoryArray) {
     document.getElementById('human-resource').innerHTML = resourceName;
 
-    var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
     length = categoryArray.split('{').length;
-    console.log(length);
     categoryArray = categoryArray.split('"');
    
-    var tableBody = document.getElementById('tbodyShow');
+    var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
     if(length <= 1){
@@ -35,22 +31,93 @@ function showInfosModalHuman(resourceName, categoryArray) {
     $('#infos-human-resource-modal').modal("show");
 }
 
-function showInfosModalMaterial(resourceId, resourceName) {
-    document.getElementById('material-resource-id').innerText = resourceId
-    document.getElementById('material-resource-name').innerText = resourceName
+function showInfosModalMaterial(resourceName, categoryArray) {
+    document.getElementById('material-resource').innerHTML = resourceName;
+
+    length = categoryArray.split('{').length;
+    categoryArray = categoryArray.split('"');
+   
+    var tableBody = document.getElementById('tbody-material-resource');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de catégorie associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(categoryArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-material-resource-modal').modal("show");
 }
 
-function showInfosModalHumanCateg(humanResourceCategId, humaneResourceCategName) {
-    document.getElementById('human-resource-category-id').innerText = humanResourceCategId
-    document.getElementById('human-resource-category-name').innerText = humaneResourceCategName
+function showInfosModalHumanCateg(humanResourceCategName, resourceArray) {
+    document.getElementById('human-resource-category').innerHTML = humanResourceCategName;
+
+    length = resourceArray.split('{').length;
+    resourceArray = resourceArray.split('"');
+
+    var tableBody = document.getElementById('tbody-human-resource-category');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de ressource humaine associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(resourceArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-human-resource-category-modal').modal("show");
 }
 
-function showInfosModalMaterialCateg(materialResourceCategId, materialResourceCategName) {
+function showInfosModalMaterialCateg(materialResourceCategName, resourceArray) {
+    document.getElementById('material-resource-category').innerHTML = materialResourceCategName;
 
-    document.getElementById('material-resource-category-id').innerText = materialResourceCategId
-    document.getElementById('material-resource-category-name').innerText = materialResourceCategName
+    length = resourceArray.split('{').length;
+    resourceArray = resourceArray.split('"');
+
+    var tableBody = document.getElementById('tbody-material-resource-category');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de ressource matérielle associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(resourceArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-material-resource-category-modal').modal("show");
 }
 
@@ -153,7 +220,7 @@ function deleteSelect(id) {
 /**
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
  */
- function verifyChanges() {
+ function humanResourceVerify() {
 
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
@@ -195,6 +262,31 @@ function deleteSelect(id) {
     else {
         btnAdd.click();
     }
+
+    
+}
+
+function materialResourceVerify() {
+
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('categories-container')
+    let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let nbCategory = document.getElementById('nbCategory');
+    var nbCateg = 0;
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
+        }
+        
+    } 
+
+    nbCategory.value = nbCateg
+    btnAdd.click();
 
     
 }
