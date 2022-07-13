@@ -161,3 +161,6 @@ p .label {
     font-weight: 900;
 }
 
+ul.ui-autocomplete {
+    z-index: 1100;
+}
