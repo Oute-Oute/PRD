@@ -66,7 +66,7 @@ class AppointmentController extends AbstractController
             'id' => $patient->getId(),
             'firstname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())),
             'lastname' => (str_replace(" ", "3aZt3r", $patient->getlastname())),
-            'fullname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())." ".str_replace(" ", "3aZt3r", $patient->getlastname())),
+            'fullname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())."3aZt3r".str_replace(" ", "3aZt3r", $patient->getlastname())),
         );
         }        
         return new JsonResponse($patientsArray);
