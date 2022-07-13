@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UnavailabilityMaterialResourceRepository;
+use App\Repository\UnavailabilityHumanResourceRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AppointmentController extends AbstractController
 {
@@ -20,15 +23,66 @@ class AppointmentController extends AbstractController
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
         }
-        
         $currentDateTime = new \DateTime($date);
+        $patientsJSON=$this->getPatientsJSON($doctrine);
+        $pathwaysJSON=$this->getPathwaysJSON($doctrine);
+        //dd($doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),$patients);
         //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
             'currentappointments' => $appointmentRepository->findBy(["dayappointment" => $currentDateTime]),
             'currentdate' => $date,
-            'patients' => $doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),
-            'pathways' => $doctrine->getManager()->getRepository("App\Entity\Pathway")->findall()
+            'patientsJSON' => $patientsJSON,
+            'pathwaysJSON' => $pathwaysJSON
         ]);
+    }
+
+
+    /*
+     * @brief This function is the getter of the Pathways from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the pathways's data
+     */
+    public function getPathwaysJSON(ManagerRegistry $doctrine)
+    {
+        //recuperation du pathway depuis la base de données
+        $pathways = $doctrine->getRepository("App\Entity\Pathway")->findAll();
+        $pathwaysArray = array();
+        foreach ($pathways as $pathway) {
+            //ajout des données du pathway dans un tableau
+            $pathwaysArray[] = array(
+            'id' => $pathway->getId(),
+            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
+        );
+        }        
+        return new JsonResponse($pathwaysArray);
+    }
+
+    public function getPatientsJSON(ManagerRegistry $doctrine){
+        $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();
+        $patientsArray = array();
+        foreach ($patients as $patient) {
+            //ajout des données du pathway dans un tableau
+            $patientsArray[] = array(
+            'id' => $patient->getId(),
+            'firstname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())),
+            'lastname' => (str_replace(" ", "3aZt3r", $patient->getlastname())),
+            'fullname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())." ".str_replace(" ", "3aZt3r", $patient->getlastname())),
+        );
+        }        
+        return new JsonResponse($patientsArray);
+    }
+
+    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway){
+        $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
+        $targetsJSON = [];
+        foreach ($targets as $target) {
+            $targetsJSON[] = [
+                'id' => $target->getId(),
+                'dayweek' => $target->getDayweek(),
+                'target' => $target->getTarget()
+            ];
+        }
+        return new JsonResponse($targetsJSON);
     }
 
     public function appointmentAdd(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
