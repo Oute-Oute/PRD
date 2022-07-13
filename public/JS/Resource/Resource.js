@@ -1,10 +1,37 @@
 var SELECT_ID = 0;
 var NB_CATEGORY = 0;
 
-function showInfosModalHuman(resourceId, resourceName, resourceType) {
-    document.getElementById('human-resource-id').innerText = resourceId
-    document.getElementById('human-resource-name').innerText = resourceName
-    document.getElementById('human-resource-available').innerText = resourceType
+function showInfosModalHuman(resourceName, categoryArray) {
+    document.getElementById('human-resource').innerHTML = resourceName;
+
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    length = categoryArray.split('{').length;
+    console.log(length);
+    categoryArray = categoryArray.split('"');
+   
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de catégorie associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(categoryArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-human-resource-modal').modal("show");
 }
 
