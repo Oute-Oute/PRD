@@ -8,19 +8,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\UnavailabilityMaterialResourceRepository;
 use App\Repository\UnavailabilityHumanResourceRepository;
 
 class PatientController extends AbstractController
 {
-    public function patientGet(PatientRepository $patientRepository): Response
+    public function patientGet(PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', [
-            'patients' => $patientRepository->findAll()
+            'patients' => $patientRepository->findBy(array(),
+                                                     array('lastname' => 'ASC')),
+            'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall()
         ]);
     }
-
+    
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
         // On recupere toutes les données de la requête

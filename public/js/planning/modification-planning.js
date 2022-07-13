@@ -7,6 +7,7 @@ var timerAlert;
 var modifAlertTime = 480000;
 
 var listEvents;
+var historyEvents=[]; 
 
 function $_GET(param) {
   var vars = {};
@@ -52,7 +53,9 @@ function modifyEvent() {
   var editByClick = true;
 
   updateEventsAppointment(oldEvent);
+  
   $("#modify-planning-modal").modal("toggle");
+
 }
 
 function formatDate(date) {
@@ -71,7 +74,7 @@ function formatDate(date) {
   );
 }
 
-function setEvents() {
+function setEvents(array) {
   var listCurrentEvents = calendar.getEvents();
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
@@ -81,8 +84,8 @@ function setEvents() {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("events").value = JSON.stringify(
-    calendar.getEvents()
+  document.getElementById("listScheduledActivitiesJSON").value = JSON.stringify(
+    array
   );
   document.getElementById("list-resource").value = JSON.stringify(listResources);
   document.getElementById("validation-date").value = $_GET("date");
@@ -341,6 +344,7 @@ function AddEventValider() {
       PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
 
     } while (successorsActivitiesA.length!=0);
+    verifyHistoryPush(historyEvents); 
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
@@ -416,7 +420,6 @@ function filterShow() {
       filter.appendChild(label); //add the label to the filter
     } else {
       //fo all the resources in the calendar
-      console.log(resourcesToDisplay);
       for (var i = 0; i < resourcesToDisplay.length; i++) {
         if (document.getElementById(resourcesToDisplay[i].id) == null) {
           var input = document.createElement("input"); //create a input
@@ -609,7 +612,6 @@ function createCalendar(typeResource) {
   } else {
     first = false;
     listEvent = calendar.getEvents();
-    console.log(listEvent);
     listEvent.forEach((event) => {
       let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
@@ -737,7 +739,6 @@ function createCalendar(typeResource) {
           }
           for(let j=0; j<listeMaterialResources.length;j++){
             if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
-              console.log('alo');
               var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
               modifyEvent._def.extendedProps.materialResources.push(materialArray); 
             }  
@@ -839,7 +840,6 @@ function createCalendar(typeResource) {
         }
         );
         }
-      console.log(setEvents);
       index++;
     });
     listEvents = setEvents;
@@ -852,9 +852,12 @@ function createCalendar(typeResource) {
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
   });
-
+  if(historyEvents.length==0){
+    historyEvents.push(calendar.getEvents()); 
+  }
   //affiche le calendar
   calendar.gotoDate(currentDate);
+
   calendar.render();
 }
 
@@ -906,6 +909,25 @@ function clearArray(array){
   }
 }
 
-function undoEvent(){
+function undoEvent(){ 
+  console.log(historyEvents,calendar.getEvents()); 
+  if(historyEvents.length!=0){
+    setEvents(historyEvents[historyEvents.length-1]); 
+    createCalendar(headerResources); 
+    historyEvents.splice(historyEvents.length-1); 
+  }
   console.log(calendar.getEvents()); 
+  calendar.render(); 
+}
+
+function verifyHistoryPush(array){
+  if(array.length<5){
+    array.push(calendar.getEvents()); 
+  }
+  else{
+    for(let i=0; array.length>=5; i++){
+      array.splice(i); 
+    }
+    array.push(calendar.getEvents()); 
+  }
 }
