@@ -128,10 +128,8 @@ function deleteSelect(id) {
  */
  function verifyChanges() {
 
-    let formOk = true
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
-    let categoriesChecked = []
     let btnAdd = document.getElementById('btn-none-add-human-resource')
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
@@ -149,7 +147,6 @@ function deleteSelect(id) {
         
     nbCategory.value = nbCateg;
     btnAdd.click();
-    
     
 }
 
@@ -173,10 +170,47 @@ function hideNewModalForm() {
 }
 
 function hideEditModalForm() {
+
     $('#edit-human-resource-category-modal').modal("hide");
     $('#edit--human-resource-modal').modal("hide");
     $('#edit--material-resource-category-modal').modal("hide");
     $('#edit--material-resource-modal').modal("hide");
+}
+
+function change_tab_material(id)
+{
+  document.getElementById("resources").className="notselected";
+  document.getElementById("categories").className="notselected";
+  document.getElementById(id).className="selected";
+  let resources = document.getElementById("list-material-resources")
+  let categories = document.getElementById("list-material-categories")
+  if(id == 'resources') {
+    categories.style.display = 'none'
+    resources.style.display = 'block'
+  }
+  else {
+    categories.style.display = 'block'
+    resources.style.display = 'none'
+
+  }
+}
+
+function change_tab_human(id)
+{
+  document.getElementById("resources").className="notselected";
+  document.getElementById("categories").className="notselected";
+  document.getElementById(id).className="selected";
+  let resources = document.getElementById("list-human-resources")
+  let categories = document.getElementById("list-human-categories")
+  if(id == 'resources') {
+    categories.style.display = 'none'
+    resources.style.display = 'block'
+  }
+  else {
+    categories.style.display = 'block'
+    resources.style.display = 'none'
+
+  }
 }
 // #container-modal 
 // .modal-form             #form-add-activity
