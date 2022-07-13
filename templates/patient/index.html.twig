@@ -23,12 +23,12 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
-		<table class="table table-striped">
+		<table class="table table-striped" id="tablePatient">
 			<thead>
-				<tr>
-					<th>Identifiant</th>
-					<th>Nom</th>
-					<th>Prénom</th> 
+				<tr class="headerPatient">
+					<th>Id</th>
+					<th><input type="text" id="inputLastname" onkeyup="filterAppointment('inputLastname')" placeholder="Nom"></th>
+					<th>Prénom</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
