@@ -1,7 +1,3 @@
-calendrier:
-  path: /
-  controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
-
 add_user:
   path: /add_user
   controller: App\Controller\UserController::new
