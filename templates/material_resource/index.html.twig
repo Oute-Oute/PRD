@@ -135,6 +135,7 @@
                    {{ include('material_resource/delete_category.html.twig') }}
                 </td>
             </tr>
+            {% set indexCategory = indexCategory + 1 %}
         {% else %}
             <tr>
                 <td colspan="3">Pas de catégorie de ressources matérielles créées !</td>
