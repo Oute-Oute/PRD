@@ -21,6 +21,12 @@
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function addAppointment() {
+  while(tagsPathways.length>0){
+    tagsPathways.pop();
+  }
+  while(tagsPatients.length>0){
+    tagsPatients.pop();
+  }
   $("#add-appointment-modal").modal("show");
   var dataPatients = JSON.parse(document.getElementById("patient").value);
   console.log(dataPatients);
@@ -60,6 +66,12 @@ function editAppointment(
   earliestappointmenttime,
   latestappointmenttime
 ) {
+  while(tagsPathways.length>0){
+    tagsPathways.pop();
+  }
+  while(tagsPatients.length>0){
+    tagsPatients.pop();
+  }
   //on initialise les informations affichées avec les données du rendez-vous modifié
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient+" "+firstnamepatient;
@@ -92,14 +104,11 @@ function hideNewModalForm() {
  function hideDayModale(type) {
   $("#select-day-modal").modal("hide");
   if(type=="new"){
-    console.log("new");
   $("#add-appointment-modal").modal("show");
   }
   if(type=="edit"){
-    console.log("edit");
     $("#edit-appointment-modal").modal("show");
   }
-  console.log(type);
 }
 
 function validate(type){
