@@ -4,14 +4,10 @@ var NB_CATEGORY = 0;
 function showInfosModalHuman(resourceName, categoryArray) {
     document.getElementById('human-resource').innerHTML = resourceName;
 
-    var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
     length = categoryArray.split('{').length;
-    console.log(length);
     categoryArray = categoryArray.split('"');
    
-    var tableBody = document.getElementById('tbodyShow');
+    var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
     if(length <= 1){
@@ -38,12 +34,37 @@ function showInfosModalHuman(resourceName, categoryArray) {
 function showInfosModalMaterial(resourceId, resourceName) {
     document.getElementById('material-resource-id').innerText = resourceId
     document.getElementById('material-resource-name').innerText = resourceName
+
     $('#infos-material-resource-modal').modal("show");
 }
 
-function showInfosModalHumanCateg(humanResourceCategId, humaneResourceCategName) {
-    document.getElementById('human-resource-category-id').innerText = humanResourceCategId
-    document.getElementById('human-resource-category-name').innerText = humaneResourceCategName
+function showInfosModalHumanCateg(humanResourceCategName, resourceArray) {
+    document.getElementById('human-resource-category').innerHTML = humanResourceCategName;
+
+    length = resourceArray.split('{').length;
+    resourceArray = resourceArray.split('"');
+
+    var tableBody = document.getElementById('tbody-human-resource-category');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de ressource humaine associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(resourceArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-human-resource-category-modal').modal("show");
 }
 
