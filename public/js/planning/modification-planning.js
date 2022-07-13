@@ -74,13 +74,19 @@ function formatDate(date) {
   );
 }
 
-function setEvents(array) {
-  /*console.log(JSON.parse(document.getElementById("listScheduledActivitiesJSON").value)); 
-  console.log(array); 
-  document.getElementById("listScheduledActivitiesJSON").value = JSON.stringify(array);
-  console.log(document.getElementById("listScheduledActivitiesJSON").value); 
-  */
-
+function setEvents() {
+  var listCurrentEvents = calendar.getEvents();
+  let listResources = [];
+  listCurrentEvents.forEach((currentEvent) => {
+    var listResourceCurrentEvent = [];
+    for (let i = 0; i < currentEvent._def.resourceIds.length; i++) {
+      listResourceCurrentEvent.push(currentEvent._def.resourceIds[i]);
+    }
+    listResources.push(listResourceCurrentEvent);
+  });
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
+  document.getElementById("list-resource").value = JSON.stringify(listResources);
+  document.getElementById("validation-date").value = $_GET("date");
 }
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
