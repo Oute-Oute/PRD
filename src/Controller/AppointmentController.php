@@ -11,6 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UnavailabilityMaterialResourceRepository;
 use App\Repository\UnavailabilityHumanResourceRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AppointmentController extends AbstractController
 {
@@ -22,15 +23,66 @@ class AppointmentController extends AbstractController
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
         }
-        
         $currentDateTime = new \DateTime($date);
+        $patientsJSON=$this->getPatientsJSON($doctrine);
+        $pathwaysJSON=$this->getPathwaysJSON($doctrine);
+        //dd($doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),$patients);
         //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
             'currentappointments' => $appointmentRepository->findBy(["dayappointment" => $currentDateTime]),
             'currentdate' => $date,
-            'patients' => $doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),
-            'pathways' => $doctrine->getManager()->getRepository("App\Entity\Pathway")->findall()
+            'patientsJSON' => $patientsJSON,
+            'pathwaysJSON' => $pathwaysJSON
         ]);
+    }
+
+
+    /*
+     * @brief This function is the getter of the Pathways from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the pathways's data
+     */
+    public function getPathwaysJSON(ManagerRegistry $doctrine)
+    {
+        //recuperation du pathway depuis la base de données
+        $pathways = $doctrine->getRepository("App\Entity\Pathway")->findAll();
+        $pathwaysArray = array();
+        foreach ($pathways as $pathway) {
+            //ajout des données du pathway dans un tableau
+            $pathwaysArray[] = array(
+            'id' => $pathway->getId(),
+            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
+        );
+        }        
+        return new JsonResponse($pathwaysArray);
+    }
+
+    public function getPatientsJSON(ManagerRegistry $doctrine){
+        $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();
+        $patientsArray = array();
+        foreach ($patients as $patient) {
+            //ajout des données du pathway dans un tableau
+            $patientsArray[] = array(
+            'id' => $patient->getId(),
+            'firstname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())),
+            'lastname' => (str_replace(" ", "3aZt3r", $patient->getlastname())),
+            'fullname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())." ".str_replace(" ", "3aZt3r", $patient->getlastname())),
+        );
+        }        
+        return new JsonResponse($patientsArray);
+    }
+
+    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway){
+        $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
+        $targetsJSON = [];
+        foreach ($targets as $target) {
+            $targetsJSON[] = [
+                'id' => $target->getId(),
+                'dayweek' => $target->getDayweek(),
+                'target' => $target->getTarget()
+            ];
+        }
+        return new JsonResponse($targetsJSON);
     }
 
     public function appointmentAdd(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
@@ -48,7 +100,7 @@ class AppointmentController extends AbstractController
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
-        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
+        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
 
         // Création du rendez-vous
         $appointment = new Appointment(); 
@@ -90,7 +142,7 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function appointmentDelete(EntityManagerInterface $entityManager, Appointment $appointment, AppointmentRepository $appointmentRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository): Response
+    public function appointmentDelete(EntityManagerInterface $entityManager, Appointment $appointment, AppointmentRepository $appointmentRepository): Response
     {
         //on récupère toutes les activités programmées associées au rendez-vous
         $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
@@ -106,20 +158,10 @@ class AppointmentController extends AbstractController
 
             foreach($allMaterialResourceScheduled as $materialResourceScheduled)
             {
+                $unavailabilityRemove = $materialResourceScheduled->getUnavailability();
                 $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-                $strDate = substr($date, 0, 10);
-                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
-
-                foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
-                {
-                    $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                    $entityManager->remove($unavailabilityMaterialResource);
-                    $entityManager->flush($unavailabilityMaterialResource);
-                    $entityManager->remove($unavailability);
-                    $entityManager->flush($unavailability);
-                }
+                $entityManager->remove($unavailabilityRemove);
+                $entityManager->flush();
             }
 
 
@@ -129,18 +171,10 @@ class AppointmentController extends AbstractController
 
             foreach($allHumanResourceScheduled as $humanResourceScheduled)
             {
+                $unavailabilityRemove = $humanResourceScheduled->getUnavailability();
                 $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-
-                $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
-
-                foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
-                {
-                    $unavailability = $unavailabilityHumanResource->getUnavailability();
-                    $entityManager->remove($unavailabilityHumanResource);
-                    $entityManager->flush($unavailabilityHumanResource);
-                    $entityManager->remove($unavailability);
-                    $entityManager->flush($unavailability);
-                }
+                $entityManager->remove($unavailabilityRemove);
+                $entityManager->flush();
             }
 
 

@@ -18,7 +18,8 @@ class PatientController extends AbstractController
     {
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', [
-            'patients' => $patientRepository->findAll(),
+            'patients' => $patientRepository->findBy(array(),
+                                                     array('lastname' => 'ASC')),
             'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall()
         ]);
     }
@@ -63,7 +64,7 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository): Response
+    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository): Response
     {
         //suppression des données associées au patient de la table Appointment
         $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Appointment");
@@ -85,21 +86,10 @@ class PatientController extends AbstractController
 
                 foreach($allMaterialResourceScheduled as $materialResourceScheduled)
                 {
+                    $unavailabilityRemove = $materialResourceScheduled->getUnavailability();
                     $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-
-                    $strDate = substr($date, 0, 10);
-                    $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                    $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
-
-                    foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
-                    {
-                        $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                        $entityManager->remove($unavailabilityMaterialResource);
-                        $entityManager->flush($unavailabilityMaterialResource);
-                        $entityManager->remove($unavailability);
-                        $entityManager->flush($unavailability);
-                    }
+                    $entityManager->remove($unavailabilityRemove);
+                    $entityManager->flush();
                 }
 
 
@@ -109,21 +99,10 @@ class PatientController extends AbstractController
 
                 foreach($allHumanResourceScheduled as $humanResourceScheduled)
                 {
+                    $unavailabilityRemove = $humanResourceScheduled->getUnavailability();
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-
-                    $strDate = substr($date, 0, 10);
-                    $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                    $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
-
-                    foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
-                    {
-                        $unavailability = $unavailabilityHumanResource->getUnavailability();
-                        $entityManager->remove($unavailabilityHumanResource);
-                        $entityManager->flush($unavailabilityHumanResource);
-                        $entityManager->remove($unavailability);
-                        $entityManager->flush($unavailability);
-                    }
+                    $entityManager->remove($unavailabilityRemove);
+                    $entityManager->flush();
                 }
 
 

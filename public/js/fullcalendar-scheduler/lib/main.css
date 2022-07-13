@@ -353,6 +353,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     border-bottom-width: 0;
 
   }
+
 .fc .fc-scrollgrid-liquid {
     height: 100%;
   }
@@ -717,6 +718,8 @@ A HORIZONTAL event
     }
 .fc .fc-daygrid-day-frame {
     position: relative;
+    
+    background-color: white;
     min-height: 100%; /* seems to work better than `height` because sets height after rows/cells naturally do it */
   }
 .fc {
@@ -740,6 +743,7 @@ A HORIZONTAL event
     position: relative;
     z-index: 4;
     padding: 4px;
+    color : black;
   }
 .fc {
 

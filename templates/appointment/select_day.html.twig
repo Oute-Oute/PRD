@@ -1,0 +1,26 @@
+<!-- select-day-modal -->
+
+<div class="modal" id="select-day-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Choisir un jour pour le rendez-vous</h2>
+			</div>
+			<div class="modal-body">
+            
+                <input class="input" type='hidden' name='dayappointment' id="dateTemp" disabled required>
+				<div
+					id="calendar-container" class="calendar-container">
+
+					<!-- affichage du calendar -->
+					<div id='calendar-appointment'></div>
+
+				</div>
+                <button type="button" id="buttonCancel" class="btn-delete btn-secondary" >Annuler</button>
+				<button type="button" id="buttonSelect" class="btn-valide btn-secondary" disabled style="background-color:grey; border : 1px solid grey;">
+					Selectionner
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

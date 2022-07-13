@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="js/jquery-3.6.0.js"></script>
+    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
     <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
     <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
     <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
@@ -45,6 +45,24 @@
             {% else %}
             {% endfor %}            
         {% endif %}
+
+        var resourcesByCategories = new Array();
+        {% if (resourcesByCategories) %}
+            {% for indexCategory in 0..(resourcesByCategories|length - 1) %}
+                resourcesByCategories[{{indexCategory}}] = new Object();
+                {# resourcesByCategories[{{indexResource}}].resourceName = '{{ resourcesByCategories[indexResource].humanresourcename }}'#} 
+                resourcesByCategories[{{indexCategory}}].categories = new Array();
+                {% if (resourcesByCategories[indexCategory]) %}
+                    {% for indexResource in 0..(resourcesByCategories[indexCategory]|length - 1) %}
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}] = new Object();
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}].idCategory = '{{ resourcesByCategories[indexCategory][indexResource].id }}'
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}].name = '{{ resourcesByCategories[indexCategory][indexResource].humanresourcename }}' 
+                    {% else %}
+                    {% endfor %}
+                {% endif %} 
+            {% else %}
+            {% endfor %}            
+        {% endif %}
     </script> 
 
 <div class = "index" id="both-tables">
@@ -62,32 +80,22 @@
         <tbody>
         {% set indexResource = 0 %}
         {% for human_resource in human_resources %}
+            {% set categoryArray = [] %}
+            {% if (categoriesByResources[indexResource]) %}
+                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+					{% set nameCategory = categoriesByResources[indexResource][indexCategory].categoryname %}
+				    {% set categoryArray = categoryArray|merge([{'name' : nameCategory}]) %} 
+                {% endfor %}
+            {% endif %}
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
-                {#
-                <td> 
-                    {% if (categoriesByResources[indexResource]) %}
-                    <select>
-                                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
-                                    <option id = "option-categories-list-select" value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
-                                {% else %}
-                                {% endfor %}
-                        </select> 
-                    </div>
-                    {% else %}
-                        <p> Pas d'activites créées ! </p> 
-                    {% endif %} 
-                </td> #}
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Informations</a>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.humanresourcename}}', '{{categoryArray|json_encode()}}')">Informations</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('human_resource/delete_resource.html.twig') }}
                 </td>
             </tr>
-
-            
-
             {% set indexResource = indexResource + 1 %}
         {% else %}
             <tr>
@@ -110,17 +118,26 @@
             </tr>
         </thead>
         <tbody>
+        {% set indexCategory = 0 %}
         {% for human_resource_category in human_resources_categories %}
+            {% set humanResourceArray = [] %}
+            {% if (resourcesByCategories[indexCategory]) %}
+                {% for indexResource in 0..(resourcesByCategories[indexCategory]|length - 1) %}
+					{% set nameHumanResource = resourcesByCategories[indexCategory][indexResource].humanresourcename %}
+				    {% set humanResourceArray = humanResourceArray|merge([{'name' : nameHumanResource}]) %} 
+                {% endfor %}
+            {% endif %}
             <tr>
                 <td>{{ human_resource_category.id }}</td>
                 <td>{{ human_resource_category.categoryname }}</td>
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Informations</a>
-                   <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.categoryname}}', '{{humanResourceArray|json_encode()}}')">Informations</a>
+                    <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
                     {{ include('human_resource/delete_category.html.twig') }}
 
                 </td>
             </tr>
+            {% set indexCategory = indexCategory + 1 %}
         {% else %}
             <tr>
                 <td colspan="3">Pas de catégorie de ressources humaines créées !</td>
