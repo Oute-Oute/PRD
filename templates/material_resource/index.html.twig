@@ -46,6 +46,23 @@
             {% else %}
             {% endfor %}            
         {% endif %}
+
+        var resourcesByCategories = new Array();
+        {% if (resourcesByCategories) %}
+            {% for indexCategory in 0..(resourcesByCategories|length - 1) %}
+                resourcesByCategories[{{indexCategory}}] = new Object();
+                resourcesByCategories[{{indexCategory}}].categories = new Array();
+                {% if (resourcesByCategories[indexCategory]) %}
+                    {% for indexResource in 0..(resourcesByCategories[indexCategory]|length - 1) %}
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}] = new Object();
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}].idCategory = '{{ resourcesByCategories[indexCategory][indexResource].id }}'
+                        resourcesByCategories[{{indexCategory}}].categories[{{indexResource}}].name = '{{ resourcesByCategories[indexCategory][indexResource].materialresourcename }}' 
+                    {% else %}
+                    {% endfor %}
+                {% endif %} 
+            {% else %}
+            {% endfor %}            
+        {% endif %}
     </script> 
 
 <div class = "index" id="both-tables">
@@ -63,11 +80,18 @@
         <tbody>
         {% set indexResource = 0 %}
         {% for material_resource in material_resources %}
+            {% set categoryArray = [] %}
+            {% if (categoriesByResources[indexResource]) %}
+                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+					{% set nameCategory = categoriesByResources[indexResource][indexCategory].categoryname %}
+				    {% set categoryArray = categoryArray|merge([{'name' : nameCategory}]) %} 
+                {% endfor %}
+            {% endif %}
             <tr>
                 <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
                 <td>
-                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}')">Informations</a>
+                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterial('{{material_resource.materialresourcename}}', '{{categoryArray|json_encode()}}')">Informations</a>
                    <button class = "btn-edit btn-secondary" onclick="showEditModalFormMaterial('{{material_resource.id}}', '{{material_resource.materialresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('material_resource/delete_resource.html.twig') }}
                 </td>
@@ -93,12 +117,20 @@
             </tr>
         </thead>
         <tbody>
+        {% set indexCategory = 0 %}
         {% for material_resource_category in material_resources_categories %}
+            {% set materialResourceArray = [] %}
+            {% if (resourcesByCategories[indexCategory]) %}
+                {% for indexResource in 0..(resourcesByCategories[indexCategory]|length - 1) %}
+					{% set nameMaterialResource = resourcesByCategories[indexCategory][indexResource].materialresourcename %}
+				    {% set materialResourceArray = materialResourceArray|merge([{'name' : nameMaterialResource}]) %} 
+                {% endfor %}
+            {% endif %}
             <tr>
                 <td>{{ material_resource_category.id }}</td>
                 <td>{{ material_resource_category.categoryname }}</td>
                 <td>
-                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.id}}', '{{material_resource_category.categoryname}}')">Informations</a>
+                   <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{material_resource_category.categoryname}}', '{{materialResourceArray|json_encode()}}')">Informations</a>
                    <button class = "btn-edit btn-secondary"  onclick="showEditMaterialCategModalForm('{{ material_resource_category.id }}', '{{ material_resource_category.categoryname }}')">Éditer</a>
                    {{ include('material_resource/delete_category.html.twig') }}
                 </td>
