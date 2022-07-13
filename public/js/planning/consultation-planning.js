@@ -7,6 +7,8 @@
  */
 
 
+
+
 var calendar; // var globale pour le calendrier
 var date = new Date(); //create a default date
 var dateStr = date.toDateString();
@@ -111,8 +113,8 @@ function createCalendar(resources) {
     resourceAreaWidth: "20%", //set the width of the resources area
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
     events: events, //set the events
-    filterResourcesWithEvents: true,    
-    
+    filterResourcesWithEvents: true,
+
 
     eventDidMount: function (info) {
       $(info.el).tooltip({
@@ -227,7 +229,7 @@ function createCalendar(resources) {
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-console.log( document.getElementById("material").value)
+      console.log(document.getElementById("material").value)
       console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
@@ -248,4 +250,12 @@ console.log( document.getElementById("material").value)
   calendar.gotoDate(date); //go to the date we want to display
   calendar.render(); //display the calendar
 }
+
+
+function zoomChange() {
+  newZoom = document.getElementById('zoom').value;
+  calendar.setOption('slotDuration', newZoom)
+}
+
+
 

@@ -39,7 +39,7 @@ class ConnexionController extends AbstractController
             ]);
         } else {
             if (password_verify($password, $user->getPassword())) {
-                return $this->render("base.html.twig");
+                return $this->redirectToRoute('ConsultationPlanning', []);
             } else {
                 return $this->render('connexion/connexion.html.twig', [
                     'error' => $messageError1, 'message' => $messageError2,

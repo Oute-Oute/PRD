@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
-    //addActivity()
+    //addActivity() 
     initActivity()
     handleHumanButton()
     fillActivityList()
@@ -112,9 +112,11 @@ function addActivity() {
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
         verif = false
+        alert("Le nom de l'activité ne peut pas être vide")
     }
-    if (document.getElementById('input-duration').value == '') {
+    else if (document.getElementById('input-duration').value == '') {
         verif = false
+        alert("La durée de l'activité n'est pas correcte ")
     }
 
     if (verif) {
@@ -134,7 +136,7 @@ function addActivity() {
         handleHumanButton()
 
     } else {
-        //afficher une message d'erreur
+        // message d'erreur
     }
 
     fillActivityList()
@@ -155,6 +157,7 @@ function fillActivityList() {
     divActivitiesList.appendChild(label)*/
 
     let indexActivityAvailable = 0
+
     for (let indexActivity = 0; indexActivity < RESOURCES_BY_ACTIVITIES.length; indexActivity++) {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
             let activity = document.createElement('div')
@@ -165,19 +168,41 @@ function fillActivityList() {
             str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
             let p = document.createElement('p')
             p.innerHTML = str
+
             let imgDelete = new Image();
             imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('id','img-'+indexActivity)
+            imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
+
+            let imgEdit = new Image();
+            imgEdit.src = '../img/edit.svg'
+            imgEdit.setAttribute('id','imge-'+indexActivity)
+            imgEdit.setAttribute('onclick', 'editActivity(this.id)')
+            imgEdit.setAttribute('title', 'Édition de l\'activité')
+            imgEdit.style.width = '20px'
+            imgEdit.style.cursor = 'pointer'
+            imgEdit.style.marginRight = '10px'
+
+            let div = document.createElement('div')
+            div.appendChild(imgEdit)
+            div.appendChild(imgDelete)
             activity.appendChild(p)
-            activity.appendChild(imgDelete)
+            activity.appendChild(div)
             divActivitiesList.appendChild(activity)
             indexActivityAvailable++
         }
     }
+    
+
+    if (indexActivityAvailable == 0) {
+        let noactivity = document.createElement('p')
+        noactivity.innerHTML = "Aucune activité pour le moment !"
+        divActivitiesList.appendChild(noactivity)
+    }
+
 
 }
 
@@ -303,29 +328,9 @@ var DIV_TO_EDIT_OLD
  * Permet de modifier une activité  
  * @param {*} id : XXX-0, XXX-1
  */
-function editSelect(id) {
+function editActivity(id) {
 
-    document.getElementById('name').innerHTML = 'oui'
-    //RESOURCES_BY_ACTIVITIES.length
 
-    // On récupère le numero de la div a supprimer  
-    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
-    id = getId(id)
-
-    // On peut donc recuperer la div
-    //let divToEdit = document.getElementsByClassName('div-activity-'+id)[0]
-    let divToEdit = document.getElementById('div-edit-activity-'+id)
-
-    if (DIV_TO_EDIT_OLD == undefined) {
-        divToEdit.style.display = 'flex'
-        DIV_TO_EDIT_OLD = divToEdit
-    } else {
-        if (divToEdit != DIV_TO_EDIT_OLD) {
-            divToEdit.style.display = 'flex'
-            DIV_TO_EDIT_OLD.style.display = 'none'
-            DIV_TO_EDIT_OLD = divToEdit
-        }
-    }
 
 
 }
@@ -730,4 +735,18 @@ function deleteResource(id) {
     }
     //console.log(RESOURCES_BY_ACTIVITIES)
 
+}
+
+
+function submitPathway() {
+    let btnSubmit = document.getElementById('submit')
+
+    console.log('verifier')
+    console.log(RESOURCES_BY_ACTIVITIES)
+
+    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+
+    console.log(document.getElementById('json-resources-by-activities').value)
+
+    btnSubmit.click()
 }
