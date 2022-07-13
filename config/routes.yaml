@@ -124,10 +124,6 @@ AppointmentEdit:
   controller: App\Controller\AppointmentController::appointmentEdit
   methods: [POST]
 
-app_activity_index:
-  path: /activities
-  controller: App\Controller\ActivityController:index
-
 Pathways:
   path: /pathways
   controller: App\Controller\PathwayController:pathwayGet
@@ -184,11 +180,6 @@ index_material_resources:
 index_mon_profil:
   path: /mon_profil
   controller: App\Controller\UserController:edit
-
-app_activity_new:
-  path: /activities/new
-  controller: App\Controller\ActivityController:new
-  methods: [POST]
 
 Settings:
   path: /settings

@@ -62,6 +62,13 @@
         <tbody>
         {% set indexResource = 0 %}
         {% for human_resource in human_resources %}
+            {% set categoryArray = [] %}
+            {% if (categoriesByResources[indexResource]) %}
+                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
+					{% set nameCategory = categoriesByResources[indexResource][indexCategory].categoryname %}
+				    {% set categoryArray = categoryArray|merge([{'name' : nameCategory}]) %} 
+                {% endfor %}
+            {% endif %}
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
@@ -80,14 +87,11 @@
                     {% endif %} 
                 </td> #}
                 <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{human_resource.available}}')">Informations</a>
+                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.humanresourcename}}', '{{categoryArray|json_encode()}}')">Informations</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>
                     {{ include('human_resource/delete_resource.html.twig') }}
                 </td>
             </tr>
-
-            
-
             {% set indexResource = indexResource + 1 %}
         {% else %}
             <tr>

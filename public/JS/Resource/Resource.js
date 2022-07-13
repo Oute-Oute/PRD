@@ -1,10 +1,37 @@
 var SELECT_ID = 0;
 var NB_CATEGORY = 0;
 
-function showInfosModalHuman(resourceId, resourceName, resourceType) {
-    document.getElementById('human-resource-id').innerText = resourceId
-    document.getElementById('human-resource-name').innerText = resourceName
-    document.getElementById('human-resource-available').innerText = resourceType
+function showInfosModalHuman(resourceName, categoryArray) {
+    document.getElementById('human-resource').innerHTML = resourceName;
+
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    length = categoryArray.split('{').length;
+    console.log(length);
+    categoryArray = categoryArray.split('"');
+   
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    if(length <= 1){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de catégorie associée !");
+        tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.append(categoryArray[3+4*i]);
+            tr.appendChild(td);
+        }
+    }
+
     $('#infos-human-resource-modal').modal("show");
 }
 
@@ -131,6 +158,10 @@ function deleteSelect(id) {
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
     let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let divWorkingHoursBegin = document.getElementById('working-hours-input-begin')
+    let divWorkingHoursEnd = document.getElementById('working-hours-input-end')
+    let pbWorkingHoursSolo = false;
+    let endHigherThanBegin = false;
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
     // On parcours toutes nos activités 
@@ -144,9 +175,27 @@ function deleteSelect(id) {
         }
         
     } 
-        
-    nbCategory.value = nbCateg;
-    btnAdd.click();
+
+    for (let j = 0; j <= 6; j++)
+    {
+        if((divWorkingHoursBegin.children[j].value == '' && divWorkingHoursEnd.children[j].value != '') || (divWorkingHoursBegin.children[j].value  != '' && divWorkingHoursEnd.children[j].value == '')){
+            pbWorkingHoursSolo = true;
+        }
+        if((divWorkingHoursBegin.children[j].value > divWorkingHoursEnd.children[j].value)) {
+            endHigherThanBegin = true;
+        }
+    }
+    nbCategory.value = nbCateg
+    if(pbWorkingHoursSolo == true) {
+        alert('Veuillez saisir l\'heure de début et de fin, ou aucun des deux horaires pour chaque jour de disponibilité !')
+    }
+    else if(endHigherThanBegin == true) {
+        alert('Veuillez saisir des horaires de début antérieures à celles de fin pour chaque jour de disponibilité !')
+    }
+    else {
+        btnAdd.click();
+    }
+
     
 }
 
