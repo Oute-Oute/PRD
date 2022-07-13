@@ -9,7 +9,7 @@ div#pathway-form-body {
 div#create-activity-container {
     width: 50%;
     /*border: 1px solid lightgray;*/
-    border: 2px solid var(--main-blue);
+    border: 1px solid var(--main-blue);
     padding: 10px;
 
 }
@@ -30,7 +30,8 @@ div#create-activity-container {
 
 div#activities-list {
     width: 40%;
-
+    border: 1px solid var(--main-blue);
+    padding: 10px;
 }
 
 /* bouton pour ajouter des activités au parcours */

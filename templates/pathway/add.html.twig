@@ -40,8 +40,8 @@
        
                     <div id="create-activity">
                         <div class="form-field">
-                            <input type="text" class="input-activity" placeholder="Nom">
-                            <input type="number" min="0" class="input-activity" placeholder="Durée (min)">
+                            <input type="text" id='input-name' class="input-activity" placeholder="Nom">
+                            <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Durée (min)">
 
                             <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
                             <div id="div-edit-activity">
@@ -57,11 +57,9 @@
 
                             <div id="div-add-resources">
                                 <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
-                                <input id="resources-nb" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
+                                <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
                                 <img onclick="addResources()" src="../img/plus.png" title="Ajouter la ressource"> </img>
                             </div>
-
-
 
                         </div>
                     </div>
@@ -79,8 +77,7 @@
             </div>
 
             <div id="pathway-form-footer">
-                <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
+                <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
                 <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter le parcours</button>
             </div>
         </div>

@@ -158,6 +158,10 @@ function deleteSelect(id) {
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
     let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let divWorkingHoursBegin = document.getElementById('working-hours-input-begin')
+    let divWorkingHoursEnd = document.getElementById('working-hours-input-end')
+    let pbWorkingHoursSolo = false;
+    let endHigherThanBegin = false;
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
     // On parcours toutes nos activités 
@@ -171,9 +175,27 @@ function deleteSelect(id) {
         }
         
     } 
-        
-    nbCategory.value = nbCateg;
-    btnAdd.click();
+
+    for (let j = 0; j <= 6; j++)
+    {
+        if((divWorkingHoursBegin.children[j].value == '' && divWorkingHoursEnd.children[j].value != '') || (divWorkingHoursBegin.children[j].value  != '' && divWorkingHoursEnd.children[j].value == '')){
+            pbWorkingHoursSolo = true;
+        }
+        if((divWorkingHoursBegin.children[j].value > divWorkingHoursEnd.children[j].value)) {
+            endHigherThanBegin = true;
+        }
+    }
+    nbCategory.value = nbCateg
+    if(pbWorkingHoursSolo == true) {
+        alert('Veuillez saisir l\'heure de début et de fin, ou aucun des deux horaires pour chaque jour de disponibilité !')
+    }
+    else if(endHigherThanBegin == true) {
+        alert('Veuillez saisir des horaires de début antérieures à celles de fin pour chaque jour de disponibilité !')
+    }
+    else {
+        btnAdd.click();
+    }
+
     
 }
 

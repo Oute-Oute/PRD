@@ -143,7 +143,7 @@ p.label {
     position: relative;
     padding: 10px;
     overflow-y: scroll;
-    max-height: 400px;
+    max-height: 200px;
 }
 .div-resources-h {
     display: flex;
