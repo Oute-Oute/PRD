@@ -10,11 +10,10 @@ function editUser(idEdit, usernameEdit ) {
     
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  
- 
-  actualUser = document.getElementById('OwnUsernameEdit').innerHTML;  
-  actualUser = actualUser.replace(' ','')
+//Fonction empechant la suppresion ou l'edition de son propre compte administrateur  
+document.addEventListener("DOMContentLoaded", () => { 
+  actualUser = document.getElementById('OwnUsername').innerHTML;  
+  actualUser = actualUser.replace(' ','') //La fonction innerHtml rajoute un espace, on le supprime
   document.getElementById('buttonEdit'+actualUser).disabled = true
   document.getElementById('buttonErase'+actualUser).disabled = true
 })
