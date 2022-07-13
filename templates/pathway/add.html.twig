@@ -17,6 +17,10 @@
     <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
     <input style="display:none;" name="nbactivity" id="nbactivity">
 
+    {#  inputs pour passer les json venant du serveur #}
+    <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
+    <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
+                    
     <h1> Ajouter un parcours </h1>
 
     <form action="{{ path('PathwayAdd') }}" method="post">
@@ -30,35 +34,61 @@
 
             <div id="pathway-form-body">
                 <!-- partie gauche - permet de lister les activités -->
-                <div id="activities-list">
-                    <label class="label">Choisissez les activités de votre parcours</label>
+                <div id="create-activity-container">
+                    <label class="label">Création d'une activité</label>
 
-                    <fieldset id="fs-add-activity">
-                
-                        {# div dans laquelle on ajoutera les activités : #}
-                        <div class="activities-container"> 
+       
+                    <div id="create-activity">
+                        <div class="form-field">
+                            <input type="text" id='input-name' class="input-activity" placeholder="Nom">
+                            <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Durée (min)">
+
+                            <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
+                            <div id="div-edit-activity">
+                                <div id="buttons-resources"> 
+                                    <button id="human-button" onclick="handleHumanButton(this.id)" type="button"> Humaines </button>
+                                    <button id="material-button" onclick="handleMaterialButton(this.id)" type="button"> Materielles </button>
+                                </div>
+                                <div id="div-resources">
+                                    <ul id="list-resources"> </ul>
+                                </div>
+               
+                            </div>
+
+                            <div id="div-add-resources">
+                                <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
+                                <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
+                                <img onclick="addResources()" src="../img/plus.png" title="Ajouter la ressource"> </img>
+                            </div>
+
                         </div>
+                    </div>
 
-                        <button type="button" id='btn-add-activity' onclick="handleAddActivity()"> <b> Ajouter une activité </b> </button> 
+                    <div id="container-btn-add-activity" style=""> 
+                        <button type="button" id='btn-add-activity' onclick="addActivity()"> <b> Ajouter une activité > </b> </button> 
+                    </div>
 
-                    </fieldset>
                 </div>
 
                 <!-- partie droite - permet d'éditer une activité -->
-                <div id="resources-editing">
-                    <div class="flex-col"> 
-                        <label class="label" for='name'> Éditer une activité </label>        
-                    </div>
+                <div id="activities-list">
+                    <label id="name" class="label" for='name'> Liste des activités </label>    
+                    <div id="list">  </div>  
                 </div>
             </div>
 
             <div id="pathway-form-footer">
-                <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                <button type='button' onclick="verifyChanges()" class="btn-consult btn-secondary"> Verrouiller les modifications  </button>
-                <button id='submit' type="submit" class="btn-valide btn-secondary" disabled> Ajouter </button>
+                <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
+                <button id='submit' type="submit" class="btn-valide btn-secondary" > Ajouter le parcours</button>
             </div>
         </div>
     </form>
+
+
+    <div id="display">
+
+    </div>
+
 </div>
 
 {% endblock %}

@@ -4,10 +4,14 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
+use App\Entity\WorkingHours;
 use App\Form\HumanResourceType;
 use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\CategoryOfHumanResourceRepository;
+use App\Repository\WorkingHoursRepository;
+use DateTimeInterface;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +33,7 @@ class HumanResourceController extends AbstractController
         $humanResources = $humanResourceRepository->findAll();
         $categOfHumanResource = $categOfHumanResourceRepository->findAll();
         $nbHumanResource = count($humanResources);
+        $nbHumanResourceCategory = count($humanResourceCategories);
         $nbCategBy = count($categOfHumanResource);
         $categoriesByResources = array();
 
@@ -54,11 +59,26 @@ class HumanResourceController extends AbstractController
                 array_push($categoriesByResources, $categoriesByResource);
             }
         }
+
+        $resourcesByCategories = array();
+        for($indexCategory = 0; $indexCategory< $nbHumanResourceCategory; $indexCategory++) {
+            $listHumanOf = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategories[$indexCategory]]);
+        
+            $resourcesByCategory = array();
+            for($indexHumanOf = 0; $indexHumanOf < count($listHumanOf); $indexHumanOf++) {
+                $humanResourceBy =  $humanResourceRepository->findBy(['id' => $listHumanOf[$indexHumanOf]->getHumanresource()->getId()]);
+                if($humanResourceBy != null){
+                    array_push($resourcesByCategory,$humanResourceBy[0]);
+                }
+            }
+            array_push($resourcesByCategories, $resourcesByCategory);
+        }
         //dd($categoriesByResources);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'human_resources_categories' => $humanResourceCategories,
-            'categoriesByResources' => $categoriesByResources
+            'categoriesByResources' => $categoriesByResources,
+            'resourcesByCategories' => $resourcesByCategories
         ]); 
     }
 
@@ -71,24 +91,126 @@ class HumanResourceController extends AbstractController
             $humanResource = new HumanResource();
             $param = $request->request->all();            
             $name = $param['resourcename'];
+            $monday = array();
+            $tuesday = array();
+            $wednesday = array();
+            $thursday = array();
+            $friday = array();
+            $saturday = array();
+            $sunday = array();
+            array_push($monday, $param['monday-begin'].':00', $param['monday-end'].':00');
+            array_push($tuesday, $param['tuesday-begin'].':00', $param['tuesday-end'].':00');
+            array_push($wednesday, $param['wednesday-begin'].':00', $param['wednesday-end'].':00');
+            array_push($thursday, $param['thursday-begin'].':00', $param['thursday-end'].':00');
+            array_push($friday, $param['friday-begin'].':00', $param['friday-end'].':00');
+            array_push($saturday, $param['saturday-begin'].':00', $param['saturday-end'].':00');
+            array_push($sunday, $param['sunday-begin'].':00', $param['sunday-end'].':00');
             $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
             $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
 
-
             // On récupère toutes les catégories
             $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-            $categories = $categoryOfHumanResourceRepository->findAll();            
+            $categories = $categoryOfHumanResourceRepository->findAll(); 
 
+            // On récupère les working hours
+            $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
+            
             // On récupère le nombre de catégories
             $nbCategory = $param['nbCategory'];
-
-
             //$activityArray = array();
+            for($j = 0; $j <= 6; $j++) {
+                switch ($j) {
+                    case 0:
+                        if(($sunday[0] != ':00') && ($sunday[1] != ':00')){
+                            $workingHoursSunday = new WorkingHours();
+                            $sunday0 = DateTime::createFromFormat('H:i:s', $sunday[0]);
+                            $sunday1 = DateTime::createFromFormat('H:i:s', $sunday[1]);
+                            $workingHoursSunday->setStarttime($sunday0);
+                            $workingHoursSunday->setEndtime($sunday1);
+                            $workingHoursSunday->setHumanresource($humanResource);
+                            $workingHoursSunday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursSunday, true);
+                        }
+                        break;
+                    case 1:
+                        if(($monday[0] != ':00') && ($monday[1] != ':00')){
+                            $workingHoursMonday = new WorkingHours();
+                            $monday0 = DateTime::createFromFormat('H:i:s', $monday[0]);
+                            $monday1 = DateTime::createFromFormat('H:i:s', $monday[1]);
+                            $workingHoursMonday->setStarttime($monday0);
+                            $workingHoursMonday->setEndtime($monday1);
+                            $workingHoursMonday->setHumanresource($humanResource);
+                            $workingHoursMonday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursMonday, true);
+                        }
+                        break;
+                    case 2:
 
-
+                        if(($tuesday[0] != ':00') && ($tuesday[1] != ':00')){
+                            $workingHoursTuesday = new WorkingHours();
+                            $tuesday0 = DateTime::createFromFormat('H:i:s', $tuesday[0]);
+                            $tuesday1 = DateTime::createFromFormat('H:i:s', $tuesday[1]);
+                            $workingHoursTuesday->setStarttime($tuesday0);
+                            $workingHoursTuesday->setEndtime($tuesday1);
+                            $workingHoursTuesday->setHumanresource($humanResource);
+                            $workingHoursTuesday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursTuesday, true);
+                        }
+                        break;
+                    case 3:
+                        if(($wednesday[0] != ':00') && ($wednesday[1] != ':00')){
+                            $workingHoursWednesday = new WorkingHours();
+                            $wednesday0 = DateTime::createFromFormat('H:i:s', $wednesday[0]);
+                            $wednesday1 = DateTime::createFromFormat('H:i:s', $wednesday[1]);
+                            $workingHoursWednesday->setStarttime($wednesday0);
+                            $workingHoursWednesday->setEndtime($wednesday1);
+                            $workingHoursWednesday->setHumanresource($humanResource);
+                            $workingHoursWednesday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursWednesday, true);
+                        }
+                        break;
+                    case 4:
+                        if(($thursday[0] != ':00') && ($thursday[1] != ':00')){
+                            $workingHoursThursday = new WorkingHours();
+                            $thursday0 = DateTime::createFromFormat('H:i:s', $thursday[0]);
+                            $thursday1 = DateTime::createFromFormat('H:i:s', $thursday[1]);
+                            $workingHoursThursday->setStarttime($thursday0);
+                            $workingHoursThursday->setEndtime($thursday1);
+                            $workingHoursThursday->setHumanresource($humanResource);
+                            $workingHoursThursday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursThursday, true);
+                        }
+                        break;
+                    case 5:
+                        if(($friday[0] != ':00') && ($friday[1] != ':00')){
+                            $workingHoursFriday = new WorkingHours();
+                            $friday0 = DateTime::createFromFormat('H:i:s', $friday[0]);
+                            $friday1 = DateTime::createFromFormat('H:i:s', $friday[1]);
+                            $workingHoursFriday->setStarttime($friday0);
+                            $workingHoursFriday->setEndtime($friday1);
+                            $workingHoursFriday->setHumanresource($humanResource);
+                            $workingHoursFriday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursFriday, true);
+                        }
+                        break;
+                    case 6:
+                        if(($saturday[0] != ':00') && ($saturday[1] != ':00')){
+                            $workingHoursSaturday = new WorkingHours();
+                            $saturday0 = DateTime::createFromFormat('H:i:s', $saturday[0]);
+                            $saturday1 = DateTime::createFromFormat('H:i:s', $saturday[1]);
+                            $workingHoursSaturday->setStarttime($saturday0);
+                            $workingHoursSaturday->setEndtime($saturday1);
+                            $workingHoursSaturday->setHumanresource($humanResource);
+                            $workingHoursSaturday->setDayweek($j);
+                            $workingHoursRepository->add($workingHoursSaturday, true);
+                        }
+                        break;
+                   
+                }
+            }
             for($i = 0; $i < $nbCategory; $i++)
             {
                 $linkCategRes = new CategoryOfHumanResource();      
@@ -98,7 +220,8 @@ class HumanResourceController extends AbstractController
                 $categoryOfHumanResourceRepository->add($linkCategRes, true);
             }
             return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
-        }
+        
+    }
     
 }
 

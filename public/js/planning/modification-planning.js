@@ -7,6 +7,7 @@ var timerAlert;
 var modifAlertTime = 480000;
 
 var listEvents;
+var historyEvents=[]; 
 
 function $_GET(param) {
   var vars = {};
@@ -51,8 +52,10 @@ function modifyEvent() {
   var newDelay = oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
   var editByClick = true;
 
-  updateEventsAppointment(oldEvent, newDelay, editByClick);
+  updateEventsAppointment(oldEvent);
+  
   $("#modify-planning-modal").modal("toggle");
+
 }
 
 function formatDate(date) {
@@ -81,9 +84,7 @@ function setEvents() {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("events").value = JSON.stringify(
-    calendar.getEvents()
-  );
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
   document.getElementById("list-resource").value = JSON.stringify(listResources);
   document.getElementById("validation-date").value = $_GET("date");
 }
@@ -144,9 +145,9 @@ function AddEventValider() {
   var listeActivityMaterialResource = JSON.parse(
     document.getElementById("listeActivityMaterialResource").value
   );
-
+    
   var appointmentid = document.getElementById("select-appointment").value;
-
+  
   //Récupération du rdv choisit par l'utilisateur et de la place de l'élément dans listeAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -267,7 +268,10 @@ function AddEventValider() {
           materialResources: [],
           pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
         });
-        
+
+        event._def.ui.backgroundColor = RessourcesAllocated(event);
+        event._def.ui.borderColor = RessourcesAllocated(event);
+        event.setEnd(event.end); 
       }
       
       var successorsActivitiesA=[]; 
@@ -338,6 +342,7 @@ function AddEventValider() {
       PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
 
     } while (successorsActivitiesA.length!=0);
+    verifyHistoryPush(historyEvents,appointmentid); 
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
@@ -413,7 +418,6 @@ function filterShow() {
       filter.appendChild(label); //add the label to the filter
     } else {
       //fo all the resources in the calendar
-      console.log(resourcesToDisplay);
       for (var i = 0; i < resourcesToDisplay.length; i++) {
         if (document.getElementById(resourcesToDisplay[i].id) == null) {
           var input = document.createElement("input"); //create a input
@@ -477,7 +481,8 @@ function changePlanning() {
 }
 
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
-function updateEventsAppointment(oldEvent, newDelay, editByClick) {
+function updateEventsAppointment(oldEvent) {
+  verifyHistoryPush(historyEvents,-1);
   var listEvent = calendar.getEvents();
   let listOldEvent = calendar.getEvents();
   var appointmentId = oldEvent._def.extendedProps.appointment;
@@ -494,16 +499,7 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
     }
   });
 
-  var eventFirst = listEventAppointment[0];
-  var eventLast = listEventAppointment[0];
-  listEventAppointment.forEach((eventAppointment) => {
-    if (eventAppointment.end > eventLast.end) {
-      eventLast = eventAppointment;
-    }
-    if (eventAppointment.start < eventFirst.start) {
-      eventFirst = eventAppointment;
-    }
-  });
+  var newEvent = calendar.getEventById(oldEvent._def.publicId);
 
   var listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value
@@ -525,119 +521,86 @@ function updateEventsAppointment(oldEvent, newDelay, editByClick) {
       appointment.latestappointmenttime.split("T")[1]
   );
 
-  var isEditable = true;
-  if (
-    earliestAppointmentDate <=
-      new Date(eventFirst.start.getTime() - 2 * 60 * 60 * 1000 - newDelay) &&
-    new Date(eventLast.end.getTime() - 2 * 60 * 60 * 1000 - newDelay) <=
-      latestAppointmentDate
-  ) {
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-    calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-    calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
-    listEventAppointment.forEach((eventAppointment) => {
-      if (editByClick) {
-        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var endStr = formatDate(endDate).replace(" ", "T");
-        eventAppointment.setStart(startStr);
-        eventAppointment.setEnd(endStr);
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      } 
-      else if (eventAppointment._def.publicId != oldEvent._def.publicId) {
-        var startDate = new Date(eventAppointment.start.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var startStr = formatDate(startDate).replace(" ", "T");
-        var endDate = new Date(eventAppointment.end.getTime() - 2 * 60 * 60 * 1000 - newDelay);
-        var endStr = formatDate(endDate).replace(" ", "T");
-        eventAppointment.setStart(startStr);
-        eventAppointment.setEnd(endStr);
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      }
-      else {
-        eventAppointment._def.ui.backgroundColor = RessourcesAllocated(eventAppointment);
-        eventAppointment._def.ui.borderColor = RessourcesAllocated(eventAppointment);
-      }
-    });
-    listEventAppointment.forEach((currentModifyEvent) => {
-      listOldEvent.forEach((oldEventSet) => {
-        var newEventAppointment = currentModifyEvent;
-        if(currentModifyEvent._def.publicId == oldEvent._def.publicId){
-          newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+  var currentDate = new Date(currentDateStr.split("T")[0] + " 00:00:00");
+  var workingHoursStart = new Date(currentDateStr.split("T")[0] + " 00:00:00");
+  var workingHoursEnd = new Date(currentDateStr.split("T")[0] + " 23:59:00");
+
+  var newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+
+    humanResources.forEach((resource) => {
+      newEventAppointment._def.resourceIds.forEach((resourceId => {
+        if(resource.id == resourceId){
+          var isOld = false;
+          oldEvent._def.resourceIds.forEach((oldResourceId) => {
+            if(resource.id == oldResourceId){
+              isOld = true;
+            }
+          })
+          if(isOld == false){
+            workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
+            workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+            if(!(workingHoursStart <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) && 
+            new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+              alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
+            }
+          }
         }
-        oldEventSet._def.resourceIds.forEach((oldResource) => {
-          newEventAppointment._def.resourceIds.forEach((newResource) => {
-            if(newResource != "h-default" && newResource != "m-default"){
-              if(newResource == oldResource) {
-                if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+      }))
+    })
+
+    if (
+      earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
+      new Date(newEvent.end.getTime() - 2 * 60 * 60 * 1000) <= latestAppointmentDate
+    ) {
+      calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+      calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
+      calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
+
+      listOldEvent.forEach((oldEventSet) => {
+        if(oldEventSet._def.extendedProps.type == "activity"){
+          oldEventSet._def.resourceIds.forEach((oldResource) => {
+            newEventAppointment._def.resourceIds.forEach((newResource) => {
+              if(newResource != "h-default" && newResource != "m-default"){
                   if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
-                    var resourceTitle = "";
-                    if (newResource.substring(0, 8) == "material"){
-                      materialResources.forEach((material) => {
-                        if(material.id == newResource){
-                          resourceTitle = material.title;
-                        }
-                      })
+                    if(newResource == oldResource) {
+                      var resourceTitle = "";
+                      if (newResource.substring(0, 8) == "material"){
+                        materialResources.forEach((material) => {
+                          if(material.id == newResource){
+                            resourceTitle = material.title;
+                          }
+                        })
+                      }
+                      else if (newResource.substring(0, 5) == "human"){
+                        humanResources.forEach((human) => {
+                          if(human.id == newResource){
+                            resourceTitle = human.title;
+                          }
+                        })
+                      }
+                      if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
+                        alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", il risque d'y avoir un conflit avec " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
+                      }
+                      else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
+                        alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
+                      }
                     }
-                    else if (newResource.substring(0, 5) == "human"){
-                      humanResources.forEach((human) => {
-                        if(human.id == newResource){
-                          resourceTitle = human.title;
-                        }
-                      })
-                    }
-                    alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", on ne peut donc pas mettre " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
-                    isEditable = false;
-                  }
                 }
               }
-            }
+            })
           })
+        }
         })
-      })
-    })
-  }
-  else {
-    alert("Le parcours doit être compris entre : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
-    isEditable = false;
-  }
-      
-      if (!isEditable){
-        listEventAppointment.forEach((newEventAppointment) => {
-          listOldEvent.forEach((oldEventSet) => {
-            if(newEventAppointment._def.publicId == oldEventSet._def.publicId){
-              if(newEventAppointment._def.publicId == oldEvent._def.publicId){
-                calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-                calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-                var startDate = new Date(oldEvent.start.getTime()-(2*60*60*1000));
-                var startStr = formatDate(startDate).replace(" ", "T");
-                var endDate = new Date(oldEvent.end.getTime()-(2*60*60*1000));
-                var endStr = formatDate(endDate).replace(" ", "T");
-                calendar.getEventById(oldEvent._def.publicId)._def.resourceIds = oldEvent._def.resourceIds;
-                calendar.getEventById(oldEvent._def.publicId).setStart(startStr);
-                calendar.getEventById(oldEvent._def.publicId).setEnd(endStr);
-              }
-              else {
-                newEventAppointment._def.ui.backgroundColor = RessourcesAllocated(oldEventSet);
-                newEventAppointment._def.ui.borderColor = RessourcesAllocated(oldEventSet);
-                var startDate = new Date(oldEventSet.start.getTime()-(2*60*60*1000));
-                var startStr = formatDate(startDate).replace(" ", "T");
-                var endDate = new Date(oldEventSet.end.getTime()-(2*60*60*1000));
-                var endStr = formatDate(endDate).replace(" ", "T");
-                newEventAppointment.setStart(startStr);
-                newEventAppointment.setEnd(endStr);
-              }
-            }
-          })
-        })
-      }
+    }
+    else {
+      alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
+    }
+    
 }
 
 
 
-function createCalendar(typeResource) {
+function createCalendar(typeResource,useCase) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -648,8 +611,31 @@ function createCalendar(typeResource) {
     first = true;
   } else {
     first = false;
-    listEvent = calendar.getEvents();
-    console.log(listEvent);
+    switch(useCase){
+      case 'recreate':
+        //Test pour savoir si il s'agit d'un ajout
+        if(historyEvents[historyEvents.length-2].idAppointment!=-1){
+            //récupère la liste des Appointments
+            var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
+            for (let i = 0; i < listeAppointments.length; i++) {
+              if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-2].idAppointment) {
+                //On défini le rdv comme non plannifié
+                listeAppointments[i].scheduled = false;
+              }
+            }
+            //On update la liste de rendez-vous
+            document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+          }
+          
+        if(historyEvents[historyEvents.length-2].events!=undefined){
+          listEvent=historyEvents[historyEvents.length-2].events; 
+          historyEvents.splice(historyEvents.length-1,1);  
+        }
+        break; 
+    default: 
+      listEvent = calendar.getEvents();
+      break; 
+    }
     listEvent.forEach((event) => {
       let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
@@ -759,7 +745,7 @@ function createCalendar(typeResource) {
       var modifyEvent = event.event;
       var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
       var editByClick = false;
-      updateEventsAppointment(oldEvent, newDelay, editByClick);
+      updateEventsAppointment(oldEvent);
       calendar.render();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
@@ -777,7 +763,6 @@ function createCalendar(typeResource) {
           }
           for(let j=0; j<listeMaterialResources.length;j++){
             if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
-              console.log('alo');
               var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
               modifyEvent._def.extendedProps.materialResources.push(materialArray); 
             }  
@@ -879,12 +864,10 @@ function createCalendar(typeResource) {
         }
         );
         }
-      console.log(setEvents);
       index++;
     });
     listEvents = setEvents;
   }
-  console.log(listEvents);
   for (var i = 0; i < listEvents.length; i++) {
     calendar.addEvent(listEvents[i]);
   }
@@ -893,9 +876,12 @@ function createCalendar(typeResource) {
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
   });
-
+  if(historyEvents.length==0){
+    historyEvents.push(calendar.getEvents(),-1); 
+  }
   //affiche le calendar
   calendar.gotoDate(currentDate);
+
   calendar.render();
 }
 
@@ -945,4 +931,23 @@ function clearArray(array){
   while (array.length) {
     array.pop();
   }
+}
+
+function undoEvent(){ 
+
+  createCalendar(headerResources,'recreate');
+}
+
+function verifyHistoryPush(array, idAppointment){
+  
+  if(array.length<10){
+    array.push({events:calendar.getEvents(),idAppointment:idAppointment}); 
+  }
+  else{
+    for(let i=0; array.length>=10; i++){
+      array.splice(i,1); 
+    }
+    array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
+  }
+  console.log(array);
 }

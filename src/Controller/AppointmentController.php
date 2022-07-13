@@ -100,7 +100,7 @@ class AppointmentController extends AbstractController
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
-        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
+        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
 
         // Création du rendez-vous
         $appointment = new Appointment(); 
@@ -142,7 +142,7 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function appointmentDelete(EntityManagerInterface $entityManager, Appointment $appointment, AppointmentRepository $appointmentRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, UnavailabilityHumanResourceRepository $unavailabilityHumanResourceRepository): Response
+    public function appointmentDelete(EntityManagerInterface $entityManager, Appointment $appointment, AppointmentRepository $appointmentRepository): Response
     {
         //on récupère toutes les activités programmées associées au rendez-vous
         $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
@@ -158,20 +158,10 @@ class AppointmentController extends AbstractController
 
             foreach($allMaterialResourceScheduled as $materialResourceScheduled)
             {
+                $unavailabilityRemove = $materialResourceScheduled->getUnavailability();
                 $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-                $strDate = substr($date, 0, 10);
-                $strStart = $strDate . " " . $scheduledActivity->getStarttime()->format('H:i:s');
-
-                $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findUnavailabilityMaterialResourceByDate($strStart, $materialResourceScheduled->getMaterialresource()->getId());
-
-                foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
-                {
-                    $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                    $entityManager->remove($unavailabilityMaterialResource);
-                    $entityManager->flush($unavailabilityMaterialResource);
-                    $entityManager->remove($unavailability);
-                    $entityManager->flush($unavailability);
-                }
+                $entityManager->remove($unavailabilityRemove);
+                $entityManager->flush();
             }
 
 
@@ -181,18 +171,10 @@ class AppointmentController extends AbstractController
 
             foreach($allHumanResourceScheduled as $humanResourceScheduled)
             {
+                $unavailabilityRemove = $humanResourceScheduled->getUnavailability();
                 $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-
-                $listUnavailabilityHumanResource = $unavailabilityHumanResourceRepository->findUnavailabilityHumanResourceByDate($strStart, $humanResourceScheduled->getHumanresource()->getId());
-
-                foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
-                {
-                    $unavailability = $unavailabilityHumanResource->getUnavailability();
-                    $entityManager->remove($unavailabilityHumanResource);
-                    $entityManager->flush($unavailabilityHumanResource);
-                    $entityManager->remove($unavailability);
-                    $entityManager->flush($unavailability);
-                }
+                $entityManager->remove($unavailabilityRemove);
+                $entityManager->flush();
             }
 
 
