@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="js/jquery-3.6.0.js"></script>
+    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
     <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
     <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
     <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
@@ -90,20 +90,6 @@
             <tr>
                 <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
-                {#
-                <td> 
-                    {% if (categoriesByResources[indexResource]) %}
-                    <select>
-                                {% for indexCategory in 0..(categoriesByResources[indexResource]|length - 1) %}
-                                    <option id = "option-categories-list-select" value="{{categoriesByResources[indexResource][indexCategory].id}}">   {{(indexCategory+1) ~ '. ' ~ categoriesByResources[indexResource][indexCategory].categoryname }} </option>
-                                {% else %}
-                                {% endfor %}
-                        </select> 
-                    </div>
-                    {% else %}
-                        <p> Pas d'activites créées ! </p> 
-                    {% endif %} 
-                </td> #}
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHuman('{{human_resource.humanresourcename}}', '{{categoryArray|json_encode()}}')">Informations</a>
                     <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{human_resource.id}}', '{{human_resource.humanresourcename}}', '{{indexResource}}')">Éditer</a>

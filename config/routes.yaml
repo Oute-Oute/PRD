@@ -190,3 +190,8 @@ SettingsEdit:
   path: /settings/edit
   controller: App\Controller\SettingsController:settingsEdit
   methods: [POST]
+
+SettingsAddDefault:
+  path: /settings/addDefault
+  controller: App\Controller\SettingsController:settingsAddDefault
+  methods: [POST]
