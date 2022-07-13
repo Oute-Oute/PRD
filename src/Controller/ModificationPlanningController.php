@@ -328,6 +328,13 @@ class ModificationPlanningController extends AbstractController
                 'endTime' => ($workingHours->getEndtime()->format('H:i')),
             ];
         }
+        else{
+            $workingHoursArray[] = [
+                'day' => $dayWeek,
+                'startTime' => '00:00',
+                'endTime' => '00:00',
+            ];
+        }
         return $workingHoursArray;
     }
 
