@@ -126,7 +126,7 @@ function deleteSelect(id) {
 /**
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
  */
- function verifyChanges() {
+ function humanResourceVerify() {
 
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
@@ -168,6 +168,31 @@ function deleteSelect(id) {
     else {
         btnAdd.click();
     }
+
+    
+}
+
+function materialResourceVerify() {
+
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('categories-container')
+    let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let nbCategory = document.getElementById('nbCategory');
+    var nbCateg = 0;
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
+        }
+        
+    } 
+
+    nbCategory.value = nbCateg
+    btnAdd.click();
 
     
 }
