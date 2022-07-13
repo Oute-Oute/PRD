@@ -3,9 +3,10 @@
 {% block title %}Liste des parcours{% endblock %}
 
 {% block stylesheets %}
-       <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+        <link rel="stylesheet" href="../CSS/bootstrap/bootstrap.min.css">
 {% endblock %}
 
 
@@ -13,9 +14,7 @@
 
 <div class="index">
 
-    <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
-    <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
-    <input style="display:none;" name="nbactivity" id="nbactivity">
+
 
     {#  inputs pour passer les json venant du serveur #}
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
@@ -24,6 +23,11 @@
     <h1> Ajouter un parcours </h1>
 
     <form action="{{ path('PathwayAdd') }}" method="post">
+
+        <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
+        <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
+        <input style="display:none;" name="nbactivity" id="nbactivity">
+
         <div id="pathway-form">
             <div id="pathway-form-top">
                <div class="flex-col"> 
@@ -79,7 +83,9 @@
 
             <div id="pathway-form-footer">
                 <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
-                <button id='submit' type="submit" class="btn-valide btn-secondary" > Ajouter le parcours</button>
+                <button onclick='submitPathway()' type="button" class="btn-valide btn-secondary" > Ajouter le parcours</button>
+                <button style="display:none;" id='submit' type="submit" class="btn-valide btn-secondary" >  </button>
+
             </div>
         </div>
     </form>
