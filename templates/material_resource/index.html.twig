@@ -11,9 +11,12 @@
     <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
           <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
           <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
+
 {% endblock %}
 {% block body %}
-
+<div id="main_content">
+<li class="selected" id="resources" onclick="change_tab_material(this.id);">Ressources</li>
+ <li class="notselected" id="categories" onclick="change_tab_material(this.id);">Catégories</li>
     <script> 
     /* Script permettant de remplir dans le js un tableau qui contient toutes les activités des pathway
 
@@ -46,7 +49,7 @@
     </script> 
 
 <div class = "index" id="both-tables">
-
+<div id = 'list-material-resources'>
     <h1>Liste des ressources matérielles</h1>
     <button class ="btn-add" onclick="showNewMaterialModalForm()"> Ajouter une nouvelle ressource matérielle </button>
     <table class="table table-striped">
@@ -77,6 +80,8 @@
         {% endfor %}
         </tbody>
     </table>
+</div>
+<div style = "display : none" id = 'list-material-categories'>
     <h1>Liste des catégories des ressources matérielles</h1>
         <button class ="btn-add" onclick="showNewMaterialCategModalForm()"> Ajouter une nouvelle catégorie de ressource matérielle </button>
     <table class="table table-striped">
@@ -105,6 +110,8 @@
         {% endfor %}
         </tbody>
     </table>
+</div>
+</div>
 </div>
 
 

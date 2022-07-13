@@ -1,3 +1,58 @@
+/* CSS PAGE AJOUT PARCOURS*/
+div#pathway-form-body {
+    display: flex;
+    width: 100%;
+    height: 50%;
+    justify-content: space-between;
+    margin: 20px 0px;
+}
+div#create-activity-container {
+    width: 50%;
+    /*border: 1px solid lightgray;*/
+    border: 2px solid var(--main-blue);
+    padding: 10px;
+
+}
+
+
+#creation-form {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    /*margin: 10px 10px; */
+    background-color: #fff;
+
+}
+
+
+div#activities-list {
+    width: 40%;
+
+}
+
+/* bouton pour ajouter des activités au parcours */
+ button#btn-add-activity {
+    background: #404040;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    color: #37BC9B;
+    background : none;
+    border : 1px solid #37BC9B;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+ div#container-btn-add-activity {
+    width:100%; 
+    display: flex; 
+    justify-content: center;
+}
 /* fieldset qui contient la liste activités*/
 fieldset#fs-add-activity, #fs-add-human-category, #fs-add-material-category {
     display: flex;
@@ -9,35 +64,8 @@ fieldset#fs-add-activity, #fs-add-human-category, #fs-add-material-category {
     width: 100%;
 }
 
-/* bouton pour ajouter des activités au parcours */
-fieldset#fs-add-activity button#btn-add-activity {
-    background: #404040;
-    padding: 5px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease 0s;
-    color: #404040;
-    background : none;
-    border : 1px solid black;
-    margin-top: 20px;
-}
-fieldset#fs-add-activity button#btn-add-activity:hover {
-    box-shadow: 0px 0px 5px black;
-}
-
-div#pathway-form-body {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-}
-div#resources-editing {
-    width: 45%;
-
-}
-div#activities-list {
-    width: 45%;
-
+#pathwayname {
+    width: 50%;
 }
 
 fieldset#fs-add-pathway, #fs-add-human-category, #fs-add-material-category {
@@ -99,4 +127,8 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     display : flex;
     flex-direction : column;
 
+}
+
+#lgd-working-hours{
+    margin-left : 100px;
 }
