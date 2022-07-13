@@ -75,20 +75,12 @@ function formatDate(date) {
 }
 
 function setEvents(array) {
-  var listCurrentEvents = calendar.getEvents();
-  let listResources = [];
-  listCurrentEvents.forEach((currentEvent) => {
-    var listResourceCurrentEvent = [];
-    for (let i = 0; i < currentEvent._def.resourceIds.length; i++) {
-      listResourceCurrentEvent.push(currentEvent._def.resourceIds[i]);
-    }
-    listResources.push(listResourceCurrentEvent);
-  });
-  document.getElementById("listScheduledActivitiesJSON").value = JSON.stringify(
-    array
-  );
-  document.getElementById("list-resource").value = JSON.stringify(listResources);
-  document.getElementById("validation-date").value = $_GET("date");
+  /*console.log(JSON.parse(document.getElementById("listScheduledActivitiesJSON").value)); 
+  console.log(array); 
+  document.getElementById("listScheduledActivitiesJSON").value = JSON.stringify(array);
+  console.log(document.getElementById("listScheduledActivitiesJSON").value); 
+  */
+
 }
 
 //function permettant l'ouverture de la modal d'ajout d'un parcours
@@ -147,9 +139,9 @@ function AddEventValider() {
   var listeActivityMaterialResource = JSON.parse(
     document.getElementById("listeActivityMaterialResource").value
   );
-
+    
   var appointmentid = document.getElementById("select-appointment").value;
-
+  
   //Récupération du rdv choisit par l'utilisateur et de la place de l'élément dans listeAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -344,7 +336,7 @@ function AddEventValider() {
       PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
 
     } while (successorsActivitiesA.length!=0);
-    verifyHistoryPush(historyEvents); 
+    verifyHistoryPush(historyEvents,appointmentid); 
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
@@ -484,6 +476,7 @@ function changePlanning() {
 
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
 function updateEventsAppointment(oldEvent) {
+  verifyHistoryPush(historyEvents,-1);
   var listEvent = calendar.getEvents();
   let listOldEvent = calendar.getEvents();
   var appointmentId = oldEvent._def.extendedProps.appointment;
@@ -596,11 +589,12 @@ function updateEventsAppointment(oldEvent) {
     else {
       alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
     }
+    
 }
 
 
 
-function createCalendar(typeResource) {
+function createCalendar(typeResource,useCase) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -611,7 +605,31 @@ function createCalendar(typeResource) {
     first = true;
   } else {
     first = false;
-    listEvent = calendar.getEvents();
+    switch(useCase){
+      case 'recreate':
+        //Test pour savoir si il s'agit d'un ajout
+        if(historyEvents[historyEvents.length-2].idAppointment!=-1){
+            //récupère la liste des Appointments
+            var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
+            for (let i = 0; i < listeAppointments.length; i++) {
+              if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-2].idAppointment) {
+                //On défini le rdv comme non plannifié
+                listeAppointments[i].scheduled = false;
+              }
+            }
+            //On update la liste de rendez-vous
+            document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+          }
+          
+        if(historyEvents[historyEvents.length-2].events!=undefined){
+          listEvent=historyEvents[historyEvents.length-2].events; 
+          historyEvents.splice(historyEvents.length-1,1);  
+        }
+        break; 
+    default: 
+      listEvent = calendar.getEvents();
+      break; 
+    }
     listEvent.forEach((event) => {
       let eventResources = [];
       for (let i = 0; i < event._def.resourceIds.length; i++) {
@@ -853,7 +871,7 @@ function createCalendar(typeResource) {
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
   });
   if(historyEvents.length==0){
-    historyEvents.push(calendar.getEvents()); 
+    historyEvents.push(calendar.getEvents(),-1); 
   }
   //affiche le calendar
   calendar.gotoDate(currentDate);
@@ -910,24 +928,20 @@ function clearArray(array){
 }
 
 function undoEvent(){ 
-  console.log(historyEvents,calendar.getEvents()); 
-  if(historyEvents.length!=0){
-    setEvents(historyEvents[historyEvents.length-1]); 
-    createCalendar(headerResources); 
-    historyEvents.splice(historyEvents.length-1); 
-  }
-  console.log(calendar.getEvents()); 
-  calendar.render(); 
+
+  createCalendar(headerResources,'recreate');
 }
 
-function verifyHistoryPush(array){
-  if(array.length<5){
-    array.push(calendar.getEvents()); 
+function verifyHistoryPush(array, idAppointment){
+  
+  if(array.length<10){
+    array.push({events:calendar.getEvents(),idAppointment:idAppointment}); 
   }
   else{
-    for(let i=0; array.length>=5; i++){
-      array.splice(i); 
+    for(let i=0; array.length>=10; i++){
+      array.splice(i,1); 
     }
-    array.push(calendar.getEvents()); 
+    array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
   }
+  console.log(array);
 }
