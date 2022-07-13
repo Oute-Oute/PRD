@@ -1,26 +1,25 @@
+{% block content %}
 <div class="modal" id="infos-patient-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-<h1>Patient</h1>
+                <h1 id='patient'></h1>
+                <br>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="tableShow">
+                    <thead>
+                        <tr>
+                            <th>Parcours</th>
+                            <th>Jour du rendez-vous </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyShow">
 
-    <table class="table table-striped">
-        <tbody>
-            <tr>
-                <th>Identifiant</th>
-                <td id ="patient-id"></td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td id ="patient-lastname"></td>
-            </tr>
-            <tr>
-                <th>Prénom</th>
-                <td id ="patient-firstname"></td>
-            </tr>
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-</div>
-</div>
+{% endblock content %}

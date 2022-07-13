@@ -34,19 +34,29 @@
 			</thead>
 			<tbody>
 				{% for patient in patients %}
+					{% set appointmentArray = [] %}
+					{% for appointment in currentappointments %}
+						{% if appointment.patient.id == patient.id  and appointment.dayappointment|date("d/m/Y") >= 'now'|date('d/m/Y') %}
+							{% set date = appointment.dayappointment|date("d/m/Y") %}
+							{% set pathwayname = appointment.pathway.pathwayname %}
+							{% set appointmentArray = appointmentArray|merge([{'date': date, 'pathwayname': pathwayname}]) %}
+						{% endif %}
+					{% endfor %}
+					{% set appointmentArray = appointmentArray|json_encode %}
 					<tr>
 						<td>{{ patient.id }}</td>
 						<td>{{ patient.lastname }}</td>
 						<td>{{ patient.firstname }}</td>
 						<td>
-						    <button class = "btn-infos btn-secondary" onclick="showInfosPatient('{{patient.id}}', '{{patient.lastname}}' , '{{ patient.firstname }}')">Informations</a>
-							<button type="button" class="btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
+							<button class = "btn-infos btn-secondary" onclick="showInfosPatient('{{patient.lastname}}', '{{patient.firstname}}', '{{appointmentArray}}')">Informations</a>
+						    <button type="button" class="btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
 							<form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
 								<input type="hidden" name="patient" value="{{ patient.id }}">
 								<button class="btn-delete btn-secondary">Supprimer</button>
 							</form>
 						</td>
 					</tr>
+					{% set appointmentArray = [] %}
 				{% else %}
 					<tr>
 						<td colspan="5">Pas de patients créés !</td>
