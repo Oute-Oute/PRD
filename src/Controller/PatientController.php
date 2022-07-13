@@ -18,7 +18,8 @@ class PatientController extends AbstractController
     {
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', [
-            'patients' => $patientRepository->findAll(),
+            'patients' => $patientRepository->findBy(array(),
+                                                     array('lastname' => 'ASC')),
             'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall()
         ]);
     }
