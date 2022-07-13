@@ -8,16 +8,17 @@
 {% endblock %}
 {% block body %}
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
-	
+
 	<script src="js/jquery-3.6.0.js"></script>
-    <script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+	<script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY" crossorigin="anonymous"></script>
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 	<script src="js/planning/consultation-planning.js"></script>
 	<script src="js/planning/utils-planning.js"></script>
 
 	<div class="all-container" id="all">
-		<h1>Consultation du Planning du {{ currentdate|date("d/m/Y") }}</h1>
+		<h1>Consultation du Planning du
+			{{ currentdate|date("d/m/Y") }}</h1>
 		<div class="flex">
 			<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
@@ -48,7 +49,16 @@
 			<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
 			<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 			<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
-			</div>
+			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom">
+				<option value="02:00:00">Zoom : 2H</option>
+				<option value="01:00:00">Zoom : 1H</option>
+				<option value="0:40:00">Zoom : 40min</option>
+				<option value='00:20:00' selected>Zoom : 20min (Default)</option>
+				<option value="00:10:00">Zoom : 10min</option>
+				<option value="00:05:00">Zoom : 5min</option>
+				<option value="00:03:00">Zoom : 1min</option>
+			</select>
+		</div>
 	</div>
 
 
@@ -72,27 +82,9 @@
 						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
 						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
 					<label class="label-event">Parcours :</label>
-					</br>
-					<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
-					</br>
-					<label class="label-event">Patient :</label>
-					</br>
-					<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
-					</br>
-					<label class="label-event">Ressource Humaine :</label>
-					</br>
-					<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
-					</br>
-					<label class="label-event">Ressource Matérielle :</label>
-					</br>
-					<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-					</div>
-				</div>
-			</form> 
-		</div>
-	</div>
-
-				{% endblock %}
+				</br>
+				<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+		</br>
+		<label class="label-event">Patient :</label>
+	</br>
+	<input class="input-modal" type="text" id="patient" name="patient" disabled></input></br><label class="label-event">Ressource Humaine :</label></br><input class="input-modal" type="text" id="rh" name="rh" disabled></input></br><label class="label-event">Ressource Matérielle :</label></br><input class="input-modal" type="text" id="rm" name="rm" disabled></input></div><div class="modal-footer"><button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button></div></div></form> </div></div>{% endblock %}
