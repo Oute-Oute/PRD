@@ -319,14 +319,15 @@ class ModificationPlanningController extends AbstractController
         //recuperation du pathway depuis la base de données
         $workingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findOneBy(['humanresource' => $resource, 'dayweek' => $dayWeek]);
         $workingHoursArray = array();
-        $dayWorkingHours = $workingHours->getDayweek();
-        //ajout des données du pathway dans un tableau
-        $workingHoursArray[] = [
-            'day' => $dayWorkingHours,
-            'startTime' => ($workingHours->getStarttime()->format('H:i')),
-            'endTime' => ($workingHours->getEndtime()->format('H:i')),
-        ];
-
+        if($workingHours !=null){
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = [
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+            ];
+        }
         return $workingHoursArray;
     }
 
