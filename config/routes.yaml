@@ -194,7 +194,7 @@ SettingsAddDefault:
 
 AjaxAppointment:
   path: /ajaxAppointment
-  controller: App\Controller\AjaxAppointmentController::getTargets
+  controller: App\Controller\AppointmentController::getTargets
   methods: [POST]
 
 AjaxPatient:
@@ -205,4 +205,9 @@ AjaxPatient:
 AjaxPathway:
   path: /ajaxPathway
   controller: App\Controller\PathwayController::getDataPathway
+  methods: [POST]
+
+AjaxHumanResource:
+  path: /ajaxHumanResource
+  controller: App\Controller\HumanResourceController::getDataHumanResource
   methods: [POST]

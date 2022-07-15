@@ -61,4 +61,15 @@ class AppointmentRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function getNumberOfAppointmentByPathwayByFirstDate($pathway, $date)
+    {   
+        $qb= $this->createQueryBuilder('a')
+            ->where('a.dayappointment >= :date')
+            ->andWhere('a.pathway = :pathway')
+            ->setParameter('date', $date)
+            ->setParameter('pathway', $pathway);
+        $query=$qb->getQuery()->getResult();
+        return $query;
+    }
 }
+

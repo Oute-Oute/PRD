@@ -32,7 +32,7 @@ function addAppointment() {
   for(var i=0; i<dataPatients.length; i++){
     firstname=dataPatients[i]["firstname"];
     lastname=dataPatients[i]["lastname"];
-    patient=firstname+" "+lastname;
+    patient=firstname+"   "+lastname;
     tagsPatients.push(patient);
   }
   var dataPathways=JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
@@ -53,10 +53,7 @@ function openDayModale(type) {
         dataType : "json",
         success : function(data)
               {
-                   $("#pathway").html(data);
-                   
-                   console.log(data);
-                   console.log("gg")
+                   addTargetsToCalendar(data);
                 },
         error: function(data)
         {
@@ -156,6 +153,14 @@ function validate(type){
     selectable: true, //set the calendar to be selectable
     editable: true, //set the calendar not to be editable
     nowIndicator: true,
+    eventDidMount: function (info) {
+      $(info.el).tooltip({
+        title: info.event.extendedProps.description,
+        placement: "top",
+        trigger: "hover",
+        container: "body",
+      });
+    },
     dateClick: function(info) {
       document.getElementById("buttonSelect").style="background-color : #37BC9B; border : 1px solid #37BC9B;"
       document.getElementById("buttonSelect").disabled=false;
@@ -171,3 +176,19 @@ function validate(type){
   calendar.render(); //render the calendar
 }
 
+function addTargetsToCalendar(targets) {
+  console.log(targets)
+  targets.forEach(element => {
+    console.log(element);
+    calendar.addEvent({
+      id: element.id,
+      description: element.target,
+      display:'background',
+      color:element.color,
+
+  });
+  
+});
+calendar.render();
+console.log(calendar.getEvents());
+}
