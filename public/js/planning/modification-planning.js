@@ -607,125 +607,128 @@ function createCalendar(typeResource,useCase) {
   var listEvent;
 
   let listResource = [];
-  if (listEvents == undefined) {
-    first = true;
-  } else {
-    first = false;
-    switch(useCase){
-      case 'recreate':
-        //Test pour savoir si il s'agit d'un ajout
-        if(historyEvents[historyEvents.length-2].idAppointment!=-1){
-            //récupère la liste des Appointments
-            var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
-            for (let i = 0; i < listeAppointments.length; i++) {
-              if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-2].idAppointment) {
-                //On défini le rdv comme non plannifié
-                listeAppointments[i].scheduled = false;
+    if (listEvents == undefined) {
+      first = true;
+    } 
+
+    else {
+      first = false;
+      switch(useCase){
+        case 'recreate':
+          //Test pour savoir si il s'agit d'un ajout
+        console.log(historyEvents);
+            if(historyEvents[historyEvents.length-2]!=undefined){
+              if(historyEvents[historyEvents.length-1].idAppointment!=-1){
+                //récupère la liste des Appointments
+                var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
+                for (let i = 0; i < listeAppointments.length; i++) {
+                  if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-1].idAppointment) {
+                    //On défini le rdv comme non plannifié
+                    listeAppointments[i].scheduled = false;
+                  }
+                }
+                //On update la liste de rendez-vous
+                document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
               }
+            
+              listEvent=historyEvents[historyEvents.length-2].events; 
+              historyEvents.splice(historyEvents.length-1,1);  
             }
-            //On update la liste de rendez-vous
-            document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
-          }
-          
-        if(historyEvents[historyEvents.length-2].events!=undefined){
-          listEvent=historyEvents[historyEvents.length-2].events; 
-          historyEvents.splice(historyEvents.length-1,1);  
-        }
+          break; 
+      default: 
+        listEvent = calendar.getEvents();
         break; 
-    default: 
-      listEvent = calendar.getEvents();
-      break; 
-    }
-    listEvent.forEach((event) => {
-      let eventResources = [];
-      for (let i = 0; i < event._def.resourceIds.length; i++) {
-        eventResources.push(event._def.resourceIds[i]);
       }
-      listResource.push(eventResources);
-    });
-  }
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    //clé de la license pour utiliser la librairie à des fin non commerciale
-    schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
-
-    //initialise la vue en colonne par ressource par jour en horaire française
-    initialView: "resourceTimelineDay",
-    slotDuration: "00:20:00",
-    locale: "fr",
-    timeZone: "Europe/Paris",
-
-    //permet de modifier les events dans le calendar
-    selectable: false,
-    //eventConstraint:"businessHours",
-    editable: true,
-    eventDurationEditable: false,
-    contentHeight: (9 / 12) * height,
-    handleWindowResize: true,
-    nowIndicator: true,
-    selectConstraint: "businessHours", //set the select constraint to be business hours
-    eventMinWidth: 1, //set the minimum width of the event
-
-    //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
-    headerToolbar: {
-      start: null,
-      center: "title",
-      end: null,
-    },
-
-    //modifie l'affichage des heures de la journée
-    slotLabelFormat: {
-      hour: "2-digit",
-      minute: "2-digit",
-      meridiem: false,
-      hour12: false,
-    },
-
-    //à supprimer
-    resourceOrder: "title",
-    resourceAreaWidth: "20%",
-    resourceAreaHeaderContent: headerResources,
-
-    /*eventDidMount: function (info) {
-      $(info.el).tooltip({
-        title: info.event.extendedProps.description,
-        placement: "top",
-        trigger: "hover",
-        container: "body",
+      listEvent.forEach((event) => {
+        let eventResources = [];
+        for (let i = 0; i < event._def.resourceIds.length; i++) {
+          eventResources.push(event._def.resourceIds[i]);
+        }
+        listResource.push(eventResources);
       });
-    },*/
+    }
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      //clé de la license pour utiliser la librairie à des fin non commerciale
+      schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
 
-    //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
-    eventClick: function (event) {
-      var id = event.event._def.publicId; //get the id of the event
-      var activity = calendar.getEventById(id); //get the event with the id
-      var start = activity.start; //get the start date of the event
-      var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-      var humanResourcesNames = ""; //create a string with the human resources names
-      if (humanResources != undefined) {
-        for (var i = 0; i < humanResources.length; i++) {
-          //for each human resource except the last one
+      //initialise la vue en colonne par ressource par jour en horaire française
+      initialView: "resourceTimelineDay",
+      slotDuration: "00:20:00",
+      locale: "fr",
+      timeZone: "Europe/Paris",
 
-          if (humanResources[i].title != undefined) {
-            //if the human resource exist
-            humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+      //permet de modifier les events dans le calendar
+      selectable: false,
+      //eventConstraint:"businessHours",
+      editable: true,
+      eventDurationEditable: false,
+      contentHeight: (9 / 12) * height,
+      handleWindowResize: true,
+      nowIndicator: true,
+      selectConstraint: "businessHours", //set the select constraint to be business hours
+      eventMinWidth: 1, //set the minimum width of the event
+
+      //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
+      headerToolbar: {
+        start: null,
+        center: "title",
+        end: null,
+      },
+
+      //modifie l'affichage des heures de la journée
+      slotLabelFormat: {
+        hour: "2-digit",
+        minute: "2-digit",
+        meridiem: false,
+        hour12: false,
+      },
+
+      //à supprimer
+      resourceOrder: "title",
+      resourceAreaWidth: "20%",
+      resourceAreaHeaderContent: headerResources,
+
+      /*eventDidMount: function (info) {
+        $(info.el).tooltip({
+          title: info.event.extendedProps.description,
+          placement: "top",
+          trigger: "hover",
+          container: "body",
+        });
+      },*/
+
+      //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
+      eventClick: function (event) {
+        var id = event.event._def.publicId; //get the id of the event
+        var activity = calendar.getEventById(id); //get the event with the id
+        var start = activity.start; //get the start date of the event
+        var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+        var humanResourcesNames = ""; //create a string with the human resources names
+        if (humanResources != undefined) {
+          for (var i = 0; i < humanResources.length; i++) {
+            //for each human resource except the last one
+
+            if (humanResources[i].title != undefined) {
+              //if the human resource exist
+              humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+            }
           }
         }
-      }
-      //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
-      
+        //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
+        
 
-      var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
-      
-      var materialResourcesNames = ""; //create a string with the material resources names
-      if (materialResources != undefined) {
-        for (var i = 0; i < materialResources.length; i++) {
-          //for each material resource except the last one
-          if (materialResources[i].title != undefined) {
-            //if the material resource exist
-            materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
+        var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+        
+        var materialResourcesNames = ""; //create a string with the material resources names
+        if (materialResources != undefined) {
+          for (var i = 0; i < materialResources.length; i++) {
+            //for each material resource except the last one
+            if (materialResources[i].title != undefined) {
+              //if the material resource exist
+              materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
+            }
           }
         }
-      }
       // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
       //set data to display in the modal window
@@ -819,53 +822,53 @@ function createCalendar(typeResource,useCase) {
           };
           businessHours.push(businesstemp); //add the business hour to the array
         }
+        }
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"], //set the id
           title: temp["title"], //set the title
           businessHours: businessHours, //get the business hours
         });
-      }
-      calendar.addResource({
-        id: "h-default",
-        title: "Aucune ressource allouée",
-      });
-      break;
-    case "Ressources Matérielles": //if we want to display by the resources
-      var resourcesArray = JSON.parse(
-        document.getElementById("material").value.replaceAll("3aZt3r", " ")
-      ); //get the data of the resources
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
         calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"],
-          title: temp["title"],
-        });
-        calendar.addResource({
-          id: "m-default",
+          id: "h-default",
           title: "Aucune ressource allouée",
         });
-      }
-      break;
-  }
+        break;
+      case "Ressources Matérielles": //if we want to display by the resources
+        var resourcesArray = JSON.parse(
+          document.getElementById("material").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the resources
+        for (var i = 0; i < resourcesArray.length; i++) {
+          var temp = resourcesArray[i]; //get the resources data
+          calendar.addResource({
+            //add the resources to the calendar
+            id: temp["id"],
+            title: temp["title"],
+          });
+          calendar.addResource({
+            id: "m-default",
+            title: "Aucune ressource allouée",
+          });
+        }
+        break;
+    }
 
-  if (first == true) {
-    listEvents = JSON.parse(
-      document
-        .getElementById("listScheduledActivitiesJSON")
-        .value.replaceAll("3aZt3r", " ")
-    );
-  } else {
-    let setEvents = [];
-    var index = 0;
-    listEvent.forEach((eventModify) => {
-      var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
-      var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
-      if (eventModify.display != "background") {
+    if (first == true) {
+      listEvents = JSON.parse(
+        document
+          .getElementById("listScheduledActivitiesJSON")
+          .value.replaceAll("3aZt3r", " ")
+      );
+    } else {
+      let setEvents = [];
+      var index = 0;
+      listEvent.forEach((eventModify) => {
         var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
         var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
-        setEvents.push({
+        if (eventModify.display != "background") {
+          var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
+          var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
+          setEvents.push({
           id: eventModify.id,
           start: formatDate(start).replace(" ", "T"),
           end: formatDate(end).replace(" ", "T"),
@@ -879,11 +882,11 @@ function createCalendar(typeResource,useCase) {
           materialResources: eventModify.extendedProps.materialResources,
           pathway: eventModify.extendedProps.pathway,
         });
-      }
-      else{
-        var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
-        var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
-        setEvents.push({
+        }
+        else{
+          var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
+          var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
+          setEvents.push({
           id: eventModify.id,
           start: formatDate(start).replace(" ", "T"),
           end: formatDate(end).replace(" ", "T"),
@@ -892,29 +895,29 @@ function createCalendar(typeResource,useCase) {
           description: eventModify.extendedProps.description,
           display : eventModify.display,
           color : eventModify.color,
-          idScheduledActivity : eventModify.extendedProps.idScheduledActivity
-        });
-      }
-      index++;
+          }
+          );
+          }
+        index++;
+      });
+      listEvents = setEvents;
+    }
+    for (var i = 0; i < listEvents.length; i++) {
+      calendar.addEvent(listEvents[i]);
+    }
+    let listCurrentEvent = calendar.getEvents();
+    listCurrentEvent.forEach((currentEvent) => {
+      currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+      currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     });
-    listEvents = setEvents;
-  }
-  for (var i = 0; i < listEvents.length; i++) {
-    calendar.addEvent(listEvents[i]);
-  }
-  let listCurrentEvent = calendar.getEvents();
-  listCurrentEvent.forEach((currentEvent) => {
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-  });
-  if(historyEvents.length==0){
-    historyEvents.push(calendar.getEvents(),-1); 
-  }
-  //affiche le calendar
-  calendar.gotoDate(currentDate);
+    if(historyEvents.length==0){
+      verifyHistoryPush(historyEvents,-1); 
+    }
+    //affiche le calendar
+    calendar.gotoDate(currentDate);
 
-  calendar.render();
-}
+    calendar.render();
+  }
 
 function showPopup() {
   $("#divPopup").show();
@@ -965,8 +968,10 @@ function clearArray(array){
 }
 
 function undoEvent(){ 
-
-  createCalendar(headerResources,'recreate');
+  console.log(historyEvents.length); 
+  if(historyEvents.length!=1){
+    createCalendar(headerResources,'recreate');
+  }
 }
 
 function verifyHistoryPush(array, idAppointment){

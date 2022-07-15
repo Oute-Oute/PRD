@@ -49,6 +49,10 @@ div#activities-list #list{
     justify-content: space-between;
     align-items: center;
     padding: 0px 15px;
+    min-height: 35px;
+}
+.div-activity p {
+    margin: 0px;
 }
 
 /* bouton pour ajouter des activités au parcours */
