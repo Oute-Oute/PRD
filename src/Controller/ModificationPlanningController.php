@@ -371,15 +371,33 @@ class ModificationPlanningController extends AbstractController
         foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
             $resource= $materialResourceUnavailable->getMaterialresource()->getId();
             $resource = "material-" . $resource;
-            $materialResourcesUnavailableArray[] = array(
-                'description' =>'Ressource Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display'=>'background',
-                'color'=>'#ff0000',
-                'type'=>'unavailability'
-            );
+            $scheduledActivity = $materialResourceUnavailable->getScheduledactivity();
+            if($scheduledActivity == null)
+            {
+                $materialResourcesUnavailableArray[] = array(
+                    'description' =>'Ressource Indisponible',
+                    'resourceId' => ($resource),
+                    'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                    'display'=>'background',
+                    'color'=>'#ff0000',
+                    'type'=>'unavailability',
+                    'idScheduledActivity' => 'null'
+                );
+            }
+            else
+            {
+                $materialResourcesUnavailableArray[] = array(
+                    'description' =>'Ressource Indisponible',
+                    'resourceId' => ($resource),
+                    'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                    'display'=>'background',
+                    'color'=>'#ff0000',
+                    'type'=>'unavailability',
+                    'idScheduledActivity' => $scheduledActivity->getId()
+                );
+            }
         }
         return $materialResourcesUnavailableArray;
     }
@@ -397,15 +415,33 @@ class ModificationPlanningController extends AbstractController
         foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
             $resource= $humanResourceUnavailable->getHumanresource()->getId();
             $resource = "human-" . $resource;
-            $humanResourcesUnavailableArray[] = array(
-                'description' =>'Employé Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display'=>'background',
-                'color'=>'#ff0000',
-                'type'=>'unavailability'
-            );
+            $scheduledActivity = $humanResourceUnavailable->getScheduledactivity();
+            if($scheduledActivity == null)
+            {
+                $humanResourcesUnavailableArray[] = array(
+                    'description' =>'Employé Indisponible',
+                    'resourceId' => ($resource),
+                    'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                    'display'=>'background',
+                    'color'=>'#ff0000',
+                    'type'=>'unavailability',
+                    'idScheduledActivity' => 'null'
+                );
+            }
+            else
+            {
+                $humanResourcesUnavailableArray[] = array(
+                    'description' =>'Employé Indisponible',
+                    'resourceId' => ($resource),
+                    'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                    'display'=>'background',
+                    'color'=>'#ff0000',
+                    'type'=>'unavailability',
+                    'idScheduledActivity' => $scheduledActivity->getId()
+                );
+            }
         }
         return $humanResourcesUnavailableArray;
     }
