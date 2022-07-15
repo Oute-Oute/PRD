@@ -16,8 +16,6 @@ function editPatient(id, lastname, firstname) {
 
 function showInfosPatient(idPatient, lastname, firstname) {
     document.getElementById('patient').innerHTML = lastname + ' ' + firstname;
-    length = appointmentArray.split('{').length;
-    appointmentArray = appointmentArray.split('"');
    
     var tableBody = document.getElementById('tbodyShow');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
