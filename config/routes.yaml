@@ -191,3 +191,8 @@ SettingsAddDefault:
   path: /settings/addDefault
   controller: App\Controller\SettingsController:settingsAddDefault
   methods: [POST]
+
+AjaxAppointment:
+  path: /ajaxAppointment
+  controller: App\Controller\AjaxAppointmentController::getTargets
+  methods: [POST]

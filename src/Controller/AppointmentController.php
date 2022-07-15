@@ -72,19 +72,6 @@ class AppointmentController extends AbstractController
         return new JsonResponse($patientsArray);
     }
 
-    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway){
-        $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
-        $targetsJSON = [];
-        foreach ($targets as $target) {
-            $targetsJSON[] = [
-                'id' => $target->getId(),
-                'dayweek' => $target->getDayweek(),
-                'target' => $target->getTarget()
-            ];
-        }
-        return new JsonResponse($targetsJSON);
-    }
-
     public function appointmentAdd(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
         // On recupere toutes les données de la requete
@@ -187,4 +174,5 @@ class AppointmentController extends AbstractController
 
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
+
 }

@@ -28,17 +28,14 @@ function addAppointment() {
     tagsPatients.pop();
   }
   $("#add-appointment-modal").modal("show");
-  var dataPatients = JSON.parse(document.getElementById("patient").value);
-  console.log(dataPatients);
+  var dataPatients = JSON.parse(document.getElementById("patient").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPatients.length; i++){
     firstname=dataPatients[i]["firstname"];
     lastname=dataPatients[i]["lastname"];
     patient=firstname+" "+lastname;
     tagsPatients.push(patient);
   }
-  console.log(tagsPatients);
-  var dataPathways=JSON.parse(document.getElementById("pathway").value);
-  console.log(dataPathways);
+  var dataPathways=JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPathways.length; i++){
     pathName=dataPathways[i]["title"];
     tagsPathways.push(pathName);
@@ -47,7 +44,25 @@ function addAppointment() {
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
-  console.log(type);
+  var pathwayName = $('#autocompletePathwayAdd').val();
+      $.ajax({
+
+        type : 'POST',
+        url  : '/ajaxAppointment',
+        data : { pathway: pathwayName},
+        dataType : "json",
+        success : function(data)
+              {
+                   $("#pathway").html(data);
+                   
+                   console.log(data);
+                   console.log("gg")
+                },
+        error: function(data)
+        {
+          console.log("error");
+        }
+        });
   document.getElementById("buttonSelect").onclick=function(){validate(type);}
   document.getElementById("buttonCancel").onclick=function(){hideDayModale(type);}
   $("#add-appointment-modal").modal("hide");
