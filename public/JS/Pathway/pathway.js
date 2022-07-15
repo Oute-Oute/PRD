@@ -40,15 +40,49 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
-function showInfosPathway(id, name) {
-    document.getElementById('pathway-id').innerText = id;
-    document.getElementById('pathway-name').innerText = name;
-    $('#infos-pathway-modal').modal("show");
-    
+function showInfosPathway(idPathway, name) {
+    document.getElementById('pathway').innerHTML = name;
+   
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-     
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxPathway',
+        data : {idPathway: idPathway},
+        dataType : "json",
+        success : function(data){        
+            tableAppointment(tableBody, data);
+        },
+        error: function(data){
+            console.log("error");
+        }
+        });
+    
+    $('#infos-pathway-modal').modal("show");
 }
 
+function tableAppointment(tableBody, data){
+    if(data.length <= 0){
+        var tr = document.createElement('TR');
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de patients prévus pour ce parcours");
+        tr.appendChild(td);
+    }
+    else{
+        for(i = 0; i < data.length; i++){
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td1 = document.createElement('TD');
+            var td2 = document.createElement('TD');
+            td1.append(data[i]['lastname'] + ' ' + data[i]['firstname']);
+            td2.append(data[i]['date']);
+            tr.appendChild(td1);tr.appendChild(td2);
+        }
+    }
+}
 
 /**
  * Permet d'afficher la fenêtre modale d'ajout

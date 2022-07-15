@@ -49,10 +49,32 @@ function modifyEvent() {
 
   var currentDateModified = $_GET("date").substring(0, 10);
   var newStart = new Date(currentDateModified + " " + document.getElementById("start-modified-event").value);
-  var newDelay = oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
-  var editByClick = true;
+  var newDelay = oldEvent.end.getTime() - oldEvent.start.getTime();
+  
+  console.log(newDelay/60000)
+  oldEvent.setStart(new Date(newStart.getTime() + 2 * 60 * 60 * 1000))
+  oldEvent.setEnd(new Date(newStart.getTime() + 2 * 60 * 60 * 1000 + newDelay))
 
   updateEventsAppointment(oldEvent);
+
+  let listResource = [];
+  oldEvent._def.resourceIds.forEach((resource) => {
+    listResource.push(resource)
+  })
+  console.log(listResource)
+
+  calendar.getEvents().forEach((currentEvent) => {
+    if(currentEvent.display == "background"){
+      if(oldEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
+        if(listResource.length != 0){
+          currentEvent._def.resourceIds = listResource;
+          currentEvent.setStart(oldEvent.start);
+          currentEvent.setEnd(oldEvent.end);
+        }
+      }
+    }
+  })
+  
   
   $("#modify-planning-modal").modal("toggle");
 
@@ -729,79 +751,110 @@ function createCalendar(typeResource,useCase) {
             }
           }
         }
-        // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
+      // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
 
-        //set data to display in the modal window
-        $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
-        document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
-        $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
-        $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
-        $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
-        $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
-        $("#id-modified-event").val(id);
+      //set data to display in the modal window
+      $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
+      document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
+      $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
+      $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
+      $("#id-modified-event").val(id);
 
-        $("#modify-planning-modal").modal("show"); //open the window
-      },
+      $("#modify-planning-modal").modal("show"); //open the window
+    },
 
-      eventDrop: function (event) {
-        var oldEvent = event.oldEvent;
-        var modifyEvent = event.event;
-        var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
-        var editByClick = false;
-        updateEventsAppointment(oldEvent);
-        calendar.render();
-        
-        listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
-        listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
-        //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
-        clearArray(modifyEvent._def.extendedProps.humanResources); 
-        clearArray(modifyEvent._def.extendedProps.materialResources)
-        for(let i=0; i<modifyEvent._def.resourceIds.length; i++){
-          if(modifyEvent._def.resourceIds[i]!='h-default' && modifyEvent._def.resourceIds[i]!='m-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i])==false){
-            for(let j=0; j<listeHumanResources.length; j++){
-              if(listeHumanResources[j].id==modifyEvent._def.resourceIds[i]){
-                var humanArray={id:modifyEvent._def.resourceIds[i],title:listeHumanResources[j].title}
-                modifyEvent._def.extendedProps.humanResources.push(humanArray); 
-              }  
-            }
-            for(let j=0; j<listeMaterialResources.length;j++){
-              if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
-                var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
-                modifyEvent._def.extendedProps.materialResources.push(materialArray); 
-              }  
+    eventDrop: function (event) {
+      var oldEvent = event.oldEvent;
+      var modifyEvent = event.event;
+      updateEventsAppointment(oldEvent);
+      calendar.render();
+      
+      listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
+      listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
+      //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
+      clearArray(modifyEvent._def.extendedProps.humanResources); 
+      clearArray(modifyEvent._def.extendedProps.materialResources)
+      for(let i=0; i<modifyEvent._def.resourceIds.length; i++){
+        if(modifyEvent._def.resourceIds[i]!='h-default' && modifyEvent._def.resourceIds[i]!='m-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i])==false){
+          for(let j=0; j<listeHumanResources.length; j++){
+            if(listeHumanResources[j].id==modifyEvent._def.resourceIds[i]){
+              var humanArray={id:modifyEvent._def.resourceIds[i],title:listeHumanResources[j].title}
+              modifyEvent._def.extendedProps.humanResources.push(humanArray); 
+            }  
+          }
+          for(let j=0; j<listeMaterialResources.length;j++){
+            if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
+              var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
+              modifyEvent._def.extendedProps.materialResources.push(materialArray); 
+            }  
+          }
+        }
+      }
+
+      let listResource = [];
+      modifyEvent._def.resourceIds.forEach((resource) => {
+        listResource.push(resource)
+      })
+      console.log(listResource)
+
+      eventExist = false;
+      calendar.getEvents().forEach((currentEvent) => {
+        if(currentEvent.display == "background"){
+          if(modifyEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
+            if(listResource.length != 0){
+              eventExist = true;
+              currentEvent._def.resourceIds = listResource;
+              currentEvent.setStart(modifyEvent.start);
+              currentEvent.setEnd(modifyEvent.end);
             }
           }
         }
-      },
-    });
-    switch (typeResource) {
-      case "Ressources Humaines": //if we want to display by the resources
-        var resourcesArray = JSON.parse(
-          document.getElementById("human").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
-        for (var i = 0; i < resourcesArray.length; i++) {
-          var temp = resourcesArray[i]; //get the resources data
-          var businessHours = []; //create an array to store the working hours
-          for (var j = 0; j < temp["workingHours"].length; j++) {
-            businesstemp = {
-              //create a new business hour
-              startTime: temp["workingHours"][j]["startTime"], //set the start time
-              endTime: temp["workingHours"][j]["endTime"], //set the end time
-              daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
-            };
-            businessHours.push(businesstemp); //add the business hour to the array
-          }
-          calendar.addResource({
-            //add the resources to the calendar
-            id: temp["id"], //set the id
-            title: temp["title"], //set the title
-            businessHours: businessHours, //get the business hours
-          });
+      })
+
+      if(eventExist == false){
+        calendar.addEvent({
+          start: modifyEvent.start,
+          end: modifyEvent.end,
+          resourceIds: listResource,
+          type: 'unavailable',
+          description: 'Ressource Indisponible',
+          display: 'background',
+          color: '#ff0000',
+          idScheduledActivity: modifyEvent._def.publicId
+        });
+      }
+    },
+  });
+  switch (typeResource) {
+    case "Ressources Humaines": //if we want to display by the resources
+      var resourcesArray = JSON.parse(
+        document.getElementById("human").value.replaceAll("3aZt3r", " ")
+      ); //get the data of the resources
+      for (var i = 0; i < resourcesArray.length; i++) {
+        var temp = resourcesArray[i]; //get the resources data
+        var businessHours = []; //create an array to store the working hours
+        for (var j = 0; j < temp["workingHours"].length; j++) {
+          businesstemp = {
+            //create a new business hour
+            startTime: temp["workingHours"][j]["startTime"], //set the start time
+            endTime: temp["workingHours"][j]["endTime"], //set the end time
+            daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
+          };
+          businessHours.push(businesstemp); //add the business hour to the array
         }
+        calendar.addResource({
+          //add the resources to the calendar
+          id: temp["id"], //set the id
+          title: temp["title"], //set the title
+          businessHours: businessHours, //get the business hours
+        });
         calendar.addResource({
           id: "h-default",
           title: "Aucune ressource allouée",
         });
+        }
         break;
       case "Ressources Matérielles": //if we want to display by the resources
         var resourcesArray = JSON.parse(

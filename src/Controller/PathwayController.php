@@ -17,6 +17,7 @@ use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use App\Form\PathwayType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,10 +82,10 @@ class PathwayController extends AbstractController
      * Redirige vers la page qui liste les utilisateurs 
      * route : "/pathways"
      */
-    public function pathwayGet(PathwayRepository $pathwayRepository): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
     {
 
-        $activityRepository = new ActivityRepository($this->getDoctrine());
+        $activityRepository = $doctrine->getManager()->getRepository("App\Entity\Activity");
 
         //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
         //$humanResources = $humanResourceRepo->findAll();
@@ -573,5 +574,30 @@ class PathwayController extends AbstractController
         }
 
         return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function getDataPathway(ManagerRegistry $doctrine)
+    {
+        $appointments = $this->getAppointmentByPathwayId($_POST["idPathway"], $doctrine);
+        return new JsonResponse($appointments);
+    }
+
+    public function getAppointmentByPathwayId($id, ManagerRegistry $doctrine)
+    {
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
+        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
+        $appointmentArray=[];
+        foreach ($appointments as $appointment) {
+            $date = $appointment->getDayappointment()->format('d-m-Y');
+            if($date >= date('d-m-Y')){
+                $appointmentArray[] = [
+                    'lastname' => $appointment->getPatient()->getLastname(),
+                    'firstname' => $appointment->getPatient()->getFirstname(),
+                    'date' => $appointment->getDayappointment()->format('d-m-Y'),
+                ];
+            }
+        }
+
+        return $appointmentArray;
     }
 }
