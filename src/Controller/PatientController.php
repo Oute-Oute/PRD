@@ -130,10 +130,13 @@ class PatientController extends AbstractController
         $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["patient"=>$patient]);
         $appointmentArray=[];
         foreach ($appointments as $appointment) {
-            $appointmentArray[] = [
-                'pathwayname' => $appointment->getPathway()->getPathwayname(),
-                'date' => $appointment->getDayappointment()->format('d-m-Y'),
-            ];
+            $date = $appointment->getDayappointment()->format('d-m-Y');
+            if($date >= date('d-m-Y')){
+                $appointmentArray[] = [
+                    'pathwayname' => $appointment->getPathway()->getPathwayname(),
+                    'date' => $appointment->getDayappointment()->format('d-m-Y'),
+                ];
+            }
         }
 
         return $appointmentArray;
