@@ -108,8 +108,8 @@ function showEditModalForm(id, name, index){
 
             case 4:
 
-            beginHours[0].children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours[0].children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+            beginHours.children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
             break;
 
@@ -306,6 +306,5 @@ function edit__handleAddCategory() {
         btnAdd.click();
     }  
     nbCategory.value = nbCateg;
-    btnAdd.click();
 
 }

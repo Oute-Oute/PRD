@@ -269,9 +269,10 @@ class HumanResourceController extends AbstractController
     { 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
-            
+
             // On recupere toutes les données de la requete
             $param = $request->request->all();
+
             // On récupère l'objet parcours que l'on souhaite modifier grace a son id
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResource = $humanResourceRepository->findById($param['id'])[0];
@@ -329,6 +330,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursSunday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursSunday, true);
                         }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 0, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
+                        }
                         break;
                     case 1:
                         if(($monday[0] != ':00') && ($monday[1] != ':00')){
@@ -340,6 +352,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursMonday->setHumanresource($humanResource);
                             $workingHoursMonday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursMonday, true);
+                        }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 1, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
                         }
                         break;
                     case 2:
@@ -354,6 +377,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursTuesday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursTuesday, true);
                         }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 2, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
+                        }
                         break;
                     case 3:
                         if(($wednesday[0] != ':00') && ($wednesday[1] != ':00')){
@@ -365,6 +399,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursWednesday->setHumanresource($humanResource);
                             $workingHoursWednesday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursWednesday, true);
+                        }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 3, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
                         }
                         break;
                     case 4:
@@ -378,6 +423,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursThursday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursThursday, true);
                         }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 4, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
+                        }
                         break;
                     case 5:
                         if(($friday[0] != ':00') && ($friday[1] != ':00')){
@@ -390,6 +446,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursFriday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursFriday, true);
                         }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 5, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
+                        }
                         break;
                     case 6:
                         if(($saturday[0] != ':00') && ($saturday[1] != ':00')){
@@ -401,6 +468,17 @@ class HumanResourceController extends AbstractController
                             $workingHoursSaturday->setHumanresource($humanResource);
                             $workingHoursSaturday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursSaturday, true);
+                        }
+                        else {
+                            $workingHoursBy = $workingHoursRepository->findBy(
+                                ['dayweek' => 6, 
+                                'humanresource' => $humanResource]
+                            );
+                            if(sizeof($workingHoursBy) != 0){
+                            $em=$this->getDoctrine()->getManager();
+                            $em->remove($workingHoursBy[0]);
+                            $em->flush();
+                            }
                         }
                         break;
                    
