@@ -175,4 +175,47 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
+
+    public function getTargets(ManagerRegistry $doctrine, AppointmentRepository $AR)
+    {
+        global $date;
+        $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
+        $appointments= $this->getAppointmentByPathwayByFirstDate($AR,$pathway, $date);
+        $targets = $this->getTargetByPathwayJSON($doctrine, $pathway);
+        return new JsonResponse($targets);
+    }
+
+    public function getPathwayByName($name, ManagerRegistry $doctrine)
+    {
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findBy(["pathwayname"=>$name]);
+        return $pathway;
+    }
+    public function getAppointmentByPathwayByFirstDate(AppointmentRepository $AR, $pathway, $date)
+    {
+        $appointments = $AR->getNumberOfAppointmentByPathwayByFirstDate($pathway, $date);
+        return $appointments;
+    }
+
+    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway)
+    {
+        $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
+        $targetsJSON = [];
+        $targetsJSON[] = [
+            'id' => '',
+            'start'=> '2022-07-18',
+            'end'=> '2022-07-18',
+            'target' => '1',
+            'color' => '#FF0000',
+        ];
+        $targetsJSON[] = [
+            'id' => '',
+            'start'=> '2022-07-19',
+            'end'=> '2022-07-19',
+            'target' => '1',
+            'color' => '#FF0000',
+        ];
+        
+        
+        return $targetsJSON;
+    }
 }
