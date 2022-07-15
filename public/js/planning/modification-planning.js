@@ -1,5 +1,6 @@
 var calendar;
 var countAddEvent = 0;
+var countAddResource=0; 
 var headerResources = "Ressources Humaines";
 var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
@@ -799,7 +800,7 @@ function createCalendar(typeResource,useCase) {
     calendar = new FullCalendar.Calendar(calendarEl, {
       //clé de la license pour utiliser la librairie à des fin non commerciale
       schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
-
+      resourceOrder:'type',
       //initialise la vue en colonne par ressource par jour en horaire française
       initialView: "resourceTimelineDay",
       slotDuration: "00:20:00",
@@ -832,8 +833,6 @@ function createCalendar(typeResource,useCase) {
         hour12: false,
       },
 
-      //à supprimer
-      resourceOrder: "title",
       resourceAreaWidth: "20%",
       resourceAreaHeaderContent: headerResources,
 
@@ -971,15 +970,18 @@ function createCalendar(typeResource,useCase) {
           };
           businessHours.push(businesstemp); //add the business hour to the array
         }
+        countAddResource++; 
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"], //set the id
           title: temp["title"], //set the title
           businessHours: businessHours, //get the business hours
+          type:countAddResource,
         });
         calendar.addResource({
           id: "h-default",
           title: "Aucune ressource allouée",
+          type:0,
         });
         }
         break;
@@ -993,10 +995,13 @@ function createCalendar(typeResource,useCase) {
             //add the resources to the calendar
             id: temp["id"],
             title: temp["title"],
+            type:countAddResource,
+
           });
           calendar.addResource({
             id: "m-default",
             title: "Aucune ressource allouée",
+            type:0,
           });
         }
         break;

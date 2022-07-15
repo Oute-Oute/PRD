@@ -28,17 +28,14 @@ function addAppointment() {
     tagsPatients.pop();
   }
   $("#add-appointment-modal").modal("show");
-  var dataPatients = JSON.parse(document.getElementById("patient").value);
-  console.log(dataPatients);
+  var dataPatients = JSON.parse(document.getElementById("patient").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPatients.length; i++){
     firstname=dataPatients[i]["firstname"];
     lastname=dataPatients[i]["lastname"];
-    patient=firstname+" "+lastname;
+    patient=firstname+"   "+lastname;
     tagsPatients.push(patient);
   }
-  console.log(tagsPatients);
-  var dataPathways=JSON.parse(document.getElementById("pathway").value);
-  console.log(dataPathways);
+  var dataPathways=JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPathways.length; i++){
     pathName=dataPathways[i]["title"];
     tagsPathways.push(pathName);
@@ -47,7 +44,22 @@ function addAppointment() {
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
-  console.log(type);
+  var pathwayName = $('#autocompletePathwayAdd').val();
+      $.ajax({
+
+        type : 'POST',
+        url  : '/ajaxAppointment',
+        data : { pathway: pathwayName},
+        dataType : "json",
+        success : function(data)
+              {
+                   addTargetsToCalendar(data);
+                },
+        error: function(data)
+        {
+          console.log("error");
+        }
+        });
   document.getElementById("buttonSelect").onclick=function(){validate(type);}
   document.getElementById("buttonCancel").onclick=function(){hideDayModale(type);}
   $("#add-appointment-modal").modal("hide");
@@ -141,6 +153,14 @@ function validate(type){
     selectable: true, //set the calendar to be selectable
     editable: true, //set the calendar not to be editable
     nowIndicator: true,
+    eventDidMount: function (info) {
+      $(info.el).tooltip({
+        title: info.event.extendedProps.description,
+        placement: "top",
+        trigger: "hover",
+        container: "body",
+      });
+    },
     dateClick: function(info) {
       document.getElementById("buttonSelect").style="background-color : #37BC9B; border : 1px solid #37BC9B;"
       document.getElementById("buttonSelect").disabled=false;
@@ -156,3 +176,19 @@ function validate(type){
   calendar.render(); //render the calendar
 }
 
+function addTargetsToCalendar(targets) {
+  console.log(targets)
+  targets.forEach(element => {
+    console.log(element);
+    calendar.addEvent({
+      id: element.id,
+      description: element.target,
+      display:'background',
+      color:element.color,
+
+  });
+  
+});
+calendar.render();
+console.log(calendar.getEvents());
+}

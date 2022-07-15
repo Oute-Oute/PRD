@@ -18,7 +18,7 @@
                     </div>
                     <fieldset id="fs-add-human-category">
                         <legend>Choisissez les catégories de votre ressource</legend>
-                
+
                         <div id="categories-container"> 
                                 {% for human_resource_category in human_resources_categories %} 
                                 <div>
@@ -79,7 +79,7 @@
                     </fieldset>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button type = "button" onclick="verifyChanges()" class="btn-valide btn-secondary"> Ajouter </button>
+                    <button type = "button" onclick="humanResourceVerify()" class="btn-valide btn-secondary"> Ajouter </button>
                     <button id = 'btn-none-add-human-resource' style = "display : none" type = "submit"></button>
 
                 </div>
