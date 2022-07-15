@@ -40,13 +40,36 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
-function showInfosPathway(id, name) {
-    document.getElementById('pathway-id').innerText = id;
-    document.getElementById('pathway-name').innerText = name;
-    $('#infos-pathway-modal').modal("show");
-    
+function showInfosPathway(name, appointmentArray) {
+    document.getElementById('pathway').innerHTML = name;
+    length = appointmentArray.split('{').length;
+    appointmentArray = appointmentArray.split('"');
+    console.log(appointmentArray);
+   
+    var tableBody = document.getElementById('tbodyShow');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-     
+    if(length <= 1){
+        var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td = document.createElement('TD');
+            td.setAttribute('colspan', 5);
+            td.append("Pas de patients prévus pour ce parcours");
+            tr.appendChild(td);
+    }
+    else{
+        for (var i = 0; i < length-1; i++) {
+            var tr = document.createElement('TR');
+            tableBody.appendChild(tr);
+            var td1 = document.createElement('TD');
+            var td2 = document.createElement('TD');
+            td1.append(appointmentArray[3+8*i]);
+            td2.append(appointmentArray[7+8*i] + ' ' + appointmentArray[11+8*i]);
+            tr.appendChild(td2);tr.appendChild(td1);
+        }
+    }
+
+    $('#infos-pathway-modal').modal("show");
 }
 
 

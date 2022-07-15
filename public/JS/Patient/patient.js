@@ -15,10 +15,8 @@ function editPatient(id, lastname, firstname) {
 }
 
 function showInfosPatient(lastname, firstname, appointmentArray) {
-    console.log(appointmentArray);
     document.getElementById('patient').innerHTML = lastname + ' ' + firstname;
     length = appointmentArray.split('{').length;
-    console.log(length);
     appointmentArray = appointmentArray.split('"');
    
     var tableBody = document.getElementById('tbodyShow');
@@ -29,7 +27,7 @@ function showInfosPatient(lastname, firstname, appointmentArray) {
             tableBody.appendChild(tr);
             var td = document.createElement('TD');
             td.setAttribute('colspan', 5);
-            td.append("Pas de parcours prévus");
+            td.append("Pas de parcours prévus pour ce patient");
             tr.appendChild(td);
     }
     else{
