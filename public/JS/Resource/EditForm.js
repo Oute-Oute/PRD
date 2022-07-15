@@ -31,6 +31,27 @@ function edit__deleteSelect(id) {
     SELECT_ID_EDIT = SELECT_ID_EDIT - 1;
 }
 
+
+function formatDate(date) {
+    return (
+      [
+        date.getFullYear(),
+        padTo2Digits(date.getMonth() + 1),
+        padTo2Digits(date.getDate()),
+      ].join('-') +
+      ' ' +
+      [
+        padTo2Digits(date.getHours()),
+        padTo2Digits(date.getMinutes()),
+        // padTo2Digits(date.getSeconds()), can also add seconds
+      ].join(':')
+    );
+  }
+
+  function padTo2Digits(num) {
+    return num.toString().padStart(2, '0');
+  }
+
 /**
  * Permet d'afficher la fenêtre modale d'édition
  * => remplit les inputs suivants :
@@ -40,7 +61,12 @@ function edit__deleteSelect(id) {
  * Les noms et durée des activités déjà présentes dans le pathway
  */
 function showEditModalForm(id, name, index){
-        
+        //let WORKING_HOURS_FILTERED = WORKING_HOURS.filter(WORKING_HOURS[0].humanresource_id => index >= 0);
+        var WORKING_HOURS_FILTERED =  WORKING_HOURS.filter(function(WORKING_HOUR) {
+            return WORKING_HOUR.humanresource_id == id;
+        });
+
+
     SELECT_ID_EDIT = 0;
     // Affichage de la fenetre modale 
     $('#edit--human-resource-modal').modal("show");
@@ -48,14 +74,77 @@ function showEditModalForm(id, name, index){
 
     document.getElementById('edit--resourceid').value = id;
     document.getElementById('edit--resourcename').value = name
+    let beginHours = document.getElementById('working-hours-input-begin-edit')
+    let endHours = document.getElementById('working-hours-input-end-edit')
+    for(let y = 0; y<WORKING_HOURS_FILTERED.length; y++){
+        switch (WORKING_HOURS_FILTERED[y].dayweek) {
+            case 0:
+
+            beginHours.children[6].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[6].value = WORKING_HOURS_FILTERED[0].endtime.date.substring(11,16)
+
+            break;
+
+            case 1:
+
+            beginHours.children[0].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[0].value= WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+
+            case 2:
+
+            beginHours.children[1].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[1].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+
+            case 3:
+
+            beginHours.children[2].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[2].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+
+            case 4:
+
+            beginHours[0].children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours[0].children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+
+            case 5:
+
+            beginHours.children[4].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[4].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+
+            case 6:
+
+            beginHours.children[5].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+            endHours.children[5].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+
+            break;
+    }
+    /*for (let y = 0; y < 6; y++){
+        beginHours[y]
+    }*/
+
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
     
     for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
         categoriesId.push(categoriesByResources[index].categories[j].idCategory)
     }
-
-    for (let i = 0; i <= categoriesContainer.children.length; i++) {
+    
+    
+    /*for (let y = 0; y <= 6; y++){
+        beginHours.children[y].value = currentTime
+    }*/
+    //TODO : check pq erreur dans console, mettre la length -1 dans le for?
+    //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
         categoriesContainer.children[i].children[0].checked = false;
 
         if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
@@ -64,12 +153,12 @@ function showEditModalForm(id, name, index){
     }
 
     
+    
     }
 
 
 
-    
-
+}
 
 /**
 * Permet d'afficher la fenêtre modale d'édition
@@ -168,6 +257,54 @@ function edit__handleAddCategory() {
         
     } 
         
+    nbCategory.value = nbCateg;
+    btnAdd.click();
+
+}
+
+/**
+ * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ */
+ function edit__verifyChangesHuman() {
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('edit--categories-container')
+    let btnAdd = document.getElementById('btn-none-edit-resource')
+    let divWorkingHoursBegin = document.getElementById('working-hours-input-begin-edit')
+    let divWorkingHoursEnd = document.getElementById('working-hours-input-end-edit')
+    let pbWorkingHoursSolo = false;
+    let endHigherThanBegin = false;
+    let nbCategory = document.getElementById('edit--nbcategory');
+    var nbCateg = 0;
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
+        }
+        
+    } 
+    for (let j = 0; j <= 6; j++)
+    {
+        if((divWorkingHoursBegin.children[j].value == '' && divWorkingHoursEnd.children[j].value != '') || (divWorkingHoursBegin.children[j].value  != '' && divWorkingHoursEnd.children[j].value == '')){
+            pbWorkingHoursSolo = true;
+        }
+        if((divWorkingHoursBegin.children[j].value > divWorkingHoursEnd.children[j].value)) {
+            endHigherThanBegin = true;
+        }
+    }
+    nbCategory.value = nbCateg
+    if(pbWorkingHoursSolo == true) {
+        alert('Veuillez saisir l\'heure de début et de fin, ou aucun des deux horaires pour chaque jour de disponibilité !')
+    }
+    else if(endHigherThanBegin == true) {
+        alert('Veuillez saisir des horaires de début antérieures à celles de fin pour chaque jour de disponibilité !')
+    }
+    else {
+        btnAdd.click();
+    }  
     nbCategory.value = nbCateg;
     btnAdd.click();
 

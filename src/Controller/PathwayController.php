@@ -109,7 +109,6 @@ class PathwayController extends AbstractController
             'activitiesByPathways' => $activitiesByPathways,
             'humanResourceCategories' => $humanResourceCategoriesJson,
             'materialResourceCategories' => $materialResourceCategoriesJson,
-            'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall(),
         ]);
     }
 
@@ -575,5 +574,30 @@ class PathwayController extends AbstractController
         }
 
         return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function getDataPathway(ManagerRegistry $doctrine)
+    {
+        $appointments = $this->getAppointmentByPathwayId($_POST["idPathway"], $doctrine);
+        return new JsonResponse($appointments);
+    }
+
+    public function getAppointmentByPathwayId($id, ManagerRegistry $doctrine)
+    {
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
+        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
+        $appointmentArray=[];
+        foreach ($appointments as $appointment) {
+            $date = $appointment->getDayappointment()->format('d-m-Y');
+            if($date >= date('d-m-Y')){
+                $appointmentArray[] = [
+                    'lastname' => $appointment->getPatient()->getLastname(),
+                    'firstname' => $appointment->getPatient()->getFirstname(),
+                    'date' => $appointment->getDayappointment()->format('d-m-Y'),
+                ];
+            }
+        }
+
+        return $appointmentArray;
     }
 }
