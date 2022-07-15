@@ -12,9 +12,11 @@ use App\Repository\CategoryOfHumanResourceRepository;
 use App\Repository\WorkingHoursRepository;
 use DateTimeInterface;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -208,7 +210,6 @@ class HumanResourceController extends AbstractController
                             $workingHoursRepository->add($workingHoursSaturday, true);
                         }
                         break;
-                   
                 }
             }
             for($i = 0; $i < $nbCategory; $i++)
@@ -220,10 +221,8 @@ class HumanResourceController extends AbstractController
                 $categoryOfHumanResourceRepository->add($linkCategRes, true);
             }
             return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
-        
+        }
     }
-    
-}
 
     /**
      * @Route("/{id}", name="app_human_resource_show", methods={"GET"})
@@ -317,5 +316,44 @@ class HumanResourceController extends AbstractController
 
         $humanResourceRepository->add($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function getDataHumanResource(ManagerRegistry $doctrine)
+    {
+        if(isset($_POST["idHumanResource"])){
+            $categories = $this->getCategoryByHumanResourceId($_POST["idHumanResource"], $doctrine);
+            return new JsonResponse($categories);
+        }
+        if(isset($_POST["idHumanResourceCategory"])){
+            $resources = $this->getResourceByHumanResourceCategoryId($_POST["idHumanResourceCategory"], $doctrine);
+            return new JsonResponse($resources);
+        }
+    }
+
+    public function getCategoryByHumanResourceId($id, ManagerRegistry $doctrine)
+    {
+        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
+        $categoryArray=[];
+        foreach ($categories as $category) {
+            if ($category->getHumanresource()->getId() == $id){
+                $categoryArray[] = [
+                    'humanresourcecategory' => $category->getHumanresourcecategory()->getCategoryname(),
+                ];
+            }
+        }
+        return $categoryArray;
+    }
+    public function getResourceByHumanResourceCategoryId($id, ManagerRegistry $doctrine)
+    {
+        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
+        $resourceArray=[];
+        foreach ($categories as $category) {
+            if ($category->getHumanresourceCategory()->getId() == $id){
+                $resourceArray[] = [
+                    'humanresource' => $category->getHumanresource()->getHumanresourcename(),
+                ];
+            }
+        }
+        return $resourceArray;
     }
 }

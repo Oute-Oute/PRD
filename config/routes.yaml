@@ -206,3 +206,8 @@ AjaxPathway:
   path: /ajaxPathway
   controller: App\Controller\PathwayController::getDataPathway
   methods: [POST]
+
+AjaxHumanResource:
+  path: /ajaxHumanResource
+  controller: App\Controller\HumanResourceController::getDataHumanResource
+  methods: [POST]
