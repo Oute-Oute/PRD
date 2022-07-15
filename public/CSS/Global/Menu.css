@@ -1,13 +1,12 @@
-
-
-
 :root {
     --font-family-sans-serif: "Open Sans", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
@@ -26,8 +25,8 @@ nav {
 body {
     margin: 0;
     font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -36,7 +35,12 @@ body {
     background-color: #e9edf4;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin-top: 0;
     margin-bottom: 0.5rem;
 }
@@ -52,14 +56,26 @@ a:hover {
     text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
     font-family: "Nunito", sans-serif;
     margin-bottom: 0.5rem;
     font-weight: 500;
     line-height: 1.2;
 }
 
-h1, .h1 {
+h1,
+.h1 {
     font-size: 2.5rem;
     font-weight: normal;
 }
@@ -134,7 +150,7 @@ h1, .h1 {
 
 .dashboard-nav {
     min-width: 238px;
-    /*position: fixed;*/
+    position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
@@ -157,12 +173,13 @@ h1, .h1 {
 
 
 #appointment:active {
-    background-color : var(--main-green);
+    background-color: var(--main-green);
 }
 
 .dashboard-nav a#title:hover {
-    background-color : transparent;
+    background-color: transparent;
 }
+
 .dashboard-compact .dashboard-nav {
     display: none;
 }
@@ -209,7 +226,9 @@ h1, .h1 {
     align-items: center;
 }
 
-.brand-logo:focus, .brand-logo:active, .brand-logo:hover {
+.brand-logo:focus,
+.brand-logo:active,
+.brand-logo:hover {
     color: #dbdbdb;
     text-decoration: none;
 }
@@ -279,17 +298,17 @@ h1, .h1 {
     background: rgba(255, 255, 255, 0.04);
 }
 
-.dashboard-nav-dropdown.show > .dashboard-nav-dropdown-toggle {
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-toggle {
     font-weight: bold;
 }
 
-.dashboard-nav-dropdown.show > .dashboard-nav-dropdown-toggle:after {
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-toggle:after {
     -webkit-transform: none;
     -o-transform: none;
     transform: none;
 }
 
-.dashboard-nav-dropdown.show > .dashboard-nav-dropdown-menu {
+.dashboard-nav-dropdown.show>.dashboard-nav-dropdown-menu {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -360,7 +379,9 @@ h1, .h1 {
     color: #443ea2;
 }
 
-.menu-toggle:hover, .menu-toggle:active, .menu-toggle:focus {
+.menu-toggle:hover,
+.menu-toggle:active,
+.menu-toggle:focus {
     text-decoration: none;
     color: #875de5;
 }
@@ -381,11 +402,7 @@ h1, .h1 {
     -ms-flex-align: center;
     align-items: center;
     padding: 8px 27px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 1000;
+
 }
 
 .nav-item-divider {
