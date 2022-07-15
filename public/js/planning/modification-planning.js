@@ -49,10 +49,32 @@ function modifyEvent() {
 
   var currentDateModified = $_GET("date").substring(0, 10);
   var newStart = new Date(currentDateModified + " " + document.getElementById("start-modified-event").value);
-  var newDelay = oldEvent.start.getTime() - 2 * 60 * 60 * 1000 - newStart.getTime();
-  var editByClick = true;
+  var newDelay = oldEvent.end.getTime() - oldEvent.start.getTime();
+  
+  console.log(newDelay/60000)
+  oldEvent.setStart(new Date(newStart.getTime() + 2 * 60 * 60 * 1000))
+  oldEvent.setEnd(new Date(newStart.getTime() + 2 * 60 * 60 * 1000 + newDelay))
 
   updateEventsAppointment(oldEvent);
+
+  let listResource = [];
+  oldEvent._def.resourceIds.forEach((resource) => {
+    listResource.push(resource)
+  })
+  console.log(listResource)
+
+  calendar.getEvents().forEach((currentEvent) => {
+    if(currentEvent.display == "background"){
+      if(oldEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
+        if(listResource.length != 0){
+          currentEvent._def.resourceIds = listResource;
+          currentEvent.setStart(oldEvent.start);
+          currentEvent.setEnd(oldEvent.end);
+        }
+      }
+    }
+  })
+  
   
   $("#modify-planning-modal").modal("toggle");
 
@@ -822,7 +844,6 @@ function createCalendar(typeResource,useCase) {
           };
           businessHours.push(businesstemp); //add the business hour to the array
         }
-        }
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"], //set the id
@@ -833,6 +854,7 @@ function createCalendar(typeResource,useCase) {
           id: "h-default",
           title: "Aucune ressource allouée",
         });
+        }
         break;
       case "Ressources Matérielles": //if we want to display by the resources
         var resourcesArray = JSON.parse(
