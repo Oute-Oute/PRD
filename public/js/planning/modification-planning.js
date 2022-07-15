@@ -510,6 +510,8 @@ function updateEventsAppointment(oldEvent) {
   var appointmentId = oldEvent._def.extendedProps.appointment;
   var materialResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
   var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+  var categoryOfMaterialResource = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+  var categoryOfHumanResource = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
   var listEventAppointment = [];
   listEvent.forEach((currentEvent) => {
     if (currentEvent._def.extendedProps.appointment == appointmentId) {
@@ -548,6 +550,10 @@ function updateEventsAppointment(oldEvent) {
   var workingHoursEnd = new Date(currentDateStr.split("T")[0] + " 23:59:00");
 
   var newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
+  let categoryHumanResourceOld = [];
+  let categoryHumanResourceNew = [];
+  let categoryMaterialResourceOld = [];
+  let categoryMaterialResourceNew = [];
 
     humanResources.forEach((resource) => {
       newEventAppointment._def.resourceIds.forEach((resourceId => {
@@ -556,6 +562,32 @@ function updateEventsAppointment(oldEvent) {
           oldEvent._def.resourceIds.forEach((oldResourceId) => {
             if(resource.id == oldResourceId){
               isOld = true;
+              categoryOfHumanResource.forEach((humanEventRelation) => {
+                if(humanEventRelation.idresource == resource.id){
+                  if(categoryHumanResourceOld != []){
+                    var alreadyExist = false;
+                    categoryHumanResourceOld.forEach((categoryHuman) => {
+                      if(categoryHuman.id == humanEventRelation.idcategory){
+                        alreadyExist = true;
+                        categoryHuman.quantity = categoryHuman.quantity + 1;
+                      }
+                    })
+                    if(!alreadyExist){
+                      categoryHumanResourceOld.push({
+                        id: humanEventRelation.idcategory,
+                        quantity: 1
+                      });
+                    }
+                  }
+                  else {
+                    console.log("coucou")
+                    categoryHumanResourceOld.push({
+                      id: humanEventRelation.idcategory,
+                      quantity: 1
+                    });
+                  }
+                }
+              })
             }
           })
           if(isOld == false){
@@ -565,10 +597,102 @@ function updateEventsAppointment(oldEvent) {
             new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
               alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
             }
+            categoryOfHumanResource.forEach((humanEventRelation) => {
+              if(humanEventRelation.idresource == resource.id){
+                if(categoryHumanResourceNew != []){
+                  var alreadyExist = false;
+                  categoryHumanResourceNew.forEach((categoryHuman) => {
+                    if(categoryHuman.id == humanEventRelation.idcategory){
+                      alreadyExist = true;
+                      categoryHuman.quantity = categoryHuman.quantity + 1;
+                    }
+                  })
+                  if(!alreadyExist){
+                    categoryHumanResourceNew.push({
+                      id: humanEventRelation.idcategory,
+                      quantity: 1
+                    });
+                  }
+                }
+                else {
+                  categoryHumanResourceNew.push({
+                    id: humanEventRelation.idcategory,
+                    quantity: 1
+                  });
+                }
+              }
+            })
           }
         }
       }))
     })
+
+    materialResources.forEach((resource) => {
+      newEventAppointment._def.resourceIds.forEach((resourceId => {
+        if(resource.id == resourceId){
+          var isOld = false;
+          oldEvent._def.resourceIds.forEach((oldResourceId) => {
+            if(resource.id == oldResourceId){
+              isOld = true;
+              categoryOfMaterialResource.forEach((materialEventRelation) => {
+                if(materialEventRelation.idresource == resource.id){
+                  if(categoryMaterialResourceOld != []){
+                    var alreadyExist = false;
+                    categoryMaterialResourceOld.forEach((categoryMaterial) => {
+                      if(categoryMaterial.id == materialEventRelation.idcategory){
+                        alreadyExist = true;
+                        categoryMaterial.quantity = categoryMaterial.quantity + 1;
+                      }
+                    })
+                    if(!alreadyExist){
+                      categoryMaterialResourceOld.push({
+                        id: materialEventRelation.idcategory,
+                        quantity: 1
+                      });
+                    }
+                  }
+                  else {
+                    categoryMaterialResourceOld.push({
+                      id: materialEventRelation.idcategory,
+                      quantity: 1
+                    });
+                  }
+                }
+              })
+            }
+          })
+          if(isOld == false){
+            categoryOfMaterialResource.forEach((materialEventRelation) => {
+              if(materialEventRelation.idresource == resource.id){
+                if(categoryMaterialResourceNew != []){
+                  var alreadyExist = false;
+                  categoryMaterialResourceNew.forEach((categoryMaterial) => {
+                    if(categoryMaterial.id == materialEventRelation.idcategory){
+                      alreadyExist = true;
+                      categoryMaterial.quantity = categoryMaterial.quantity + 1;
+                    }
+                  })
+                  if(!alreadyExist){
+                    categoryMaterialResourceNew.push({
+                      id: materialEventRelation.idcategory,
+                      quantity: 1
+                    });
+                  }
+                }
+                else {
+                  categoryMaterialResourceNew.push({
+                    id: materialEventRelation.idcategory,
+                    quantity: 1
+                  });
+                }
+              }
+            })
+          }
+        }
+      }))
+    })
+
+
 
     if (
       earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
@@ -606,6 +730,9 @@ function updateEventsAppointment(oldEvent) {
                       else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
                         alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
                       }
+                    }
+                    else {
+                      
                     }
                 }
               }
@@ -891,32 +1018,34 @@ function createCalendar(typeResource,useCase) {
           var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
           var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
           setEvents.push({
-          id: eventModify.id,
-          start: formatDate(start).replace(" ", "T"),
-          end: formatDate(end).replace(" ", "T"),
-          title: eventModify.title,
-          resourceIds: listResource[index],
-          patient: eventModify.extendedProps.patient,
-          appointment: eventModify.extendedProps.appointment,
-          activity: eventModify.extendedProps.activity,
-          type: eventModify.extendedProps.type,
-          humanResources: eventModify.extendedProps.humanResources,
-          materialResources: eventModify.extendedProps.materialResources,
-          pathway: eventModify.extendedProps.pathway,
-        });
+            id: eventModify.id,
+            start: formatDate(start).replace(" ", "T"),
+            end: formatDate(end).replace(" ", "T"),
+            title: eventModify.title,
+            resourceIds: listResource[index],
+            patient: eventModify.extendedProps.patient,
+            appointment: eventModify.extendedProps.appointment,
+            activity: eventModify.extendedProps.activity,
+            type: eventModify.extendedProps.type,
+            humanResources: eventModify.extendedProps.humanResources,
+            materialResources: eventModify.extendedProps.materialResources,
+            categoryMaterialResource: eventModify.extendedProps.categoryMaterialResource,
+            categoryHumanResource: eventModify.extendedProps.categoryHumanResource,
+            pathway: eventModify.extendedProps.pathway,
+          });
         }
         else{
           var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
           var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
           setEvents.push({
-          id: eventModify.id,
-          start: formatDate(start).replace(" ", "T"),
-          end: formatDate(end).replace(" ", "T"),
-          resourceIds: listResource[index],
-          type: eventModify.extendedProps.type,
-          description: eventModify.extendedProps.description,
-          display : eventModify.display,
-          color : eventModify.color,
+            id: eventModify.id,
+            start: formatDate(start).replace(" ", "T"),
+            end: formatDate(end).replace(" ", "T"),
+            resourceIds: listResource[index],
+            type: eventModify.extendedProps.type,
+            description: eventModify.extendedProps.description,
+            display : eventModify.display,
+            color : eventModify.color,
           }
           );
           }
