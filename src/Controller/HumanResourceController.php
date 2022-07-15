@@ -31,58 +31,13 @@ class HumanResourceController extends AbstractController
     public function index(HumanResourceRepository $humanResourceRepository): Response
     {
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
-        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
-        $humanResources = $humanResourceRepository->findAll();
-        $categOfHumanResource = $categOfHumanResourceRepository->findAll();
-        $nbHumanResource = count($humanResources);
-        $nbHumanResourceCategory = count($humanResourceCategories);
-        $nbCategBy = count($categOfHumanResource);
-        $categoriesByResources = array();
-        for($indexResource = 0; $indexResource < $nbHumanResource; $indexResource++) {
-            if ($humanResources[$indexResource]->isAvailable()) {
-                $listCategOf = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResources[$indexResource]]);
-                $categoriesByResource = array();
-                for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
-                    //dd($humanResourceCategories[$indexCategOf]->getCategoryname());
-                    //dd( $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]]));
-                    //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
-                    //dd($listCategOf[$indexCategOf]);
-    
-                    $humanResourceCategoriesBy =  $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()]);
-                    //dd($materialResourceCategories);
-                    if($humanResourceCategoriesBy != null){
-                        array_push($categoriesByResource,$humanResourceCategoriesBy[0]);
-                    }
-                    //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getHumanresourcecategory()->getId()])[0]);
-                    
-                }
-                array_push($categoriesByResources, $categoriesByResource);
-            }
-        }
 
-        $resourcesByCategories = array();
-        for($indexCategory = 0; $indexCategory< $nbHumanResourceCategory; $indexCategory++) {
-            $listHumanOf = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategories[$indexCategory]]);
-        
-            $resourcesByCategory = array();
-            for($indexHumanOf = 0; $indexHumanOf < count($listHumanOf); $indexHumanOf++) {
-                $humanResourceBy =  $humanResourceRepository->findBy(['id' => $listHumanOf[$indexHumanOf]->getHumanresource()->getId()]);
-                if($humanResourceBy != null){
-                    array_push($resourcesByCategory,$humanResourceBy[0]);
-                }
-            }
-            array_push($resourcesByCategories, $resourcesByCategory);
-        }
-        //dd($categoriesByResources);
         $workingHours = $this->listWorkingHoursJSON();
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'human_resources_categories' => $humanResourceCategories,
-            'categoriesByResources' => $categoriesByResources,
             'workingHours' => $workingHours,
-            'resourcesByCategories' => $resourcesByCategories
         ]); 
     }
 
