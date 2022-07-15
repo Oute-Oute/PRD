@@ -31,12 +31,58 @@
                                 {% else %}
                                     <p> Pas de catégories créées ! </p>
                                 {% endfor %}
-                            </div>
+                            </div>     
+                    </fieldset>
+                    <fieldset id="fs-add-working-hours">
+                <legend id = "lgd-working-hours">Choisissez les heures de disponibilités</legend>
+                <div id = 'working-hours-parent'>
+                <div id = 'working-hours-label'>
+                <label> Lundi :</label>
+                <label> Mardi :</label>
+                <label> Mercredi :</label>
+                <label> Jeudi :</label>
+                <label> Vendredi :</label>
+                <label> Samedi :</label>
+                <label> Dimanche :</label>
+                </div>
+                <div id = 'working-hours-input-begin-edit'>
+                    <input type="time" id="monday-begin-edit" name="monday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="tuesday-begin-edit" name="tuesday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="wednesday-begin-edit" name="wednesday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="thursday-begin-edit" name="thursday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="friday-begin-edit" name="friday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="saturday-begin-edit" name="saturday-begin-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="sunday-begin-edit" name="sunday-begin-edit"
+                    min="00:00" max="23:59">
+                    </div>
+                    <div id = 'working-hours-input-end-edit'>
+                    <input type="time" id="monday-end-edit" name="monday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="tuesday-end-edit" name="tuesday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="wednesday-end-edit" name="wednesday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="thursday-end-edit" name="thursday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="friday-end-edit" name="friday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="saturday-end-edit" name="saturday-end-edit"
+                    min="00:00" max="23:59">
+                    <input type="time" id="sunday-end-edit" name="sunday-end-edit"
+                    min="00:00" max="23:59">
+                    </div>
+                    </div>
                     </fieldset>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
-                    <button type='button' onclick="edit__verifyChanges()" class="btn-consult btn-secondary"> Ajouter  </button>
+                    <button type='button' onclick="edit__verifyChangesHuman()" class="btn-consult btn-secondary"> Ajouter  </button>
                     <button id = 'btn-none-edit-resource' style = "display : none" type = "submit"></button>
                 </div>
     	    </form>

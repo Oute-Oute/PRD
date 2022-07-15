@@ -1,5 +1,11 @@
 var SELECT_ID = 0;
 var NB_CATEGORY = 0;
+var WORKING_HOURS;
+
+document.addEventListener('DOMContentLoaded', () => {
+    WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value)    
+})
+
 
 /**
  * Permet d'afficher la fenêtre modale d'informations
@@ -316,12 +322,9 @@ function materialResourceVerify() {
         nbCateg = nbCateg +1;
         }
         
-    } 
-
+    }
     nbCategory.value = nbCateg
-    btnAdd.click();
-
-    
+    btnAdd.click();    
 }
 
 function hasDuplicates(array) {
