@@ -36,4 +36,17 @@ class SettingsController extends AbstractController
 
         return $this->redirectToRoute('Settings', [], Response::HTTP_SEE_OTHER);
     }
+
+    public function settingsAddDefault(EntityManagerInterface $entityManager): Response
+    {
+        $settings = new Settings();
+
+        $settings->setAlertmodificationtimer(480000);
+        $settings->setZoommultiplier(1);
+
+        $entityManager->persist($settings);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('Settings', [], Response::HTTP_SEE_OTHER);
+    }
 }

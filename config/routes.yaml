@@ -1,7 +1,3 @@
-calendrier:
-  path: /
-  controller: App\Controller\ConsultationPlanningController::consultationPlanningGet
-
 add_user:
   path: /add_user
   controller: App\Controller\UserController::new
@@ -189,4 +185,19 @@ Settings:
 SettingsEdit:
   path: /settings/edit
   controller: App\Controller\SettingsController:settingsEdit
+  methods: [POST]
+
+SettingsAddDefault:
+  path: /settings/addDefault
+  controller: App\Controller\SettingsController:settingsAddDefault
+  methods: [POST]
+
+AjaxAppointment:
+  path: /ajaxAppointment
+  controller: App\Controller\AjaxAppointmentController::getTargets
+  methods: [POST]
+
+AjaxPatient:
+  path: /ajaxPatient
+  controller: App\Controller\PatientController::getDataPatient
   methods: [POST]

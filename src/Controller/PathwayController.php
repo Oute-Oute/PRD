@@ -17,6 +17,7 @@ use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use App\Form\PathwayType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,10 +82,10 @@ class PathwayController extends AbstractController
      * Redirige vers la page qui liste les utilisateurs 
      * route : "/pathways"
      */
-    public function pathwayGet(PathwayRepository $pathwayRepository): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
     {
 
-        $activityRepository = new ActivityRepository($this->getDoctrine());
+        $activityRepository = $doctrine->getManager()->getRepository("App\Entity\Activity");
 
         //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
         //$humanResources = $humanResourceRepo->findAll();
@@ -108,6 +109,7 @@ class PathwayController extends AbstractController
             'activitiesByPathways' => $activitiesByPathways,
             'humanResourceCategories' => $humanResourceCategoriesJson,
             'materialResourceCategories' => $materialResourceCategoriesJson,
+            'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall(),
         ]);
     }
 

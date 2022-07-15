@@ -36,6 +36,7 @@ class HumanResourceController extends AbstractController
         $humanResources = $humanResourceRepository->findAll();
         $categOfHumanResource = $categOfHumanResourceRepository->findAll();
         $nbHumanResource = count($humanResources);
+        $nbHumanResourceCategory = count($humanResourceCategories);
         $nbCategBy = count($categOfHumanResource);
         $categoriesByResources = array();
         for($indexResource = 0; $indexResource < $nbHumanResource; $indexResource++) {
@@ -59,13 +60,28 @@ class HumanResourceController extends AbstractController
                 array_push($categoriesByResources, $categoriesByResource);
             }
         }
+
+        $resourcesByCategories = array();
+        for($indexCategory = 0; $indexCategory< $nbHumanResourceCategory; $indexCategory++) {
+            $listHumanOf = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategories[$indexCategory]]);
+        
+            $resourcesByCategory = array();
+            for($indexHumanOf = 0; $indexHumanOf < count($listHumanOf); $indexHumanOf++) {
+                $humanResourceBy =  $humanResourceRepository->findBy(['id' => $listHumanOf[$indexHumanOf]->getHumanresource()->getId()]);
+                if($humanResourceBy != null){
+                    array_push($resourcesByCategory,$humanResourceBy[0]);
+                }
+            }
+            array_push($resourcesByCategories, $resourcesByCategory);
+        }
         //dd($categoriesByResources);
         $workingHours = $this->listWorkingHoursJSON();
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findBy(['available' => true]),
             'human_resources_categories' => $humanResourceCategories,
             'categoriesByResources' => $categoriesByResources,
-            'workingHours' => $workingHours
+            'workingHours' => $workingHours,
+            'resourcesByCategories' => $resourcesByCategories
         ]); 
     }
 
@@ -80,8 +96,7 @@ class HumanResourceController extends AbstractController
 
         if ($workingHours != null) {
             foreach ($workingHours as $workingHour) {
-                $workingHoursArray[] = array(
-                    'id' => strval($workingHour->getId()),
+                $workingHoursArray[] = array('id' => strval($workingHour->getId()),
                     'humanresource_id' => $workingHour->getHumanresource()->getId(),
                     'starttime' => $workingHour->getStarttime(),
                     'endtime' => $workingHour->getEndtime(),

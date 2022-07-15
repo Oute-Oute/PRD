@@ -7,6 +7,7 @@ use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\UnavailabilityMaterialResourceRepository;
@@ -20,7 +21,6 @@ class PatientController extends AbstractController
         return $this->render('patient/index.html.twig', [
             'patients' => $patientRepository->findBy(array(),
                                                      array('lastname' => 'ASC')),
-            'currentappointments' => $doctrine->getManager()->getRepository("App\Entity\Appointment")->findall()
         ]);
     }
     
@@ -116,5 +116,26 @@ class PatientController extends AbstractController
         $patientRepository->remove($patient, true);
 
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function getDataPatient(ManagerRegistry $doctrine)
+    {
+        $appointments = $this->getAppointmentByPatientId($_POST["idPatient"], $doctrine);
+        return new JsonResponse($appointments);
+    }
+
+    public function getAppointmentByPatientId($id, ManagerRegistry $doctrine)
+    {
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(["id"=>$id]);
+        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["patient"=>$patient]);
+        $appointmentArray=[];
+        foreach ($appointments as $appointment) {
+            $appointmentArray[] = [
+                'pathwayname' => $appointment->getPathway()->getPathwayname(),
+                'date' => $appointment->getDayappointment()->format('d-m-Y'),
+            ];
+        }
+
+        return $appointmentArray;
     }
 }
