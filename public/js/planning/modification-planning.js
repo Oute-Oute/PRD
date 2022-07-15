@@ -743,8 +743,6 @@ function createCalendar(typeResource,useCase) {
     eventDrop: function (event) {
       var oldEvent = event.oldEvent;
       var modifyEvent = event.event;
-      var newDelay = oldEvent.start.getTime() - modifyEvent.start.getTime();
-      var editByClick = false;
       updateEventsAppointment(oldEvent);
       calendar.render();
       
@@ -768,6 +766,39 @@ function createCalendar(typeResource,useCase) {
             }  
           }
         }
+      }
+
+      let listResource = [];
+      modifyEvent._def.resourceIds.forEach((resource) => {
+        listResource.push(resource)
+      })
+      console.log(listResource)
+
+      eventExist = false;
+      calendar.getEvents().forEach((currentEvent) => {
+        if(currentEvent.display == "background"){
+          if(modifyEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
+            if(listResource.length != 0){
+              eventExist = true;
+              currentEvent._def.resourceIds = listResource;
+              currentEvent.setStart(modifyEvent.start);
+              currentEvent.setEnd(modifyEvent.end);
+            }
+          }
+        }
+      })
+
+      if(eventExist == false){
+        calendar.addEvent({
+          start: modifyEvent.start,
+          end: modifyEvent.end,
+          resourceIds: listResource,
+          type: 'unavailable',
+          description: 'Ressource Indisponible',
+          display: 'background',
+          color: '#ff0000',
+          idScheduledActivity: modifyEvent._def.publicId
+        });
       }
     },
   });
@@ -835,35 +866,35 @@ function createCalendar(typeResource,useCase) {
         var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
         var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
         setEvents.push({
-        id: eventModify.id,
-        start: formatDate(start).replace(" ", "T"),
-        end: formatDate(end).replace(" ", "T"),
-        title: eventModify.title,
-        resourceIds: listResource[index],
-        patient: eventModify.extendedProps.patient,
-        appointment: eventModify.extendedProps.appointment,
-        activity: eventModify.extendedProps.activity,
-        type: eventModify.extendedProps.type,
-        humanResources: eventModify.extendedProps.humanResources,
-        materialResources: eventModify.extendedProps.materialResources,
-        pathway: eventModify.extendedProps.pathway,
-      });
+          id: eventModify.id,
+          start: formatDate(start).replace(" ", "T"),
+          end: formatDate(end).replace(" ", "T"),
+          title: eventModify.title,
+          resourceIds: listResource[index],
+          patient: eventModify.extendedProps.patient,
+          appointment: eventModify.extendedProps.appointment,
+          activity: eventModify.extendedProps.activity,
+          type: eventModify.extendedProps.type,
+          humanResources: eventModify.extendedProps.humanResources,
+          materialResources: eventModify.extendedProps.materialResources,
+          pathway: eventModify.extendedProps.pathway,
+        });
       }
       else{
         var start = new Date(eventModify.start - 2 * 60 * 60 * 1000);
         var end = new Date(eventModify.end - 2 * 60 * 60 * 1000);
         setEvents.push({
-        id: eventModify.id,
-        start: formatDate(start).replace(" ", "T"),
-        end: formatDate(end).replace(" ", "T"),
-        resourceIds: listResource[index],
-        type: eventModify.extendedProps.type,
-        description: eventModify.extendedProps.description,
-        display : eventModify.display,
-        color : eventModify.color,
-        }
-        );
-        }
+          id: eventModify.id,
+          start: formatDate(start).replace(" ", "T"),
+          end: formatDate(end).replace(" ", "T"),
+          resourceIds: listResource[index],
+          type: eventModify.extendedProps.type,
+          description: eventModify.extendedProps.description,
+          display : eventModify.display,
+          color : eventModify.color,
+          idScheduledActivity : eventModify.extendedProps.idScheduledActivity
+        });
+      }
       index++;
     });
     listEvents = setEvents;
