@@ -196,3 +196,8 @@ AjaxAppointment:
   path: /ajaxAppointment
   controller: App\Controller\AjaxAppointmentController::getTargets
   methods: [POST]
+
+AjaxPatient:
+  path: /ajaxPatient
+  controller: App\Controller\PatientController::getDataPatient
+  methods: [POST]

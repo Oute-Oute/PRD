@@ -14,7 +14,7 @@ function editPatient(id, lastname, firstname) {
     $('#edit-patient-modal').modal("show");
 }
 
-function showInfosPatient(lastname, firstname, appointmentArray) {
+function showInfosPatient(idPatient, lastname, firstname) {
     document.getElementById('patient').innerHTML = lastname + ' ' + firstname;
     length = appointmentArray.split('{').length;
     appointmentArray = appointmentArray.split('"');
@@ -22,27 +22,42 @@ function showInfosPatient(lastname, firstname, appointmentArray) {
     var tableBody = document.getElementById('tbodyShow');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-    if(length <= 1){
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxPatient',
+        data : {idPatient: idPatient},
+        dataType : "json",
+        success : function(data){        
+            tableAppointment(tableBody, data);
+        },
+        error: function(data){
+            console.log("error");
+        }
+        });
+    
+    $('#infos-patient-modal').modal("show");
+}
+
+function tableAppointment(tableBody, data){
+    if(data.length <= 0){
         var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.setAttribute('colspan', 5);
-            td.append("Pas de parcours prévus pour ce patient");
-            tr.appendChild(td);
+        tableBody.appendChild(tr);
+        var td = document.createElement('TD');
+        td.setAttribute('colspan', 5);
+        td.append("Pas de parcours prévus pour ce patient");
+        tr.appendChild(td);
     }
     else{
-        for (var i = 0; i < length-1; i++) {
+        for(i = 0; i < data.length; i++){
             var tr = document.createElement('TR');
             tableBody.appendChild(tr);
             var td1 = document.createElement('TD');
             var td2 = document.createElement('TD');
-            td1.append(appointmentArray[3+8*i]);
-            td2.append(appointmentArray[7+8*i]);
-            tr.appendChild(td2);tr.appendChild(td1);
+            td1.append(data[i]['pathwayname']);
+            td2.append(data[i]['date']);
+            tr.appendChild(td1);tr.appendChild(td2);
         }
     }
-    
-    $('#infos-patient-modal').modal("show");
 }
 
 function filterAppointment(idInput){
