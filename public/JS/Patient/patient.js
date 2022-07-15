@@ -45,19 +45,25 @@ function showInfosPatient(lastname, firstname, appointmentArray) {
     $('#infos-patient-modal').modal("show");
 }
 
-function filterAppointment(idInput){
+function filterPatient(idInput){
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
-    var filter = document.querySelector('#'+idInput).value
-    var regex = new RegExp(filter, 'i')
-    const isFoundInTds = td => regex.test(td.innerHTML)
-    const isFound = childrenArr => childrenArr.some(isFoundInTds)
-    const setTrStyleDisplay = ({ style, children }) => {
-      style.display = isFound([
-        ...children // <-- All columns
-      ]) ? '' : 'none' 
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i'); 
+        var fullIdentitySurname=trs[i].cells[1].outerText +" "+trs[i].cells[2].outerText; 
+        var fullIdentityName=trs[i].cells[2].outerText+" "+trs[i].cells[1].outerText;  
+        var name=trs[i].cells[2].outerText;
+        var surname=trs[i].cells[1].outerText;
+
+        if(regex.test(fullIdentityName)== false && regex.test(name)==false && regex.test(surname)==false && regex.test(fullIdentitySurname)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
     }
-    trs.forEach(setTrStyleDisplay)
   }
+ 
 
 function hideNewModalForm() {
     $('#add-patient-modal').modal("hide");
