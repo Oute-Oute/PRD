@@ -201,3 +201,8 @@ AjaxPatient:
   path: /ajaxPatient
   controller: App\Controller\PatientController::getDataPatient
   methods: [POST]
+
+AjaxPathway:
+  path: /ajaxPathway
+  controller: App\Controller\PathwayController::getDataPathway
+  methods: [POST]
