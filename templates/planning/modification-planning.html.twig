@@ -134,6 +134,8 @@
 <input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
 <input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value={{listActivityHumanResourcesJSON.content}}>
 <input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value={{listActivityMaterialResourcesJSON.content}}>
+<input id="categoryOfMaterialResourceJSON" name="categoryOfMaterialResourceJSON" type='hidden' value={{categoryOfMaterialResourceJSON.content}}>
+<input id="categoryOfHumanResourceJSON" name="categoryOfHumanResourceJSON" type='hidden' value={{categoryOfHumanResourceJSON.content}}>
 
 {% for setting in settingsRepository %}
 	<input type="hidden" name="modifAlertTime" id="modifAlertTime" value='{{setting.getAlertmodificationtimer}}'>

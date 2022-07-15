@@ -63,6 +63,8 @@ class ModificationPlanningController extends AbstractController
         $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
         $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
         $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
+        $categoryOfMaterialResourceJSON = $this->getCategoryOfMaterialResource($doctrine);
+        $categoryOfHumanResourceJSON = $this->getCategoryOfHumanResource($doctrine);
 
         if ($this->alertModif($dateModified, $idUser, $doctrine, $settingsRepository)) {
             $this->modificationAdd($dateModified, $idUser, $doctrine);
@@ -85,6 +87,8 @@ class ModificationPlanningController extends AbstractController
             'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
             'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
             'settingsRepository' => $settingsRepository,
+            'categoryOfMaterialResourceJSON' => $categoryOfMaterialResourceJSON,
+            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON
         ]);
     }
 
@@ -476,14 +480,26 @@ class ModificationPlanningController extends AbstractController
             //Obtention du nombre de resources matérielles à renseigner pour cette activité
             $activitiesMaterialResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
             $quantityMaterialResources = 0;
+            $categoryMaterialResource = array();
             foreach ($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId) {
+                $categoryMaterialResource[] = array(
+                    'id' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getId(),
+                    'quantity' => $activityMaterialResourcesByActivityId->getQuantity(),
+                    'categoryname' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getCategoryname()
+                );
                 $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResourcesByActivityId->getQuantity();
             }
 
             //Obtention du nombre de resources Humaines à renseigner pour cette activité
             $activitiesHumanResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
             $quantityHumanResources = 0;
+            $categoryHumanResource = array();
             foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
+                $categoryHumanResource[] = array(
+                    'id' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getId(),
+                    'quantity' => $activityHumanResourcesByActivityId->getQuantity(),
+                    'categoryname' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getCategoryname()
+                );
                 $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
             }
             //Tableau contenant toutes les ressources déja plannifiées pour une activité
@@ -545,6 +561,8 @@ class ModificationPlanningController extends AbstractController
                 'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
                 'materialResources' => ($scheduledActivitiesMaterialResourceArray),
                 'humanResources' => ($scheduledActivitesHumanResourcesArray),
+                'categoryMaterialResource' => $categoryMaterialResource,
+                'categoryHumanResource' => $categoryHumanResource,
                 'type' => "activity",
                 'description'=>''
             );
@@ -585,6 +603,34 @@ class ModificationPlanningController extends AbstractController
             );
         }
         return new JsonResponse($activitiesMaterialResourcesArray);
+    }
+
+    public function getCategoryOfMaterialResource(ManagerRegistry $doctrine)
+    {
+        $categoryOfMaterialResources = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
+        $categoryOfMaterialResourceArray = array();
+        foreach($categoryOfMaterialResources as $categoryOfMaterialResource)
+        {
+            $categoryOfMaterialResourceArray[] = array(
+                'idcategory' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
+                'idresource' => 'material-' . $categoryOfMaterialResource->getMaterialresource()->getId()
+            );
+        }
+        return new JsonResponse($categoryOfMaterialResourceArray);
+    }
+
+    public function getCategoryOfHumanResource(ManagerRegistry $doctrine)
+    {
+        $categoryOfHumanResources = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
+        $categoryOfHumanResourceArray = array();
+        foreach($categoryOfHumanResources as $categoryOfHumanResource)
+        {
+            $categoryOfHumanResourceArray[] = array(
+                'idcategory' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
+                'idresource' => 'human-' . $categoryOfHumanResource->getHumanresource()->getId()
+            );
+        }
+        return new JsonResponse($categoryOfHumanResourceArray);
     }
 
     //Appelée lors de l'appui du bouton valider
