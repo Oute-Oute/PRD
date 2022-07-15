@@ -79,18 +79,19 @@ function hideEditModalForm() {
   $('#edit-user-modal').modal("hide");
 }
 
+
 function filterUser(idInput) {
-  console.log(idInput)
-  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser) ');
-  var filter = document.querySelector('#' + idInput).value
-  var regex = new RegExp(filter, 'i')
-  const isFoundInTds = td => regex.test(td.innerHTML)
-  const isFound = childrenArr => childrenArr.some(isFoundInTds)
-  const setTrStyleDisplay = ({ style, children }) => {
-    style.display = isFound([
-      ...children // <-- All columns
-    ]) ? '' : 'none'
+  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
+  var filter = document.querySelector('#' + idInput).value;
+  for (let i = 0; i < trs.length; i++) {
+    var regex = new RegExp(filter, 'i');
+    var username = trs[i].cells[1].outerText;
+    if (regex.test(username) == false) {
+      trs[i].style.display = 'none';
+    }
+    else {
+      trs[i].style.display = '';
+    }
   }
-  trs.forEach(setTrStyleDisplay)
 }
 
