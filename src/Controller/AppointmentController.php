@@ -124,10 +124,10 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function appointmentDelete(EntityManagerInterface $entityManager, Appointment $appointment, AppointmentRepository $appointmentRepository): Response
+    public function appointmentDelete( ManagerRegistry $doctrine, Appointment $appointment, AppointmentRepository $appointmentRepository): Response
     {
         //on récupère toutes les activités programmées associées au rendez-vous
-        $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+        $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
         $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
 
         foreach($scheduledActivities as $scheduledActivity)
@@ -135,7 +135,7 @@ class AppointmentController extends AbstractController
             $date = $appointment->getDayappointment()->format('Y-m-d');
 
             //suppression des données associées au rendez-vous de la table MaterialResourceScheduled
-            $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+            $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
             $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
             foreach($allMaterialResourceScheduled as $materialResourceScheduled)
@@ -145,7 +145,7 @@ class AppointmentController extends AbstractController
 
 
             //suppression des données associées au rendez-vous de la table HumanResourceScheduled
-            $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+            $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
             $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
             foreach($allHumanResourceScheduled as $humanResourceScheduled)
