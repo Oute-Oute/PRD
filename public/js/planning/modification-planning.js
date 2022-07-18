@@ -967,34 +967,6 @@ function createCalendar(typeResource,useCase) {
       modifyEvent._def.resourceIds.forEach((resource) => {
         listResource.push(resource)
       })
-      console.log(listResource)
-
-      eventExist = false;
-      calendar.getEvents().forEach((currentEvent) => {
-        if(currentEvent.display == "background"){
-          if(modifyEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
-            if(listResource.length != 0){
-              eventExist = true;
-              currentEvent._def.resourceIds = listResource;
-              currentEvent.setStart(modifyEvent.start);
-              currentEvent.setEnd(modifyEvent.end);
-            }
-          }
-        }
-      })
-
-      if(eventExist == false){
-        calendar.addEvent({
-          start: modifyEvent.start,
-          end: modifyEvent.end,
-          resourceIds: listResource,
-          type: 'unavailable',
-          description: 'Ressource Indisponible',
-          display: 'background',
-          color: '#ff0000',
-          idScheduledActivity: modifyEvent._def.publicId
-        });
-      }
     },
   });
   switch (typeResource) {
