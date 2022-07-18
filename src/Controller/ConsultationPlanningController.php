@@ -137,7 +137,7 @@ class ConsultationPlanningController extends AbstractController
     public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
         $materialResourcesUnavailableArray = array();
         foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
             $resource= $materialResourceUnavailable->getMaterialresource()->getId();
@@ -162,7 +162,7 @@ class ConsultationPlanningController extends AbstractController
     public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
         $humanResourcesUnavailableArray = array();
         foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
             $resource= $humanResourceUnavailable->getHumanresource()->getId();
