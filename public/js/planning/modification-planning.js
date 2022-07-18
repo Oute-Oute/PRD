@@ -628,7 +628,6 @@ function updateEventsAppointment(oldEvent) {
         }
       }))
     })
-    console.log(categoryHumanResourceOld, categoryHumanResourceNew)
 
     materialResources.forEach((resource) => {
       newEventAppointment._def.resourceIds.forEach((resourceId => {
@@ -699,7 +698,7 @@ function updateEventsAppointment(oldEvent) {
       categoryHumanResourceNew.forEach((newCategoryHumanResource) => {
         var categoryIsGood = false;
         listActivityHumanResource.forEach((activityHumanResource) => {
-          if(newCategoryHumanResource.id == activityHumanResource.materialResourceCategoryId){
+          if(newCategoryHumanResource.id == activityHumanResource.humanResourceCategoryId){
             categoryIsGood = true;
             var quantity = newCategoryHumanResource.quantity;
             categoryHumanResourceOld.forEach((oldCategoryHumanResource) => {
@@ -712,14 +711,31 @@ function updateEventsAppointment(oldEvent) {
             }
           }
         })
-        if(categoryIsGood = false){
+        if(categoryIsGood == false){
           alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
         }
       })
     }
     else if(categoryMaterialResourceNew != []){
-      categoryMaterialResourceNew.forEach((categoryMaterialResource) => {
-        
+      categoryMaterialResourceNew.forEach((newCategoryMaterialResource) => {
+        var categoryIsGood = false;
+        listActivityMaterialResource.forEach((activityMaterialResource) => {
+          if(newCategoryMaterialResource.id == activityMaterialResource.materialResourceCategoryId){
+            categoryIsGood = true;
+            var quantity = newCategoryMaterialResource.quantity;
+            categoryMaterialResourceOld.forEach((oldCategoryMaterialResource) => {
+              if(oldCategoryMaterialResource. id == newCategoryMaterialResource.id){
+                quantity = quantity + oldCategoryMaterialResource.quantity;
+              }
+            })
+            if(quantity > activityMaterialResource.quantity){
+              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
+            }
+          }
+        })
+        if(categoryIsGood == false){
+          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
+        }
       })
     }
 
