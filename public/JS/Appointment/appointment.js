@@ -28,14 +28,14 @@ function addAppointment() {
     tagsPatients.pop();
   }
   $("#add-appointment-modal").modal("show");
-  var dataPatients = JSON.parse(document.getElementById("patient").value.replaceAll("3aZt3r", " "));
+  var dataPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPatients.length; i++){
     firstname=dataPatients[i]["firstname"];
     lastname=dataPatients[i]["lastname"];
-    patient=firstname+"   "+lastname;
+    patient=lastname+" "+firstname;
     tagsPatients.push(patient);
   }
-  var dataPathways=JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
+  var dataPathways=JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
   for(var i=0; i<dataPathways.length; i++){
     pathName=dataPathways[i]["title"];
     tagsPathways.push(pathName);
@@ -126,7 +126,8 @@ function hideNewModalForm() {
 function validate(type){
   if(type=="new"){
   document.getElementById("dateSelected").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
-  }
+console.log(document.getElementById("dateSelected").value);  
+}
   else if(type=="edit")
   {
     document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input

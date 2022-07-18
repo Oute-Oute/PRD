@@ -18,14 +18,19 @@ class Settings
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $alertmodificationtimer;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $zoommultiplier;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $reloadtime;
 
     public function getId(): ?int
     {
@@ -37,7 +42,7 @@ class Settings
         return $this->alertmodificationtimer;
     }
 
-    public function setAlertmodificationtimer(int $alertmodificationtimer): self
+    public function setAlertmodificationtimer(?int $alertmodificationtimer): self
     {
         $this->alertmodificationtimer = $alertmodificationtimer;
 
@@ -49,9 +54,21 @@ class Settings
         return $this->zoommultiplier;
     }
 
-    public function setZoommultiplier(int $zoommultiplier): self
+    public function setZoommultiplier(?int $zoommultiplier): self
     {
         $this->zoommultiplier = $zoommultiplier;
+
+        return $this;
+    }
+
+    public function getReloadtime(): ?int
+    {
+        return $this->reloadtime;
+    }
+
+    public function setReloadtime(?int $reloadtime): self
+    {
+        $this->reloadtime = $reloadtime;
 
         return $this;
     }

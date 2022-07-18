@@ -121,7 +121,6 @@ class PathwayController extends AbstractController
     public function pathwayAddPage(Request $request, PathwayRepository $pathwayRepository): Response
     {
 
-
         // Méthode GET pour aller vers la page d'ajout d'un parcours 
         if ($request->getMethod() === 'GET' ) {
 
@@ -185,6 +184,7 @@ class PathwayController extends AbstractController
             // On recupere le json qui contient la liste de ressources par activités 
             // et on le transforme en tableau PHP
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+            //dd($resourcesByActivities);
 
 
             // Premierement on s'occupe d'ajouter le parcours dans la bd :

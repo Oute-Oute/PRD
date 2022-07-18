@@ -48,7 +48,8 @@ class ConsultationPlanningController extends AbstractController
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-       //envoi sous forme de JSON
+        $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
+        //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
@@ -57,6 +58,7 @@ class ConsultationPlanningController extends AbstractController
                 'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
                 'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
+                'settingsRepository' => $settingsRepository,
                 ]
         );
     }
@@ -137,7 +139,7 @@ class ConsultationPlanningController extends AbstractController
     public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
         $materialResourcesUnavailableArray = array();
         foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
             $resource= $materialResourceUnavailable->getMaterialresource()->getId();
@@ -162,7 +164,7 @@ class ConsultationPlanningController extends AbstractController
     public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
         $humanResourcesUnavailableArray = array();
         foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
             $resource= $humanResourceUnavailable->getHumanresource()->getId();

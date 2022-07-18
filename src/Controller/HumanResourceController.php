@@ -35,7 +35,7 @@ class HumanResourceController extends AbstractController
 
         $workingHours = $this->listWorkingHoursJSON();
         return $this->render('human_resource/index.html.twig', [
-            'human_resources' => $humanResourceRepository->findBy(['available' => true]),
+            'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
         ]); 
@@ -88,7 +88,6 @@ class HumanResourceController extends AbstractController
             array_push($friday, $param['friday-begin'].':00', $param['friday-end'].':00');
             array_push($saturday, $param['saturday-begin'].':00', $param['saturday-end'].':00');
             array_push($sunday, $param['sunday-begin'].':00', $param['sunday-end'].':00');
-            $humanResource->setAvailable(true);
             $humanResource->setHumanresourcename($name);
             $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
             $humanResourceRepository->add($humanResource, true);
@@ -475,14 +474,7 @@ class HumanResourceController extends AbstractController
      */
     public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
     {
-            if($humanResource->isAvailable() == true) {
-                $humanResource->setAvailable(false);
-            }
-            else {
-                $humanResource->setAvailable(true);
-            }
-
-        $humanResourceRepository->add($humanResource, true);
+        $humanResourceRepository->remove($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 

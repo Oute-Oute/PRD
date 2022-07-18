@@ -25,19 +25,18 @@ h1#title {
     width: 100%;
 }
 .btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
-    margin-top : 10px;
     border: 1px solid transparent;
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    margin-left : 10px;
-    margin-bottom : 5px;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
     fill:white;
     background-color:var(--main-blue); 
     color: #ffffff;
+    margin-left : 10px;
+    margin-bottom : 5px;
 }
 
 .btn-valide {
