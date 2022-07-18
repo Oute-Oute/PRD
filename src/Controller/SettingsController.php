@@ -23,15 +23,16 @@ class SettingsController extends AbstractController
     {
         $idAlert = $request->request->get("idAlert");
 
-        $minTimeAlert = $request->request->get("minTimeAlert");
-        $minutes=substr($minTimeAlert,0,2);
-        $seconds=substr($minTimeAlert,3,2); 
-        
+        $alertTimeMin = $request->request->get("alertTimeMin");
+        $alertTime = 60*$alertTimeMin*1000;
 
+        $reloadTimeMin = $request->request->get("reloadTimeMin");
+        $reloadTime = 60*$reloadTimeMin*1000;
 
         $settings = $settingRepository->findOneBy(['id' => $idAlert]);
 
-        $settings->setAlertmodificationtimer($minutes*60000+$seconds*1000);
+        $settings->setAlertmodificationtimer($alertTime);
+        $settings->setReloadtime($reloadTime);
 
         $entityManager->persist($settings);
         $entityManager->flush();
@@ -45,6 +46,7 @@ class SettingsController extends AbstractController
 
         $settings->setAlertmodificationtimer(480000);
         $settings->setZoommultiplier(1);
+        $settings->setReloadtime(600000);
 
         $entityManager->persist($settings);
         $entityManager->flush();
