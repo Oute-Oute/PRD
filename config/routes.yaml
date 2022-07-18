@@ -211,3 +211,8 @@ AjaxHumanResource:
   path: /ajaxHumanResource
   controller: App\Controller\HumanResourceController::getDataHumanResource
   methods: [POST]
+
+AjaxMaterialResource:
+  path: /ajaxMaterialResource
+  controller: App\Controller\MaterialResourceController::getDataMaterialResource
+  methods: [POST]

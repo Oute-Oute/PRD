@@ -32,6 +32,28 @@ function showInfosModalHuman(idHumanResource, resourceName) {
     $('#infos-human-resource-modal').modal("show");
 }
 
+function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
+    document.getElementById('human-resource-category').innerHTML = resourceCategName;
+
+    var tableBody = document.getElementById('tbody-human-resource-category');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxHumanResource',
+        data : {idHumanResourceCategory: idHumanResourceCategory},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "humanresourcecategory");
+        },
+        error: function(data){
+            console.log("error");
+        }
+        });
+
+    $('#infos-human-resource-category-modal').modal("show");
+}
+
 function tableResource(tableBody, data, switch_param){
     if(data.length <= 0){
         var tr = document.createElement('TR');
@@ -78,84 +100,46 @@ function tableResource(tableBody, data, switch_param){
     }
 }
 
-function showInfosModalMaterial(resourceName, categoryArray) {
+function showInfosModalMaterial(idMaterialResource, resourceName) {
     document.getElementById('material-resource').innerHTML = resourceName;
-
-    length = categoryArray.split('{').length;
-    categoryArray = categoryArray.split('"');
    
     var tableBody = document.getElementById('tbody-material-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-    if(length <= 1){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de catégorie associée !");
-        tr.appendChild(td);
-    }
-    else{
-        for (var i = 0; i < length-1; i++) {
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.append(categoryArray[3+4*i]);
-            tr.appendChild(td);
-        }
-    }
-
-    $('#infos-material-resource-modal').modal("show");
-}
-
-function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
-    document.getElementById('human-resource-category').innerHTML = resourceCategName;
-
-    var tableBody = document.getElementById('tbody-human-resource-category');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
     $.ajax({
         type : 'POST',
-        url  : '/ajaxHumanResource',
-        data : {idHumanResourceCategory: idHumanResourceCategory},
+        url  : '/ajaxMaterialResource',
+        data : {idMaterialResource: idMaterialResource},
         dataType : "json",
         success : function(data){  
-            tableResource(tableBody, data, "humanresourcecategory");
+            tableResource(tableBody, data, "materialresource");
         },
         error: function(data){
             console.log("error");
         }
         });
 
-    $('#infos-human-resource-category-modal').modal("show");
+    $('#infos-material-resource-modal').modal("show");
 }
 
-function showInfosModalMaterialCateg(materialResourceCategName, resourceArray) {
-    document.getElementById('material-resource-category').innerHTML = materialResourceCategName;
-
-    length = resourceArray.split('{').length;
-    resourceArray = resourceArray.split('"');
+function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategName) {
+    document.getElementById('material-resource-category').innerHTML = resourceCategName;
 
     var tableBody = document.getElementById('tbody-material-resource-category');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-    if(length <= 1){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de ressource matérielle associée !");
-        tr.appendChild(td);
-    }
-    else{
-        for (var i = 0; i < length-1; i++) {
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.append(resourceArray[3+4*i]);
-            tr.appendChild(td);
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxMaterialResource',
+        data : {idMaterialResourceCategory: idMaterialResourceCategory},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "materialresourcecategory");
+        },
+        error: function(data){
+            console.log("error");
         }
-    }
+        });
 
     $('#infos-material-resource-category-modal').modal("show");
 }
@@ -391,3 +375,68 @@ function change_tab_human(id)
 }
 // #container-modal 
 // .modal-form             #form-add-activity
+
+
+function filterHumanResource(idInput){
+    var trs = document.querySelectorAll('#tableHumanResource tr:not(.headerHumanResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterHumanResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    console.log(filter);
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResource(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResource tr:not(.headerMaterialResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
