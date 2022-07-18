@@ -66,7 +66,6 @@ class AppointmentController extends AbstractController
             'id' => $patient->getId(),
             'firstname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())),
             'lastname' => (str_replace(" ", "3aZt3r", $patient->getlastname())),
-            'fullname' => (str_replace(" ", "3aZt3r", $patient->getfirstname())."3aZt3r".str_replace(" ", "3aZt3r", $patient->getlastname())),
         );
         }        
         return new JsonResponse($patientsArray);
@@ -77,14 +76,10 @@ class AppointmentController extends AbstractController
         // On recupere toutes les données de la requete
         $param = $request->request->all();
 
-        // On vérifie que tous les champs sont remplis
-        if(count($param) != 5)
-        {
-            return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['id' => $param['idpatient']]);
-        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
+        $name=explode(" ",$param["patient"]);
+        //parse_str($nameParsed[0], $nameParsed);
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
@@ -100,17 +95,17 @@ class AppointmentController extends AbstractController
 
         // ajout dans la bdd
         $appointmentRepository->add($appointment, true);
-
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
     public function appointmentEdit(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine)
     {
         //on récupère les nouvelles informations sur le rendez-vous
-        $param = $request->request->all();
+        $param = $request->request->all();    
+        $name=explode(" ",$param["patient"]);
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
-        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['id' => $param['idpatient']]);
-        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['id' => $param['idpathway']]);
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
         $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
@@ -207,7 +202,7 @@ class AppointmentController extends AbstractController
             'target' => '1',
             'color' => '#FF0000',
         ];
-        $targetsJSON[] = [
+        $targetsJSON = [
             'id' => '',
             'start'=> '2022-07-19',
             'end'=> '2022-07-19',
