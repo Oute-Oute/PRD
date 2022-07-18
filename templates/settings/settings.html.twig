@@ -22,14 +22,10 @@
             <div style="margin-left: 20px;">
                 {% for setting in settings %}
                     <div style="margin-right: 50%;">
-                        <label class="label" > Temps max de modification avant alerte </label><br>
-                        {% set timerMinutes = setting.getAlertmodificationtimer // 60000 %}
-                        {% set timerSeconds = setting.getAlertmodificationtimer % 60000 / 1000 %}
-                        <label class="label" for="alertTimeMin">Minutes : </label>
-                        <input class="input" id='alertTimeMin' type='number' name='alertTimeMin' value={{timerMinutes}}>
-                        
-                        <label class="label" for="alertTimeSec">Secondes : </label>
-                        <input class="input" id='alertTimeSec' type='number' name='alertTimeSec' value={{timerSeconds}}>
+                        <label class="label" > Temps maximal d'inactivité avant l'affichage d'une alerte' </label><br>
+                        {% set timerMinutes = (setting.getAlertmodificationtimer // 60000 )|number_format %}
+                        {% set timerSeconds = (setting.getAlertmodificationtimer % 60000 / 1000)|number_format %}
+                        <input class="input" id='minTimeAlert' type='time' name='minTimeAlert' value={{"%02d"|format(timerMinutes) ~ ':'~ "%02d"|format(timerSeconds)}}>
                         <input class="input" type=hidden id='idAlert' name='idAlert' value={{setting.getId}}>
                     </div><br>
                 {% endfor %}

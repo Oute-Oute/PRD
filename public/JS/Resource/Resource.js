@@ -7,122 +7,139 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-function showInfosModalHuman(resourceName, categoryArray) {
+/**
+ * Permet d'afficher la fenêtre modale d'informations
+ */
+function showInfosModalHuman(idHumanResource, resourceName) {
     document.getElementById('human-resource').innerHTML = resourceName;
-
-    length = categoryArray.split('{').length;
-    categoryArray = categoryArray.split('"');
    
     var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-    if(length <= 1){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de catégorie associée !");
-        tr.appendChild(td);
-    }
-    else{
-        for (var i = 0; i < length-1; i++) {
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.append(categoryArray[3+4*i]);
-            tr.appendChild(td);
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxHumanResource',
+        data : {idHumanResource: idHumanResource},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "humanresource");
+        },
+        error: function(data){
+            console.log("error");
         }
-    }
-
+        });
+    
     $('#infos-human-resource-modal').modal("show");
 }
 
-function showInfosModalMaterial(resourceName, categoryArray) {
-    document.getElementById('material-resource').innerHTML = resourceName;
-
-    length = categoryArray.split('{').length;
-    categoryArray = categoryArray.split('"');
-   
-    var tableBody = document.getElementById('tbody-material-resource');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    if(length <= 1){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de catégorie associée !");
-        tr.appendChild(td);
-    }
-    else{
-        for (var i = 0; i < length-1; i++) {
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.append(categoryArray[3+4*i]);
-            tr.appendChild(td);
-        }
-    }
-
-    $('#infos-material-resource-modal').modal("show");
-}
-
-function showInfosModalHumanCateg(humanResourceCategName, resourceArray) {
-    document.getElementById('human-resource-category').innerHTML = humanResourceCategName;
-
-    length = resourceArray.split('{').length;
-    resourceArray = resourceArray.split('"');
+function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
+    document.getElementById('human-resource-category').innerHTML = resourceCategName;
 
     var tableBody = document.getElementById('tbody-human-resource-category');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
-    if(length <= 1){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de ressource humaine associée !");
-        tr.appendChild(td);
-    }
-    else{
-        for (var i = 0; i < length-1; i++) {
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            td.append(resourceArray[3+4*i]);
-            tr.appendChild(td);
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxHumanResource',
+        data : {idHumanResourceCategory: idHumanResourceCategory},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "humanresourcecategory");
+        },
+        error: function(data){
+            console.log("error");
         }
-    }
+        });
 
     $('#infos-human-resource-category-modal').modal("show");
 }
 
-function showInfosModalMaterialCateg(materialResourceCategName, resourceArray) {
-    document.getElementById('material-resource-category').innerHTML = materialResourceCategName;
-
-    length = resourceArray.split('{').length;
-    resourceArray = resourceArray.split('"');
-
-    var tableBody = document.getElementById('tbody-material-resource-category');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    if(length <= 1){
+function tableResource(tableBody, data, switch_param){
+    if(data.length <= 0){
         var tr = document.createElement('TR');
         tableBody.appendChild(tr);
         var td = document.createElement('TD');
         td.setAttribute('colspan', 5);
-        td.append("Pas de ressource matérielle associée !");
+        switch(switch_param){
+            case "humanresource":
+                td.append("Pas de catégorie associée à cette ressource !");
+            break;
+            case "humanresourcecategory":
+                td.append("Pas de ressource associée à cette catégorie !");
+            break;
+            case "materialresource":
+                td.append("Pas de catégorie associée à cette ressource !");
+            break;
+            case "materialresourcecategory":
+                td.append("Pas de ressource associée à cette catégorie !");
+            break;
+        }
         tr.appendChild(td);
     }
     else{
-        for (var i = 0; i < length-1; i++) {
+        for(i = 0; i < data.length; i++){
             var tr = document.createElement('TR');
             tableBody.appendChild(tr);
             var td = document.createElement('TD');
-            td.append(resourceArray[3+4*i]);
+            switch(switch_param){
+                case "humanresource":
+                    td.append(data[i]['humanresourcecategory']);
+                break;
+                case "humanresourcecategory":
+                    td.append(data[i]['humanresource']);
+                break;
+                case "materialresource":
+                    td.append(data[i]['materialresourcecategory']);
+                break;
+                case "materialresourcecategory":
+                    td.append(data[i]['materialresource']);
+                break;
+            }
             tr.appendChild(td);
         }
     }
+}
+
+function showInfosModalMaterial(idMaterialResource, resourceName) {
+    document.getElementById('material-resource').innerHTML = resourceName;
+   
+    var tableBody = document.getElementById('tbody-material-resource');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxMaterialResource',
+        data : {idMaterialResource: idMaterialResource},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "materialresource");
+        },
+        error: function(data){
+            console.log("error");
+        }
+        });
+
+    $('#infos-material-resource-modal').modal("show");
+}
+
+function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategName) {
+    document.getElementById('material-resource-category').innerHTML = resourceCategName;
+
+    var tableBody = document.getElementById('tbody-material-resource-category');
+    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxMaterialResource',
+        data : {idMaterialResourceCategory: idMaterialResourceCategory},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data, "materialresourcecategory");
+        },
+        error: function(data){
+            console.log("error");
+        }
+        });
 
     $('#infos-material-resource-category-modal').modal("show");
 }
