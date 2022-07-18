@@ -16,6 +16,9 @@
 	<script src="js/planning/consultation-planning.js"></script>
 	<script src="js/planning/utils-planning.js"></script>
 
+	{% for setting in settingsRepository %}
+		<input type="hidden" name="reloadTime" id="reloadTime" value='{{setting.getReloadtime}}'>
+	{% endfor %}
 	<div class="all-container" id="all">
 		<h1>Consultation du Planning du
 			{{ currentdate|date("d/m/Y") }}</h1>
@@ -66,6 +69,7 @@
 		<div id='calendar'></div>
 	</div>
 </div>
+<script>reload();</script>
 <div class="modal" id="modify-planning-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">

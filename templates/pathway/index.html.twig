@@ -81,13 +81,22 @@
                 <td> {{ pathway.id }} </td>
                 <td> {{ pathway.pathwayname }} </td>
 
-                <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosPathway('{{pathway.id}}', '{{pathway.pathwayname}}')">Informations</a>
-                    <button class = "btn-edit btn-secondary" onclick="showEditModalForm('{{pathway.id}}', '{{pathway.pathwayname}}', '{{indexPathway}}')">Éditer</a>
-                    <form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');" style="width:100%;">
-                        <input type="hidden" value="{{pathway.id}}" name="pathwayid">
-                        <button type="submit" class="btn-delete btn-secondary" > <p style="margin:0px;"> Supprimer </p> </button>
-                    </form>
+                <td class="flex-row">
+                    <button style="height:100%" class = "btn-infos btn-secondary" onclick="showInfosPathway('{{pathway.id}}', '{{pathway.pathwayname}}')">Informations</button>
+                    
+                    <div>
+                        <form action="{{ path('PathwayEditPage', {'id':pathway.id}) }}" method="GET" style="width:100%;">
+                           {# <input type="hidden" value="{{pathway.id}}" name="pathwayid">#}
+                            <button type="submit" class = "btn-edit btn-secondary"> <p style="margin:0px; heigth:100%"> Éditer </p> </button>
+                        </form>
+                    </div> 
+    
+                    <div>
+                        <form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');" style="width:100%;">
+                            <input type="hidden" value="{{pathway.id}}" name="pathwayid">
+                            <button type="submit" class="btn-delete btn-secondary" > <p style="margin:0px;"> Supprimer </p> </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% set indexPathway = indexPathway + 1 %}
@@ -102,7 +111,7 @@
     {# Fenêtre modale d'ajout 
     {{ include ('pathway/modal_new.html.twig') }}#}
     {# Fenêtre modale d'édition #}
-    {{ include ('pathway/modal_edit.html.twig') }}
+    {#{{ include ('pathway/modal_edit.html.twig') }}#}
     {# Fenêtre modale d'information #}
     {{ include ('pathway/show.html.twig') }}
 

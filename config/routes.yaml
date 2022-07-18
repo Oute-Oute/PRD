@@ -135,6 +135,11 @@ PathwayAddPage:
   controller: App\Controller\PathwayController:pathwayAddPage
   methods: [GET]
 
+PathwayEditPage:
+  path: /pathway/edit/{id}
+  controller: App\Controller\PathwayController:pathwayEditPage
+  methods: [GET]
+
 PathwayEdit:
   path: /pathway/edit
   controller: App\Controller\PathwayController:edit
