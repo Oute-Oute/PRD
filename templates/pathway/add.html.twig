@@ -20,7 +20,11 @@
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
     <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
                     
-    <h1> Ajouter un parcours </h1>
+    <div id="title-pathway">     
+        <h1> Ajouter un parcours </h1>
+        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img>
+</div>
+    </div>
 
     <form action="{{ path('PathwayAdd') }}" method="post">
 
@@ -39,7 +43,7 @@
             <div id="pathway-form-body">
                 <!-- partie gauche - permet de lister les activités -->
                 <div id="create-activity-container">
-                    <label class="label">Création d'une activité</label>
+                    <label id="lbl-title-create" dclass="label">Création d'une activité</label>
 
        
                     <div id="create-activity">
@@ -68,8 +72,11 @@
                         </div>
                     </div>
 
-                    <div id="container-btn-add-activity" style=""> 
-                        <button type="button" id='btn-add-activity' onclick="addActivity()"> <b> Ajouter une activité > </b> </button> 
+                    <div id="container-btn-add-activity" class="flex-row" style=""> 
+                    <!--  style="display:none;"  -->
+                        <button style="display:none;"  type="button" id="btn-cancel-activity"  class="btn-delete btn-secondary" onclick="cancelEditActivity()"> <b> Annuler </b></button>
+                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="addActivity()"> <b> Ajouter une activité > </b> </button> 
+                        <button style="display:none;"  type="button" id="btn-confirm-activity"  class="btn-delete btn-secondary" onclick="confirmEditActivity()"> <b> Valider les modifications </b></button>
                     </div>
 
                 </div>

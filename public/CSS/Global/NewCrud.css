@@ -56,21 +56,49 @@ div#activities-list #list{
 }
 
 /* bouton pour ajouter des activités au parcours */
- button#btn-add-activity {
-    background: #404040;
-    padding: 5px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease 0s;
+button#btn-add-activity {
     color: #37BC9B;
-    background : none;
+    background : none;    
     border : 1px solid #37BC9B;
-    margin-top: 20px;
-    cursor: pointer;
+
 }
 
- div#container-btn-add-activity {
+/* bouton pour confirmer l'édition d'une activité dans un parcours */
+button#btn-confirm-activity {
+    color: #37BC9B;
+    background : none;    
+    border : 1px solid #37BC9B;
+}
+/* bouton pour annuler l'édition d'une activité dans le parcours */
+button#btn-cancel-activity {
+    color: #DA4353;
+    background : none;    
+    border : 1px solid #DA4353;
+
+}
+button#btn-add-activity:hover {
+
+}
+#title-pathway {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+#title-pathway div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+#title-pathway div img{
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+#title-pathway div p{
+    margin: 0;
+}
+div#container-btn-add-activity {
+    margin-top: 20px;
     width:100%; 
     display: flex; 
     justify-content: center;

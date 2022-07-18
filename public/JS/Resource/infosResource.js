@@ -50,7 +50,8 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
 }
 
 function showInfosModalMaterial(idMaterialResource, resourceName) {
-    document.getElementById('material-resource').innerHTML = resourceName;
+    document.getElementById('material-resource1').innerHTML = resourceName;
+    document.getElementById('material-resource2').innerHTML = resourceName;
    
     var tableBody = document.getElementById('tbody-material-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
@@ -68,6 +69,7 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
         }
         });
 
+    change_tab_material_infos('planning');
     $('#infos-material-resource-modal').modal("show");
 }
 
@@ -225,6 +227,27 @@ function change_tab_human_infos(id)
     case 'categoriesbyresource':
         planning.style.display = 'none'
         workinghours.style.display = 'none';
+        categories.style.display = 'block';
+    break;
+  }
+}
+
+function change_tab_material_infos(id)
+{
+  document.getElementById("planning").className="notselected";
+  document.getElementById("categoriesbyresource").className="notselected";
+  document.getElementById(id).className="selected";
+
+  let planning = document.getElementById("material-resource-planning");
+  let categories = document.getElementById("material-resource-categories");
+  
+  switch(id){
+    case 'planning':
+        planning.style.display = 'block';
+        categories.style.display = 'none';
+    break;
+    case 'categoriesbyresource':
+        planning.style.display = 'none';
         categories.style.display = 'block';
     break;
   }
