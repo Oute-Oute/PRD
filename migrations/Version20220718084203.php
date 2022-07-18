@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220711123914 extends AbstractMigration
+final class Version20220718084203 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,6 +20,12 @@ final class Version20220711123914 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE unavailability_human_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, humanresource_id INTEGER NOT NULL, unavailability_id INTEGER NOT NULL)');
+        $this->addSql('CREATE INDEX IDX_1C4DE80F58A652CC ON unavailability_human_resource (humanresource_id)');
+        $this->addSql('CREATE INDEX IDX_1C4DE80FF6922FEF ON unavailability_human_resource (unavailability_id)');
+        $this->addSql('CREATE TABLE unavailability_material_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, materialresource_id INTEGER NOT NULL, unavailability_id INTEGER NOT NULL)');
+        $this->addSql('CREATE INDEX IDX_716F7A44A4B113F ON unavailability_material_resource (materialresource_id)');
+        $this->addSql('CREATE INDEX IDX_716F7A4F6922FEF ON unavailability_material_resource (unavailability_id)');
         $this->addSql('DROP INDEX IDX_AC74095AF3DA7551');
         $this->addSql('CREATE TEMPORARY TABLE __temp__activity AS SELECT id, pathway_id, activityname, duration FROM activity');
         $this->addSql('DROP TABLE activity');
@@ -27,73 +33,71 @@ final class Version20220711123914 extends AbstractMigration
         $this->addSql('INSERT INTO activity (id, pathway_id, activityname, duration) SELECT id, pathway_id, activityname, duration FROM __temp__activity');
         $this->addSql('DROP TABLE __temp__activity');
         $this->addSql('CREATE INDEX IDX_AC74095AF3DA7551 ON activity (pathway_id)');
-        $this->addSql('DROP INDEX IDX_C93D462A81C06096');
         $this->addSql('DROP INDEX IDX_C93D462A85BDF988');
+        $this->addSql('DROP INDEX IDX_C93D462A81C06096');
         $this->addSql('CREATE TEMPORARY TABLE __temp__activity_human_resource AS SELECT id, activity_id, humanresourcecategory_id, quantity FROM activity_human_resource');
         $this->addSql('DROP TABLE activity_human_resource');
         $this->addSql('CREATE TABLE activity_human_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activity_id INTEGER NOT NULL, humanresourcecategory_id INTEGER NOT NULL, quantity INTEGER NOT NULL, CONSTRAINT FK_C93D462A81C06096 FOREIGN KEY (activity_id) REFERENCES activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_C93D462A85BDF988 FOREIGN KEY (humanresourcecategory_id) REFERENCES human_resource_category (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO activity_human_resource (id, activity_id, humanresourcecategory_id, quantity) SELECT id, activity_id, humanresourcecategory_id, quantity FROM __temp__activity_human_resource');
         $this->addSql('DROP TABLE __temp__activity_human_resource');
-        $this->addSql('CREATE INDEX IDX_C93D462A81C06096 ON activity_human_resource (activity_id)');
         $this->addSql('CREATE INDEX IDX_C93D462A85BDF988 ON activity_human_resource (humanresourcecategory_id)');
-        $this->addSql('DROP INDEX IDX_5911932181C06096');
+        $this->addSql('CREATE INDEX IDX_C93D462A81C06096 ON activity_human_resource (activity_id)');
         $this->addSql('DROP INDEX IDX_591193213140497B');
+        $this->addSql('DROP INDEX IDX_5911932181C06096');
         $this->addSql('CREATE TEMPORARY TABLE __temp__activity_material_resource AS SELECT id, activity_id, materialresourcecategory_id, quantity FROM activity_material_resource');
         $this->addSql('DROP TABLE activity_material_resource');
         $this->addSql('CREATE TABLE activity_material_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activity_id INTEGER NOT NULL, materialresourcecategory_id INTEGER NOT NULL, quantity INTEGER NOT NULL, CONSTRAINT FK_5911932181C06096 FOREIGN KEY (activity_id) REFERENCES activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_591193213140497B FOREIGN KEY (materialresourcecategory_id) REFERENCES material_resource_category (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO activity_material_resource (id, activity_id, materialresourcecategory_id, quantity) SELECT id, activity_id, materialresourcecategory_id, quantity FROM __temp__activity_material_resource');
         $this->addSql('DROP TABLE __temp__activity_material_resource');
-        $this->addSql('CREATE INDEX IDX_5911932181C06096 ON activity_material_resource (activity_id)');
         $this->addSql('CREATE INDEX IDX_591193213140497B ON activity_material_resource (materialresourcecategory_id)');
-        $this->addSql('DROP INDEX IDX_FE38F8446B899279');
+        $this->addSql('CREATE INDEX IDX_5911932181C06096 ON activity_material_resource (activity_id)');
         $this->addSql('DROP INDEX IDX_FE38F844F3DA7551');
+        $this->addSql('DROP INDEX IDX_FE38F8446B899279');
         $this->addSql('CREATE TEMPORARY TABLE __temp__appointment AS SELECT id, patient_id, pathway_id, earliestappointmenttime, latestappointmenttime, dayappointment, scheduled FROM appointment');
         $this->addSql('DROP TABLE appointment');
         $this->addSql('CREATE TABLE appointment (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, patient_id INTEGER NOT NULL, pathway_id INTEGER NOT NULL, earliestappointmenttime TIME DEFAULT NULL, latestappointmenttime TIME DEFAULT NULL, dayappointment DATE NOT NULL, scheduled BOOLEAN NOT NULL, CONSTRAINT FK_FE38F8446B899279 FOREIGN KEY (patient_id) REFERENCES patient (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_FE38F844F3DA7551 FOREIGN KEY (pathway_id) REFERENCES pathway (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO appointment (id, patient_id, pathway_id, earliestappointmenttime, latestappointmenttime, dayappointment, scheduled) SELECT id, patient_id, pathway_id, earliestappointmenttime, latestappointmenttime, dayappointment, scheduled FROM __temp__appointment');
         $this->addSql('DROP TABLE __temp__appointment');
-        $this->addSql('CREATE INDEX IDX_FE38F8446B899279 ON appointment (patient_id)');
         $this->addSql('CREATE INDEX IDX_FE38F844F3DA7551 ON appointment (pathway_id)');
-        $this->addSql('DROP INDEX IDX_A297C7A758A652CC');
+        $this->addSql('CREATE INDEX IDX_FE38F8446B899279 ON appointment (patient_id)');
         $this->addSql('DROP INDEX IDX_A297C7A785BDF988');
+        $this->addSql('DROP INDEX IDX_A297C7A758A652CC');
         $this->addSql('CREATE TEMPORARY TABLE __temp__category_of_human_resource AS SELECT id, humanresource_id, humanresourcecategory_id FROM category_of_human_resource');
         $this->addSql('DROP TABLE category_of_human_resource');
         $this->addSql('CREATE TABLE category_of_human_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, humanresource_id INTEGER NOT NULL, humanresourcecategory_id INTEGER NOT NULL, CONSTRAINT FK_A297C7A758A652CC FOREIGN KEY (humanresource_id) REFERENCES human_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_A297C7A785BDF988 FOREIGN KEY (humanresourcecategory_id) REFERENCES human_resource_category (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO category_of_human_resource (id, humanresource_id, humanresourcecategory_id) SELECT id, humanresource_id, humanresourcecategory_id FROM __temp__category_of_human_resource');
         $this->addSql('DROP TABLE __temp__category_of_human_resource');
-        $this->addSql('CREATE INDEX IDX_A297C7A758A652CC ON category_of_human_resource (humanresource_id)');
         $this->addSql('CREATE INDEX IDX_A297C7A785BDF988 ON category_of_human_resource (humanresourcecategory_id)');
-        $this->addSql('DROP INDEX IDX_A467F8654A4B113F');
+        $this->addSql('CREATE INDEX IDX_A297C7A758A652CC ON category_of_human_resource (humanresource_id)');
         $this->addSql('DROP INDEX IDX_A467F8653140497B');
+        $this->addSql('DROP INDEX IDX_A467F8654A4B113F');
         $this->addSql('CREATE TEMPORARY TABLE __temp__category_of_material_resource AS SELECT id, materialresource_id, materialresourcecategory_id FROM category_of_material_resource');
         $this->addSql('DROP TABLE category_of_material_resource');
         $this->addSql('CREATE TABLE category_of_material_resource (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, materialresource_id INTEGER NOT NULL, materialresourcecategory_id INTEGER NOT NULL, CONSTRAINT FK_A467F8654A4B113F FOREIGN KEY (materialresource_id) REFERENCES material_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_A467F8653140497B FOREIGN KEY (materialresourcecategory_id) REFERENCES material_resource_category (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO category_of_material_resource (id, materialresource_id, materialresourcecategory_id) SELECT id, materialresource_id, materialresourcecategory_id FROM __temp__category_of_material_resource');
         $this->addSql('DROP TABLE __temp__category_of_material_resource');
-        $this->addSql('CREATE INDEX IDX_A467F8654A4B113F ON category_of_material_resource (materialresource_id)');
         $this->addSql('CREATE INDEX IDX_A467F8653140497B ON category_of_material_resource (materialresourcecategory_id)');
-        $this->addSql('DROP INDEX IDX_2E4F9E8CF6922FEF');
-        $this->addSql('DROP INDEX IDX_2E4F9E8C58A652CC');
+        $this->addSql('CREATE INDEX IDX_A467F8654A4B113F ON category_of_material_resource (materialresource_id)');
         $this->addSql('DROP INDEX IDX_2E4F9E8C7CF91857');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, humanresource_id, scheduledactivity_id, unavailability_id FROM human_resource_scheduled');
+        $this->addSql('DROP INDEX IDX_2E4F9E8C58A652CC');
+        $this->addSql('DROP INDEX IDX_2E4F9E8CF6922FEF');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, humanresource_id, scheduledactivity_id FROM human_resource_scheduled');
         $this->addSql('DROP TABLE human_resource_scheduled');
-        $this->addSql('CREATE TABLE human_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, humanresource_id INTEGER NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, unavailability_id INTEGER NOT NULL, CONSTRAINT FK_2E4F9E8C7CF91857 FOREIGN KEY (scheduledactivity_id) REFERENCES scheduled_activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2E4F9E8CF6922FEF FOREIGN KEY (unavailability_id) REFERENCES unavailability (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2E4F9E8C58A652CC FOREIGN KEY (humanresource_id) REFERENCES human_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
-        $this->addSql('INSERT INTO human_resource_scheduled (id, humanresource_id, scheduledactivity_id, unavailability_id) SELECT id, humanresource_id, scheduledactivity_id, unavailability_id FROM __temp__human_resource_scheduled');
+        $this->addSql('CREATE TABLE human_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, humanresource_id INTEGER NOT NULL, scheduledactivity_id INTEGER NOT NULL, CONSTRAINT FK_2E4F9E8C7CF91857 FOREIGN KEY (scheduledactivity_id) REFERENCES scheduled_activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_2E4F9E8C58A652CC FOREIGN KEY (humanresource_id) REFERENCES human_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO human_resource_scheduled (id, humanresource_id, scheduledactivity_id) SELECT id, humanresource_id, scheduledactivity_id FROM __temp__human_resource_scheduled');
         $this->addSql('DROP TABLE __temp__human_resource_scheduled');
-        $this->addSql('CREATE INDEX IDX_2E4F9E8CF6922FEF ON human_resource_scheduled (unavailability_id)');
-        $this->addSql('CREATE INDEX IDX_2E4F9E8C58A652CC ON human_resource_scheduled (humanresource_id)');
         $this->addSql('CREATE INDEX IDX_2E4F9E8C7CF91857 ON human_resource_scheduled (scheduledactivity_id)');
-        $this->addSql('DROP INDEX IDX_9AB22E7FF6922FEF');
-        $this->addSql('DROP INDEX IDX_9AB22E7F4A4B113F');
+        $this->addSql('CREATE INDEX IDX_2E4F9E8C58A652CC ON human_resource_scheduled (humanresource_id)');
         $this->addSql('DROP INDEX IDX_9AB22E7F7CF91857');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__material_resource_scheduled AS SELECT id, materialresource_id, scheduledactivity_id, unavailability_id FROM material_resource_scheduled');
+        $this->addSql('DROP INDEX IDX_9AB22E7F4A4B113F');
+        $this->addSql('DROP INDEX IDX_9AB22E7FF6922FEF');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__material_resource_scheduled AS SELECT id, materialresource_id, scheduledactivity_id FROM material_resource_scheduled');
         $this->addSql('DROP TABLE material_resource_scheduled');
-        $this->addSql('CREATE TABLE material_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, materialresource_id INTEGER NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, unavailability_id INTEGER NOT NULL, CONSTRAINT FK_9AB22E7F7CF91857 FOREIGN KEY (scheduledactivity_id) REFERENCES scheduled_activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_9AB22E7FF6922FEF FOREIGN KEY (unavailability_id) REFERENCES unavailability (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_9AB22E7F4A4B113F FOREIGN KEY (materialresource_id) REFERENCES material_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
-        $this->addSql('INSERT INTO material_resource_scheduled (id, materialresource_id, scheduledactivity_id, unavailability_id) SELECT id, materialresource_id, scheduledactivity_id, unavailability_id FROM __temp__material_resource_scheduled');
+        $this->addSql('CREATE TABLE material_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, materialresource_id INTEGER NOT NULL, scheduledactivity_id INTEGER NOT NULL, CONSTRAINT FK_9AB22E7F7CF91857 FOREIGN KEY (scheduledactivity_id) REFERENCES scheduled_activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_9AB22E7F4A4B113F FOREIGN KEY (materialresource_id) REFERENCES material_resource (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO material_resource_scheduled (id, materialresource_id, scheduledactivity_id) SELECT id, materialresource_id, scheduledactivity_id FROM __temp__material_resource_scheduled');
         $this->addSql('DROP TABLE __temp__material_resource_scheduled');
-        $this->addSql('CREATE INDEX IDX_9AB22E7FF6922FEF ON material_resource_scheduled (unavailability_id)');
-        $this->addSql('CREATE INDEX IDX_9AB22E7F4A4B113F ON material_resource_scheduled (materialresource_id)');
         $this->addSql('CREATE INDEX IDX_9AB22E7F7CF91857 ON material_resource_scheduled (scheduledactivity_id)');
+        $this->addSql('CREATE INDEX IDX_9AB22E7F4A4B113F ON material_resource_scheduled (materialresource_id)');
         $this->addSql('DROP INDEX IDX_EF6425D2A76ED395');
         $this->addSql('CREATE TEMPORARY TABLE __temp__modification AS SELECT id, user_id, datemodified, datetimemodification FROM modification');
         $this->addSql('DROP TABLE modification');
@@ -101,29 +105,24 @@ final class Version20220711123914 extends AbstractMigration
         $this->addSql('INSERT INTO modification (id, user_id, datemodified, datetimemodification) SELECT id, user_id, datemodified, datetimemodification FROM __temp__modification');
         $this->addSql('DROP TABLE __temp__modification');
         $this->addSql('CREATE INDEX IDX_EF6425D2A76ED395 ON modification (user_id)');
-        $this->addSql('DROP INDEX IDX_DDA14B8581C06096');
         $this->addSql('DROP INDEX IDX_DDA14B85E5B533F9');
+        $this->addSql('DROP INDEX IDX_DDA14B8581C06096');
         $this->addSql('CREATE TEMPORARY TABLE __temp__scheduled_activity AS SELECT id, activity_id, appointment_id, starttime, endtime FROM scheduled_activity');
         $this->addSql('DROP TABLE scheduled_activity');
         $this->addSql('CREATE TABLE scheduled_activity (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activity_id INTEGER NOT NULL, appointment_id INTEGER NOT NULL, starttime TIME NOT NULL, endtime TIME NOT NULL, CONSTRAINT FK_DDA14B8581C06096 FOREIGN KEY (activity_id) REFERENCES activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_DDA14B85E5B533F9 FOREIGN KEY (appointment_id) REFERENCES appointment (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO scheduled_activity (id, activity_id, appointment_id, starttime, endtime) SELECT id, activity_id, appointment_id, starttime, endtime FROM __temp__scheduled_activity');
         $this->addSql('DROP TABLE __temp__scheduled_activity');
-        $this->addSql('CREATE INDEX IDX_DDA14B8581C06096 ON scheduled_activity (activity_id)');
         $this->addSql('CREATE INDEX IDX_DDA14B85E5B533F9 ON scheduled_activity (appointment_id)');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__settings AS SELECT id, alertmodificationtimer, multiplicatorzoom FROM settings');
-        $this->addSql('DROP TABLE settings');
-        $this->addSql('CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, alertmodificationtimer INTEGER NOT NULL, zoommultiplier INTEGER NOT NULL)');
-        $this->addSql('INSERT INTO settings (id, alertmodificationtimer, zoommultiplier) SELECT id, alertmodificationtimer, multiplicatorzoom FROM __temp__settings');
-        $this->addSql('DROP TABLE __temp__settings');
-        $this->addSql('DROP INDEX IDX_DD2819F848CD420');
+        $this->addSql('CREATE INDEX IDX_DDA14B8581C06096 ON scheduled_activity (activity_id)');
         $this->addSql('DROP INDEX IDX_DD2819F816397BCE');
+        $this->addSql('DROP INDEX IDX_DD2819F848CD420');
         $this->addSql('CREATE TEMPORARY TABLE __temp__successor AS SELECT id, activitya_id, activityb_id, delaymin, delaymax FROM successor');
         $this->addSql('DROP TABLE successor');
         $this->addSql('CREATE TABLE successor (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, activitya_id INTEGER NOT NULL, activityb_id INTEGER NOT NULL, delaymin INTEGER DEFAULT NULL, delaymax INTEGER DEFAULT NULL, CONSTRAINT FK_DD2819F848CD420 FOREIGN KEY (activitya_id) REFERENCES activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_DD2819F816397BCE FOREIGN KEY (activityb_id) REFERENCES activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO successor (id, activitya_id, activityb_id, delaymin, delaymax) SELECT id, activitya_id, activityb_id, delaymin, delaymax FROM __temp__successor');
         $this->addSql('DROP TABLE __temp__successor');
-        $this->addSql('CREATE INDEX IDX_DD2819F848CD420 ON successor (activitya_id)');
         $this->addSql('CREATE INDEX IDX_DD2819F816397BCE ON successor (activityb_id)');
+        $this->addSql('CREATE INDEX IDX_DD2819F848CD420 ON successor (activitya_id)');
         $this->addSql('DROP INDEX IDX_466F2FFCF3DA7551');
         $this->addSql('CREATE TEMPORARY TABLE __temp__target AS SELECT id, pathway_id, target, dayweek FROM target');
         $this->addSql('DROP TABLE target');
@@ -131,16 +130,16 @@ final class Version20220711123914 extends AbstractMigration
         $this->addSql('INSERT INTO target (id, pathway_id, target, dayweek) SELECT id, pathway_id, target, dayweek FROM __temp__target');
         $this->addSql('DROP TABLE __temp__target');
         $this->addSql('CREATE INDEX IDX_466F2FFCF3DA7551 ON target (pathway_id)');
-        $this->addSql('DROP INDEX IDX_8D93D6499DB8AE1C');
         $this->addSql('DROP INDEX UNIQ_8D93D649F85E0677');
+        $this->addSql('DROP INDEX IDX_8D93D6499DB8AE1C');
         $this->addSql('CREATE TEMPORARY TABLE __temp__user AS SELECT id, usersettings_id, username, roles, password FROM user');
         $this->addSql('DROP TABLE user');
         $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, usersettings_id INTEGER DEFAULT NULL, username VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
         , password VARCHAR(255) NOT NULL, CONSTRAINT FK_8D93D6499DB8AE1C FOREIGN KEY (usersettings_id) REFERENCES user_settings (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('INSERT INTO user (id, usersettings_id, username, roles, password) SELECT id, usersettings_id, username, roles, password FROM __temp__user');
         $this->addSql('DROP TABLE __temp__user');
-        $this->addSql('CREATE INDEX IDX_8D93D6499DB8AE1C ON user (usersettings_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)');
+        $this->addSql('CREATE INDEX IDX_8D93D6499DB8AE1C ON user (usersettings_id)');
         $this->addSql('DROP INDEX IDX_D72CDC3D58A652CC');
         $this->addSql('CREATE TEMPORARY TABLE __temp__working_hours AS SELECT id, humanresource_id, starttime, endtime, dayweek FROM working_hours');
         $this->addSql('DROP TABLE working_hours');
@@ -153,6 +152,8 @@ final class Version20220711123914 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('DROP TABLE unavailability_human_resource');
+        $this->addSql('DROP TABLE unavailability_material_resource');
         $this->addSql('DROP INDEX IDX_AC74095AF3DA7551');
         $this->addSql('CREATE TEMPORARY TABLE __temp__activity AS SELECT id, pathway_id, activityname, duration FROM activity');
         $this->addSql('DROP TABLE activity');
@@ -206,27 +207,25 @@ final class Version20220711123914 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_A467F8654A4B113F ON category_of_material_resource (materialresource_id)');
         $this->addSql('CREATE INDEX IDX_A467F8653140497B ON category_of_material_resource (materialresourcecategory_id)');
         $this->addSql('DROP INDEX IDX_2E4F9E8C7CF91857');
-        $this->addSql('DROP INDEX IDX_2E4F9E8CF6922FEF');
         $this->addSql('DROP INDEX IDX_2E4F9E8C58A652CC');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, scheduledactivity_id, unavailability_id, humanresource_id FROM human_resource_scheduled');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, scheduledactivity_id, humanresource_id FROM human_resource_scheduled');
         $this->addSql('DROP TABLE human_resource_scheduled');
-        $this->addSql('CREATE TABLE human_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, unavailability_id INTEGER NOT NULL, humanresource_id INTEGER NOT NULL)');
-        $this->addSql('INSERT INTO human_resource_scheduled (id, scheduledactivity_id, unavailability_id, humanresource_id) SELECT id, scheduledactivity_id, unavailability_id, humanresource_id FROM __temp__human_resource_scheduled');
+        $this->addSql('CREATE TABLE human_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, humanresource_id INTEGER NOT NULL, unavailability_id INTEGER NOT NULL)');
+        $this->addSql('INSERT INTO human_resource_scheduled (id, scheduledactivity_id, humanresource_id) SELECT id, scheduledactivity_id, humanresource_id FROM __temp__human_resource_scheduled');
         $this->addSql('DROP TABLE __temp__human_resource_scheduled');
         $this->addSql('CREATE INDEX IDX_2E4F9E8C7CF91857 ON human_resource_scheduled (scheduledactivity_id)');
-        $this->addSql('CREATE INDEX IDX_2E4F9E8CF6922FEF ON human_resource_scheduled (unavailability_id)');
         $this->addSql('CREATE INDEX IDX_2E4F9E8C58A652CC ON human_resource_scheduled (humanresource_id)');
+        $this->addSql('CREATE INDEX IDX_2E4F9E8CF6922FEF ON human_resource_scheduled (unavailability_id)');
         $this->addSql('DROP INDEX IDX_9AB22E7F7CF91857');
-        $this->addSql('DROP INDEX IDX_9AB22E7FF6922FEF');
         $this->addSql('DROP INDEX IDX_9AB22E7F4A4B113F');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__material_resource_scheduled AS SELECT id, scheduledactivity_id, unavailability_id, materialresource_id FROM material_resource_scheduled');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__material_resource_scheduled AS SELECT id, scheduledactivity_id, materialresource_id FROM material_resource_scheduled');
         $this->addSql('DROP TABLE material_resource_scheduled');
-        $this->addSql('CREATE TABLE material_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, unavailability_id INTEGER NOT NULL, materialresource_id INTEGER NOT NULL)');
-        $this->addSql('INSERT INTO material_resource_scheduled (id, scheduledactivity_id, unavailability_id, materialresource_id) SELECT id, scheduledactivity_id, unavailability_id, materialresource_id FROM __temp__material_resource_scheduled');
+        $this->addSql('CREATE TABLE material_resource_scheduled (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER DEFAULT NULL, materialresource_id INTEGER NOT NULL, unavailability_id INTEGER NOT NULL)');
+        $this->addSql('INSERT INTO material_resource_scheduled (id, scheduledactivity_id, materialresource_id) SELECT id, scheduledactivity_id, materialresource_id FROM __temp__material_resource_scheduled');
         $this->addSql('DROP TABLE __temp__material_resource_scheduled');
         $this->addSql('CREATE INDEX IDX_9AB22E7F7CF91857 ON material_resource_scheduled (scheduledactivity_id)');
-        $this->addSql('CREATE INDEX IDX_9AB22E7FF6922FEF ON material_resource_scheduled (unavailability_id)');
         $this->addSql('CREATE INDEX IDX_9AB22E7F4A4B113F ON material_resource_scheduled (materialresource_id)');
+        $this->addSql('CREATE INDEX IDX_9AB22E7FF6922FEF ON material_resource_scheduled (unavailability_id)');
         $this->addSql('DROP INDEX IDX_EF6425D2A76ED395');
         $this->addSql('CREATE TEMPORARY TABLE __temp__modification AS SELECT id, user_id, datemodified, datetimemodification FROM modification');
         $this->addSql('DROP TABLE modification');
@@ -243,11 +242,6 @@ final class Version20220711123914 extends AbstractMigration
         $this->addSql('DROP TABLE __temp__scheduled_activity');
         $this->addSql('CREATE INDEX IDX_DDA14B8581C06096 ON scheduled_activity (activity_id)');
         $this->addSql('CREATE INDEX IDX_DDA14B85E5B533F9 ON scheduled_activity (appointment_id)');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__settings AS SELECT id, alertmodificationtimer, zoommultiplier FROM settings');
-        $this->addSql('DROP TABLE settings');
-        $this->addSql('CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, alertmodificationtimer INTEGER NOT NULL, multiplicatorzoom INTEGER NOT NULL)');
-        $this->addSql('INSERT INTO settings (id, alertmodificationtimer, multiplicatorzoom) SELECT id, alertmodificationtimer, zoommultiplier FROM __temp__settings');
-        $this->addSql('DROP TABLE __temp__settings');
         $this->addSql('DROP INDEX IDX_DD2819F848CD420');
         $this->addSql('DROP INDEX IDX_DD2819F816397BCE');
         $this->addSql('CREATE TEMPORARY TABLE __temp__successor AS SELECT id, activitya_id, activityb_id, delaymin, delaymax FROM successor');

@@ -19,14 +19,9 @@ class HumanResourceScheduled
 
     /**
      * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
-     */
-    private $scheduledactivity;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Unavailability::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $unavailability;
+    private $scheduledactivity;
 
     /**
      * @ORM\ManyToOne(targetEntity=HumanResource::class)
@@ -47,18 +42,6 @@ class HumanResourceScheduled
     public function setScheduledactivity(?ScheduledActivity $scheduledactivity): self
     {
         $this->scheduledactivity = $scheduledactivity;
-
-        return $this;
-    }
-
-    public function getUnavailability(): ?Unavailability
-    {
-        return $this->unavailability;
-    }
-
-    public function setUnavailability(?Unavailability $unavailability): self
-    {
-        $this->unavailability = $unavailability;
 
         return $this;
     }
