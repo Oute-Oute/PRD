@@ -6,9 +6,11 @@ use App\Entity\MaterialResource;
 use App\Entity\CategoryOfMaterialResource;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryOfMaterialResourceRepository;
 use App\Repository\MaterialResourceScheduledRepository;
@@ -36,7 +38,6 @@ class MaterialResourceController extends AbstractController
         $categoriesByResources = array();
 
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
-            if ($materialResources[$indexResource]->isAvailable()) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
                 $categoriesByResource = array();
@@ -53,7 +54,6 @@ class MaterialResourceController extends AbstractController
                     
                 }
                 array_push($categoriesByResources, $categoriesByResource);
-            }
         }
 
         $resourcesByCategories = array();
@@ -71,10 +71,8 @@ class MaterialResourceController extends AbstractController
         }
         //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
-            'material_resources' => $materialResourceRepository->findBy(['available' => true]),
+            'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
-            'categoriesByResources' => $categoriesByResources,
-            'resourcesByCategories' => $resourcesByCategories
         ]); 
     }
 
@@ -87,7 +85,6 @@ class MaterialResourceController extends AbstractController
             $materialResource = new MaterialResource();
             $param = $request->request->all();
             $name = $param['resourcename'];
-            $materialResource->setAvailable(true);
             $materialResource->setMaterialresourcename($name);
             $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
             $materialResourceRepository->add($materialResource, true);
@@ -219,5 +216,44 @@ class MaterialResourceController extends AbstractController
         }
 
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+    }
+
+    public function getDataMaterialResource(ManagerRegistry $doctrine)
+    {
+        if(isset($_POST["idMaterialResource"])){
+            $categories = $this->getCategoryByMaterialResourceId($_POST["idMaterialResource"], $doctrine);
+            return new JsonResponse($categories);
+        }
+        if(isset($_POST["idMaterialResourceCategory"])){
+            $resources = $this->getResourceByMaterialResourceCategoryId($_POST["idMaterialResourceCategory"], $doctrine);
+            return new JsonResponse($resources);
+        }
+    }
+
+    public function getCategoryByMaterialResourceId($id, ManagerRegistry $doctrine)
+    {
+        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
+        $categoryArray=[];
+        foreach ($categories as $category) {
+            if ($category->getMaterialresource()->getId() == $id){
+                $categoryArray[] = [
+                    'materialresourcecategory' => $category->getMaterialresourcecategory()->getCategoryname(),
+                ];
+            }
+        }
+        return $categoryArray;
+    }
+    public function getResourceByMaterialResourceCategoryId($id, ManagerRegistry $doctrine)
+    {
+        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
+        $resourceArray=[];
+        foreach ($categories as $category) {
+            if ($category->getMaterialresourceCategory()->getId() == $id){
+                $resourceArray[] = [
+                    'materialresource' => $category->getMaterialresource()->getMaterialresourcename(),
+                ];
+            }
+        }
+        return $resourceArray;
     }
 }
