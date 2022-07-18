@@ -513,6 +513,8 @@ function updateEventsAppointment(oldEvent) {
   var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   var categoryOfMaterialResource = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
   var categoryOfHumanResource = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+  var listActivityHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value.replaceAll("3aZt3r", " "));
+  var listActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value.replaceAll("3aZt3r", " "));
   var listEventAppointment = [];
   listEvent.forEach((currentEvent) => {
     if (currentEvent._def.extendedProps.appointment == appointmentId) {
@@ -581,7 +583,6 @@ function updateEventsAppointment(oldEvent) {
                     }
                   }
                   else {
-                    console.log("coucou")
                     categoryHumanResourceOld.push({
                       id: humanEventRelation.idcategory,
                       quantity: 1
@@ -627,6 +628,7 @@ function updateEventsAppointment(oldEvent) {
         }
       }))
     })
+    console.log(categoryHumanResourceOld, categoryHumanResourceNew)
 
     materialResources.forEach((resource) => {
       newEventAppointment._def.resourceIds.forEach((resourceId => {
@@ -693,7 +695,33 @@ function updateEventsAppointment(oldEvent) {
       }))
     })
 
-
+    if(categoryHumanResourceNew != []){
+      categoryHumanResourceNew.forEach((newCategoryHumanResource) => {
+        var categoryIsGood = false;
+        listActivityHumanResource.forEach((activityHumanResource) => {
+          if(newCategoryHumanResource.id == activityHumanResource.materialResourceCategoryId){
+            categoryIsGood = true;
+            var quantity = newCategoryHumanResource.quantity;
+            categoryHumanResourceOld.forEach((oldCategoryHumanResource) => {
+              if(oldCategoryHumanResource. id == newCategoryHumanResource.id){
+                quantity = quantity + oldCategoryHumanResource.quantity;
+              }
+            })
+            if(quantity > activityHumanResource.quantity){
+              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
+            }
+          }
+        })
+        if(categoryIsGood = false){
+          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
+        }
+      })
+    }
+    else if(categoryMaterialResourceNew != []){
+      categoryMaterialResourceNew.forEach((categoryMaterialResource) => {
+        
+      })
+    }
 
     if (
       earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
