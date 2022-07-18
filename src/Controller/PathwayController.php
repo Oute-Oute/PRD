@@ -113,6 +113,36 @@ class PathwayController extends AbstractController
     }
 
 
+    /**
+     * Redirige vers la page d'ajout d'un parcours
+     * route : "/pathway/edit/{id}"
+     */
+    public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, int $id): Response
+    {
+
+        //dd($id);
+        // Méthode GET pour aller vers la page d'ajout d'un parcours 
+        if ($request->getMethod() === 'GET' ) {
+
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+
+            $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
+            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+
+            $pathway = $pathwayRepository->findBy(['id' => $id]);
+
+            $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
+            //dd($activitiesByPathways);
+
+            return $this->render('pathway/edit.html.twig', [
+                'pathway' => $pathway,
+                'activitiesByPathways' => $activitiesByPathways,
+                'humanResourceCategories' => $humanResourceCategoriesJson,
+                'materialResourceCategories' => $materialResourceCategoriesJson,
+            ]);
+        }
+            
+    }
 
     /**
      * Redirige vers la page d'ajout d'un parcours
@@ -192,7 +222,7 @@ class PathwayController extends AbstractController
             // On crée l'objet parcours
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
-            $pathway->setAvailable(true);
+            //$pathway->setAvailable(true);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
