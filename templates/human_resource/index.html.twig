@@ -63,7 +63,6 @@
             </tr>
         </thead>
         <tbody>
-        {% set indexCategory = 0 %}
         {% for human_resource_category in human_resources_categories %}
             <tr>
                 <td>{{ human_resource_category.id }}</td>
@@ -75,7 +74,6 @@
 
                 </td>
             </tr>
-            {% set indexCategory = indexCategory + 1 %}
         {% else %}
             <tr>
                 <td colspan="3">Pas de catégorie de ressources humaines créées !</td>
