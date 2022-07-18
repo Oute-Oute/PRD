@@ -204,7 +204,7 @@ ul.ui-autocomplete {
     justify-content: space-between;
 }
 
-#working-hours-input-begin, #working-hours-input-begin-edit {
+#working-hours-input-begin, #working-hours-input-begin-edit, #working-hours-infos-begin{
     display : flex;
     flex-direction : column;
     width : 33%;
@@ -212,11 +212,15 @@ ul.ui-autocomplete {
     justify-content: space-between;
 }
 
-#working-hours-input-end , #working-hours-input-end-edit {
+#working-hours-input-end , #working-hours-input-end-edit, #working-hours-infos-end{
     display : flex;
     flex-direction : column;
     width : 33%;
     height : 100%;
     justify-content: space-between;
     margin-left : 10px;
+}
+
+#working-hours-infos-begin input, #working-hours-infos-end input{
+    pointer-events:none;
 }

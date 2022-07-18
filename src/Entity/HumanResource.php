@@ -22,11 +22,6 @@ class HumanResource
      */
     private $humanresourcename;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $available;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -40,18 +35,6 @@ class HumanResource
     public function setHumanresourcename(string $humanresourcename): self
     {
         $this->humanresourcename = $humanresourcename;
-
-        return $this;
-    }
-
-    public function isAvailable(): ?bool
-    {
-        return $this->available;
-    }
-
-    public function setAvailable(bool $available): self
-    {
-        $this->available = $available;
 
         return $this;
     }

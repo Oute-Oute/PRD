@@ -38,7 +38,6 @@ class MaterialResourceController extends AbstractController
         $categoriesByResources = array();
 
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
-            if ($materialResources[$indexResource]->isAvailable()) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
                 $categoriesByResource = array();
@@ -55,7 +54,6 @@ class MaterialResourceController extends AbstractController
                     
                 }
                 array_push($categoriesByResources, $categoriesByResource);
-            }
         }
 
         $resourcesByCategories = array();
@@ -73,7 +71,7 @@ class MaterialResourceController extends AbstractController
         }
         //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
-            'material_resources' => $materialResourceRepository->findBy(['available' => true]),
+            'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
         ]); 
     }
@@ -87,7 +85,6 @@ class MaterialResourceController extends AbstractController
             $materialResource = new MaterialResource();
             $param = $request->request->all();
             $name = $param['resourcename'];
-            $materialResource->setAvailable(true);
             $materialResource->setMaterialresourcename($name);
             $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
             $materialResourceRepository->add($materialResource, true);

@@ -1,21 +1,86 @@
 <div class="modal" id="infos-human-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 id='human-resource'></h1>
-                <br>
+            <div id="main_content">
+                <li class="selected" id="planning" onclick="change_tab_human_infos(this.id);">Emploi du temps</li>
+                <li class="notselected" id="workinghours" onclick="change_tab_human_infos(this.id);">Horaires de travail</li>
+                <li class="notselected" id="categoriesbyresource" onclick="change_tab_human_infos(this.id);">Catégories</li>
             </div>
-            <div class="modal-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Catégorie</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-human-resource">
+            <div id = 'human-resource-planning'>
+                <div class="modal-header">
+                    <h1 id='human-resource1'></h1>
+                </div>
+                <div class="modal-body">
 
-                    </tbody>
-                </table>
+                </div>
+            </div>
+            <div id = 'human-resource-working-hours'>
+                <div class="modal-header">
+                    <h1 id='human-resource2'></h1>
+                </div>
+                <fieldset id="fs-add-working-hours">
+                    <div id = 'working-hours-parent'>
+                        <div id = 'working-hours-label'>
+                            <label> Lundi :</label>
+                            <label> Mardi :</label>
+                            <label> Mercredi :</label>
+                            <label> Jeudi :</label>
+                            <label> Vendredi :</label>
+                            <label> Samedi :</label>
+                            <label> Dimanche :</label>
+                        </div>
+                        <div id = 'working-hours-infos-begin'>
+                            <input type="time" id="monday-begin" name="monday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="tuesday-begin" name="tuesday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="wednesday-begin" name="wednesday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="thursday-begin" name="thursday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="friday-begin" name="friday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="saturday-begin" name="saturday-begin"
+                            min="00:00" max="23:59">
+                            <input type="time" id="sunday-begin" name="sunday-begin"
+                            min="00:00" max="23:59">
+                        </div>
+                        <div id = 'working-hours-infos-end'>
+                            <input type="time" id="monday-end" name="monday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="tuesday-end" name="tuesday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="wednesday-end" name="wednesday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="thursday-end" name="thursday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="friday-end" name="friday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="saturday-end" name="saturday-end"
+                            min="00:00" max="23:59">
+                            <input type="time" id="sunday-end" name="sunday-end"
+                            min="00:00" max="23:59">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div id = 'human-resource-categories'>
+                <div class="modal-header">
+                    <h1 id='human-resource3'></h1>
+                    <br>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Catégorie</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-human-resource">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

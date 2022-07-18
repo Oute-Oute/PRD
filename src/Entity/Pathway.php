@@ -22,11 +22,6 @@ class Pathway
      */
     private $pathwayname;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $available;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -40,18 +35,6 @@ class Pathway
     public function setPathwayname(string $pathwayname): self
     {
         $this->pathwayname = $pathwayname;
-
-        return $this;
-    }
-
-    public function isAvailable(): ?bool
-    {
-        return $this->available;
-    }
-
-    public function setAvailable(bool $available): self
-    {
-        $this->available = $available;
 
         return $this;
     }

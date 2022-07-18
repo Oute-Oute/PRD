@@ -6,144 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value)    
 })
 
-
-/**
- * Permet d'afficher la fenêtre modale d'informations
- */
-function showInfosModalHuman(idHumanResource, resourceName) {
-    document.getElementById('human-resource').innerHTML = resourceName;
-   
-    var tableBody = document.getElementById('tbody-human-resource');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxHumanResource',
-        data : {idHumanResource: idHumanResource},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data, "humanresource");
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-    
-    $('#infos-human-resource-modal').modal("show");
-}
-
-function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
-    document.getElementById('human-resource-category').innerHTML = resourceCategName;
-
-    var tableBody = document.getElementById('tbody-human-resource-category');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxHumanResource',
-        data : {idHumanResourceCategory: idHumanResourceCategory},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data, "humanresourcecategory");
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-
-    $('#infos-human-resource-category-modal').modal("show");
-}
-
-function tableResource(tableBody, data, switch_param){
-    if(data.length <= 0){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        switch(switch_param){
-            case "humanresource":
-                td.append("Pas de catégorie associée à cette ressource !");
-            break;
-            case "humanresourcecategory":
-                td.append("Pas de ressource associée à cette catégorie !");
-            break;
-            case "materialresource":
-                td.append("Pas de catégorie associée à cette ressource !");
-            break;
-            case "materialresourcecategory":
-                td.append("Pas de ressource associée à cette catégorie !");
-            break;
-        }
-        tr.appendChild(td);
-    }
-    else{
-        for(i = 0; i < data.length; i++){
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td = document.createElement('TD');
-            switch(switch_param){
-                case "humanresource":
-                    td.append(data[i]['humanresourcecategory']);
-                break;
-                case "humanresourcecategory":
-                    td.append(data[i]['humanresource']);
-                break;
-                case "materialresource":
-                    td.append(data[i]['materialresourcecategory']);
-                break;
-                case "materialresourcecategory":
-                    td.append(data[i]['materialresource']);
-                break;
-            }
-            tr.appendChild(td);
-        }
-    }
-}
-
-function showInfosModalMaterial(idMaterialResource, resourceName) {
-    document.getElementById('material-resource').innerHTML = resourceName;
-   
-    var tableBody = document.getElementById('tbody-material-resource');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxMaterialResource',
-        data : {idMaterialResource: idMaterialResource},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data, "materialresource");
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-
-    $('#infos-material-resource-modal').modal("show");
-}
-
-function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategName) {
-    document.getElementById('material-resource-category').innerHTML = resourceCategName;
-
-    var tableBody = document.getElementById('tbody-material-resource-category');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxMaterialResource',
-        data : {idMaterialResourceCategory: idMaterialResourceCategory},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data, "materialresourcecategory");
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-
-    $('#infos-material-resource-category-modal').modal("show");
-}
-
 function showNewHumanModalForm(){
     $('#new-human-resource-modal').modal("show");
 }
@@ -361,17 +223,82 @@ function change_tab_human(id)
   document.getElementById("resources").className="notselected";
   document.getElementById("categories").className="notselected";
   document.getElementById(id).className="selected";
-  let resources = document.getElementById("list-human-resources")
-  let categories = document.getElementById("list-human-categories")
+  let resources = document.getElementById("list-human-resources");
+  let categories = document.getElementById("list-human-categories");
   if(id == 'resources') {
-    categories.style.display = 'none'
-    resources.style.display = 'block'
+    categories.style.display = 'none';
+    resources.style.display = 'block';
   }
   else {
-    categories.style.display = 'block'
-    resources.style.display = 'none'
+    categories.style.display = 'block';
+    resources.style.display = 'none';
 
   }
 }
 // #container-modal 
 // .modal-form             #form-add-activity
+
+
+function filterHumanResource(idInput){
+    var trs = document.querySelectorAll('#tableHumanResource tr:not(.headerHumanResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterHumanResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    console.log(filter);
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResource(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResource tr:not(.headerMaterialResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }

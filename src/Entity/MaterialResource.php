@@ -22,11 +22,6 @@ class MaterialResource
      */
     private $materialresourcename;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $available;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -40,18 +35,6 @@ class MaterialResource
     public function setMaterialresourcename(string $materialresourcename): self
     {
         $this->materialresourcename = $materialresourcename;
-
-        return $this;
-    }
-
-    public function isAvailable(): ?bool
-    {
-        return $this->available;
-    }
-
-    public function setAvailable(bool $available): self
-    {
-        $this->available = $available;
 
         return $this;
     }
