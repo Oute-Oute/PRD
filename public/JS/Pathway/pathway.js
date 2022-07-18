@@ -6,7 +6,9 @@ var HUMAN_RESOURCE_CATEGORIES
 var MATERIAL_RESOURCE_CATEGORIES
 var RESOURCES_BY_ACTIVITIES = new Array()
 var ACTIVITY_IN_PROGRESS
-var ID_ACTIVITY
+var ID_EDITED_ACTIVITY
+var IS_EDIT_MODE = false
+
 
 /**
  * Appelée au chargement de la page de création d'un parcours (circuit)
@@ -26,12 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHumanButton()
     fillActivityList()
 
-    console.log('hello')
     let heightTitle = document.getElementById('name').offsetHeight
-    console.log(heightTitle)
     let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
     heightCreationDiv = heightCreationDiv - heightTitle
-    console.log(heightCreationDiv)
     document.getElementById('list').style.height = heightCreationDiv+'px'
 
 })
@@ -88,7 +87,6 @@ function tableAppointment(tableBody, data){
  * Permet d'afficher la fenêtre modale d'ajout
  */
 function showNewModalForm(){
-    //console.log("non")
     $('#add-pathway-modal').modal("show");
     //$('#add-pathway-resources-modal').modal("show");
     //document.getElementById('add-pathway-resources-modal').style.display = 'flex'
@@ -139,9 +137,17 @@ function addArray() {
     RESOURCES_BY_ACTIVITIES[len].activityduration = document.getElementById('input-duration').value
 }
 
+/**
+ * Permet d'ajouter une activité dans la liste grâce a ACTIVITY_IN_PROGRESS
+ * ou de modifier les informations d'une activité déjà présente grâce à IS_EDIT_MODE et ACTIVITY_IN_PROGRESS
+ */
 function addActivity() {
 
     let verif = true
+
+    console.log('verif ok confirm')
+    console.log(document.getElementById('input-name').value)
+    console.log(document.getElementById('input-duration').value)
 
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
@@ -154,6 +160,14 @@ function addActivity() {
     }
 
     if (verif) {
+        if (IS_EDIT_MODE) {
+            console.log('verif ok confirm')
+            console.log(document.getElementById('input-name').value)
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
+            fillActivityList()
+
+        } else {
         // ajout de l'activité au tableau
         addArray()
         NB_ACTIVITY = NB_ACTIVITY + 1;
@@ -168,18 +182,17 @@ function addActivity() {
         document.getElementById('input-name').value = ''
         document.getElementById('input-duration').value = ''
         handleHumanButton()
+        }
+        fillActivityList()
+        return 1
 
     } else {
         // message d'erreur
+        return 0
     }
-
-    fillActivityList()
-
-    //RESOURCES_BY_ACTIVITIES[SELECT_ID].btnHM = 'human'
-    //let id = Number(RESOURCES_BY_ACTIVITIES.length - 1)
-    //handleHumanButton()
 }
 
+/* remplit la liste des activités (sur la droite) */
 function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
@@ -223,6 +236,11 @@ function fillActivityList() {
             let div = document.createElement('div')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
+            
+            pindex = document.createElement('p')
+            pindex.innerText = indexActivity
+            activity.appendChild(pindex)
+
             activity.appendChild(p)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
@@ -239,96 +257,6 @@ function fillActivityList() {
 
 
 }
-
-/**
- * Permet d'ajouter une liste déroulante pour choisir une activité lors de la cration d'un parcours (pathway)
- */
-function handleAddActivity() {
-
-
-    // Création d'une div qui contient les inputs pour le nom de l'activité la durée et le btn de suppression
-    /*let div = document.createElement("div")
-    div.setAttribute('class', 'form-field')    
-    div.setAttribute('id', 'activity-field-'+SELECT_ID)*/
-
-    /*let inputName = document.createElement('input')
-    inputName.setAttribute('class', 'input-name')
-    inputName.setAttribute('id', 'input-activity-name-'+SELECT_ID)
-    //inputName.disabled = true
-    inputName.setAttribute('placeholder', 'Nom')
-    inputName.setAttribute('onchange', 'disableSubmit()')*/
-    //inputName.setAttribute('name', 'name-activity-'+SELECT_ID)
-
-  /*  let inputDuration = document.createElement('input')
-    inputDuration.setAttribute('class', 'input-duration')
-    inputDuration.setAttribute('placeholder', 'Durée (min)')
-    inputDuration.setAttribute('type', 'number')
-    inputDuration.setAttribute('min', '0')
-    inputDuration.setAttribute('onchange', 'disableSubmit()')
-    inputDuration.setAttribute('id', 'input-activity-duration-'+SELECT_ID)*/
-
-    //inputDuration.setAttribute('name', 'duration-activity-'+SELECT_ID)
-
-   /* let imgEdit = new Image();
-    imgEdit.src = '../img/edit.svg'
-    imgEdit.setAttribute('id','img-'+SELECT_ID)
-    //imgEdit.setAttribute('onclick', 'showResourcesEditing(this.id)')
-    imgEdit.setAttribute('onclick', 'editSelect(this.id)')
-    imgEdit.setAttribute('title', 'Éditer les ressources de l\'activité')*/
-
-   /* let imgDelete = new Image();
-    imgDelete.src = '../img/delete.svg'
-    imgDelete.setAttribute('id','img-'+SELECT_ID)
-    imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
-    imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')*/
-
-   /* div.appendChild(inputName)
-    div.appendChild(inputDuration)
-    //div.appendChild(imgEdit)
-    div.appendChild(imgDelete)*/
-
-    // On l'affiche et on l'ajoute a la fin de la balise div activities-container
-    //select.style.display = "block";
-    let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    //divAddActivity.setAttribute('id', 'activities-container-'+SELECT_ID)
-    //let divAddActivity = document.getElementsByClassName('activities-container')
-
-    //divAddActivity.
-
-    let divcontainer = document.createElement('div')
-    //divcontainer.setAttribute('class', "title-container")
-    //divcontainer.setAttribute('class', 'flex-row')
-    divcontainer.style.justifyContent = "center"
-    let pTitle = document.createElement("p")
-    pTitle.innerHTML = 'Activité : '
-    pTitle.setAttribute('class', 'label')
-    //let divclass = divcontainer.getAttribute('class')  //ajouter la classe 'div-activity-(id)' en plusde activity-field a div
-    divcontainer.setAttribute('id', 'div-activity-'+SELECT_ID)
-    divcontainer.appendChild(pTitle)
-    divcontainer.appendChild(div)
-    //divcontainer.appendChild(createDivEdit()) /* div edit  */
-
-    //let divEdit = document.createElement('div')
-    //divEdit.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
-    //divEdit.appendChild(createDivEdit())
-    //divcontainer.appendChild(createDivEdit())
-    let div_res_edit = document.getElementById('resources-editing')
-    //console.log(div_res_edit)
-    //console.log(divEdit)
-    //div_res_edit.appendChild(createDivEdit())
-
-    divcontainer.appendChild(createDivEdit())
-
- //   divcontainer.appendChild(divEdit)
-
-    divAddActivity.appendChild(divcontainer)
-
-    // On appelle la methode : pour afficher la liste de ressources humaines par défaut 
-    handleHumanButton()
-
-    SELECT_ID++
-} 
-
 
 /**
  * Permet de supprimer un select dans la liste déroulante 
@@ -356,16 +284,65 @@ function deleteSelect(id) {
 }
 
 
-var showedit = false;
-var DIV_TO_EDIT_OLD
 /**
  * Permet de modifier une activité  
- * @param {*} id : XXX-0, XXX-1
  */
 function editActivity(id) {
+    IS_EDIT_MODE = true
+    document.getElementById('btn-cancel-activity').style.display = 'flex'
+    document.getElementById('btn-confirm-activity').style.display = 'flex'
+    document.getElementById('btn-add-activity').style.display = 'none'
+    document.getElementById('lbl-title-create').innerText = 'Édition d\'une activité'
+    
+    id = getId(id)
+    ID_EDITED_ACTIVITY = id
+    
+    ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
+    handleHumanButton()
+    document.getElementById('input-name').value = ACTIVITY_IN_PROGRESS.activityname
+    document.getElementById('input-duration').value = ACTIVITY_IN_PROGRESS.activityduration
 
+}
 
+/**
+ * Permet d'annuler la modification d'une activité  
+ */
+function cancelEditActivity() {
+    IS_EDIT_MODE = false
 
+    document.getElementById('btn-cancel-activity').style.display = 'none'
+    document.getElementById('btn-confirm-activity').style.display = 'none'
+    document.getElementById('btn-add-activity').style.display = 'flex'
+
+    document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
+    initActivity()
+    handleHumanButton()
+    document.getElementById('input-name').value = ''
+    document.getElementById('input-duration').value = ''
+}
+
+/**
+ * Permet de valider les modifications faites lors de l'édition d'une activité 
+ */
+function confirmEditActivity() {
+
+    let res = addActivity() 
+    if (res) {
+        initActivity()
+        document.getElementById('btn-cancel-activity').style.display = 'none'    
+        document.getElementById('btn-confirm-activity').style.display = 'none'
+        document.getElementById('btn-add-activity').style.display = 'flex'
+    
+        document.getElementById('input-name').value = ''
+        document.getElementById('input-duration').value = ''
+
+        document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
+        IS_EDIT_MODE = false
+        
+    } else {
+        // l'edition n'a pas fonctionné
+    }
+    handleHumanButton()
 
 }
 
@@ -767,7 +744,6 @@ function deleteResource(id) {
         ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
         fillMRCList();
     }
-    //console.log(RESOURCES_BY_ACTIVITIES)
 
 }
 
@@ -775,12 +751,7 @@ function deleteResource(id) {
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
 
-    console.log('verifier')
-    console.log(RESOURCES_BY_ACTIVITIES)
-
     document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-
-    console.log(document.getElementById('json-resources-by-activities').value)
 
     btnSubmit.click()
 }
