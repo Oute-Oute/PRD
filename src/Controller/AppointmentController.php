@@ -9,8 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\UnavailabilityMaterialResourceRepository;
-use App\Repository\UnavailabilityHumanResourceRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AppointmentController extends AbstractController

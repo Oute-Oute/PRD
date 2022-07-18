@@ -49,8 +49,8 @@ class ModificationPlanningController extends AbstractController
         }
 
         //Récupération des données via la base de donnée avec Doctrine
-        $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findBy(['available' => true]);
-        $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findBy(['available' => true]);
+        $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
+        $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
         $listPatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
         $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listAppointment = $this->getAppointment($doctrine, $dateModified);

@@ -35,7 +35,7 @@ class HumanResourceController extends AbstractController
 
         $workingHours = $this->listWorkingHoursJSON();
         return $this->render('human_resource/index.html.twig', [
-            'human_resources' => $humanResourceRepository->findBy(['available' => true]),
+            'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
         ]); 

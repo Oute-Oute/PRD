@@ -71,7 +71,7 @@ class MaterialResourceController extends AbstractController
         }
         //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
-            'material_resources' => $materialResourceRepository->findBy(['available' => true]),
+            'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
         ]); 
     }
