@@ -14,6 +14,7 @@ var date = new Date(); //create a default date
 var dateStr = date.toDateString();
 var headerResources = "Patients";
 const height = document.querySelector("div").clientHeight;
+var reloadTime = 600000;
 
 /**
 
@@ -35,6 +36,15 @@ function $_GET(param) {
     return vars[param] ? vars[param] : null;
   }
   return vars;
+}
+
+function reload(){ 
+  if(document.getElementById('reloadTime')!=null){
+    reloadTime = document.getElementById('reloadTime').value; // En millisecondes
+  }
+  setTimeout(function(){
+    window.location.assign("/ConsultationPlanning");
+  }, reloadTime);
 }
 
 //update the date with the date in url
