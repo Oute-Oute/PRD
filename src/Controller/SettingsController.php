@@ -22,16 +22,13 @@ class SettingsController extends AbstractController
     public function settingsEdit(Request $request, SettingsRepository $settingRepository, EntityManagerInterface $entityManager): Response
     {
         $idAlert = $request->request->get("idAlert");
-
-        $minTimeAlert = $request->request->get("minTimeAlert");
-        $minutes=substr($minTimeAlert,0,2);
-        $seconds=substr($minTimeAlert,3,2); 
-        
-
+        $alertTimeMin = $request->request->get("alertTimeMin");
+        $alertTimeSec = $request->request->get("alertTimeSec");
+        $alertTime = (60 * $alertTimeMin + $alertTimeSec) * 1000;
 
         $settings = $settingRepository->findOneBy(['id' => $idAlert]);
 
-        $settings->setAlertmodificationtimer($minutes*60000+$seconds*1000);
+        $settings->setAlertmodificationtimer($alertTime);
 
         $entityManager->persist($settings);
         $entityManager->flush();

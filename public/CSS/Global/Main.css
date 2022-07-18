@@ -2,7 +2,8 @@ body {
     display: flex;
     flex-direction: row;
     height: 100vh;
-    
+    margin-left: 280px;
+
 }
 
 :root {
@@ -14,139 +15,151 @@ body {
 h1#title {
     margin-bottom: 30px;
 }
+
 .flex-row {
     display: flex;
     flex-direction: row;
     width: 100%;
 }
+
 .flex-col {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
-.btn-add, .btn-edit, .btn-infos, .btn-delete, .btn-valide, .btn-consult{
-    margin-top : 10px;
+
+.btn-add,
+.btn-edit,
+.btn-infos,
+.btn-delete,
+.btn-valide,
+.btn-consult {
+    margin-top: 10px;
     border: 1px solid transparent;
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    margin-left : 10px;
-    margin-bottom : 5px;
+    margin-left: 10px;
+    margin-bottom: 5px;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
-    fill:white;
-    background-color:var(--main-blue); 
+    fill: white;
+    background-color: var(--main-blue);
     color: #ffffff;
 }
 
 .btn-valide {
-    background-color : #37BC9B;
-    border : 1px solid #37BC9B;
+    background-color: #37BC9B;
+    border: 1px solid #37BC9B;
 }
 
 .btn-valide:hover {
-    background : #30A487;
-    border : 1px solid #298D74;
+    background: #30A487;
+    border: 1px solid #298D74;
 }
 
 
 
-.btn-add:hover, .btn-edit:hover, .btn-infos:hover, .btn-delete:hover, .btn-consult:hover{
-    background-color :  rgba(0,48,93,0.5);
-    border : 1px solid black;
+.btn-add:hover,
+.btn-edit:hover,
+.btn-infos:hover,
+.btn-delete:hover,
+.btn-consult:hover {
+    background-color: rgba(0, 48, 93, 0.5);
+    border: 1px solid black;
 }
 
 .btn-delete {
-    margin-top : 10px;
+    margin-top: 10px;
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    border : 1px solid #DA4353;
-    margin-left : 10px;
-    margin-bottom : 5px;
+    border: 1px solid #DA4353;
+    margin-left: 10px;
+    margin-bottom: 5px;
 
     box-shadow: none;
     border: none;
-    background: #DA4353; 
+    background: #DA4353;
     color: #ffffff;
 
 }
 
 .btn-delete {
-    background : #DA4353;
-    border : 1px solid #DA4353;
+    background: #DA4353;
+    border: 1px solid #DA4353;
 
 }
 
 .btn-infos {
-    background : #3BAFDA;
-    border : 1px solid #3BAFDA;
+    background: #3BAFDA;
+    border: 1px solid #3BAFDA;
 }
 
 .btn-infos:hover {
-    background : #27A2CF;
-    border : 1px solid #228EB6;
+    background: #27A2CF;
+    border: 1px solid #228EB6;
 }
 
 .btn-infos:active {
-    background : #228EB6;
+    background: #228EB6;
 }
 
 .btn-add {
-    margin-left : 50px;
-    margin-right : 50px;
-    margin-bottom : 30px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 30px;
 }
 
 .btn-edit {
-    background : #37BC9B;
-    border : 1px solid #37BC9B;
+    background: #37BC9B;
+    border: 1px solid #37BC9B;
 
 }
 
 .btn-edit:hover {
-    background : #30A487;
-    border : 1px solid #298D74;
+    background: #30A487;
+    border: 1px solid #298D74;
 }
 
 
-.btn-delete:hover {   
-    background : #D52A3B;
-    border : 1px solid #BC2534;
+.btn-delete:hover {
+    background: #D52A3B;
+    border: 1px solid #BC2534;
 }
 
 div#conn-form {
-    display:flex;
+    display: flex;
     align-items: center;
-    flex-direction : column;
-    justify-content : center;
-    height : 100vh;
-    width : 100%;
-    margin-left : 54vh;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    margin-left: 54vh;
 }
 
 div#conn-form div#container {
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
-    padding : 15px 40px;
-    display : flex;
-    align-items : center;
+    padding: 15px 40px;
+    display: flex;
+    align-items: center;
     flex-direction: column;
     border-radius: 20px;
 }
 
 div#conn-form div#container form {
-    display : flex;
-    align-items : center;
-    flex-direction : column;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 
-.btn-valide:hover:disabled{
-    color : #fff;
+.btn-valide:hover:disabled {
+    color: #fff;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
-    background-color : #6c757d;
-    cursor : not-allowed;
+    background-color: #6c757d;
+    cursor: not-allowed;
 }

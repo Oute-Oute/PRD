@@ -30,7 +30,6 @@ $(document).ready(function () {
             document.getElementById('material-resources').style.backgroundColor = '#71a39c';
             break;
 
-        case 'user':
         case 'settings':
             document.getElementById('settings').style.backgroundColor = '#71a39c';
             break;
