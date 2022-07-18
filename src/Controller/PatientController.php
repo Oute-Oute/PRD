@@ -86,10 +86,7 @@ class PatientController extends AbstractController
 
                 foreach($allMaterialResourceScheduled as $materialResourceScheduled)
                 {
-                    $unavailabilityRemove = $materialResourceScheduled->getUnavailability();
                     $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-                    $entityManager->remove($unavailabilityRemove);
-                    $entityManager->flush();
                 }
 
 
@@ -99,10 +96,7 @@ class PatientController extends AbstractController
 
                 foreach($allHumanResourceScheduled as $humanResourceScheduled)
                 {
-                    $unavailabilityRemove = $humanResourceScheduled->getUnavailability();
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-                    $entityManager->remove($unavailabilityRemove);
-                    $entityManager->flush();
                 }
 
 

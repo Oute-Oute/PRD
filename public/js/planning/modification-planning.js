@@ -513,6 +513,8 @@ function updateEventsAppointment(oldEvent) {
   var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   var categoryOfMaterialResource = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
   var categoryOfHumanResource = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+  var listActivityHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value.replaceAll("3aZt3r", " "));
+  var listActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value.replaceAll("3aZt3r", " "));
   var listEventAppointment = [];
   listEvent.forEach((currentEvent) => {
     if (currentEvent._def.extendedProps.appointment == appointmentId) {
@@ -581,7 +583,6 @@ function updateEventsAppointment(oldEvent) {
                     }
                   }
                   else {
-                    console.log("coucou")
                     categoryHumanResourceOld.push({
                       id: humanEventRelation.idcategory,
                       quantity: 1
@@ -693,7 +694,50 @@ function updateEventsAppointment(oldEvent) {
       }))
     })
 
-
+    if(categoryHumanResourceNew != []){
+      categoryHumanResourceNew.forEach((newCategoryHumanResource) => {
+        var categoryIsGood = false;
+        listActivityHumanResource.forEach((activityHumanResource) => {
+          if(newCategoryHumanResource.id == activityHumanResource.humanResourceCategoryId){
+            categoryIsGood = true;
+            var quantity = newCategoryHumanResource.quantity;
+            categoryHumanResourceOld.forEach((oldCategoryHumanResource) => {
+              if(oldCategoryHumanResource. id == newCategoryHumanResource.id){
+                quantity = quantity + oldCategoryHumanResource.quantity;
+              }
+            })
+            if(quantity > activityHumanResource.quantity){
+              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
+            }
+          }
+        })
+        if(categoryIsGood == false){
+          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
+        }
+      })
+    }
+    else if(categoryMaterialResourceNew != []){
+      categoryMaterialResourceNew.forEach((newCategoryMaterialResource) => {
+        var categoryIsGood = false;
+        listActivityMaterialResource.forEach((activityMaterialResource) => {
+          if(newCategoryMaterialResource.id == activityMaterialResource.materialResourceCategoryId){
+            categoryIsGood = true;
+            var quantity = newCategoryMaterialResource.quantity;
+            categoryMaterialResourceOld.forEach((oldCategoryMaterialResource) => {
+              if(oldCategoryMaterialResource. id == newCategoryMaterialResource.id){
+                quantity = quantity + oldCategoryMaterialResource.quantity;
+              }
+            })
+            if(quantity > activityMaterialResource.quantity){
+              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
+            }
+          }
+        })
+        if(categoryIsGood == false){
+          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
+        }
+      })
+    }
 
     if (
       earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
@@ -923,34 +967,6 @@ function createCalendar(typeResource,useCase) {
       modifyEvent._def.resourceIds.forEach((resource) => {
         listResource.push(resource)
       })
-      console.log(listResource)
-
-      eventExist = false;
-      calendar.getEvents().forEach((currentEvent) => {
-        if(currentEvent.display == "background"){
-          if(modifyEvent._def.publicId == currentEvent._def.extendedProps.idScheduledActivity){
-            if(listResource.length != 0){
-              eventExist = true;
-              currentEvent._def.resourceIds = listResource;
-              currentEvent.setStart(modifyEvent.start);
-              currentEvent.setEnd(modifyEvent.end);
-            }
-          }
-        }
-      })
-
-      if(eventExist == false){
-        calendar.addEvent({
-          start: modifyEvent.start,
-          end: modifyEvent.end,
-          resourceIds: listResource,
-          type: 'unavailable',
-          description: 'Ressource Indisponible',
-          display: 'background',
-          color: '#ff0000',
-          idScheduledActivity: modifyEvent._def.publicId
-        });
-      }
     },
   });
   switch (typeResource) {
