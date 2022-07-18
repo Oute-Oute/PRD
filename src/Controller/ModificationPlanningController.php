@@ -370,14 +370,11 @@ class ModificationPlanningController extends AbstractController
     public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
         $materialResourcesUnavailableArray = array();
         foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
             $resource= $materialResourceUnavailable->getMaterialresource()->getId();
             $resource = "material-" . $resource;
-            $scheduledActivity = $materialResourceUnavailable->getScheduledactivity();
-            if($scheduledActivity == null)
-            {
                 $materialResourcesUnavailableArray[] = array(
                     'description' =>'Ressource Indisponible',
                     'resourceId' => ($resource),
@@ -385,26 +382,12 @@ class ModificationPlanningController extends AbstractController
                     'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
                     'display'=>'background',
                     'color'=>'#ff0000',
-                    'type'=>'unavailability',
-                    'idScheduledActivity' => 'null'
+                    'type'=>'unavailability'
                 );
             }
-            else
-            {
-                $materialResourcesUnavailableArray[] = array(
-                    'description' =>'Ressource Indisponible',
-                    'resourceId' => ($resource),
-                    'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                    'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                    'display'=>'background',
-                    'color'=>'#ff0000',
-                    'type'=>'unavailability',
-                    'idScheduledActivity' => $scheduledActivity->getId()
-                );
-            }
-        }
         return $materialResourcesUnavailableArray;
     }
+    
     
         /*
      * @brief This function get the unavailabitity of the human resources.
@@ -414,38 +397,22 @@ class ModificationPlanningController extends AbstractController
     public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
     {
         //recuperation du patient depuis la base de données
-    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
         $humanResourcesUnavailableArray = array();
         foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
             $resource= $humanResourceUnavailable->getHumanresource()->getId();
             $resource = "human-" . $resource;
-            $scheduledActivity = $humanResourceUnavailable->getScheduledactivity();
-            if($scheduledActivity == null)
-            {
-                $humanResourcesUnavailableArray[] = array(
-                    'description' =>'Employé Indisponible',
-                    'resourceId' => ($resource),
-                    'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                    'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                    'display'=>'background',
-                    'color'=>'#ff0000',
-                    'type'=>'unavailability',
-                    'idScheduledActivity' => 'null'
-                );
-            }
-            else
-            {
-                $humanResourcesUnavailableArray[] = array(
-                    'description' =>'Employé Indisponible',
-                    'resourceId' => ($resource),
-                    'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                    'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                    'display'=>'background',
-                    'color'=>'#ff0000',
-                    'type'=>'unavailability',
-                    'idScheduledActivity' => $scheduledActivity->getId()
-                );
-            }
+            $humanResourcesUnavailableArray[] = array(
+                'description' =>'Employé Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+                'type'=>'unavailability'
+            );
+
+
         }
         return $humanResourcesUnavailableArray;
     }
