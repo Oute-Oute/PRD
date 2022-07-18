@@ -375,3 +375,68 @@ function change_tab_human(id)
 }
 // #container-modal 
 // .modal-form             #form-add-activity
+
+
+function filterHumanResource(idInput){
+    var trs = document.querySelectorAll('#tableHumanResource tr:not(.headerHumanResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterHumanResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    console.log(filter);
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResource(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResource tr:not(.headerMaterialResource)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
+
+  function filterMaterialResourceCategory(idInput){
+    var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
+    var filter = document.querySelector('#'+idInput).value; 
+    for(let i=0; i<trs.length; i++){
+        var regex = new RegExp(filter, 'i');   
+        var name=trs[i].cells[1].outerText;
+
+        if(regex.test(name)==false){
+            trs[i].style.display='none';
+        }
+        else{
+            trs[i].style.display=''; 
+        }
+    }
+  }
