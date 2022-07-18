@@ -141,7 +141,9 @@
 	<input type="hidden" name="modifAlertTime" id="modifAlertTime" value='{{setting.getAlertmodificationtimer}}'>
 {% endfor %}
 
-<div class="all-container">
+<div class="all-container" style="display: flex; flex-direction: row;">
+<div style="width:100%;">
+
 	<h1>Modification du Planning du {{ currentdate|date("d/m/Y") }}</h1>
 	<div id="container-top">
 		<div
@@ -182,12 +184,26 @@
 			</form>
 		</div>
 	</div>
+	  
 	<div
 		id="calendar-container" class="calendar-container">
 
 		<!-- affichage du calendar -->
 		<div id='calendar'></div>
 	</div>
+	</div>
+
+	<div id="lateral-panel">
+		<input id="lateral-panel-input" type="checkbox" onclick="displayListErrorMessages()">
+		<label id="lateral-panel-label" for="lateral-panel-input"></label>
+		<div id="lateral-panel-bloc">
+			<div style='text-align:center'>
+				<h2>Liste des erreurs de Plannification</h2>
+			</div>
+		</div>
+	</div>
 </div>
+
+
 <script>alertOnload();</script>
 {% endblock %}

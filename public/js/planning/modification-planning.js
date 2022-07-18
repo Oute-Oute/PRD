@@ -1168,6 +1168,21 @@ function verifyHistoryPush(array, idAppointment){
       array.splice(i,1); 
     }
     array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
-  }
-  console.log(array);
+  };
 }
+
+  function displayListErrorMessages(){
+    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
+    var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
+    var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
+    console.log(lateralPannelInput); 
+    if(lateralPannelInput==true){
+      console.log('alo');
+      lateralPannelBloc[0].style.display='block'; 
+      lateralPannel[0].style.width='40em';
+    }
+    else{
+      lateralPannelBloc[0].style.display='';
+      lateralPannel[0].style.width='';
+    }
+  }
