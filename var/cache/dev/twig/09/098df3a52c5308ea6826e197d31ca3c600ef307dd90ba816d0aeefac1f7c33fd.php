@@ -370,7 +370,7 @@ class __TwigTemplate_8d05cfffa3914b0abd2e978eadb61b189583d53df9bb870374a4a4d7a4d
 \t<div
 \t\tid=\"calendar-container\" class=\"calendar-container\">
 
-\t\t<select name=\"zoom\" onclick=\"zoomChange()\" class=\"form-select\" id=\"zoom\">
+\t\t<select name=\"zoom\" onclick=\"zoomChange()\" class=\"form-select\" id=\"zoom\" >
 \t\t\t<option value=\"02:00:00\">Zoom : 2H</option>
 \t\t\t<option value=\"01:00:00\">Zoom : 1H</option>
 \t\t\t<option value=\"0:40:00\">Zoom : 40min</option>
@@ -379,7 +379,7 @@ class __TwigTemplate_8d05cfffa3914b0abd2e978eadb61b189583d53df9bb870374a4a4d7a4d
 \t\t\t<option value=\"00:05:00\">Zoom : 5min</option>
 \t\t\t<option value=\"00:03:00\">Zoom : 1min</option>
 \t\t</select>
-\t\t
+
 \t\t<!-- affichage du calendar -->
 \t\t<div id='calendar'></div>
 \t</div>
@@ -614,7 +614,7 @@ class __TwigTemplate_8d05cfffa3914b0abd2e978eadb61b189583d53df9bb870374a4a4d7a4d
 \t<div
 \t\tid=\"calendar-container\" class=\"calendar-container\">
 
-\t\t<select name=\"zoom\" onclick=\"zoomChange()\" class=\"form-select\" id=\"zoom\">
+\t\t<select name=\"zoom\" onclick=\"zoomChange()\" class=\"form-select\" id=\"zoom\" >
 \t\t\t<option value=\"02:00:00\">Zoom : 2H</option>
 \t\t\t<option value=\"01:00:00\">Zoom : 1H</option>
 \t\t\t<option value=\"0:40:00\">Zoom : 40min</option>
@@ -623,7 +623,7 @@ class __TwigTemplate_8d05cfffa3914b0abd2e978eadb61b189583d53df9bb870374a4a4d7a4d
 \t\t\t<option value=\"00:05:00\">Zoom : 5min</option>
 \t\t\t<option value=\"00:03:00\">Zoom : 1min</option>
 \t\t</select>
-\t\t
+
 \t\t<!-- affichage du calendar -->
 \t\t<div id='calendar'></div>
 \t</div>
