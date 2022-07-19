@@ -24,10 +24,10 @@ class SettingsController extends AbstractController
         $idAlert = $request->request->get("idAlert");
 
         $alertTimeMin = $request->request->get("alertTimeMin");
-        $alertTime = 60*$alertTimeMin*1000;
+        $alertTime = 60 * $alertTimeMin * 1000;
 
         $reloadTimeMin = $request->request->get("reloadTimeMin");
-        $reloadTime = 60*$reloadTimeMin*1000;
+        $reloadTime = 60 * $reloadTimeMin * 1000;
 
         $settings = $settingRepository->findOneBy(['id' => $idAlert]);
 
