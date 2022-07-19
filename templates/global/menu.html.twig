@@ -5,13 +5,14 @@
 				<header>
 
 					<a id="title" href="/ConsultationPlanning" class="brand-logo">
-						<i class="fas fa-anchor"></i>
+						<img src="/img/hospital_icon.svg">
+
 						<span>HOPITAL</span>
 					</a>
 				</header>
 				<a href="/ConsultationPlanning" class="dashboard-nav-item">
 					<img src="/img/planning.svg">
-					<i class="fas fa-file-upload"></i>
+
 					Planning
 				</a>
 				<a href="/appointments" class="dashboard-nav-item" id="appointment">
@@ -28,12 +29,12 @@
 					Éthique
 				</a>
 				<a href="/human-resources" class="dashboard-nav-item" id="human-resources">
-					<i class="fas fa-file-upload"></i>
+
 					<img src="/img/human_ressource.svg">
 					Ressources humaines</a>
 				<a href="/material-resources" class="dashboard-nav-item" id="material-resources">
 					<img src="/img/material_resource.svg">
-					<i class="fas fa-file-upload"></i>
+
 
 					Ressources matérielles
 				</a>
@@ -42,7 +43,6 @@
 			<div id='menu-bottom'>
 				<div class="nav-item-divider"></div>
 				<a href="/settings" class="dashboard-nav-item" id="settings">
-
 					<img src="/img/setting.svg">
 					Paramètres</a>
 				<a href="/user" class="dashboard-nav-item" id="user">
@@ -51,11 +51,11 @@
 				</a>
 				<a onclick="window.location.href='{{ path('ProfilEdit', {'id': app.user.id}) }}'" class="dashboard-nav-item">
 					<img src="/img/profile.svg">
-					<i class="fas fa-user"></i>
+
 					Mon profil
 				</a>
 				<a href="/logout" class="dashboard-nav-item">
-					<i class="fas fa-sign-out-alt"></i>
+
 					<img src="/img/logout.svg">
 
 					Se déconnecter
