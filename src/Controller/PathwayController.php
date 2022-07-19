@@ -78,7 +78,7 @@ class PathwayController extends AbstractController
     }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
+     * Permet de créer un objet json a partir d'une entité de type pathway
      */
     public function pathwayJSON(Pathway $pathway)
     {
@@ -105,10 +105,10 @@ class PathwayController extends AbstractController
 
                 $hrobject = array(
                     'id' => $hr->getHumanresourcecategory()->getId(),
-                    'categoryname' => $hr->getHumanresourcecategory()->getCategoryname()
+                    'name' => $hr->getHumanresourcecategory()->getCategoryname(),
+                    'nb' => $hr->getQuantity()
                 );
                 array_push($hrArray, $hrobject);     
-
             }
 
             $materialResources = $activityMaterialResourceRepo->findBy(['activity' => $activity]);
@@ -118,7 +118,8 @@ class PathwayController extends AbstractController
 
                 $mrobject = array(
                     'id' => $mr->getMaterialresourcecategory()->getId(),
-                    'categoryname' => $mr->getMaterialresourcecategory()->getCategoryname()
+                    'name' => $mr->getMaterialresourcecategory()->getCategoryname(),
+                    'nb' => $mr->getQuantity()
                 );
                 array_push($mrArray, $mrobject);
 
@@ -126,8 +127,9 @@ class PathwayController extends AbstractController
             $activitiesArray[] = array(
                 'id' => $activity->getId(),
                 'activityname' => $activity->getActivityname(),
-                'humanResources' => $hrArray,
-                'materialResources' =>$mrArray
+                'activityduration' => $activity->getDuration(),
+                'humanResourceCategories' => $hrArray,
+                'materialResourceCategories' =>$mrArray
             );
         }
         

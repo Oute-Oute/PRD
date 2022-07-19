@@ -76,56 +76,60 @@ function showEditModalForm(id, name, index){
     document.getElementById('edit--resourcename').value = name
     let beginHours = document.getElementById('working-hours-input-begin-edit')
     let endHours = document.getElementById('working-hours-input-end-edit')
+    for(let y = 0; y<7; y++){
+        beginHours.children[y].value = ''
+        endHours.children[y].value = ''
+    }
     for(let y = 0; y<WORKING_HOURS_FILTERED.length; y++){
         switch (WORKING_HOURS_FILTERED[y].dayweek) {
             case 0:
 
-            beginHours.children[6].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[6].value = WORKING_HOURS_FILTERED[0].endtime.date.substring(11,16)
+                beginHours.children[6].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[6].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 1:
 
-            beginHours.children[0].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[0].value= WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[0].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[0].value= WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 2:
+                beginHours.children[1].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[1].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            beginHours.children[1].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[1].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
-
-            break;
+                break;
 
             case 3:
 
-            beginHours.children[2].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[2].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[2].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[2].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 4:
 
-            beginHours.children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 5:
 
-            beginHours.children[4].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[4].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[4].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[4].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
-            case 6:
+            default:
 
-            beginHours.children[5].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[5].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[5].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[5].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
+        }
     }
     /*for (let y = 0; y < 6; y++){
         beginHours[y]
@@ -134,10 +138,9 @@ function showEditModalForm(id, name, index){
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
     
-    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
+    for (let j = 0; j < categoriesByResources[index].categories.length-1; j++) {
         categoriesId.push(categoriesByResources[index].categories[j].idCategory)
     }
-    
     
     /*for (let y = 0; y <= 6; y++){
         beginHours.children[y].value = currentTime
@@ -150,10 +153,6 @@ function showEditModalForm(id, name, index){
         if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
             categoriesContainer.children[i].children[0].checked = true;
         }
-    }
-
-    
-    
     }
 
 

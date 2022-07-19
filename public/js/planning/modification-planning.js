@@ -110,6 +110,12 @@ function setEvents() {
   document.getElementById("validation-date").value = $_GET("date");
 }
 
+function zoomChange() {
+  newZoom = document.getElementById('zoom').value;
+  calendar.setOption('slotDuration', newZoom)
+}
+
+
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent() {
   let listeAppointments = JSON.parse(
@@ -1457,8 +1463,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
   function updateListErrorMessages(){
     var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
-    var nodeslength=nodesNotification.length; 
-    console.log('length '+nodeslength); 
     while(nodesNotification.length!=3){
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
     }
@@ -1476,9 +1480,81 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       var text=document.createElement('h3'); 
       text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
       divRow.append(img,text);
-     var corpus= document.createElement('corpus');  
-     corpus.innerHTML='Lorem Ipsum';
-     div.append(corpus);
+
+      //messageEarliestAppointmentTime
+      if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
+        var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML=listErrorMessages[i].messageEarliestAppointmentTime;  
+        div.append(messageEarliestAppointmentTime);
+      }
+
+      //messageLatestAppointmentTime
+      if(listErrorMessages[i].messageLatestAppointmentTime!=''){
+        var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML=listErrorMessages[i].messageLatestAppointmentTime;  
+        div.append(messageLatestAppointmentTime);
+      }
+      
+      //messageDelay for each ScheduledActivity
+      for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
+          if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+            var messageDelay= document.createElement('messageDelay').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
+            div.append(messageDelay);
+          }
+
+          for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
+              var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
+              div.append(messageCategoryQuantity);
+            }
+            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
+              var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
+              div.append(messageWrongCategory);
+            }
+          
+            for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
+                var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
+                div.append(messageWorkingHours);
+              }
+
+              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
+                var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
+                div.append(messageUnavailability);
+              }
+
+              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
+                var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
+                div.append(messageAlreadyScheduled);
+              }
+            }
+
+          }
+          
+          for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
+              var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
+              div.append(messageCategoryQuantity);
+            }
+            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
+              var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
+              div.append(messageWrongCategory);
+            }
+          
+            for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
+              
+              if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
+                var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
+                div.append(messageUnavailability);
+              }
+
+              if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
+                var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
+                div.append(messageAlreadyScheduled);
+              }
+            }
+
+          }
+
+        }
       document.getElementById('lateral-panel-bloc').appendChild(div);
     }
   }
