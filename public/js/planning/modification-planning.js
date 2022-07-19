@@ -1405,7 +1405,23 @@ function getListCategoryMaterialResources(scheduledActivity){
 }
 
 function getResourceTitle(resourceId) {
-  
+  var listResources;
+  if(resourceId.sustring(0,5) == human){
+    listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+  }
+  else {
+    listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+  }
+
+  var resourceName = "undefined";
+
+  listResources.forEach((resource) => {
+    if(resource.id == resourceId){
+      resourceName = resource.title;
+    }
+  })
+
+  return resourceName;
 }
 
 function getMessageCategoryQuantity(categoryResourceId){
