@@ -2,9 +2,12 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES
-var MATERIAL_RESOURCE_CATEGORIES
+var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
+var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
+
 var RESOURCES_BY_ACTIVITIES = new Array()
+var PATHWAY
+
 var ACTIVITY_IN_PROGRESS
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
@@ -24,13 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("json-material-resource-categories").value
     );
 
-    A = JSON.parse(
+    PATHWAY = JSON.parse(
         document.getElementById("json-pathway").value
     );
     console.log('oui oui')
-    console.log(A)
+    console.log(PATHWAY)
 
-    //document.getElementById('pathwayname').value = 
+    
+    document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
 
     //addActivity() 
@@ -156,10 +160,6 @@ function addActivity() {
 
     let verif = true
 
-    console.log('verif ok confirm')
-    console.log(document.getElementById('input-name').value)
-    console.log(document.getElementById('input-duration').value)
-
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
         verif = false
@@ -179,20 +179,20 @@ function addActivity() {
             fillActivityList()
 
         } else {
-        // ajout de l'activité au tableau
-        addArray()
-        NB_ACTIVITY = NB_ACTIVITY + 1;
-        document.getElementById('nbactivity').value = NB_ACTIVITY
+            // ajout de l'activité au tableau
+            addArray()
+            NB_ACTIVITY = NB_ACTIVITY + 1;
+            document.getElementById('nbactivity').value = NB_ACTIVITY
 
-        // on reinitialise les champs 
-        ACTIVITY_IN_PROGRESS = new Object()
-        ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.available = true
-        ACTIVITY_IN_PROGRESS.btnHM = 'human'
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-        handleHumanButton()
+            // on reinitialise les champs 
+            ACTIVITY_IN_PROGRESS = new Object()
+            ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.available = true
+            ACTIVITY_IN_PROGRESS.btnHM = 'human'
+            document.getElementById('input-name').value = ''
+            document.getElementById('input-duration').value = ''
+            handleHumanButton()
         }
         fillActivityList()
         return 1
