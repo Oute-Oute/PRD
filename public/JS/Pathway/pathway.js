@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
  * Permet d'afficher la fenêtre modale d'informations
  */
 function showInfosPathway(idPathway, name) {
-    document.getElementById('pathway').innerHTML = name;
+    document.getElementById('pathway1').innerHTML = name;
+    document.getElementById('pathway2').innerHTML = name;
    
     var tableBody = document.getElementById('tbodyShow');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
@@ -57,7 +58,8 @@ function showInfosPathway(idPathway, name) {
             console.log("error");
         }
         });
-    
+
+    change_tab('activities');
     $('#infos-pathway-modal').modal("show");
 }
 
@@ -81,6 +83,27 @@ function tableAppointment(tableBody, data){
             tr.appendChild(td1);tr.appendChild(td2);
         }
     }
+}
+
+function change_tab(id)
+{
+  document.getElementById("activities").className="notselected";
+  document.getElementById("appointments").className="notselected";
+  document.getElementById(id).className="selected";
+
+  let activities = document.getElementById("pathway-activities");
+  let appointments = document.getElementById("pathway-appointments");
+  
+  switch(id){
+    case 'activities':
+        activities.style.display = 'block';
+        appointments.style.display = 'none';
+    break;
+    case 'appointments':
+        activities.style.display = 'none';
+        appointments.style.display = 'block';
+    break;
+  }
 }
 
 /**

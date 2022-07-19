@@ -1,22 +1,36 @@
 <div class="modal" id="infos-pathway-modal">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 id='pathway'></h1>
-                <br>
+            <div id="main_content">
+                <li class="selected" id="activities" onclick="change_tab(this.id);">Activités</li>
+                <li class="notselected" id="appointments" onclick="change_tab(this.id);">Rendez-vous prévus</li>
             </div>
-            <div class="modal-body">
-                <table class="table table-striped" id="tableShow">
-                    <thead>
-                        <tr>
-                            <th>Nom du patient</th>
-                            <th>Jour du rendez-vous </th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbodyShow">
+            <div id="pathway-activities">
+                <div class="modal-header">
+                    <h1 id='pathway1'></h1>
+                    <br>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+            <div id="pathway-appointments">
+                <div class="modal-header">
+                    <h1 id='pathway2'></h1>
+                    <br>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped" id="tableShow">
+                        <thead>
+                            <tr>
+                                <th>Nom du patient</th>
+                                <th>Jour du rendez-vous </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyShow">
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
