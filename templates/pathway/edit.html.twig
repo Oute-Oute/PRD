@@ -19,11 +19,11 @@
     {#  inputs pour passer les json venant du serveur #}
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
     <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
-                    
+    <input type="hidden" id="json-pathway" value="{{ pathwayJson.content }}">
+
     <div id="title-pathway">     
         <h1> Éditer un parcours </h1>
-        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img>
-</div>
+        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div>
     </div>
 
     <form action="{{ path('PathwayAdd') }}" method="post">
@@ -66,9 +66,8 @@
                             <div id="div-add-resources">
                                 <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
                                 <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
-                                <img onclick="addResources()" src="../img/plus.png" title="Ajouter la ressource"> </img>
+                                <img onclick="addResources()" src="{{ asset('./img/plus.png')}}" title="Ajouter la ressource"> </img>
                             </div>
-
                         </div>
                     </div>
 
@@ -111,5 +110,4 @@
         <script src="{{ asset('./JS/jquery-3.6.0.js')}}"></script>
         <script src="{{ asset('./JS/bootstrap/bootstrap.min.js') }}" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
         <script src="{{ asset('./JS/Pathway/edit_pathway.js') }}"> </script>
-        <script src="{{ asset('./JS/Pathway/pathway.js') }}"> </script>
 {% endblock %}

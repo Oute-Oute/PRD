@@ -77,6 +77,82 @@ class PathwayController extends AbstractController
         return $materialResourceCategoriesArrayJson;    
     }
 
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
+     */
+    public function pathwayJSON(Pathway $pathway)
+    {
+        $activityRepo = new ActivityRepository($this->getDoctrine());
+        $activitiesOfPathway = $activityRepo->findBy(['pathway' => $pathway]);
+        
+        //$pathwayArray = array();
+        $pathwayArray = array(
+            'id' => $pathway->getId(),
+            'pathwayname' => $pathway->getPathwayname()
+        );
+        //dd($pathwayArray);
+
+        
+        $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
+        $activityMaterialResourceRepo = new ActivityMaterialResourceRepository($this->getDoctrine());
+
+        $activitiesArray = array();
+        foreach ($activitiesOfPathway as $activity) {
+
+            $humanResources = $activityHumanResourceRepo->findBy(['activity' => $activity]);
+            $hrArray = array();
+            foreach ($humanResources as $hr) {
+
+                $hrobject = array(
+                    'id' => $hr->getHumanresourcecategory()->getId(),
+                    'categoryname' => $hr->getHumanresourcecategory()->getCategoryname()
+                );
+                array_push($hrArray, $hrobject);     
+
+            }
+
+            $materialResources = $activityMaterialResourceRepo->findBy(['activity' => $activity]);
+            $mrArray = array();
+
+            foreach ($materialResources as $mr) {
+
+                $mrobject = array(
+                    'id' => $mr->getMaterialresourcecategory()->getId(),
+                    'categoryname' => $mr->getMaterialresourcecategory()->getCategoryname()
+                );
+                array_push($mrArray, $mrobject);
+
+            }
+            $activitiesArray[] = array(
+                'id' => $activity->getId(),
+                'activityname' => $activity->getActivityname(),
+                'humanResources' => $hrArray,
+                'materialResources' =>$mrArray
+            );
+        }
+        
+        $pathwayArray += [ 'activities' => $activitiesArray ];
+/*
+        $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
+
+        $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $materialResourceCategories = $materialResourceCategoryRepo->findAll();
+        $materialResourceCategoriesArray = array();
+
+        if ($materialResourceCategories != null) {
+            foreach ($materialResourceCategories as $materialResourceCategory) {
+                $materialResourceCategoriesArray[] = array(
+                    'id' => strval($materialResourceCategory->getId()),
+                    'categoryname' => $materialResourceCategory->getCategoryname(),
+                );
+            }
+        }*/
+
+        //Conversion des données ressources en json
+        $pathwayJson = new JsonResponse($pathwayArray);
+        return $pathwayJson;    
+    }
+
 
     /**
      * Redirige vers la page qui liste les utilisateurs 
@@ -120,7 +196,6 @@ class PathwayController extends AbstractController
     public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, int $id): Response
     {
 
-        //dd($id);
         // Méthode GET pour aller vers la page d'ajout d'un parcours 
         if ($request->getMethod() === 'GET' ) {
 
@@ -130,12 +205,18 @@ class PathwayController extends AbstractController
             $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
 
             $pathway = $pathwayRepository->findBy(['id' => $id]);
+            //dd($pathway[0]);
+            $pathwayJson = $this->pathwayJSON($pathway[0]);
 
             $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
-            //dd($activitiesByPathways);
+
+            // création d'un tableau contenant les ressources des activités
+            $resourcesByActivities = array();
+            //for ()
 
             return $this->render('pathway/edit.html.twig', [
                 'pathway' => $pathway,
+                'pathwayJson' => $pathwayJson,
                 'activitiesByPathways' => $activitiesByPathways,
                 'humanResourceCategories' => $humanResourceCategoriesJson,
                 'materialResourceCategories' => $materialResourceCategoriesJson,

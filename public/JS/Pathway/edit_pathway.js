@@ -23,11 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
+    A = JSON.parse(
+        document.getElementById("json-pathway").value
+    );
+    console.log('oui oui')
+    console.log(A)
+
+    //document.getElementById('pathwayname').value = 
+    
+
     //addActivity() 
     initActivity()
     handleHumanButton()
     fillActivityList()
 
+    // calcul de la taille de la liste
     let heightTitle = document.getElementById('name').offsetHeight
     let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
     heightCreationDiv = heightCreationDiv - heightTitle
@@ -217,7 +228,7 @@ function fillActivityList() {
             p.innerHTML = str
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
@@ -225,7 +236,7 @@ function fillActivityList() {
             imgDelete.style.cursor = 'pointer'
 
             let imgEdit = new Image();
-            imgEdit.src = '../img/edit.svg'
+            imgEdit.src = '../../img/edit.svg'
             imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
@@ -480,7 +491,7 @@ function fillHRCList() {
         
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'
@@ -527,7 +538,7 @@ function fillMRCList(id) {
             li.innerText = resourceName +' ('+resourceNb+')'
         
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'

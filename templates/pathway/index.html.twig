@@ -19,44 +19,6 @@
 
 {% block body %}
 
-    <script> 
-    /* Script permettant de remplir dans le js un tableau qui contient toutes les activités des pathway
-
-        Pour accéder a une activité d'un pathway :
-        On a :
-        activitiesByPathways.idPathway => id du pathway 
-        activitiesByPathways.activities => liste d'activites lié au pathway
-        Puis : 
-        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].idActivity => id de l'activité
-        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].name => nom de l'activité
-        activitiesByPathways[index du pathway].activities[index de l'activité que l'on cherche].duration => durée de l'activité
-    */
-        var activitiesByPathways = new Array();
-        {% if (activitiesByPathways) %}
-            {% for indexPathway in 0..(activitiesByPathways|length - 1) %}
-                activitiesByPathways[{{indexPathway}}] = new Object();
-                activitiesByPathways[{{indexPathway}}].idPathway = '{{ pathways[indexPathway].id }}'
-                //console.log('{{ pathways[indexPathway].id }}')
-                activitiesByPathways[{{indexPathway}}].activities = new Array();
-                
-                {% if (activitiesByPathways[indexPathway]) %}
-                    {% for indexActivity in 0..(activitiesByPathways[indexPathway]|length - 1) %}
-
-                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}] = new Object();
-                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].idActivity = '{{ activitiesByPathways[indexPathway][indexActivity].id }}'
-                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].name = '{{ activitiesByPathways[indexPathway][indexActivity].activityname }}' 
-
-                        activitiesByPathways[{{indexPathway}}].activities[{{indexActivity}}].duration = '{{ activitiesByPathways[indexPathway][indexActivity].duration }}'
-
-                    {% else %}
-                    {% endfor %}
-                {% endif %}
-
-            {% else %}
-            {% endfor %}
-        {% endif %}
-
-    </script> 
 
     {# la div.index est la div qui contient la page a côté du menu #}
     <div class="index">
