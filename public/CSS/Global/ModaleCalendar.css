@@ -2,13 +2,14 @@
   background-color: var(--main-blue);
   border-radius: 5px;
   }
-  #calendar-appointment{
+  #calendar-appointment,#calendar-hr,#calendar-mr{
     width: 100%;
     max-width: 1000px;
-    height: 100%;
+    height: auto;
   }
   .calendar-container{
     width: 100%;
+    height: auto;
     padding-right: 50px;
     padding-left: 50px;
     margin-right: auto;
