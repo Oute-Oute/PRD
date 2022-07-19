@@ -62,6 +62,7 @@ function openDayModale(type) {
         });
   document.getElementById("buttonSelect").onclick=function(){validate(type);}
   document.getElementById("buttonCancel").onclick=function(){hideDayModale(type);}
+  document.getElementById('load').style.visibility="";
   $("#add-appointment-modal").modal("hide");
   $("#select-day-modal").modal("show");
   createCalendar(type);
@@ -178,12 +179,11 @@ console.log(document.getElementById("dateSelected").value);
 }
 
 function addTargetsToCalendar(targets) {
-  console.log(targets)
   targets.forEach(element => {
-    console.log(element);
     calendar.addEvent({
-      id: element.id,
-      description: element.target,
+      allDay: true,
+      start: element.start,
+      description: element.description,
       display:'background',
       color:element.color,
 
@@ -191,5 +191,5 @@ function addTargetsToCalendar(targets) {
   
 });
 calendar.render();
-console.log(calendar.getEvents());
+document.getElementById('load').style.visibility="hidden";
 }

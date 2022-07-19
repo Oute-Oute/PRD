@@ -689,14 +689,45 @@ class PathwayController extends AbstractController
         return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function getDataPathway(ManagerRegistry $doctrine)
+    public function getActivitiesByPathwayId(ManagerRegistry $doctrine)
     {
-        $appointments = $this->getAppointmentByPathwayId($_POST["idPathway"], $doctrine);
-        return new JsonResponse($appointments);
+        if(isset($_POST['idPathway'])){
+            $id = $_POST['idPathway'];
+        }
+        else{
+            return new JsonResponse('');
+        }
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
+        $activities = $doctrine->getManager()->getRepository("App\Entity\Activity")->findBy(["pathway"=>$pathway]);
+        $activityArray=[];
+        foreach ($activities as $activity) {
+            $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findBy(["activitya"=>$activity]);
+            $arraySuccessor = [];
+            foreach($successors as $successor){
+                $arraySuccessor[] = [
+                    'name' => $successor->getActivityb()->getActivityName(),
+                    'delaymin' => $successor->getDelaymin(),
+                    'delaymax' => $successor->getDelaymax(),
+                ];
+            }
+            $activityArray[] = [
+                'name' => $activity->getActivityname(),
+                'duration' => $activity->getDuration(),
+                'successor' => $arraySuccessor,
+            ];
+        }
+
+        return new JsonResponse($activityArray);
     }
 
-    public function getAppointmentByPathwayId($id, ManagerRegistry $doctrine)
+    public function getAppointmentsByPathwayId(ManagerRegistry $doctrine)
     {
+        if(isset($_POST['idPathway'])){
+            $id = $_POST['idPathway'];
+        }
+        else{
+            return new JsonResponse('');
+        }
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
         $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
         $appointmentArray=[];
@@ -711,6 +742,6 @@ class PathwayController extends AbstractController
             }
         }
 
-        return $appointmentArray;
+        return new JsonResponse($appointmentArray);
     }
 }

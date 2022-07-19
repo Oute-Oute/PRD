@@ -207,9 +207,14 @@ AjaxPatient:
   controller: App\Controller\PatientController::getDataPatient
   methods: [POST]
 
-AjaxPathway:
-  path: /ajaxPathway
-  controller: App\Controller\PathwayController::getDataPathway
+AjaxPathwayAppointments:
+  path: /ajaxPathwayAppointments
+  controller: App\Controller\PathwayController::getAppointmentsByPathwayId
+  methods: [POST]
+
+AjaxPathwayActivities:
+  path: /ajaxPathwayActivities
+  controller: App\Controller\PathwayController::getActivitiesByPathwayId
   methods: [POST]
 
 AjaxHumanResource:

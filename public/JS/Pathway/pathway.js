@@ -48,14 +48,27 @@ function showInfosPathway(idPathway, name) {
 
     $.ajax({
         type : 'POST',
-        url  : '/ajaxPathway',
+        url  : '/ajaxPathwayAppointments',
         data : {idPathway: idPathway},
         dataType : "json",
         success : function(data){        
             tableAppointment(tableBody, data);
         },
         error: function(data){
-            console.log("error");
+            console.log("error : can't access appointments");
+        }
+        });
+    
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxPathwayActivities',
+        data : {idPathway: idPathway},
+        dataType : "json",
+        success : function(data){        
+           console.log(data);
+        },
+        error: function(data){
+            console.log("error : can't access activities");
         }
         });
 

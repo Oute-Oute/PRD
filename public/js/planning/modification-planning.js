@@ -6,6 +6,7 @@ var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
 var timerAlert;
 var modifAlertTime = 480000;
+var listErrorMessages = [];
 
 var listEvents;
 var historyEvents=[]; 
@@ -51,8 +52,6 @@ function modifyEvent() {
   var currentDateModified = $_GET("date").substring(0, 10);
   var newStart = new Date(currentDateModified + " " + document.getElementById("start-modified-event").value);
   var newDelay = oldEvent.end.getTime() - oldEvent.start.getTime();
-  
-  console.log(newDelay/60000)
   oldEvent.setStart(new Date(newStart.getTime() + 2 * 60 * 60 * 1000))
   oldEvent.setEnd(new Date(newStart.getTime() + 2 * 60 * 60 * 1000 + newDelay))
 
@@ -62,7 +61,6 @@ function modifyEvent() {
   oldEvent._def.resourceIds.forEach((resource) => {
     listResource.push(resource)
   })
-  console.log(listResource)
 
   calendar.getEvents().forEach((currentEvent) => {
     if(currentEvent.display == "background"){
@@ -816,7 +814,6 @@ function createCalendar(typeResource,useCase) {
       switch(useCase){
         case 'recreate':
           //Test pour savoir si il s'agit d'un ajout
-        console.log(historyEvents);
             if(historyEvents[historyEvents.length-2]!=undefined){
               if(historyEvents[historyEvents.length-1].idAppointment!=-1){
                 //récupère la liste des Appointments
@@ -948,6 +945,7 @@ function createCalendar(typeResource,useCase) {
       var modifyEvent = event.event;
       updateEventsAppointment(oldEvent);
       calendar.render();
+      //updateErrorMessages();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
       listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
@@ -1148,7 +1146,6 @@ function clearArray(array){
 }
 
 function undoEvent(){ 
-  console.log(historyEvents.length); 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
@@ -1167,18 +1164,207 @@ function verifyHistoryPush(array, idAppointment){
   };
 }
 
+function updateErrorMessages() {
+  var listScheduledActivities = calendar.getEvents();
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity.display != "background"){
+      console.log(scheduledActivity)
+      var appointmentAlreadyExist = false;
+      if(listErrorMessages != []){
+        listErrorMessages.forEach((errorMessage) => {
+          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){
+            appointmentAlreadyExist = true;
+            var scheduledActivityAlreadyExist = false;
+            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => {
+              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){
+                scheduledActivityAlreadyExist = true;
+              }
+            })
+            if(scheduledActivityAlreadyExist == false){
+              errorMessage.listScheduledActivity.push({
+                scheduledActivityId: scheduledActivity._def.publicId,
+                scheduledActivityName: scheduledActivity._def.title,
+                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
+                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
+                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+              })
+            }
+          }
+        })
+      }
+      if(appointmentAlreadyExist == false){
+        listErrorMessages.push({
+          appointmentId: scheduledActivity._def.extendedProps.appointment,
+          patientName: scheduledActivity._def.extendedProps.patient,
+          pathwayName: scheduledActivity._def.extendedProps.pathway,
+          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+          messageLatestAppointmentTime: getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+          listScheduledActivity: [{
+            scheduledActivityId: scheduledActivity._def.publicId,
+            scheduledActivityName: scheduledActivity._def.title,
+            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
+            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
+            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+          }]
+        })
+      }
+    }
+  })
+  console.log(listErrorMessages)
+}
+
+function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
+  var message = "";
+
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var appointment;
+  listeAppointments.forEach((currentAppointment) => {
+    if(currentAppointment.id == appointmentId){
+      appointment = currentAppointment
+    }
+  })
+  let earliestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.earliestappointmenttime.split("T")[1]);
+
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
+        message = message + scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivé au plus tôt du patient. ";
+      }
+    }
+  })
+
+  return message;
+}
+
+function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
+  var message = "";
+
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var appointment;
+  listeAppointments.forEach((currentAppointment) => {
+    if(currentAppointment.id == appointmentId){
+      appointment = currentAppointment
+    }
+  })
+  let latestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.latestappointmenttime.split("T")[1]);
+
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
+        message = message + scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ";
+      }
+    }
+  })
+
+  return message;
+}
+
+function getMessageDelay(listScheduledActivities, scheduledActivity){
+  var messages = [];
+  
+  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
+  listSuccessors.forEach((successor) => {
+    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){
+      listScheduledActivities.forEach((scheduledActivityB) => {
+        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){
+          var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime())/(60*1000);
+          if(duration < successor.delaymin){
+            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est inférieur à : " + successor.delaymin + " minutes qui est le délai minimum.";
+            messages.push(message);
+          }
+          if(duration > successor.delaymax){
+            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est supèrieur à : " + successor.delaymax + " minutes qui est le délai maximum.";
+            messages.push(message);
+          }
+        }
+      })
+    }
+  })
+
+  return messages;
+}
+
+function getListCategoryHumanResources(scheduledActivity){
+  var listCategoryHumanResources = [];
+
+  return listCategoryHumanResources;
+}
+
+function getListCategoryMaterialResources(scheduledActivity){
+  var listCategoryMaterialResources = [];
+
+  return listCategoryMaterialResources;
+}
+
+function getMessageCategoryQuantity(categoryResource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageWrongCategory(categoryResource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageUnavailability(listScheduledActivities, scheduledActivity, resource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageAlreadyExist(listScheduledActivities, scheduledActivity, resource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageWorkingHours(scheduledActivity, humanResource){
+  var message = "";
+
+  return message;
+}
   function displayListErrorMessages(){
     var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
-    console.log(lateralPannelInput); 
     if(lateralPannelInput==true){
-      console.log('alo');
       lateralPannelBloc[0].style.display='block'; 
       lateralPannel[0].style.width='40em';
+      updateListErrorMessages();
     }
     else{
       lateralPannelBloc[0].style.display='';
       lateralPannel[0].style.width='';
+    }
+    
+  }
+
+  function updateListErrorMessages(){
+    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
+    var nodeslength=nodesNotification.length; 
+    console.log('length '+nodeslength); 
+    while(nodesNotification.length!=3){
+      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
+    }
+    for(let i=0; i<listErrorMessages.length; i++){
+      var div = document.createElement('div');
+      div.setAttribute('class', 'alert alert-warning');
+      div.setAttribute('role','alert');
+      div.setAttribute('id','notification');
+      div.setAttribute('style','display: flex; flex-direction : column;'); 
+      var divRow=document.createElement('divRow'); 
+      divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+      div.append(divRow);
+      var img = document.createElement("img");
+      img.src="/img/exclamation-triangle-fill.svg"; 
+      var text=document.createElement('h3'); 
+      text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
+      divRow.append(img,text);
+     var corpus= document.createElement('corpus');  
+     corpus.innerHTML='Lorem Ipsum';
+     div.append(corpus);
+      document.getElementById('lateral-panel-bloc').appendChild(div);
     }
   }
