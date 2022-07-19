@@ -273,9 +273,9 @@ function fillActivityList() {
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
             
-            pindex = document.createElement('p')
+            /*pindex = document.createElement('p')
             pindex.innerText = indexActivity
-            activity.appendChild(pindex)
+            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)
