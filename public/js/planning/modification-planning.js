@@ -6,6 +6,7 @@ var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
 var timerAlert;
 var modifAlertTime = 480000;
+var listErrorMessages = [];
 
 var listEvents;
 var historyEvents=[]; 
@@ -942,6 +943,7 @@ function createCalendar(typeResource,useCase) {
       var modifyEvent = event.event;
       updateEventsAppointment(oldEvent);
       calendar.render();
+      //updateErrorMessages();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
       listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
@@ -1160,4 +1162,166 @@ function verifyHistoryPush(array, idAppointment){
     array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
   }
   console.log(array);
+}
+
+function updateErrorMessages() {
+  var listScheduledActivities = calendar.getEvents();
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity.display != "background"){
+      console.log(scheduledActivity)
+      var appointmentAlreadyExist = false;
+      if(listErrorMessages != []){
+        listErrorMessages.forEach((errorMessage) => {
+          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){
+            appointmentAlreadyExist = true;
+            var scheduledActivityAlreadyExist = false;
+            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => {
+              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){
+                scheduledActivityAlreadyExist = true;
+              }
+            })
+            if(scheduledActivityAlreadyExist == false){
+              errorMessage.listScheduledActivity.push({
+                scheduledActivityId: scheduledActivity._def.publicId,
+                scheduledActivityName: scheduledActivity._def.title,
+                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
+                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
+                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+              })
+            }
+          }
+        })
+      }
+      if(appointmentAlreadyExist == false){
+        listErrorMessages.push({
+          appointmentId: scheduledActivity._def.extendedProps.appointment,
+          patientName: scheduledActivity._def.extendedProps.patient,
+          pathwayName: scheduledActivity._def.extendedProps.pathway,
+          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+          messageLatestAppointmentTime: getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+          listScheduledActivity: [{
+            scheduledActivityId: scheduledActivity._def.publicId,
+            scheduledActivityName: scheduledActivity._def.title,
+            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
+            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
+            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+          }]
+        })
+      }
+    }
+  })
+  console.log(listErrorMessages)
+}
+
+function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
+  var message = "";
+
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var appointment;
+  listeAppointments.forEach((currentAppointment) => {
+    if(currentAppointment.id == appointmentId){
+      appointment = currentAppointment
+    }
+  })
+  let earliestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.earliestappointmenttime.split("T")[1]);
+
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
+        message = message + scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivé au plus tôt du patient. ";
+      }
+    }
+  })
+
+  return message;
+}
+
+function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
+  var message = "";
+
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var appointment;
+  listeAppointments.forEach((currentAppointment) => {
+    if(currentAppointment.id == appointmentId){
+      appointment = currentAppointment
+    }
+  })
+  let latestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.latestappointmenttime.split("T")[1]);
+
+  listScheduledActivities.forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
+        message = message + scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ";
+      }
+    }
+  })
+
+  return message;
+}
+
+function getMessageDelay(listScheduledActivities, scheduledActivity){
+  var messages = [];
+  
+  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
+  listSuccessors.forEach((successor) => {
+    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){
+      listScheduledActivities.forEach((scheduledActivityB) => {
+        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){
+          var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime())/(60*1000);
+          if(duration < successor.delaymin){
+            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est inférieur à : " + successor.delaymin + " minutes qui est le délai minimum.";
+            messages.push(message);
+          }
+          if(duration > successor.delaymax){
+            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est supèrieur à : " + successor.delaymax + " minutes qui est le délai maximum.";
+            messages.push(message);
+          }
+        }
+      })
+    }
+  })
+
+  return messages;
+}
+
+function getListCategoryHumanResources(scheduledActivity){
+  var listCategoryHumanResources = [];
+
+  return listCategoryHumanResources;
+}
+
+function getListCategoryMaterialResources(scheduledActivity){
+  var listCategoryMaterialResources = [];
+
+  return listCategoryMaterialResources;
+}
+
+function getMessageCategoryQuantity(categoryResource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageWrongCategory(categoryResource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageUnavailability(listScheduledActivities, scheduledActivity, resource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageAlreadyExist(listScheduledActivities, scheduledActivity, resource){
+  var message = "";
+
+  return message;
+}
+
+function getMessageWorkingHours(scheduledActivity, humanResource){
+  var message = "";
+
+  return message;
 }
