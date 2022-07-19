@@ -7,6 +7,10 @@
     align-items: self-start;
 
 }
+.modal-body-select-day {
+    display: flex;
+    align-items: center;
+}
 
 .modal-dialog {
     max-width: 600px;
@@ -224,3 +228,45 @@ ul.ui-autocomplete {
 #working-hours-infos-begin input, #working-hours-infos-end input{
     pointer-events:none;
 }
+
+#load{
+    position: absolute;
+    display : flex;
+    justify-content: center;
+    z-index:9999;
+    margin:200px 200px 200px 200px;
+    border: 16px solid #bdc3c7;
+    width: 120px;
+    height: 120px;
+    border-top-color: #1abc9c;
+    border-bottom-color: #3498db;
+    border-radius: 50%;
+    animation: chargeur 4s linear infinite;
+  }
+  
+  @keyframes chargeur {
+    0%{
+      transform: rotate(0deg) scale(1);
+      border-top-color: grey;
+      border-bottom-color: grey;
+    }
+    25%{
+      border-top-color: grey;
+      border-bottom-color: grey;
+    }
+    50% {
+       transform: rotate(360deg) scale(1.15);
+      border-top-color: grey;
+      border-bottom-color: grey;
+    }
+    75%{
+      border-top-color: grey;
+      border-bottom-color: grey;
+    }
+    100%{
+       transform: rotate(720deg) scale(1);
+      border-top-color: grey;
+      border-bottom-color: grey;
+    }
+    
+  }
