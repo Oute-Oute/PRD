@@ -51,8 +51,6 @@ function modifyEvent() {
   var currentDateModified = $_GET("date").substring(0, 10);
   var newStart = new Date(currentDateModified + " " + document.getElementById("start-modified-event").value);
   var newDelay = oldEvent.end.getTime() - oldEvent.start.getTime();
-  
-  console.log(newDelay/60000)
   oldEvent.setStart(new Date(newStart.getTime() + 2 * 60 * 60 * 1000))
   oldEvent.setEnd(new Date(newStart.getTime() + 2 * 60 * 60 * 1000 + newDelay))
 
@@ -62,7 +60,6 @@ function modifyEvent() {
   oldEvent._def.resourceIds.forEach((resource) => {
     listResource.push(resource)
   })
-  console.log(listResource)
 
   calendar.getEvents().forEach((currentEvent) => {
     if(currentEvent.display == "background"){
@@ -810,7 +807,6 @@ function createCalendar(typeResource,useCase) {
       switch(useCase){
         case 'recreate':
           //Test pour savoir si il s'agit d'un ajout
-        console.log(historyEvents);
             if(historyEvents[historyEvents.length-2]!=undefined){
               if(historyEvents[historyEvents.length-1].idAppointment!=-1){
                 //récupère la liste des Appointments
@@ -1142,7 +1138,6 @@ function clearArray(array){
 }
 
 function undoEvent(){ 
-  console.log(historyEvents.length); 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
@@ -1165,14 +1160,42 @@ function verifyHistoryPush(array, idAppointment){
     var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
-    console.log(lateralPannelInput); 
     if(lateralPannelInput==true){
-      console.log('alo');
       lateralPannelBloc[0].style.display='block'; 
       lateralPannel[0].style.width='40em';
+      updateListErrorMessages();
     }
     else{
       lateralPannelBloc[0].style.display='';
       lateralPannel[0].style.width='';
+    }
+    
+  }
+
+  function updateListErrorMessages(){
+    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
+    var nodeslength=nodesNotification.length; 
+    console.log('length '+nodeslength); 
+    while(nodesNotification.length!=3){
+      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
+    }
+    for(let i=0; i<listErrorMessages.length; i++){
+      var div = document.createElement('div');
+      div.setAttribute('class', 'alert alert-warning');
+      div.setAttribute('role','alert');
+      div.setAttribute('id','notification');
+      div.setAttribute('style','display: flex; flex-direction : column;'); 
+      var divRow=document.createElement('divRow'); 
+      divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+      div.append(divRow);
+      var img = document.createElement("img");
+      img.src="/img/exclamation-triangle-fill.svg"; 
+      var text=document.createElement('h3'); 
+      text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
+      divRow.append(img,text);
+     var corpus= document.createElement('corpus');  
+     corpus.innerHTML='Lorem Ipsum';
+     div.append(corpus);
+      document.getElementById('lateral-panel-bloc').appendChild(div);
     }
   }
