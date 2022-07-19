@@ -1161,7 +1161,6 @@ function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents();
   listScheduledActivities.forEach((scheduledActivity) => {
     if(scheduledActivity.display != "background"){
-      console.log(scheduledActivity)
       var appointmentAlreadyExist = false;
       if(listErrorMessages != []){
         listErrorMessages.forEach((errorMessage) => {
@@ -1210,7 +1209,7 @@ function updateErrorMessages() {
       }
     }
   })
-  console.log(listErrorMessages)
+  //console.log(listErrorMessages)
 }
 
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
@@ -1406,7 +1405,7 @@ function getListCategoryMaterialResources(scheduledActivity){
 
 function getResourceTitle(resourceId) {
   var listResources;
-  if(resourceId.sustring(0,5) == human){
+  if(resourceId.substring(0,5) == "human"){
     listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   }
   else {
