@@ -883,14 +883,7 @@ function createCalendar(typeResource,useCase) {
       resourceAreaWidth: "20%",
       resourceAreaHeaderContent: headerResources,
 
-      eventDidMount: function (info) {
-        $(info.el).tooltip({
-          title: info.event.extendedProps.description,
-          placement: "top",
-          trigger: "hover",
-          container: "body",
-        });
-      },
+
 
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
       eventClick: function (event) {
