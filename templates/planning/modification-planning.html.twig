@@ -32,34 +32,32 @@
 						<span id="show-modified-event-title"></span>
 					</h2>
 				</div>
-				<div
-					<div class="modal-body">
+				<div class="modal-body">
 					<label class="label-event">Début de l'activité
 					</label>
 					<div class="input-container onWhite">
-					<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
-					<input id="id-modified-event" name="id-modified-event" type="hidden">
+						<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
+						<input id="id-modified-event" name="id-modified-event" type="hidden">
 
-					<input class="input-modal-date" type="time" id="start-modified-event" name="start-modified-event" required>
-					</br>
-					<label class="label-event">Parcours :</label>
-					</br>
-					<input class="input-modal" type="text" id="parcours-modified-event" name="parcours-modified-event" disabled></input>
-					</br>
-					<label class="label-event">Patient :</label>
-					</br>
-					<input class="input-modal" type="text" id="patient-modified-event" name="patient-modified-event" disabled></input>
-					</br>
-					<label class="label-event">Ressource Humaine :</label>
-					</br>
-					<input class="input-modal" type="text" id="human-resource-modified-event" name="human-resource-modified-event" disabled></input>
-					</br>
-					<label class="label-event">Ressource Matérielle :</label>
-					</br>
-					<input class="input-modal" type="text" id="material-resource-modified-event" name="material-resource-modified-event" disabled></input>
+						<input class="input-modal-date" type="time" id="start-modified-event" name="start-modified-event" required>
+						</br>
+						<label class="label-event">Parcours :</label>
+						</br>
+						<input class="input-modal" type="text" id="parcours-modified-event" name="parcours-modified-event" disabled></input>
+						</br>
+						<label class="label-event">Patient :</label>
+						</br>
+						<input class="input-modal" type="text" id="patient-modified-event" name="patient-modified-event" disabled></input>
+						</br>
+						<label class="label-event">Ressource Humaine :</label>
+						</br>
+						<input class="input-modal" type="text" id="human-resource-modified-event" name="human-resource-modified-event" disabled></input>
+						</br>
+						<label class="label-event">Ressource Matérielle :</label>
+						</br>
+						<input class="input-modal" type="text" id="material-resource-modified-event" name="material-resource-modified-event" disabled></input>
 					</div>
-					<div
-						class="modal-footer">
+					<div class="modal-footer">
 						<!-- bouton de suppression à revoir, permet pour le moment d'être redirigé vers la gestion des rendez-vous pour en supprimer un -->
 						<form method="get" action="{{ path('Appointment') }}">
 							<button class="btn-delete btn-secondary" onclick="return confirm('Voulez-vous être redirigé vers la gestion des rendez-vous ? Vos modifications vont être perdues');">Supprimer le rendez-vous</button>
@@ -77,8 +75,7 @@
 
 	<!-- add-planning-modal -->
 
-	<div
-		class="modal" id="add-planning-modal">
+	<div class="modal" id="add-planning-modal">
 		<!-- div qui représente la modal -->
 		<div
 			class="modal-dialog">
@@ -167,7 +164,10 @@
 			</button>
 			<div id="filterId" class="filter-container" style="display:none"></div>
 		</div>
+		
 		<!-- liste des boutons pour annuler ou valider les modifications -->
+
+
 		<div id='container-top-right'>
 			<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
 			<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
@@ -187,6 +187,16 @@
 	  
 	<div
 		id="calendar-container" class="calendar-container">
+
+		<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
+			<option value="02:00:00">Zoom : 2H</option>
+			<option value="01:00:00">Zoom : 1H</option>
+			<option value="0:40:00">Zoom : 40min</option>
+			<option value='00:20:00' selected>Zoom : 20min (Default)</option>
+			<option value="00:10:00">Zoom : 10min</option>
+			<option value="00:05:00">Zoom : 5min</option>
+			<option value="00:03:00">Zoom : 1min</option>
+		</select>
 
 		<!-- affichage du calendar -->
 		<div id='calendar'></div>

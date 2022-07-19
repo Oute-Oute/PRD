@@ -34,12 +34,14 @@
     <body>
         {% include 'Global/Menu.html.twig' %}
         {% block body %}{% endblock %}
+        {#
         {% if  app.user != null %} 
         <div  id="OwnUsername">{{ app.user.userIdentifier }} </div>
         <div id="informations">ID : {{ app.user.userIdentifier }}<br>
         Rôle : {{ app.user.roles[0] }}
         </div>
         {% endif %}
+        #}
 
     </body>
 </html>

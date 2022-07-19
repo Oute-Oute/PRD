@@ -110,6 +110,12 @@ function setEvents() {
   document.getElementById("validation-date").value = $_GET("date");
 }
 
+function zoomChange() {
+  newZoom = document.getElementById('zoom').value;
+  calendar.setOption('slotDuration', newZoom)
+}
+
+
 //function permettant l'ouverture de la modal d'ajout d'un parcours
 function addEvent() {
   let listeAppointments = JSON.parse(
