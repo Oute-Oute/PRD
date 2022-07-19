@@ -2,9 +2,12 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES
-var MATERIAL_RESOURCE_CATEGORIES
+var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
+var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
+
 var RESOURCES_BY_ACTIVITIES = new Array()
+var PATHWAY
+
 var ACTIVITY_IN_PROGRESS
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
@@ -23,11 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
+    PATHWAY = JSON.parse(
+        document.getElementById("json-pathway").value
+    );
+    console.log('oui oui')
+    console.log(PATHWAY)
+
+    
+    document.getElementById('pathwayname').value = PATHWAY.pathwayname
+    
+
     //addActivity() 
     initActivity()
     handleHumanButton()
     fillActivityList()
 
+    // calcul de la taille de la liste
     let heightTitle = document.getElementById('name').offsetHeight
     let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
     heightCreationDiv = heightCreationDiv - heightTitle
@@ -145,10 +160,6 @@ function addActivity() {
 
     let verif = true
 
-    console.log('verif ok confirm')
-    console.log(document.getElementById('input-name').value)
-    console.log(document.getElementById('input-duration').value)
-
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
         verif = false
@@ -168,20 +179,20 @@ function addActivity() {
             fillActivityList()
 
         } else {
-        // ajout de l'activité au tableau
-        addArray()
-        NB_ACTIVITY = NB_ACTIVITY + 1;
-        document.getElementById('nbactivity').value = NB_ACTIVITY
+            // ajout de l'activité au tableau
+            addArray()
+            NB_ACTIVITY = NB_ACTIVITY + 1;
+            document.getElementById('nbactivity').value = NB_ACTIVITY
 
-        // on reinitialise les champs 
-        ACTIVITY_IN_PROGRESS = new Object()
-        ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.available = true
-        ACTIVITY_IN_PROGRESS.btnHM = 'human'
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-        handleHumanButton()
+            // on reinitialise les champs 
+            ACTIVITY_IN_PROGRESS = new Object()
+            ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.available = true
+            ACTIVITY_IN_PROGRESS.btnHM = 'human'
+            document.getElementById('input-name').value = ''
+            document.getElementById('input-duration').value = ''
+            handleHumanButton()
         }
         fillActivityList()
         return 1
@@ -217,7 +228,7 @@ function fillActivityList() {
             p.innerHTML = str
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
@@ -225,7 +236,7 @@ function fillActivityList() {
             imgDelete.style.cursor = 'pointer'
 
             let imgEdit = new Image();
-            imgEdit.src = '../img/edit.svg'
+            imgEdit.src = '../../img/edit.svg'
             imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
@@ -480,7 +491,7 @@ function fillHRCList() {
         
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'
@@ -527,7 +538,7 @@ function fillMRCList(id) {
             li.innerText = resourceName +' ('+resourceNb+')'
         
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'

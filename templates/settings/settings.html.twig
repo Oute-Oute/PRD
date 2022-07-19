@@ -1,51 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Paramètres{% endblock %}
+{% block title %}Paramètres
+{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
-    <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
-    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 {% endblock %}
 
 {% block javascripts %}
-    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 {% endblock %}
 {% block body %}
-<div class="index">
-    <h1 id="title">Paramètres</h1>
-        {% if settings != null %}
-            <form action="{{ path('SettingsEdit') }}" method="post">
-            <div style="margin-left: 20px;">
-                {% for setting in settings %}
-                    <div style="margin-right: 50%;">
-                        <div>
-                            <label class="label" > Temps maximal d'inactivité avant l'affichage d'une alerte</label><br>
-                            {% set timerModification = setting.getAlertmodificationtimer // 60000 %}
-                            <label class="label" for="alertTimeMin">Minutes : </label>
-                            <input class="input" id='alertTimeMin' type='number' step=".01" name='alertTimeMin' value={{timerModification}}>
-                        </div>
-                        <div style="margin-top:40px">
-                            <label class="label" > Fréquence de rechargement de la page consultation</label><br>
-                            {% set timerReload = setting.getReloadtime // 60000 %}
-                            
-                            <label class="label" for="reloadTimeMin">Minutes : </label>
-                            <input class="input" id='reloadTimeMin' type='number' step=".01" name='reloadTimeMin' value={{timerReload}}>
-                        </div>
-                        <input class="input" type=hidden id='idAlert' name='idAlert' value={{setting.getId}}>
-                    </div><br>
-                {% endfor %}
-                <div style="margin-left: 40%;">
-                    <button id='submit' type="submit" class="btn-edit btn-secondary"> Modifier </button>
-                </div>
-            </div>
-            </form>
-        {% else %}
-            Aucun paramètre trouvé ! Veuillez remettre les paramètres par défaut.
-            <form method="post" action="{{ path('SettingsAddDefault') }}">
-                <button id='submit' type="submit" class="btn-edit btn-secondary"> Réinitialiser les paramètres </button>
-            </form>
-        {% endif %}
-{% endblock %}
+	<div class="index">
+		<h1 id="title">Paramètres</h1>
+		{% if settings != null %}
+			<form action="{{ path('SettingsEdit') }}" method="post">
+				<div style="margin-left: 20px;">
+					{% for setting in settings %}
+						<div style="margin-right: 50%;">
+							<div>
+								<label class="label">
+									Temps maximal d'inactivité avant l'affichage d'une alerte</label><br>
+								{% set timerModification = setting.getAlertmodificationtimer // 60000 %}
+								<label class="label" for="alertTimeMin">Minutes :
+								</label>
+								<input class="input" id='alertTimeMin' type='number' step=".01" name='alertTimeMin' value={{timerModification}}>
+							</div>
+							<div style="margin-top:40px">
+								<label class="label">
+									Fréquence de rechargement de la page consultation</label><br>
+								{% set timerReload = setting.getReloadtime // 60000 %}
+
+								<label class="label" for="reloadTimeMin">Minutes :
+								</label>
+								<input class="input" id='reloadTimeMin' type='number' step=".01" name='reloadTimeMin' value={{timerReload}}>
+							</div>
+							<input class="input" type="hidden" id='idAlert' name='idAlert' value={{setting.getId}}>
+						</div><br>
+					{% endfor %}
+					<div style="margin-left: 40%;">
+						<button id='submit' type="submit" class="btn-edit btn-secondary">
+							Modifier
+						</button>
+					</div>
+				</div>
+			</form>
+		{% else %}
+			Aucun paramètre trouvé ! Veuillez remettre les paramètres par défaut.
+			<form method="post" action="{{ path('SettingsAddDefault') }}">
+				<button id='submit' type="submit" class="btn-edit btn-secondary">
+					Réinitialiser les paramètres
+				</button>
+			</form>
+		{% endif %}
+	{% endblock %}
