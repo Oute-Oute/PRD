@@ -48,7 +48,8 @@ class ConsultationPlanningController extends AbstractController
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
-       //envoi sous forme de JSON
+        $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
+        //envoi sous forme de JSON
         return $this->render(
             'planning/consultation-planning.html.twig',
             [
@@ -57,6 +58,7 @@ class ConsultationPlanningController extends AbstractController
                 'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
                 'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
+                'settingsRepository' => $settingsRepository,
                 ]
         );
     }

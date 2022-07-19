@@ -158,3 +158,78 @@ a:hover{
   margin-bottom: 5px;
 }
 
+#lateral-panel {
+  position:absolute;
+  z-index: 9999;                  /* pour être au dessus des autres éléments */                /* ne suit pas le scroll de la page et sert de réfèrent */
+  top: 0;                         /* position en haut */
+  right: 0;                        /* à gauche */
+  /*width: 40em;*/                    /* valeur de largeur pour tout le contenu */
+  min-height: 100vh;              /* occupe toute la hauteur du viewport */
+  transform: translateX(100%);   /* on déplace à gauche pour ne pas interférer avec le document */
+}
+
+#lateral-panel-input {
+  position: absolute;           /* pour sortir l'élément du flux */
+  left: -999em;                 /* position hors de la fenêtre */
+}
+
+#lateral-panel-label {
+  z-index: 1;                   /* on le met au dessus */
+  position: absolute;           /* pour sortir l'élément du flux, il va bouger */
+  top: 0;                       /* position en haut */
+  left: 0%; 
+  transform: translateX(-100%);                   /* alignement sur le bord droit du parent */
+  width: 3em;                   /* dimensions respectables */
+  height: 3em;
+  cursor: pointer;
+}
+
+#lateral-panel-bloc {
+  z-index: 0;                   /* mise au niveau zéro */
+  position: absolute;           /* pour sortir l'élément du flux, il va bouger */
+  top: 0;                       /* position en haut */  
+  left: 0;                      /* alignement sur bord gauche du parent */
+  box-sizing: border-box;       /* modèle de boîte, plus simple à gérer */
+  width: 100%;                  /* largeur 100% de son parent */
+  height: 100%;                 /* hauteur 100% de son parent */
+  padding: 1em;                 /* on décolle le contenu du bord */
+  overflow: auto; 
+  display:none;
+}
+
+#lateral-panel-input:checked ~ #lateral-panel-label {
+  left: -100%;                     /* décalage vers la droite, passe de 100% à 200% */
+}   
+#lateral-panel-input:checked ~ #lateral-panel-bloc {
+  transform: translateX(-100%);    /* translation vers la droite de 100% */
+}
+
+#lateral-panel-label,
+#lateral-panel-bloc {
+  font-size: inherit;             /* taille font du référent */
+  background: #FFF;               /* il faut un fond opaque */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: all .01s;
+}
+
+#lateral-panel-label:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  border: .5em solid currentColor;
+  border-width: .5em .5em 0 0;
+  color: #888;
+  transition: all .5s;
+  transform: translate(-50%, -50%) rotate(230deg);
+}
+
+#lateral-panel-input:checked ~ #lateral-panel-label:before {
+  transform: translate(-50%, -50%) rotate(45deg);
+  
+}
+
+

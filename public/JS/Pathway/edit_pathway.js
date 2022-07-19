@@ -23,11 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
+    A = JSON.parse(
+        document.getElementById("json-pathway").value
+    );
+    console.log('oui oui')
+    console.log(A)
+
+    //document.getElementById('pathwayname').value = 
+    
+
     //addActivity() 
     initActivity()
     handleHumanButton()
     fillActivityList()
 
+    // calcul de la taille de la liste
     let heightTitle = document.getElementById('name').offsetHeight
     let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
     heightCreationDiv = heightCreationDiv - heightTitle
@@ -40,39 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
  * Permet d'afficher la fenêtre modale d'informations
  */
 function showInfosPathway(idPathway, name) {
-    document.getElementById('pathway1').innerHTML = name;
-    document.getElementById('pathway2').innerHTML = name;
+    document.getElementById('pathway').innerHTML = name;
    
     var tableBody = document.getElementById('tbodyShow');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
     $.ajax({
         type : 'POST',
-        url  : '/ajaxPathwayAppointments',
+        url  : '/ajaxPathway',
         data : {idPathway: idPathway},
         dataType : "json",
         success : function(data){        
             tableAppointment(tableBody, data);
         },
         error: function(data){
-            console.log("error : can't access appointments");
+            console.log("error");
         }
         });
     
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxPathwayActivities',
-        data : {idPathway: idPathway},
-        dataType : "json",
-        success : function(data){        
-           console.log(data);
-        },
-        error: function(data){
-            console.log("error : can't access activities");
-        }
-        });
-
-    change_tab('activities');
     $('#infos-pathway-modal').modal("show");
 }
 
@@ -96,27 +92,6 @@ function tableAppointment(tableBody, data){
             tr.appendChild(td1);tr.appendChild(td2);
         }
     }
-}
-
-function change_tab(id)
-{
-  document.getElementById("activities").className="notselected";
-  document.getElementById("appointments").className="notselected";
-  document.getElementById(id).className="selected";
-
-  let activities = document.getElementById("pathway-activities");
-  let appointments = document.getElementById("pathway-appointments");
-  
-  switch(id){
-    case 'activities':
-        activities.style.display = 'block';
-        appointments.style.display = 'none';
-    break;
-    case 'appointments':
-        activities.style.display = 'none';
-        appointments.style.display = 'block';
-    break;
-  }
 }
 
 /**
@@ -253,7 +228,7 @@ function fillActivityList() {
             p.innerHTML = str
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
@@ -261,7 +236,7 @@ function fillActivityList() {
             imgDelete.style.cursor = 'pointer'
 
             let imgEdit = new Image();
-            imgEdit.src = '../img/edit.svg'
+            imgEdit.src = '../../img/edit.svg'
             imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
@@ -357,6 +332,7 @@ function cancelEditActivity() {
     document.getElementById('input-duration').value = ''
 }
 
+
 /**
  * Permet de valider les modifications faites lors de l'édition d'une activité 
  */
@@ -381,6 +357,7 @@ function confirmEditActivity() {
     handleHumanButton()
 
 }
+
 
 /**
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
@@ -432,99 +409,6 @@ function verifyChanges() {
 
 }
 
-
-
-function createDivEdit() {
-
-    /* Div parent pour l'ajout de ressource */
-    divEditActivity = document.createElement('div')
-    divEditActivity.setAttribute('class', 'div-edit-activities')
-    divEditActivity.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
-    divEditActivity.style.display = 'none'
-    //divEditActivity.style.height = '0px'
-
-    /* Premier enfant : les 2 boutons pour choisir materielles humaines */
-
-    divBtnsResources = document.createElement('div')
-    divBtnsResources.setAttribute('class', 'div-buttons-resources')
-    btnHuman = document.createElement('button')
-    btnHuman.innerText = 'Humaines'
-    btnHuman.setAttribute('type', 'button')
-    btnHuman.setAttribute('id', 'bh-'+SELECT_ID)
-    btnHuman.setAttribute('onclick', 'handleHumanButton(this.id)')
-
-    btnMaterial = document.createElement('button')
-    btnMaterial.innerText = 'Materielles'
-    btnMaterial.setAttribute('type', 'button')
-    btnMaterial.setAttribute('id', 'bm-'+SELECT_ID)
-    btnMaterial.setAttribute('onclick', 'handleMaterialButton(this.id)')
-
-    RESOURCES_BY_ACTIVITIES[SELECT_ID].btnHM= 'human'
-
-    divBtnsResources.appendChild(btnHuman)
-    divBtnsResources.appendChild(btnMaterial)
-
-
-    /* Deuxieme enfant : Div qui contiendra la liste des ressources */
-
-    divResources = document.createElement('div')
-    divResources.setAttribute('class', 'div-resources')
-    //divRH = document.createElement('div')
-    //divRH.setAttribute('class', 'div-resources-h')
-    divRM = document.createElement('div')
-    //divRM.setAttribute('class', 'div-resources-m')
-    //divResources.appendChild(divRH)
-    ul = document.createElement('ul')
-    ul.setAttribute('id', 'list-resources-'+SELECT_ID)
-
-    divRM.appendChild(ul)
-
-    divResources.appendChild(divRM)
-
-
-    /* Troisieme enfant : select  */
-
-    divAddResources = document.createElement('div')
-    divAddResources.setAttribute('class', 'div-add-resources')
-    divAddResources.setAttribute('title', 'Choisissez la ressource à ajouter')
-    selectResources = document.createElement('select')
-    selectResources.setAttribute('id', 'select-resources-'+SELECT_ID)
-    //for (let indexHR = 0; )
-
-    inputNbResources = document.createElement('input')
-    inputNbResources.setAttribute('type', 'number')
-    inputNbResources.setAttribute('title', 'Entrer le nombre de ressources à ajouter')
-    inputNbResources.setAttribute('placeholder', 'Qte')
-    inputNbResources.setAttribute('id', 'resource-nb-'+SELECT_ID)
-    //title="Enter input here"
-    imgAdd = new Image()
-    imgAdd.src = '../img/plus.png'
-    imgAdd.setAttribute('id', 'img-')
-    imgAdd.setAttribute('onclick', 'addResources('+SELECT_ID+')')
-    imgAdd.setAttribute('title', 'Ajouter la ressource a la liste')
-    imgAdd.style.width = '20px'
-    imgAdd.style.height = '20px'
-    //imgAdd.src = '../'
-    btnPlus = document.createElement('button')
-    btnPlus.setAttribute('type', 'button')
-    btnPlus.innerHTML = '+'
-    btnPlus.setAttribute('title', 'Ajouter la ressource a la liste')
-    btnPlus.setAttribute('id', 'btn-'+SELECT_ID)
-    btnPlus.setAttribute('onclick', 'addResources(this.id)')
-    
-    divAddResources.appendChild(selectResources)
-    divAddResources.appendChild(inputNbResources)
-    divAddResources.appendChild(imgAdd)
-    
-    /* Ajout de tous les enfants a la div parent */
-    divEditActivity.appendChild(divBtnsResources)
-    divEditActivity.appendChild(divResources)
-    divEditActivity.appendChild(divAddResources)
-
-    //
-
-    return divEditActivity
-}
 
 
 function getId(str) {
@@ -607,7 +491,7 @@ function fillHRCList() {
         
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'
@@ -654,7 +538,7 @@ function fillMRCList(id) {
             li.innerText = resourceName +' ('+resourceNb+')'
         
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
+            imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
             imgDelete.setAttribute('title', 'Supprimer la ressource')
             imgDelete.style.width='20px'

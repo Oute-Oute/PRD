@@ -77,6 +77,82 @@ class PathwayController extends AbstractController
         return $materialResourceCategoriesArrayJson;    
     }
 
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
+     */
+    public function pathwayJSON(Pathway $pathway)
+    {
+        $activityRepo = new ActivityRepository($this->getDoctrine());
+        $activitiesOfPathway = $activityRepo->findBy(['pathway' => $pathway]);
+        
+        //$pathwayArray = array();
+        $pathwayArray = array(
+            'id' => $pathway->getId(),
+            'pathwayname' => $pathway->getPathwayname()
+        );
+        //dd($pathwayArray);
+
+        
+        $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
+        $activityMaterialResourceRepo = new ActivityMaterialResourceRepository($this->getDoctrine());
+
+        $activitiesArray = array();
+        foreach ($activitiesOfPathway as $activity) {
+
+            $humanResources = $activityHumanResourceRepo->findBy(['activity' => $activity]);
+            $hrArray = array();
+            foreach ($humanResources as $hr) {
+
+                $hrobject = array(
+                    'id' => $hr->getHumanresourcecategory()->getId(),
+                    'categoryname' => $hr->getHumanresourcecategory()->getCategoryname()
+                );
+                array_push($hrArray, $hrobject);     
+
+            }
+
+            $materialResources = $activityMaterialResourceRepo->findBy(['activity' => $activity]);
+            $mrArray = array();
+
+            foreach ($materialResources as $mr) {
+
+                $mrobject = array(
+                    'id' => $mr->getMaterialresourcecategory()->getId(),
+                    'categoryname' => $mr->getMaterialresourcecategory()->getCategoryname()
+                );
+                array_push($mrArray, $mrobject);
+
+            }
+            $activitiesArray[] = array(
+                'id' => $activity->getId(),
+                'activityname' => $activity->getActivityname(),
+                'humanResources' => $hrArray,
+                'materialResources' =>$mrArray
+            );
+        }
+        
+        $pathwayArray += [ 'activities' => $activitiesArray ];
+/*
+        $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
+
+        $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $materialResourceCategories = $materialResourceCategoryRepo->findAll();
+        $materialResourceCategoriesArray = array();
+
+        if ($materialResourceCategories != null) {
+            foreach ($materialResourceCategories as $materialResourceCategory) {
+                $materialResourceCategoriesArray[] = array(
+                    'id' => strval($materialResourceCategory->getId()),
+                    'categoryname' => $materialResourceCategory->getCategoryname(),
+                );
+            }
+        }*/
+
+        //Conversion des données ressources en json
+        $pathwayJson = new JsonResponse($pathwayArray);
+        return $pathwayJson;    
+    }
+
 
     /**
      * Redirige vers la page qui liste les utilisateurs 
@@ -113,6 +189,41 @@ class PathwayController extends AbstractController
     }
 
 
+    /**
+     * Redirige vers la page d'ajout d'un parcours
+     * route : "/pathway/edit/{id}"
+     */
+    public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, int $id): Response
+    {
+
+        // Méthode GET pour aller vers la page d'ajout d'un parcours 
+        if ($request->getMethod() === 'GET' ) {
+
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+
+            $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
+            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+
+            $pathway = $pathwayRepository->findBy(['id' => $id]);
+            //dd($pathway[0]);
+            $pathwayJson = $this->pathwayJSON($pathway[0]);
+
+            $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
+
+            // création d'un tableau contenant les ressources des activités
+            $resourcesByActivities = array();
+            //for ()
+
+            return $this->render('pathway/edit.html.twig', [
+                'pathway' => $pathway,
+                'pathwayJson' => $pathwayJson,
+                'activitiesByPathways' => $activitiesByPathways,
+                'humanResourceCategories' => $humanResourceCategoriesJson,
+                'materialResourceCategories' => $materialResourceCategoriesJson,
+            ]);
+        }
+            
+    }
 
     /**
      * Redirige vers la page d'ajout d'un parcours
@@ -192,7 +303,7 @@ class PathwayController extends AbstractController
             // On crée l'objet parcours
             $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
-            $pathway->setAvailable(true);
+            //$pathway->setAvailable(true);
 
             // On ajoute le parcours a la bd
             $pathwayRepository->add($pathway, true);
@@ -576,14 +687,45 @@ class PathwayController extends AbstractController
         return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function getDataPathway(ManagerRegistry $doctrine)
+    public function getActivitiesByPathwayId(ManagerRegistry $doctrine)
     {
-        $appointments = $this->getAppointmentByPathwayId($_POST["idPathway"], $doctrine);
-        return new JsonResponse($appointments);
+        if(isset($_POST['idPathway'])){
+            $id = $_POST['idPathway'];
+        }
+        else{
+            return new JsonResponse('');
+        }
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
+        $activities = $doctrine->getManager()->getRepository("App\Entity\Activity")->findBy(["pathway"=>$pathway]);
+        $activityArray=[];
+        foreach ($activities as $activity) {
+            $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findBy(["activitya"=>$activity]);
+            $arraySuccessor = [];
+            foreach($successors as $successor){
+                $arraySuccessor[] = [
+                    'name' => $successor->getActivityb()->getActivityName(),
+                    'delaymin' => $successor->getDelaymin(),
+                    'delaymax' => $successor->getDelaymax(),
+                ];
+            }
+            $activityArray[] = [
+                'name' => $activity->getActivityname(),
+                'duration' => $activity->getDuration(),
+                'successor' => $arraySuccessor,
+            ];
+        }
+
+        return new JsonResponse($activityArray);
     }
 
-    public function getAppointmentByPathwayId($id, ManagerRegistry $doctrine)
+    public function getAppointmentsByPathwayId(ManagerRegistry $doctrine)
     {
+        if(isset($_POST['idPathway'])){
+            $id = $_POST['idPathway'];
+        }
+        else{
+            return new JsonResponse('');
+        }
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
         $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
         $appointmentArray=[];
@@ -598,6 +740,6 @@ class PathwayController extends AbstractController
             }
         }
 
-        return $appointmentArray;
+        return new JsonResponse($appointmentArray);
     }
 }

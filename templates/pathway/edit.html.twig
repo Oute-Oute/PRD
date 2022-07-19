@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des parcours{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">
+{% endblock %}
+
+
+{% block body %}
+
+<div class="index">
+
+
+
+    {#  inputs pour passer les json venant du serveur #}
+    <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
+    <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
+    <input type="hidden" id="json-pathway" value="{{ pathwayJson.content }}">
+
+    <div id="title-pathway">     
+        <h1> Éditer un parcours </h1>
+        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div>
+    </div>
+
+    <form action="{{ path('PathwayAdd') }}" method="post">
+
+        <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
+        <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
+        <input style="display:none;" name="nbactivity" id="nbactivity">
+
+        <div id="pathway-form">
+            <div id="pathway-form-top">
+               <div class="flex-col"> 
+                    <label class="label" for='name'> Nom du parcours </label>        
+                    <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
+                </div>
+            </div>
+
+            <div id="pathway-form-body">
+                <!-- partie gauche - permet de lister les activités -->
+                <div id="create-activity-container">
+                    <label id="lbl-title-create" dclass="label">Création d'une activité</label>
+
+       
+                    <div id="create-activity">
+                        <div class="form-field">
+                            <input type="text" id='input-name' class="input-activity" placeholder="Nom">
+                            <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Durée (min)">
+
+                            <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
+                            <div id="div-edit-activity">
+                                <div id="buttons-resources"> 
+                                    <button id="human-button" onclick="handleHumanButton(this.id)" type="button"> Humaines </button>
+                                    <button id="material-button" onclick="handleMaterialButton(this.id)" type="button"> Materielles </button>
+                                </div>
+                                <div id="div-resources">
+                                    <ul id="list-resources"> </ul>
+                                </div>
+               
+                            </div>
+
+                            <div id="div-add-resources">
+                                <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
+                                <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
+                                <img onclick="addResources()" src="{{ asset('./img/plus.png')}}" title="Ajouter la ressource"> </img>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="container-btn-add-activity" class="flex-row" style=""> 
+                    <!--  style="display:none;"  -->
+                        <button style="display:none;"  type="button" id="btn-cancel-activity"  class="btn-delete btn-secondary" onclick="cancelEditActivity()"> <b> Annuler </b></button>
+                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="addActivity()"> <b> Ajouter une activité > </b> </button> 
+                        <button style="display:none;"  type="button" id="btn-confirm-activity"  class="btn-delete btn-secondary" onclick="confirmEditActivity()"> <b> Valider les modifications </b></button>
+                    </div>
+
+                </div>
+
+                <!-- partie droite - permet d'éditer une activité -->
+                <div id="activities-list">
+                    <label id="name" class="label" for='name'> Liste des activités </label>    
+                    <div id="list">  </div>  
+                </div>
+            </div>
+
+            <div id="pathway-form-footer">
+                <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
+                <button onclick='submitPathway()' type="button" class="btn-valide btn-secondary" > Ajouter le parcours</button>
+                <button style="display:none;" id='submit' type="submit" class="btn-valide btn-secondary" >  </button>
+
+            </div>
+        </div>
+    </form>
+
+
+    <div id="display">
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+        <script src="{{ asset('./JS/jquery-3.6.0.js')}}"></script>
+        <script src="{{ asset('./JS/bootstrap/bootstrap.min.js') }}" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+        <script src="{{ asset('./JS/Pathway/edit_pathway.js') }}"> </script>
+{% endblock %}

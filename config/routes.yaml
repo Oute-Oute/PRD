@@ -135,6 +135,11 @@ PathwayAddPage:
   controller: App\Controller\PathwayController:pathwayAddPage
   methods: [GET]
 
+PathwayEditPage:
+  path: /pathway/edit/{id}
+  controller: App\Controller\PathwayController:pathwayEditPage
+  methods: [GET]
+
 PathwayEdit:
   path: /pathway/edit
   controller: App\Controller\PathwayController:edit
@@ -202,9 +207,14 @@ AjaxPatient:
   controller: App\Controller\PatientController::getDataPatient
   methods: [POST]
 
-AjaxPathway:
-  path: /ajaxPathway
-  controller: App\Controller\PathwayController::getDataPathway
+AjaxPathwayAppointments:
+  path: /ajaxPathwayAppointments
+  controller: App\Controller\PathwayController::getAppointmentsByPathwayId
+  methods: [POST]
+
+AjaxPathwayActivities:
+  path: /ajaxPathwayActivities
+  controller: App\Controller\PathwayController::getActivitiesByPathwayId
   methods: [POST]
 
 AjaxHumanResource:
