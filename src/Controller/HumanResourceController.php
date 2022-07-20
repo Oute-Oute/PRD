@@ -599,11 +599,15 @@ class HumanResourceController extends AbstractController
     public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
     {
         $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-
+        $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
         $em=$this->getDoctrine()->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
+        }
+        $workingHours = $workingHoursRepository->findBy(['humanresource' => $humanResource]);
+        for($indexWorkingHour = 0; $indexWorkingHour < count($workingHours); $indexWorkingHour++) {
+            $em->remove($workingHours[$indexWorkingHour]);
         }
         $em->flush();
         $humanResourceRepository->remove($humanResource, true);
