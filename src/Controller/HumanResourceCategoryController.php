@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\HumanResourceCategory;
+use App\Repository\CategoryOfHumanResourceRepository;
 use App\Form\HumanResourceCategoryType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\HumanResourceCategoryRepository;
@@ -75,6 +76,7 @@ class HumanResourceCategoryController extends AbstractController
      */
     public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
     {
+        
         if ($this->isCsrfTokenValid('delete'.$humanResourceCategory->getId(), $request->request->get('_token'))) {
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
         }

@@ -66,6 +66,7 @@ function showInfosPathway(idPathway, name) {
         dataType : "json",
         success : function(data){        
            console.log(data);
+           //drawActivities(data);
         },
         error: function(data){
             console.log("error : can't access activities");
@@ -117,6 +118,15 @@ function change_tab(id)
         appointments.style.display = 'block';
     break;
   }
+}
+
+function drawActivities(data){
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width;
+    for(i = 0; i < data.length; i++){
+
+    }
 }
 
 /**
@@ -233,11 +243,13 @@ function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*divActivitiesList.innerHTML = ''
+    /*
+    divActivitiesList.innerHTML = ''
     let label = document.createElement('label')
     label.setAttribute('class', 'label')
     label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)*/
+    divActivitiesList.appendChild(label)
+    */
 
     let indexActivityAvailable = 0
 

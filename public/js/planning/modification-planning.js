@@ -1740,6 +1740,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       }
     }
     else{
+       var div = document.createElement('div');
+       div.setAttribute('class', 'alert alert-success');
+       div.setAttribute('role','alert'); 
+       div.setAttribute('style','text-align: center');
+       var message= document.createElement('message').innerHTML="Aucune erreur détectée."; 
+       div.append(message);
+       document.getElementById('lateral-panel-bloc').appendChild(div);
+
       updateColorErrorButton(false); 
     }
   }

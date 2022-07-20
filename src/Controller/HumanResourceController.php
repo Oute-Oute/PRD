@@ -34,10 +34,12 @@ class HumanResourceController extends AbstractController
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
         $workingHours = $this->listWorkingHoursJSON();
+        $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON();
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
+            'categoriesByHumanResources' => $categoriesByHumanResources
         ]); 
     }
 
@@ -64,6 +66,31 @@ class HumanResourceController extends AbstractController
         $workingHoursArrayJson = new JsonResponse($workingHoursArray);
         return $workingHoursArrayJson;    
     }
+
+
+        /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listCategoriesByHumanResourcesJSON()
+    {
+        $categoriesByHumanResourcesRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+        $categoriesByHumanResources = $categoriesByHumanResourcesRepository->findAll();
+        $categoriesByHumanResourcesArray = array();
+
+        if ($categoriesByHumanResources != null) {
+            foreach ($categoriesByHumanResources as $category) {
+                $categoriesByHumanResourcesArray[] = array('id' => strval($category->getId()),
+                    'humanresource_id' => $category->getHumanresource()->getId(),
+                    'humanresourcecategory_id' => $category->getHumanresourcecategory()->getId()               
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $categoriesByHumanResourcesArrayJson = new JsonResponse($categoriesByHumanResourcesArray);
+        return $categoriesByHumanResourcesArrayJson;    
+    }
+
+   
 
     
 
@@ -571,6 +598,14 @@ class HumanResourceController extends AbstractController
      */
     public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
     {
+        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+
+        $em=$this->getDoctrine()->getManager();
+        $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
+        for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+            $em->remove($categsOfResources[$indexCategOf]);
+        }
+        $em->flush();
         $humanResourceRepository->remove($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
