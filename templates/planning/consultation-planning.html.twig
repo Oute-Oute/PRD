@@ -52,15 +52,15 @@
 			<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
 			<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 			<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
-			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom">
-				<option value="02:00:00">Zoom : 2H</option>
-				<option value="01:00:00">Zoom : 1H</option>
-				<option value="0:40:00">Zoom : 40min</option>
-				<option value='00:20:00' selected>Zoom : 20min (Default)</option>
-				<option value="00:10:00">Zoom : 10min</option>
-				<option value="00:05:00">Zoom : 5min</option>
-				<option value="00:03:00">Zoom : 1min</option>
-			</select>
+			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
+			<option value="02:00:00">Zoom : 12,5%</option>
+			<option value="01:00:00">Zoom : 25%</option>
+			<option value="0:40:00">Zoom : x50%</option>
+			<option value='00:20:00' selected>Zoom : 100% (Default)</option>
+			<option value="00:10:00">Zoom : 200%</option>
+			<option value="00:05:00">Zoom : 400%</option>
+			<option value="00:02:30">Zoom : 800%</option>
+		</select>
 		</div>
 	</div>
 
