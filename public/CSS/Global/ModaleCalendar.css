@@ -1,0 +1,38 @@
+.fc-scrollgrid-sync-inner{
+  background-color: var(--main-blue);
+  border-radius: 5px;
+  }
+  #calendar-appointment,#calendar-hr,#calendar-mr{
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+  }
+  .calendar-container{
+    width: 100%;
+    height: auto;
+    padding-right: 50px;
+    padding-left: 50px;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+    position: relative;
+  }
+  .btn-calendar-edit{
+    margin-top : 10px;
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    margin-left : 10px;
+    margin-bottom : 5px;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    fill:white;
+    background-color:var(--main-blue); 
+    color: #ffffff;
+  }
+  .btn-calendar-edit:hover{
+    background : #0057A8;
+    border : 1px solid #002242;
+  }

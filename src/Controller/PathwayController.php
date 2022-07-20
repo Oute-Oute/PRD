@@ -81,7 +81,7 @@ class PathwayController extends AbstractController
     }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
+     * Permet de créer un objet json a partir d'une entité de type pathway
      */
     public function pathwayJSON(Pathway $pathway)
     {
@@ -108,10 +108,10 @@ class PathwayController extends AbstractController
 
                 $hrobject = array(
                     'id' => $hr->getHumanresourcecategory()->getId(),
-                    'categoryname' => $hr->getHumanresourcecategory()->getCategoryname()
+                    'name' => $hr->getHumanresourcecategory()->getCategoryname(),
+                    'nb' => $hr->getQuantity()
                 );
                 array_push($hrArray, $hrobject);     
-
             }
 
             $materialResources = $activityMaterialResourceRepo->findBy(['activity' => $activity]);
@@ -121,7 +121,8 @@ class PathwayController extends AbstractController
 
                 $mrobject = array(
                     'id' => $mr->getMaterialresourcecategory()->getId(),
-                    'categoryname' => $mr->getMaterialresourcecategory()->getCategoryname()
+                    'name' => $mr->getMaterialresourcecategory()->getCategoryname(),
+                    'nb' => $mr->getQuantity()
                 );
                 array_push($mrArray, $mrobject);
 
@@ -129,8 +130,9 @@ class PathwayController extends AbstractController
             $activitiesArray[] = array(
                 'id' => $activity->getId(),
                 'activityname' => $activity->getActivityname(),
-                'humanResources' => $hrArray,
-                'materialResources' =>$mrArray
+                'activityduration' => $activity->getDuration(),
+                'humanResourceCategories' => $hrArray,
+                'materialResourceCategories' =>$mrArray
             );
         }
         
@@ -435,97 +437,132 @@ class PathwayController extends AbstractController
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
             
+            $em=$this->getDoctrine()->getManager();
+
+
+            //$em->remove($activitiesInPathway[$indexActivity]);
+            //$em->flush();
+
+            // Création de tous les repository
+            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $successorRepository = new SuccessorRepository($this->getDoctrine());
+            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
+            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
+            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+
+
             // On recupere toutes les données de la requete
             $param = $request->request->all();
-            //dd($param);
 
-            // On récupère l'objet parcours que l'on souhaite modifier grace a son id
-            $pathwayRepository = new PathwayRepository($this->getDoctrine());
-            $pathway = $pathwayRepository->findById($param['pathwayid'])[0];
+            // On recupere le json qui contient la liste de ressources par activités 
+            // et on le transforme en tableau PHP
+            $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+            //dd($resourcesByActivities);
+
+
+            // Premierement on s'occupe d'ajouter le parcours dans la bd :
+            
+            // On crée l'objet parcours
+            $pathway = new Pathway();
             $pathway->setPathwayname($param['pathwayname']);
             //$pathway->setAvailable(true);
 
             // On ajoute le parcours a la bd
-            $pathwayRepository->add($pathway, true);
+            $em->flush();
+
+            //dd($resourcesByActivities);
 
             // On s'occupe ensuite ds liens entre le parcours et les activités :
 
             // On récupère toutes les activités
-            $activityRepository = new ActivityRepository($this->getDoctrine());
-            $successorRepository = new SuccessorRepository($this->getDoctrine());
             $activities = $activityRepository->findAll();
 
-            // On supprime toutes les activités et leurs successor
-            $em=$this->getDoctrine()->getManager();
-            $activitiesInPathway = $activityRepository->findBy(['pathway' => $pathway]);
-            
-            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
-
-                $successorsa = $successorRepository->findBy(['activitya' => $activitiesInPathway[$indexActivity]]);
-                for ($indexSuccessora = 0; $indexSuccessora < count($successorsa); $indexSuccessora++) {
-                    $em->remove($successorsa[$indexSuccessora]);
-                }
-
-                $successorsb = $successorRepository->findBy(['activityb' => $activitiesInPathway[$indexActivity]]);
-                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
-                    $em->remove($successorsa[$indexSuccessorb]);
-                }
-                $em->flush();
-
-               // $em->remove($activitiesInPathway[$indexActivity]);
-            }
-            for ($indexActivity = 0; $indexActivity < count($activitiesInPathway); $indexActivity++) {
-                $em->remove($activitiesInPathway[$indexActivity]);
-                $em->flush();
-
-            }
-            //$em->flush();
-
-            //dd($activityRepository->findAll());
-
             // On récupère le nombre d'activité
-            $nbActivity = $param['nbactivity'];
+            $nbActivity = count($resourcesByActivities);
+            //var_dump($nbActivity);
+            //dd($resourcesByActivities);
 
-            //$activityArray = array();
             if ($nbActivity != 0) {
-                $activity_old = new Activity();      
                 
-                $activity_old->setActivityname($param["name-activity-0"]);
-                $activity_old->setDuration($param[ "duration-activity-0"]);
-                $activity_old->setPathway($pathway);
+                $firstActivityAvailableFound = false;
+                for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
 
-                $activityRepository->add($activity_old, true);
+                    if ($resourcesByActivities[$indexActivity]->available) {
+                        
+                        $activity = new Activity();
 
-                for($i = 1; $i < $nbActivity; $i++)
-                {
-                    $activity = new Activity();
-                    $strName = "name-activity-" . $i;
-                    $strDuration = "duration-activity-" . $i;
-    
-                    $activity->setActivityname($param[$strName]);
-                    $activity->setDuration($param[$strDuration]);
-                    $activity->setPathway($pathway);
-        
-                    $activityRepository->add($activity, true);
-    
-                    $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
+                        // On verifie si l'activité exsite déjà (si son id est different de -1)
+                        if ($resourcesByActivities[$indexActivity]->id == -1) {
+                            $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
 
-                    //dd($activity);
+                            // Création de l'activité
+                            $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                            $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
+                            $activity->setPathway($pathway);
+                            $activityRepository->add($activity, true);
+
+                        } else {
+                            // Dans le cas ou l'activité existe déjà
+                            $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
+
+                            // Création de l'activité
+                            $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                            $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
+                            //$activity->setPathway($pathway);
+                            $em->flush();
+            
+                        }
+
+
+                        // Ajout des liens activity - ressources humaines
+                        
+                        $nbHRC = count($resourcesByActivities[$indexActivity]->humanResourceCategories);
                     
-                    $successor = new Successor();
-    
-                    //if  ($i < ($nbActivity - 1)) {
-                    $successor->setActivitya($activity_old);
-                    $successor->setActivityb($activity);
-                    $successor->setDelaymin(0);
-                    $successor->setDelaymax(1);
-                    $successorRepository->add($successor, true);
-                   //}
+                        if ($nbHRC != 0) {
+                            for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
 
-                    $activity_old = $activityRepository->findById($activity->getId())[0];
+                                // Premierement on recupere la categorie de la bd
+                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                                                
+                                // Ensuite on crée l'objet ActivityMaterialResource
+                                $activityHumanResource = new ActivityHumanResource();
+                                $activityHumanResource->setActivity($activity);
+                                $activityHumanResource->setHumanresourcecategory($HRC);
+                                $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                                                
+                                // Puis on l'ajoute dans la bd
+                                $AHRRepository->add($activityHumanResource , true);
+                            }
+                        }
+                    
+
+                        // Ajout des liens activity - ressources materielles
+                        
+                        $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
+                    
+                        if ($nbMRC != 0) {
+                            for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
+
+                                // Premierement on recupere la categorie de la bd
+                                $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                
+                                // Ensuite on crée l'objet ActivityMaterialResource
+                                $activityMaterialResource = new ActivityMaterialResource();
+                                $activityMaterialResource->setActivity($activity);
+                                $activityMaterialResource->setMaterialresourcecategory($MRC);
+                                $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                
+                                // Puis on l'ajoute dans la bd
+                                $AMRRepository->add($activityMaterialResource , true);
+                            }
+                        }
+
+                    }
 
                 }
             }
+         
             
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }

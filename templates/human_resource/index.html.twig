@@ -4,6 +4,8 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+    <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+        <link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
 {% endblock %}
 
 {% block javascripts %}
@@ -12,6 +14,7 @@
     <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
     <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
     <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
+    <script src='js/fullcalendar-scheduler/lib/main.js'></script>
 {% endblock %}
 {% block body %}
 <div id="main_content">
@@ -19,6 +22,8 @@
 <li class="notselected" id="categories" onclick="change_tab_human(this.id);">Catégories</li>
 <div class = "index" id="both-tables">
 <input id = "working-hours-content" style = "display : none" value = "{{workingHours.content}}">
+<input id = "categories-by-human-resource" style = "display : none" value = "{{categoriesByHumanResources.content}}">
+
 <div id = 'list-human-resources'>
     <h1>Liste des ressources humaines</h1>
         <button class ="btn-add" onclick="showNewHumanModalForm()"> Ajouter une nouvelle ressource humaine </button>

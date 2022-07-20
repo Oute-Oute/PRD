@@ -10,17 +10,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\Date;
 
 class AppointmentController extends AbstractController
 {
     public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
+        
         global $date;
         $date = date(('Y-m-d'));
         if (isset($_GET["date"])) {
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
         }
+
         $currentDateTime = new \DateTime($date);
         $patientsJSON=$this->getPatientsJSON($doctrine);
         $pathwaysJSON=$this->getPathwaysJSON($doctrine);
@@ -78,7 +81,7 @@ class AppointmentController extends AbstractController
         //parse_str($nameParsed[0], $nameParsed);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-        $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
+        $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', $param['dayappointment'].' '."00:00:00");
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
 
@@ -104,7 +107,7 @@ class AppointmentController extends AbstractController
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-        $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']);
+        $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']." 00:00:00");
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
 
@@ -165,10 +168,12 @@ class AppointmentController extends AbstractController
 
     public function getTargets(ManagerRegistry $doctrine, AppointmentRepository $AR)
     {
-        global $date;
+        $date = new \DateTime();
+        if (isset($_POST["date"])) {
+            $date = \DateTime::createFromFormat('Y-m-d', $_POST["date"]);
+        }
         $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
-        $appointments= $this->getAppointmentByPathwayByFirstDate($AR,$pathway, $date);
-        $targets = $this->getTargetByPathwayJSON($doctrine, $pathway);
+        $targets = $this->getTargetByPathwayJSON($doctrine, $pathway, $AR, $date);
         return new JsonResponse($targets);
     }
 
@@ -177,31 +182,95 @@ class AppointmentController extends AbstractController
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findBy(["pathwayname"=>$name]);
         return $pathway;
     }
-    public function getAppointmentByPathwayByFirstDate(AppointmentRepository $AR, $pathway, $date)
-    {
-        $appointments = $AR->getNumberOfAppointmentByPathwayByFirstDate($pathway, $date);
-        return $appointments;
-    }
 
-    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway)
+    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway, AppointmentRepository $AR, $date)
     {
         $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
         $targetsJSON = [];
-        $targetsJSON[] = [
-            'id' => '',
-            'start'=> '2022-07-18',
-            'end'=> '2022-07-18',
-            'target' => '1',
-            'color' => '#FF0000',
-        ];
-        $targetsJSON = [
-            'id' => '',
-            'start'=> '2022-07-19',
-            'end'=> '2022-07-19',
-            'target' => '1',
-            'color' => '#FF0000',
-        ];
-        
+        $month=$date->format('m');
+        $year=$date->format('Y');
+        $numberOfDay=0;
+        switch($month){
+            case '02':
+                if($year%4==0){
+                    $numberOfDay=29;
+                }
+                else{
+                    $numberOfDay=28;
+                }
+                break;
+            case '04':
+            case '06':
+            case '09':
+            case '11':
+                $numberOfDay=30;
+                break;
+            default:
+                $numberOfDay=31;
+                break;
+        }
+        $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
+        $targetsByDay = [];
+        foreach($targets as $target)
+        {
+            $targetsByDay[$target->getDayweek()] = $target->getTarget();
+        }
+        for ($i = 1; $i <= $numberOfDay; $i++) {
+            if($i<10){
+                $i="0".$i;
+            }
+            $datestr=$year."-".$month."-".$i;
+            $dateToGet=new \DateTime($datestr);
+            $dayWeek = date('w', $dateToGet->getTimestamp());
+            $dateToGet=$dateToGet->format('Y-m-d');
+            $nbrOfAppt=$AR->getNumberOfAppointmentByPathwayByDate($pathway, $dateToGet);
+            if($nbrOfAppt>0){
+                if(array_key_exists($dayWeek, $targetsByDay)){
+                    if($targetsByDay[$dayWeek]>=$nbrOfAppt){
+                    $color="#ff0000";
+                    }
+                    else{
+                        $color="#ffff00";
+                    }
+                    $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
+                    $targetsJSON[] = [
+                        'color' => $color,
+                        'description' => $ratioTarget,
+                        'start' => $datestr."T00:00:00",
+                        'end' => $datestr."T23:59:59"
+                    ];
+                }
+                else{
+                    $ratioTarget=$nbrOfAppt."/--";
+                    $targetsJSON[] = [
+                        'color' => '#FF0000',
+                        'description' => $ratioTarget,
+                        'start' => $datestr."T00:00:00",
+                        'end' => $datestr."T23:59:59"
+                    ];
+                }
+            }
+            else{
+                if(array_key_exists($dayWeek, $targetsByDay)){
+                    $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
+                    $targetsJSON[] = [
+                        'color' => '#00FF00',
+                        'description' => $ratioTarget,
+                        'start' => $datestr."T00:00:00",
+                        'end' => $datestr."T23:59:59"
+                    ];
+                }
+                else{
+                    $ratioTarget=$nbrOfAppt."/--";
+                    $targetsJSON[] = [
+                        'color' => '#0000FF',
+                        'description' => $ratioTarget,
+                        'start' => $datestr."T00:00:00",
+                        'end' => $datestr."T23:59:59"
+                    ];
+                }
+            }
+        }
         
         return $targetsJSON;
     }

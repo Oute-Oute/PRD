@@ -243,11 +243,13 @@ function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*divActivitiesList.innerHTML = ''
+    /*
+    divActivitiesList.innerHTML = ''
     let label = document.createElement('label')
     label.setAttribute('class', 'label')
     label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)*/
+    divActivitiesList.appendChild(label)
+    */
 
     let indexActivityAvailable = 0
 
@@ -283,9 +285,9 @@ function fillActivityList() {
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
             
-            pindex = document.createElement('p')
+            /*pindex = document.createElement('p')
             pindex.innerText = indexActivity
-            activity.appendChild(pindex)
+            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)

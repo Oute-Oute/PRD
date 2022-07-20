@@ -22,6 +22,7 @@
         }
         });
         
+    createCalendarResource("humanresource");
     getWorkingHours(idHumanResource);
     change_tab_human_infos('planning');
     $('#infos-human-resource-modal').modal("show");
@@ -68,7 +69,7 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
             console.log("error");
         }
         });
-
+        createCalendarResource("materialresource");
     change_tab_material_infos('planning');
     $('#infos-material-resource-modal').modal("show");
 }
@@ -252,3 +253,49 @@ function change_tab_material_infos(id)
     break;
   }
 }
+
+/**
+ * @brief This function is called when we want to create or recreate the calendar
+ * @param {*} resources the type of resources to display (Patients, Resources...)
+ */
+ function createCalendarResource(type) {
+    console.log("createCalendarResource");
+    date = new Date(); //create a new date with the date in the hidden input
+    var calendarEl = document.getElementById("calendar-hr"); //create the calendar variable
+
+    //create the calendar
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
+        timeZone: 'UTC',
+    initialView: 'timeGridWeek',
+    headerToolbar: {
+        left: '',
+        center: '',
+        right: ''
+    },
+    events: 'https://fullcalendar.io/api/demo-feeds/events.json',
+      eventDidMount: function (info) {
+        $(info.el).tooltip({
+          //title: info.event.extendedProps.description,
+          placement: "top",
+          trigger: "hover",
+          container: "body",
+        });
+      },
+    });
+    calendar.render(); //render the calendar
+}   
+  function addTargetsToCalendar(targets) {
+    targets.forEach(element => {
+      calendar.addEvent({
+        allDay: true,
+        start: element.start,
+        description: element.description,
+        display:'background',
+        color:element.color,
+  
+    });
+    
+  });
+  calendar.render();
+  }

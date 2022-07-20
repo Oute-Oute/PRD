@@ -2,9 +2,12 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES
-var MATERIAL_RESOURCE_CATEGORIES
+var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
+var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
+
 var RESOURCES_BY_ACTIVITIES = new Array()
+var PATHWAY
+
 var ACTIVITY_IN_PROGRESS
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
@@ -24,18 +27,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("json-material-resource-categories").value
     );
 
-    A = JSON.parse(
+    PATHWAY = JSON.parse(
         document.getElementById("json-pathway").value
     );
     console.log('oui oui')
-    console.log(A)
+    console.log(PATHWAY)
 
-    //document.getElementById('pathwayname').value = 
+    document.getElementById('pathwayid').value = PATHWAY.id
+    console.log('non non')
+
+    console.log(document.getElementById('pathwayid').value)
+    document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
 
     //addActivity() 
     initActivity()
     handleHumanButton()
+    initActivitiesList()
     fillActivityList()
 
     // calcul de la taille de la liste
@@ -46,6 +54,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })
 
+
+function initActivitiesList() {
+    //console.log(PATHWAY.activities)
+    for (let i = 0; i < PATHWAY.activities.length; i++) {
+        RESOURCES_BY_ACTIVITIES[i] = new Object()
+        RESOURCES_BY_ACTIVITIES[i].humanResourceCategories = PATHWAY.activities[i].humanResourceCategories
+        RESOURCES_BY_ACTIVITIES[i].materialResourceCategories = PATHWAY.activities[i].materialResourceCategories
+        RESOURCES_BY_ACTIVITIES[i].available = true 
+
+        let len = RESOURCES_BY_ACTIVITIES[i].humanResourceCategories.length
+        for (let indexHR = 0; indexHR < len; indexHR++) {
+            RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].already = true
+        }
+        let len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
+        for (let indexMR = 0; indexMR < len; indexMR++) {
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].already = true
+        }
+        /*
+        for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
+            let res = new Object();
+            res.id = PATHWAY.activities[i].materialResourceCategories[indexMR].id
+            res.name = PATHWAY.activities[i].materialResourceCategories[indexMR].name
+            res.nb = PATHWAY.activities[i].materialResourceCategories[indexMR].nb
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.push(res)
+        
+        }
+        */
+        RESOURCES_BY_ACTIVITIES[i].id = PATHWAY.activities[i].id
+        RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
+        RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
+    }
+   
+    console.log('TABLEAU')
+    console.log(RESOURCES_BY_ACTIVITIES)
+
+}
 
 /**
  * Permet d'afficher la fenêtre modale d'informations
@@ -127,7 +171,6 @@ function addArray() {
     RESOURCES_BY_ACTIVITIES[len].materialResourceCategories = new Array()
     RESOURCES_BY_ACTIVITIES[len].available = true
 
-
     for (let indexHR = 0; indexHR < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHR++) {
         let res = new Object();
         res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].id
@@ -136,7 +179,6 @@ function addArray() {
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
-
     for (let indexMR = 0; indexMR < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMR++) {
         let res = new Object();
         res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].id
@@ -144,8 +186,10 @@ function addArray() {
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
+
     RESOURCES_BY_ACTIVITIES[len].activityname = document.getElementById('input-name').value
     RESOURCES_BY_ACTIVITIES[len].activityduration = document.getElementById('input-duration').value
+    RESOURCES_BY_ACTIVITIES[len].id = Number(-1)
 }
 
 /**
@@ -155,10 +199,6 @@ function addArray() {
 function addActivity() {
 
     let verif = true
-
-    console.log('verif ok confirm')
-    console.log(document.getElementById('input-name').value)
-    console.log(document.getElementById('input-duration').value)
 
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
@@ -172,27 +212,28 @@ function addActivity() {
 
     if (verif) {
         if (IS_EDIT_MODE) {
-            console.log('verif ok confirm')
-            console.log(document.getElementById('input-name').value)
+            //console.log('verif ok confirm')
+            //console.log(document.getElementById('input-name').value)
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
             fillActivityList()
 
         } else {
-        // ajout de l'activité au tableau
-        addArray()
-        NB_ACTIVITY = NB_ACTIVITY + 1;
-        document.getElementById('nbactivity').value = NB_ACTIVITY
+            // ajout de l'activité au tableau
+            addArray()
+            //console.log(RESOURCES_BY_ACTIVITIES)
+            NB_ACTIVITY = NB_ACTIVITY + 1;
+            document.getElementById('nbactivity').value = NB_ACTIVITY
 
-        // on reinitialise les champs 
-        ACTIVITY_IN_PROGRESS = new Object()
-        ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.available = true
-        ACTIVITY_IN_PROGRESS.btnHM = 'human'
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-        handleHumanButton()
+            // on reinitialise les champs 
+            ACTIVITY_IN_PROGRESS = new Object()
+            ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.available = true
+            ACTIVITY_IN_PROGRESS.btnHM = 'human'
+            document.getElementById('input-name').value = ''
+            document.getElementById('input-duration').value = ''
+            handleHumanButton()
         }
         fillActivityList()
         return 1
@@ -248,9 +289,9 @@ function fillActivityList() {
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
             
-            pindex = document.createElement('p')
+           /* pindex = document.createElement('p')
             pindex.innerText = indexActivity
-            activity.appendChild(pindex)
+            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)
@@ -293,7 +334,7 @@ function deleteSelect(id) {
     //SELECT_ID = SELECT_ID - 1;
     fillActivityList()
 }
-
+ 
 
 /**
  * Permet de modifier une activité  
@@ -440,7 +481,8 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-    
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
+
         fillHRCList()
     } else {
         // ! Si le bouton material est activé !
@@ -460,6 +502,7 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
     
         fillMRCList()
     }

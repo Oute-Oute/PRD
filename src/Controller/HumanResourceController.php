@@ -34,10 +34,12 @@ class HumanResourceController extends AbstractController
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
         $workingHours = $this->listWorkingHoursJSON();
+        $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON();
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
+            'categoriesByHumanResources' => $categoriesByHumanResources
         ]); 
     }
 
@@ -64,6 +66,33 @@ class HumanResourceController extends AbstractController
         $workingHoursArrayJson = new JsonResponse($workingHoursArray);
         return $workingHoursArrayJson;    
     }
+
+
+        /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listCategoriesByHumanResourcesJSON()
+    {
+        $categoriesByHumanResourcesRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+        $categoriesByHumanResources = $categoriesByHumanResourcesRepository->findAll();
+        $categoriesByHumanResourcesArray = array();
+
+        if ($categoriesByHumanResources != null) {
+            foreach ($categoriesByHumanResources as $category) {
+                $categoriesByHumanResourcesArray[] = array('id' => strval($category->getId()),
+                    'humanresource_id' => $category->getHumanresource()->getId(),
+                    'humanresourcecategory_id' => $category->getHumanresourcecategory()->getId()               
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $categoriesByHumanResourcesArrayJson = new JsonResponse($categoriesByHumanResourcesArray);
+        return $categoriesByHumanResourcesArrayJson;    
+    }
+
+   
+
+    
 
     /**
      * @Route("/new", name="app_human_resource_new", methods={"GET", "POST"})
@@ -261,110 +290,168 @@ class HumanResourceController extends AbstractController
             // On supprime toutes les activités et leurs successor
             $em=$this->getDoctrine()->getManager();
             $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
-                for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
-                    $em->remove($categsOfResources[$indexCategOf]);
-                }
-                $em->flush();
+            for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+                $em->remove($categsOfResources[$indexCategOf]);
             }
+            $em->flush();
+        
 
             // On récupère le nombre de catégories
             $nbCategories = $param['nbcategory'];
             for($j = 0; $j <= 6; $j++) {
                 switch ($j) {
                     case 0:
-                        if(($sunday[0] != ':00') && ($sunday[1] != ':00')){
-                            $workingHoursSunday = new WorkingHours();
-                            $sunday0 = DateTime::createFromFormat('H:i:s', $sunday[0]);
-                            $sunday1 = DateTime::createFromFormat('H:i:s', $sunday[1]);
-                            $workingHoursSunday->setStarttime($sunday0);
-                            $workingHoursSunday->setEndtime($sunday1);
-                            $workingHoursSunday->setHumanresource($humanResource);
-                            $workingHoursSunday->setDayweek($j);
-                            $workingHoursRepository->add($workingHoursSunday, true);
+                        $workingHoursRepoSunday = $workingHoursRepository->findBy(
+                            ['dayweek' => 0, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoSunday) == 0) {
+
+                            if(($sunday[0] != ':00') && ($sunday[1] != ':00')){
+                                $workingHoursSunday = new WorkingHours();
+                                $sunday0 = DateTime::createFromFormat('H:i:s', $sunday[0]);
+                                $sunday1 = DateTime::createFromFormat('H:i:s', $sunday[1]);
+                                $workingHoursSunday->setStarttime($sunday0);
+                                $workingHoursSunday->setEndtime($sunday1);
+                                $workingHoursSunday->setHumanresource($humanResource);
+                                $workingHoursSunday->setDayweek($j);
+                                $workingHoursRepository->add($workingHoursSunday, true);
+                            }
+
                         }
                         else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 0, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
+                            if(($sunday[0] != ':00') && ($sunday[1] != ':00')){
+                                $workingHoursUpdateSunday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoSunday[0]->getId());
+                                $sunday0 = DateTime::createFromFormat('H:i:s', $sunday[0]);
+                                $sunday1 = DateTime::createFromFormat('H:i:s', $sunday[1]);
+                                $workingHoursUpdateSunday->setStarttime($sunday0);
+                                $workingHoursUpdateSunday->setEndtime($sunday1);
+                                $workingHoursUpdateSunday->setHumanresource($humanResource);
+                                $workingHoursUpdateSunday->setDayweek($j);
+                                $em->flush();       
+                            }
+                            else {
+                                $em=$this->getDoctrine()->getManager();
+                                $em->remove($workingHoursRepoSunday[0]);
+                                $em->flush();
                             }
                         }
                         break;
                     case 1:
-                        if(($monday[0] != ':00') && ($monday[1] != ':00')){
-                            $workingHoursMonday = new WorkingHours();
-                            $monday0 = DateTime::createFromFormat('H:i:s', $monday[0]);
-                            $monday1 = DateTime::createFromFormat('H:i:s', $monday[1]);
-                            $workingHoursMonday->setStarttime($monday0);
-                            $workingHoursMonday->setEndtime($monday1);
-                            $workingHoursMonday->setHumanresource($humanResource);
-                            $workingHoursMonday->setDayweek($j);
-                            $workingHoursRepository->add($workingHoursMonday, true);
+                        $workingHoursRepoMonday = $workingHoursRepository->findBy(
+                            ['dayweek' => 1, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoMonday) == 0) {
+
+                            if(($monday[0] != ':00') && ($monday[1] != ':00')){
+                                $workingHoursMonday = new WorkingHours();
+                                $monday0 = DateTime::createFromFormat('H:i:s', $monday[0]);
+                                $monday1 = DateTime::createFromFormat('H:i:s', $monday[1]);
+                                $workingHoursMonday->setStarttime($monday0);
+                                $workingHoursMonday->setEndtime($monday1);
+                                $workingHoursMonday->setHumanresource($humanResource);
+                                $workingHoursMonday->setDayweek($j);
+                                $workingHoursRepository->add($workingHoursMonday, true);
+                            }
+
                         }
                         else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 1, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
+                            if(($monday[0] != ':00') && ($monday[1] != ':00')){
+                                $workingHoursUpdateMonday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoMonday[0]->getId());
+                                $monday0 = DateTime::createFromFormat('H:i:s', $monday[0]);
+                                $monday1 = DateTime::createFromFormat('H:i:s', $monday[1]);
+                                $workingHoursUpdateMonday->setStarttime($monday0);
+                                $workingHoursUpdateMonday->setEndtime($monday1);
+                                $workingHoursUpdateMonday->setHumanresource($humanResource);
+                                $workingHoursUpdateMonday->setDayweek($j);
+                                $em->flush();       
+                            }
+                            else {
+                                $em=$this->getDoctrine()->getManager();
+                                $em->remove($workingHoursRepoMonday[0]);
+                                $em->flush();
                             }
                         }
                         break;
                     case 2:
+                        $workingHoursRepoTuesday = $workingHoursRepository->findBy(
+                            ['dayweek' => 2, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoTuesday) == 0) {
 
-                        if(($tuesday[0] != ':00') && ($tuesday[1] != ':00')){
-                            $workingHoursTuesday = new WorkingHours();
+                            if(($tuesday[0] != ':00') && ($tuesday[1] != ':00')){
+                                $workingHoursTuesday = new WorkingHours();
+                                $tuesday0 = DateTime::createFromFormat('H:i:s', $tuesday[0]);
+                                $tuesday1 = DateTime::createFromFormat('H:i:s', $tuesday[1]);
+                                $workingHoursTuesday->setStarttime($tuesday0);
+                                $workingHoursTuesday->setEndtime($tuesday1);
+                                $workingHoursTuesday->setHumanresource($humanResource);
+                                $workingHoursTuesday->setDayweek($j);
+                                $workingHoursRepository->add($workingHoursTuesday, true);
+                            }
+                        }
+                        else {
+                            if(($tuesday[0] != ':00') && ($tuesday[1] != ':00')){
+                            $workingHoursUpdateTuesday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoTuesday[0]->getId());
                             $tuesday0 = DateTime::createFromFormat('H:i:s', $tuesday[0]);
                             $tuesday1 = DateTime::createFromFormat('H:i:s', $tuesday[1]);
-                            $workingHoursTuesday->setStarttime($tuesday0);
-                            $workingHoursTuesday->setEndtime($tuesday1);
-                            $workingHoursTuesday->setHumanresource($humanResource);
-                            $workingHoursTuesday->setDayweek($j);
-                            $workingHoursRepository->add($workingHoursTuesday, true);
+                            $workingHoursUpdateTuesday->setStarttime($tuesday0);
+                            $workingHoursUpdateTuesday->setEndtime($tuesday1);
+                            $workingHoursUpdateTuesday->setHumanresource($humanResource);
+                            $workingHoursUpdateTuesday->setDayweek($j);
+                            $em->flush();       
                         }
                         else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 2, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
                             $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
+                            $em->remove($workingHoursRepoTuesday[0]);
                             $em->flush();
-                            }
                         }
-                        break;
+                    }
+                    break;
                     case 3:
-                        if(($wednesday[0] != ':00') && ($wednesday[1] != ':00')){
-                            $workingHoursWednesday = new WorkingHours();
-                            $wednesday0 = DateTime::createFromFormat('H:i:s', $wednesday[0]);
-                            $wednesday1 = DateTime::createFromFormat('H:i:s', $wednesday[1]);
-                            $workingHoursWednesday->setStarttime($wednesday0);
-                            $workingHoursWednesday->setEndtime($wednesday1);
-                            $workingHoursWednesday->setHumanresource($humanResource);
-                            $workingHoursWednesday->setDayweek($j);
-                            $workingHoursRepository->add($workingHoursWednesday, true);
+                        $workingHoursRepoWednesday = $workingHoursRepository->findBy(
+                            ['dayweek' => 3, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoWednesday) == 0) {
+                            if(($wednesday[0] != ':00') && ($wednesday[1] != ':00')){
+                                $workingHoursWednesday = new WorkingHours();
+                                $wednesday0 = DateTime::createFromFormat('H:i:s', $wednesday[0]);
+                                $wednesday1 = DateTime::createFromFormat('H:i:s', $wednesday[1]);
+                                $workingHoursWednesday->setStarttime($wednesday0);
+                                $workingHoursWednesday->setEndtime($wednesday1);
+                                $workingHoursWednesday->setHumanresource($humanResource);
+                                $workingHoursWednesday->setDayweek($j);
+                                $workingHoursRepository->add($workingHoursWednesday, true);
+                            }
+
                         }
                         else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 3, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
+                            if(($wednesday[0] != ':00') && ($wednesday[1] != ':00')){
+                                $workingHoursUpdateWednesday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoWednesday[0]->getId());
+                                $wednesday0 = DateTime::createFromFormat('H:i:s', $wednesday[0]);
+                                $wednesday1 = DateTime::createFromFormat('H:i:s', $wednesday[1]);
+                                $workingHoursUpdateWednesday->setStarttime($wednesday0);
+                                $workingHoursUpdateWednesday->setEndtime($wednesday1);
+                                $workingHoursUpdateWednesday->setHumanresource($humanResource);
+                                $workingHoursUpdateWednesday->setDayweek($j);
+                                $em->flush();       
+                            }
+                            else {
+                                $em=$this->getDoctrine()->getManager();
+                                $em->remove($workingHoursRepoWednesday[0]);
+                                $em->flush();
                             }
                         }
                         break;
-                    case 4:
+                        case 4:
+                        $workingHoursRepoThursday = $workingHoursRepository->findBy(
+                            ['dayweek' => 4, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoThursday) == 0) {
                         if(($thursday[0] != ':00') && ($thursday[1] != ':00')){
                             $workingHoursThursday = new WorkingHours();
                             $thursday0 = DateTime::createFromFormat('H:i:s', $thursday[0]);
@@ -375,19 +462,32 @@ class HumanResourceController extends AbstractController
                             $workingHoursThursday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursThursday, true);
                         }
-                        else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 4, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
-                            }
-                        }
+
+                    }
+                    else {
+                        if(($thursday[0] != ':00') && ($thursday[1] != ':00')){
+                        $workingHoursUpdateThursday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoThursday[0]->getId());
+                        $thursday0 = DateTime::createFromFormat('H:i:s', $thursday[0]);
+                        $thursday1 = DateTime::createFromFormat('H:i:s', $thursday[1]);
+                        $workingHoursUpdateThursday->setStarttime($thursday0);
+                        $workingHoursUpdateThursday->setEndtime($thursday1);
+                        $workingHoursUpdateThursday->setHumanresource($humanResource);
+                        $workingHoursUpdateThursday->setDayweek($j);
+                        $em->flush();       
+                    }
+                    else {
+                        $em=$this->getDoctrine()->getManager();
+                        $em->remove($workingHoursRepoThursday[0]);
+                        $em->flush();
+                    }
+                    }
                         break;
                     case 5:
+                        $workingHoursRepoFriday = $workingHoursRepository->findBy(
+                            ['dayweek' => 5, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoFriday) == 0) {
                         if(($friday[0] != ':00') && ($friday[1] != ':00')){
                             $workingHoursFriday = new WorkingHours();
                             $friday0 = DateTime::createFromFormat('H:i:s', $friday[0]);
@@ -398,19 +498,32 @@ class HumanResourceController extends AbstractController
                             $workingHoursFriday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursFriday, true);
                         }
-                        else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 5, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
-                            }
-                        }
+
+                    }
+                    else {
+                        if(($friday[0] != ':00') && ($friday[1] != ':00')){
+                        $workingHoursUpdateFriday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoFriday[0]->getId());
+                        $friday0 = DateTime::createFromFormat('H:i:s', $friday[0]);
+                        $friday1 = DateTime::createFromFormat('H:i:s', $friday[1]);
+                        $workingHoursUpdateFriday->setStarttime($friday0);
+                        $workingHoursUpdateFriday->setEndtime($friday1);
+                        $workingHoursUpdateFriday->setHumanresource($humanResource);
+                        $workingHoursUpdateFriday->setDayweek($j);
+                        $em->flush();       
+                    }
+                    else {
+                        $em=$this->getDoctrine()->getManager();
+                        $em->remove($workingHoursRepoFriday[0]);
+                        $em->flush();
+                    }
+                    }
                         break;
                     case 6:
+                        $workingHoursRepoSaturday = $workingHoursRepository->findBy(
+                            ['dayweek' => 6, 
+                            'humanresource' => $humanResource]
+                        );
+                        if(sizeof($workingHoursRepoSaturday) == 0) {
                         if(($saturday[0] != ':00') && ($saturday[1] != ':00')){
                             $workingHoursSaturday = new WorkingHours();
                             $saturday0 = DateTime::createFromFormat('H:i:s', $saturday[0]);
@@ -421,17 +534,25 @@ class HumanResourceController extends AbstractController
                             $workingHoursSaturday->setDayweek($j);
                             $workingHoursRepository->add($workingHoursSaturday, true);
                         }
-                        else {
-                            $workingHoursBy = $workingHoursRepository->findBy(
-                                ['dayweek' => 6, 
-                                'humanresource' => $humanResource]
-                            );
-                            if(sizeof($workingHoursBy) != 0){
-                            $em=$this->getDoctrine()->getManager();
-                            $em->remove($workingHoursBy[0]);
-                            $em->flush();
-                            }
-                        }
+
+                    }
+                    else {
+                        if(($saturday[0] != ':00') && ($saturday[1] != ':00')){
+                        $workingHoursUpdateSaturday = $em->getRepository(WorkingHours::class)->find($workingHoursRepoSaturday[0]->getId());
+                        $saturday0 = DateTime::createFromFormat('H:i:s', $saturday[0]);
+                        $saturday1 = DateTime::createFromFormat('H:i:s', $saturday[1]);
+                        $workingHoursUpdateSaturday->setStarttime($saturday0);
+                        $workingHoursUpdateSaturday->setEndtime($saturday1);
+                        $workingHoursUpdateSaturday->setHumanresource($humanResource);
+                        $workingHoursUpdateSaturday->setDayweek($j);
+                        $em->flush();       
+                    }
+                    else {
+                        $em=$this->getDoctrine()->getManager();
+                        $em->remove($workingHoursRepoSaturday[0]);
+                        $em->flush();
+                    }
+                    }
                         break;
                    
                 }
@@ -463,7 +584,10 @@ class HumanResourceController extends AbstractController
             }
             
             return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+            
         }
+    }
+
     
     
 

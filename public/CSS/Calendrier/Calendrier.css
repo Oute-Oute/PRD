@@ -20,7 +20,7 @@ div#container {
 
 #container-top-right {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .form-control {
@@ -77,6 +77,7 @@ a:hover{
   margin-left: auto;
   display: block;
   position: relative;
+  overflow-x: hidden;
 }
 .calendar-container{
   z-index:0;
@@ -176,13 +177,25 @@ a:hover{
 #lateral-panel-label {
   z-index: 1;                   /* on le met au dessus */
   position: absolute;           /* pour sortir l'élément du flux, il va bouger */
-  top: 0;                       /* position en haut */
+  top: 50%;                       /* position en haut */
   left: 0%; 
   transform: translateX(-100%);                   /* alignement sur le bord droit du parent */
-  width: 3em;                   /* dimensions respectables */
-  height: 3em;
+  width: 2em;                   /* dimensions respectables */
+  height: 6em;
   cursor: pointer;
+  writing-mode: vertical-rl; 
+  text-align: center;
+  text-decoration:double;
+  text-size-adjust: 50%;
+  color : indianred;
+  font-size :50%;
+  font-weight: bold;
 }
+
+#text-lateral-panel-label{
+  transform: rotate(-180deg);
+}
+
 
 #lateral-panel-bloc {
   z-index: 0;                   /* mise au niveau zéro */
@@ -212,7 +225,7 @@ a:hover{
   transition: all .01s;
 }
 
-#lateral-panel-label:before {
+/*#lateral-panel-label:before {
   content: "";
   position: absolute;
   top: 50%;
@@ -222,13 +235,19 @@ a:hover{
   height: 1em;
   border: .5em solid currentColor;
   border-width: .5em .5em 0 0;
-  color: #888;
+  color: rgb(136, 136, 136);
   transition: all .5s;
   transform: translate(-50%, -50%) rotate(230deg);
+}*/
+
+#zoom {
+  width : 98%;
+  transform: translateX(2%); 
 }
 
-#lateral-panel-input:checked ~ #lateral-panel-label:before {
-  transform: translate(-50%, -50%) rotate(45deg);
-  
+#top-right-buttons{
+  display : flex; 
+  flex-direction: row;
 }
+
 

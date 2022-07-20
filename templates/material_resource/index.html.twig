@@ -4,14 +4,17 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+    <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
 {% endblock %}
 
 {% block javascripts %}
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
     <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-          <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
-          <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
-          <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
+    <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
+    <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
+    <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
+    <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+    <script src='js/fullcalendar-scheduler/lib/main.js'></script>
 
 {% endblock %}
 {% block body %}
@@ -20,6 +23,7 @@
 <li class="notselected" id="categories" onclick="change_tab_material(this.id);">Catégories</li>
 
 <div class = "index" id="both-tables">
+<input id = "categories-by-material-resource" style = "display : none" value = "{{categoriesByMaterialResources.content}}">
 <div id = 'list-material-resources'>
     <h1>Liste des ressources matérielles</h1>
     <button class ="btn-add" onclick="showNewMaterialModalForm()"> Ajouter une nouvelle ressource matérielle </button>

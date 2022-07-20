@@ -3,6 +3,27 @@ var SELECT_ID_EDIT = 0
 // NB ACTIVITY : nombre totale d'activité
 var NB_CATEGORY_EDIT = 0
 
+var WORKING_HOURS;
+var CATEGORIES_BY_HUMAN_RESOURCES;
+var CATEGORIES_BY_MATERIAL_RESOURCES;
+var sPath = window.location.pathname;
+var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if(sPage == 'human-resources') {
+
+        WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
+        CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
+        console.log(CATEGORIES_BY_HUMAN_RESOURCES)
+    }
+
+    if(sPage == 'material-resources') {
+
+        CATEGORIES_BY_MATERIAL_RESOURCES = JSON.parse(document.getElementById('categories-by-material-resource').value)
+    }    
+
+   
+})
 
 function edit__disableSubmit() {
     let btnSubmit = document.getElementById('edit--submit')
@@ -76,56 +97,60 @@ function showEditModalForm(id, name, index){
     document.getElementById('edit--resourcename').value = name
     let beginHours = document.getElementById('working-hours-input-begin-edit')
     let endHours = document.getElementById('working-hours-input-end-edit')
+    for(let y = 0; y<7; y++){
+        beginHours.children[y].value = ''
+        endHours.children[y].value = ''
+    }
     for(let y = 0; y<WORKING_HOURS_FILTERED.length; y++){
         switch (WORKING_HOURS_FILTERED[y].dayweek) {
             case 0:
 
-            beginHours.children[6].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[6].value = WORKING_HOURS_FILTERED[0].endtime.date.substring(11,16)
+                beginHours.children[6].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[6].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 1:
 
-            beginHours.children[0].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[0].value= WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[0].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[0].value= WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 2:
+                beginHours.children[1].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[1].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            beginHours.children[1].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[1].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
-
-            break;
+                break;
 
             case 3:
 
-            beginHours.children[2].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[2].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[2].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[2].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 4:
 
-            beginHours.children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[3].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[3].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
             case 5:
 
-            beginHours.children[4].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[4].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[4].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[4].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
 
-            case 6:
+            default:
 
-            beginHours.children[5].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
-            endHours.children[5].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
+                beginHours.children[5].value = WORKING_HOURS_FILTERED[y].starttime.date.substring(11,16)
+                endHours.children[5].value = WORKING_HOURS_FILTERED[y].endtime.date.substring(11,16)
 
-            break;
+                break;
+        }
     }
     /*for (let y = 0; y < 6; y++){
         beginHours[y]
@@ -133,27 +158,25 @@ function showEditModalForm(id, name, index){
 
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
-    
-    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
-        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
+    for (let j = 0; j < CATEGORIES_BY_HUMAN_RESOURCES.length; j++){
+        if(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresource_id == id){
+        categoriesId.push(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresourcecategory_id)
+        }
     }
-    
-    
+
     /*for (let y = 0; y <= 6; y++){
         beginHours.children[y].value = currentTime
     }*/
     //TODO : check pq erreur dans console, mettre la length -1 dans le for?
     //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
-    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
-        categoriesContainer.children[i].children[0].checked = false;
 
-        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+
+
+    for (let i = 0; i < categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
+        if(categoriesId.includes(Number(categoriesContainer.children[i].children[0].value))) {
             categoriesContainer.children[i].children[0].checked = true;
         }
-    }
-
-    
-    
     }
 
 
@@ -178,15 +201,23 @@ function showEditModalFormMaterial(id, name, index){
     document.getElementById('edit--resourcename').value = name
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
-    
-    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
-        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
+    for (let j = 0; j < CATEGORIES_BY_MATERIAL_RESOURCES.length; j++){
+        if(CATEGORIES_BY_MATERIAL_RESOURCES[j].materialresource_id == id){
+        categoriesId.push(CATEGORIES_BY_MATERIAL_RESOURCES[j].materialresourcecategory_id)
+        }
     }
 
-    for (let i = 0; i <= categoriesContainer.children.length; i++) {
-        categoriesContainer.children[i].children[0].checked = false;
+    /*for (let y = 0; y <= 6; y++){
+        beginHours.children[y].value = currentTime
+    }*/
+    //TODO : check pq erreur dans console, mettre la length -1 dans le for?
+    //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
 
-        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+
+
+    for (let i = 0; i < categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
+        if(categoriesId.includes(Number(categoriesContainer.children[i].children[0].value))) {
             categoriesContainer.children[i].children[0].checked = true;
         }
     }
