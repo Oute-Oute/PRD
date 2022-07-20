@@ -26,7 +26,7 @@
         <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div>
     </div>
 
-    <form action="{{ path('PathwayAdd') }}" method="post">
+    <form action="{{ path('PathwayEdit') }}" method="post">
 
         <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
@@ -36,7 +36,8 @@
             <div id="pathway-form-top">
                <div class="flex-col"> 
                     <label class="label" for='name'> Nom du parcours </label>        
-                    <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
+                    <input class="input" id='pathwayname' type='text' name='pathwayname'>
+                    <input type="hidden" class="input" id='pathwayid' type='text' name='pathwayid' >
                 </div>
             </div>
 
@@ -89,7 +90,7 @@
 
             <div id="pathway-form-footer">
                 <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
-                <button onclick='submitPathway()' type="button" class="btn-valide btn-secondary" > Ajouter le parcours</button>
+                <button onclick='submitPathway()' type="button" class="btn-valide btn-secondary" > Éditer le parcours</button>
                 <button style="display:none;" id='submit' type="submit" class="btn-valide btn-secondary" >  </button>
 
             </div>
