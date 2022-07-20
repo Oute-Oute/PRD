@@ -3,6 +3,27 @@ var SELECT_ID_EDIT = 0
 // NB ACTIVITY : nombre totale d'activité
 var NB_CATEGORY_EDIT = 0
 
+var WORKING_HOURS;
+var CATEGORIES_BY_HUMAN_RESOURCES;
+var CATEGORIES_BY_MATERIAL_RESOURCES;
+var sPath = window.location.pathname;
+var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if(sPage == 'human-resources') {
+
+        WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
+        CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
+        console.log(CATEGORIES_BY_HUMAN_RESOURCES)
+    }
+
+    if(sPage == 'material-resources') {
+
+        CATEGORIES_BY_MATERIAL_RESOURCES = JSON.parse(document.getElementById('categories-by-material-resource').value)
+    }    
+
+   
+})
 
 function edit__disableSubmit() {
     let btnSubmit = document.getElementById('edit--submit')
@@ -137,20 +158,28 @@ function showEditModalForm(id, name, index){
 
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
-    
-    for (let j = 0; j < categoriesByResources[index].categories.length-1; j++) {
-        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
+    console.log(id)
+    console.log(CATEGORIES_BY_HUMAN_RESOURCES[0].id)
+    for (let j = 0; j < CATEGORIES_BY_HUMAN_RESOURCES.length; j++){
+        if(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresource_id == id){
+        categoriesId.push(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresourcecategory_id)
+        }
     }
-    
+    console.log(categoriesContainer.children[0].children[0])
+    console.log("categoriesId :"+categoriesId)
+
+
     /*for (let y = 0; y <= 6; y++){
         beginHours.children[y].value = currentTime
     }*/
     //TODO : check pq erreur dans console, mettre la length -1 dans le for?
     //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
-    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
-        categoriesContainer.children[i].children[0].checked = false;
 
-        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+
+
+    for (let i = 0; i < categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
+        if(categoriesId.includes(Number(categoriesContainer.children[i].children[0].value))) {
             categoriesContainer.children[i].children[0].checked = true;
         }
     }
