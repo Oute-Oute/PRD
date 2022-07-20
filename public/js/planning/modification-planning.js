@@ -936,7 +936,7 @@ function createCalendar(typeResource,useCase) {
     eventDrop: function (event) {
       var oldEvent = event.oldEvent;
       var modifyEvent = event.event;
-      updateEventsAppointment(oldEvent);
+      //updateEventsAppointment(oldEvent);
       calendar.render();
       updateErrorMessages();
       
@@ -1211,6 +1211,7 @@ function updateErrorMessages() {
     }
   })
   console.log(listErrorMessages)
+  updateListErrorMessages();
 }
 
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
@@ -1516,7 +1517,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
 function getMessageUnavailability(scheduledActivity, resourceId){
   var message = "";
 
-  
+
 
   return message;
 }
