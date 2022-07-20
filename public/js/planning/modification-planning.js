@@ -1459,80 +1459,176 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     while(nodesNotification.length!=3){
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
     }
+    var RepertoryErrors =countAppointmentErrorList(); 
+    if(RepertoryErrors.count!=0){
+      updateColorErrorButton(true); 
+      for(let i=0; i<listErrorMessages.length; i++){
+        console.log()
+        if(RepertoryErrors.repertory.includes(i)){
+          var div = document.createElement('div');
+          div.setAttribute('class', 'alert alert-warning');
+          div.setAttribute('role','alert');
+          div.setAttribute('id','notification');
+          div.setAttribute('style','display: flex; flex-direction : column;'); 
+          var divRow=document.createElement('divRow'); 
+          divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+          div.append(divRow);
+          var img = document.createElement("img");
+          img.src="/img/exclamation-triangle-fill.svg"; 
+          var text=document.createElement('h3'); 
+          text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
+          divRow.append(img,text);
+
+
+        
+          //messageEarliestAppointmentTime
+          if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
+            var divColumn=document.createElement('divColumn');
+            div.append(divColumn); 
+            var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML=listErrorMessages[i].messageEarliestAppointmentTime;  
+            divColumn.append(messageEarliestAppointmentTime);
+          }
+
+          //messageLatestAppointmentTime
+          if(listErrorMessages[i].messageLatestAppointmentTime!=''){
+            var divColumn=document.createElement('divColumn');
+            div.append(divColumn); 
+            var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML=listErrorMessages[i].messageLatestAppointmentTime;  
+            divColumn.append(messageLatestAppointmentTime);
+          }
+          
+          //messageDelay for each ScheduledActivity
+          for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+                var divColumn=document.createElement('divColumn');
+                div.append(divColumn); 
+                var messageDelay= document.createElement('messageDelay').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
+                divColumn.append(messageDelay);
+              }
+
+              for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
+                  divColumn.append(messageCategoryQuantity);
+                }
+                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn);
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
+                  divColumn.append(messageWrongCategory);
+                }
+                
+                for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
+                    var divColumn=document.createElement('divColumn');
+                    div.append(divColumn);
+                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
+                    divColumn.append(messageWorkingHours);
+                  }
+
+                  if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
+                    var divColumn=document.createElement('divColumn');
+                    div.append(divColumn);
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
+                    divColumn.append(messageUnavailability);
+                  }
+
+                  if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
+                    var divColumn=document.createElement('divColumn');
+                    div.append(divColumn);
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
+                    divColumn.append(messageAlreadyScheduled);
+                  }
+                }
+
+              }
+              
+              for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn);
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
+                  divColumn.append(messageCategoryQuantity);
+                }
+                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn);
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
+                  divColumn.append(messageWrongCategory);
+                }
+              
+                for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
+                  
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
+                    var divColumn=document.createElement('divColumn');
+                    div.append(divColumn);
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
+                    divColumn.append(messageUnavailability);
+                  }
+
+                  if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
+                    var divColumn=document.createElement('divColumn');
+                    div.append(divColumn);
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
+                    divColumn.append(messageAlreadyScheduled);
+                  }
+                }
+
+              }
+
+            }
+          document.getElementById('lateral-panel-bloc').appendChild(div);
+        }
+      }
+    }
+    else{
+      updateColorErrorButton(false); 
+    }
+  }
+
+  function countAppointmentErrorList(){
+    var countAppointmentError=0; 
+    var repertoryAppointmentError=[]; 
     for(let i=0; i<listErrorMessages.length; i++){
-      var div = document.createElement('div');
-      div.setAttribute('class', 'alert alert-warning');
-      div.setAttribute('role','alert');
-      div.setAttribute('id','notification');
-      div.setAttribute('style','display: flex; flex-direction : column;'); 
-      var divRow=document.createElement('divRow'); 
-      divRow.setAttribute('style','display: flex; flex-direction : row;'); 
-      div.append(divRow);
-      var img = document.createElement("img");
-      img.src="/img/exclamation-triangle-fill.svg"; 
-      var text=document.createElement('h3'); 
-      text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
-      divRow.append(img,text);
+      var errorInappointment=false; 
 
       //messageEarliestAppointmentTime
       if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
-        var divColumn=document.createElement('divColumn');
-        div.append(divColumn); 
-        var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML=listErrorMessages[i].messageEarliestAppointmentTime;  
-        divColumn.append(messageEarliestAppointmentTime);
+        errorInappointment=true; 
       }
 
       //messageLatestAppointmentTime
       if(listErrorMessages[i].messageLatestAppointmentTime!=''){
-        var divColumn=document.createElement('divColumn');
-        div.append(divColumn); 
-        var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML=listErrorMessages[i].messageLatestAppointmentTime;  
-        divColumn.append(messageLatestAppointmentTime);
+        errorInappointment=true;
       }
       
       //messageDelay for each ScheduledActivity
       for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
           if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
-            var divColumn=document.createElement('divColumn');
-            div.append(divColumn); 
-            var messageDelay= document.createElement('messageDelay').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
-            divColumn.append(messageDelay);
+            errorInappointment=true;
           }
 
           for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
-              var divColumn=document.createElement('divColumn');
-              div.append(divColumn); 
-              var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
-              divColumn.append(messageCategoryQuantity);
+              errorInappointment=true;
             }
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
-              var divColumn=document.createElement('divColumn');
-              div.append(divColumn);
-              var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
-              divColumn.append(messageWrongCategory);
+              errorInappointment=true;
             }
-          
-            for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
-              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn);
-                var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
-                divColumn.append(messageWorkingHours);
+            
+            for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
+                errorInappointment=true;
               }
 
               if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn);
-                var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
-                divColumn.append(messageUnavailability);
+                errorInappointment=true;
               }
 
               if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn);
-                var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
-                divColumn.append(messageAlreadyScheduled);
+                errorInappointment=true;
               }
             }
 
@@ -1540,38 +1636,43 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           
           for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
-              var divColumn=document.createElement('divColumn');
-              div.append(divColumn);
-              var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
-              divColumn.append(messageCategoryQuantity);
+              errorInappointment=true;
             }
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
-              var divColumn=document.createElement('divColumn');
-              div.append(divColumn);
-              var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
-              divColumn.append(messageWrongCategory);
+              errorInappointment=true;
             }
           
-            for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
+            for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
               
-              if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn);
-                var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
-                divColumn.append(messageUnavailability);
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
+                errorInappointment=true;
               }
 
               if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn);
-                var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
-                divColumn.append(messageAlreadyScheduled);
+                errorInappointment=true; 
               }
             }
 
           }
 
         }
-      document.getElementById('lateral-panel-bloc').appendChild(div);
+        if(errorInappointment==true){
+          countAppointmentError++; 
+          repertoryAppointmentError.push(i);
+        }
     }
-  }
+  return {count:countAppointmentError,repertory:repertoryAppointmentError}; 
+}
+
+function updateColorErrorButton(state) {
+  var button=document.getElementById('lateral-panel-label'); 
+  switch(state){
+    case true : 
+    button.setAttribute('style','background : indianred; color :white'); 
+    break; 
+  case false : 
+    button.setAttribute('style','background : white; color : indianred')
+}
+    
+}
+
