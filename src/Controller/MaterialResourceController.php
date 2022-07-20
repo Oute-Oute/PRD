@@ -209,6 +209,14 @@ class MaterialResourceController extends AbstractController
      */
     public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository): Response
     {
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+
+        $em=$this->getDoctrine()->getManager();
+        $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+        for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+            $em->remove($categsOfResources[$indexCategOf]);
+        }
+        $em->flush();
         if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
             $listCategoryOfMaterialResource = $categoryOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
 

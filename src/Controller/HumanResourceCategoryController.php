@@ -76,7 +76,14 @@ class HumanResourceCategoryController extends AbstractController
      */
     public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
     {
-        
+        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+
+        $em=$this->getDoctrine()->getManager();
+        $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
+        for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+            $em->remove($categsOfResources[$indexCategOf]);
+        }
+        $em->flush();
         if ($this->isCsrfTokenValid('delete'.$humanResourceCategory->getId(), $request->request->get('_token'))) {
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
         }

@@ -56,7 +56,6 @@ if ($_GET("headerResources") != null) {
   headerResources = $_GET("headerResources"); //get the type of resources to display in the list
   headerResources = headerResources.replaceAll("%20", " "); //set the space in the header
   headerResources = headerResources.replaceAll("%C3%A9", "é"); //set the comma in the header
-  console.log(headerResources);
 } else {
   headerResources = "Patients";
 }
@@ -143,7 +142,6 @@ function createCalendar(resources) {
       var start = activity.start; //get the start date of the event
       var end = activity.end; //get the end date of the event
       var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-      console.log(humanResources);
       var humanResourcesNames = ""; //create a string with the human resources names
       if (humanResources.length > 0) {
         for (var i = 0; i < humanResources.length - 1; i++) {
@@ -157,10 +155,8 @@ function createCalendar(resources) {
       } else humanResourcesNames = "Aucune ressource associée";
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       var materialResourcesNames = ""; //create a string with the material resources names
-      console.log(materialResources);
 
       if (materialResources.length > 0) {
-        console.log("test");
         for (var i = 0; i < materialResources.length - 1; i++) {
           //for each material resource except the last one
           if (materialResources[i] != undefined) {
@@ -239,8 +235,6 @@ function createCalendar(resources) {
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
-      console.log(document.getElementById("material").value)
-      console.log(tempArray);
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {

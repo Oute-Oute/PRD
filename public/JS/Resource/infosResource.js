@@ -8,16 +8,18 @@
    
     var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
+    date=new Date();
+    dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
     $.ajax({
         type : 'POST',
         url  : '/ajaxHumanResource',
-        data : {idHumanResource: idHumanResource},
+        data : {idHumanResource: idHumanResource,date:dateStr},
         dataType : "json",
         success : function(data){  
-            tableResource(tableBody, data, "humanresource");
+            tableResource(tableBody, data["categories"], "humanresource");
+            addToCalendar(data);
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -42,7 +44,7 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
         success : function(data){  
             tableResource(tableBody, data, "humanresourcecategory");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -65,7 +67,7 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
         success : function(data){  
             tableResource(tableBody, data, "materialresource");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -88,7 +90,7 @@ function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategNa
         success : function(data){  
             tableResource(tableBody, data, "materialresourcecategory");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -219,16 +221,19 @@ function change_tab_human_infos(id)
         planning.style.display = 'block';
         workinghours.style.display = 'none';
         categories.style.display = 'none';
+        document.getElementById("modal-dialog").style.maxWidth="1000px";
     break;
     case 'workinghours':
         planning.style.display = 'none';
         workinghours.style.display = 'block';
         categories.style.display = 'none';
+        document.getElementById("modal-dialog").style.maxWidth="600px";
     break;
     case 'categoriesbyresource':
         planning.style.display = 'none'
         workinghours.style.display = 'none';
         categories.style.display = 'block';
+        document.getElementById("modal-dialog").style.maxWidth="600px";
     break;
   }
 }
@@ -262,21 +267,25 @@ function change_tab_material_infos(id)
     console.log("createCalendarResource");
     date = new Date(); //create a new date with the date in the hidden input
     var calendarEl = document.getElementById("calendar-hr"); //create the calendar variable
-
     //create the calendar
     calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
         timeZone: 'UTC',
     initialView: 'timeGridWeek',
+    contentHeight: '500px',
+    locale: "frLocale", //set the language in french
+    firstDay: 1, //set the first day of the week to monday
+    timeZone: "Europe/Paris", //set the timezone for France
+    selectable: false, //set the calendar to be selectable
+    editable: false, //set the calendar not to be editable
     headerToolbar: {
         left: '',
         center: '',
         right: ''
     },
-    events: 'https://fullcalendar.io/api/demo-feeds/events.json',
       eventDidMount: function (info) {
         $(info.el).tooltip({
-          //title: info.event.extendedProps.description,
+          title: info.event.extendedProps.description,
           placement: "top",
           trigger: "hover",
           container: "body",
@@ -285,17 +294,20 @@ function change_tab_material_infos(id)
     });
     calendar.render(); //render the calendar
 }   
-  function addTargetsToCalendar(targets) {
-    targets.forEach(element => {
-      calendar.addEvent({
-        allDay: true,
-        start: element.start,
-        description: element.description,
-        display:'background',
-        color:element.color,
-  
-    });
-    
-  });
+  function addToCalendar(data) {
+    console.log(data)
+    events=data["activities"]
+    console.log(events)
+    unavailability=data["unavailability"]
+    for(let i=0; i<events.length; i++){
+        console.log(events[i])
+        startDateTime=events[i]
+        calendar.addEvent({
+            title: events[i].activity,
+            start: events[i].dayappointment+"T"+events[i].starttime,
+            end: events[i].dayappointment+"T"+events[i].endtime,
+            description: events[i].activity,
+        })
   calendar.render();
   }
+}
