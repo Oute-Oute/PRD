@@ -169,26 +169,22 @@
 
 
 		<div id='container-top-right'>
-			<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
-			<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
-			{% if app.user %}
-				{% set userIdentifier = app.user.getUserIdentifier() %}
-			{% else %}
-				{% set userIdentifier = '' %}
-			{% endif %}
-			<form method="post" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
-				<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
-				<input type="hidden" id='events' name="events"/>
-				<input type="hidden" id='validation-date' name="validation-date"/>
-				<input type="hidden" id='list-resource' name="list-resource"/>
-			</form>
-		</div>
-	</div>
-	  
-	<div
-		id="calendar-container" class="calendar-container">
-
-		<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
+			<div id='top-right-buttons'>
+				<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
+				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
+				{% if app.user %}
+					{% set userIdentifier = app.user.getUserIdentifier() %}
+				{% else %}
+					{% set userIdentifier = '' %}
+				{% endif %}
+				<form method="post" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
+					<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
+					<input type="hidden" id='events' name="events"/>
+					<input type="hidden" id='validation-date' name="validation-date"/>
+					<input type="hidden" id='list-resource' name="list-resource"/>
+				</form>
+			</div>
+			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
 			<option value="02:00:00">Zoom : 12,5%</option>
 			<option value="01:00:00">Zoom : 25%</option>
 			<option value="0:40:00">Zoom : x50%</option>
@@ -197,6 +193,13 @@
 			<option value="00:05:00">Zoom : 400%</option>
 			<option value="00:02:30">Zoom : 800%</option>
 		</select>
+		</div>
+	</div>
+	  
+	<div
+		id="calendar-container" class="calendar-container">
+
+		
 
 		<!-- affichage du calendar -->
 		<div id='calendar'></div>

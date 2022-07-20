@@ -20,7 +20,7 @@ div#container {
 
 #container-top-right {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .form-control {
@@ -240,5 +240,14 @@ a:hover{
   transform: translate(-50%, -50%) rotate(230deg);
 }*/
 
+#zoom {
+  width : 98%;
+  transform: translateX(2%); 
+}
+
+#top-right-buttons{
+  display : flex; 
+  flex-direction: row;
+}
 
 
