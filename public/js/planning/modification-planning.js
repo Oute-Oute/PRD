@@ -1162,7 +1162,6 @@ function verifyHistoryPush(array, idAppointment){
 function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents();
   listScheduledActivities.forEach((scheduledActivity) => {
-    console.log(scheduledActivity)
     if(scheduledActivity.display != "background"){
       var appointmentAlreadyExist = false;
       if(listErrorMessages != []){
@@ -1519,19 +1518,76 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
 function getMessageUnavailability(scheduledActivity, resourceId){
   var message = "";
 
+  calendar.getEvents().forEach((compareScheduledActivity) => {
+    if(compareScheduledActivity._def.extendedProps.type == "unavailability"){
+      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+          if(compareResourceId != "h-default" && compareResourceId != "m-default"){
+            if(compareResourceId == resourceId){
+              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
+                var resourceName ="";
+                var listResources;
+                if(resourceId.substring(0,5) == "human"){
+                  listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+                }
+                else {
+                  listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+                }
+                listResources.forEach((resource) => {
+                  if(resource.id == compareResourceId){
+                    resourceName = resource.title;
+                  }
+                })
 
-
+                message = message + resourceName + " est indisponible sur ce créneau. ";
+              }
+            }
+          }
+        })
+      }
+    }
+  })
   return message;
 }
 
 function getMessageAlreadyExist(scheduledActivity, resourceId){
   var message = "";
 
+  calendar.getEvents().forEach((compareScheduledActivity) => {
+    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){
+      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+          if(compareResourceId != "h-default" && compareResourceId != "m-default"){
+            if(compareResourceId == resourceId){
+              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
+                var resourceName ="";
+                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
+                  if(("human-" + humanResource.id) == compareResourceId){
+                    resourceName = humanResource.title
+                  }
+                })
+                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
+                  if(("material-" + materialResource.id) == compareResourceId){
+                    resourceName = materialResource.title
+                  }
+                })
+
+                message = message + resourceName + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+              }
+            }
+          }
+        })
+      }
+    }
+  })
+
   return message;
 }
 
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
   var message = "";
+
+
 
   return message;
 }
@@ -1622,21 +1678,21 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
+                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
                     divColumn.append(messageWorkingHours);
                   }
 
-                  if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
-
-                  if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
+                  listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
                     divColumn.append(messageAlreadyScheduled);
                   }
                 }
@@ -1662,14 +1718,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
 
-                  if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
                     divColumn.append(messageAlreadyScheduled);
                   }
                 }
@@ -1729,11 +1785,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 errorInappointment=true;
               }
 
-              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
               }
 
-              if(listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true;
               }
             }
@@ -1754,7 +1810,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 errorInappointment=true;
               }
 
-              if(listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true; 
               }
             }
