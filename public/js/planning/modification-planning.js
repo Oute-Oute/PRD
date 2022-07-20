@@ -938,6 +938,7 @@ function createCalendar(typeResource,useCase) {
       var modifyEvent = event.event;
       //updateEventsAppointment(oldEvent);
       calendar.render();
+      verifyHistoryPush(historyEvents,-1);
       updateErrorMessages();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
@@ -1088,6 +1089,7 @@ function createCalendar(typeResource,useCase) {
     calendar.gotoDate(currentDate);
 
     calendar.render();
+    updateErrorMessages();
   }
 
 function showPopup() {
