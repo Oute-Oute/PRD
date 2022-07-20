@@ -229,12 +229,11 @@ ul.ui-autocomplete {
     pointer-events:none;
 }
 
-#load{
+#load,#load-large{
     position: absolute;
     display : flex;
     justify-content: center;
     z-index:9999;
-    margin:250px 250px 250px 250px;
     border: 16px solid #bdc3c7;
     width: 100px;
     height: 100px;
@@ -243,6 +242,12 @@ ul.ui-autocomplete {
     border-radius: 50%;
     animation: chargeur 4s linear infinite;
   }
+  #load{
+    margin:250px 250px 250px 250px;
+  }
+#load-large{
+    margin:250px 250px 450px 450px;
+}
   
   @keyframes chargeur {
     0%{
@@ -269,4 +274,25 @@ ul.ui-autocomplete {
       border-bottom-color: grey;
     }
     
+  }
+  .input-modal, .input-modal-date{  
+    margin-left: 5%;
+    margin-bottom: 5px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    color: black;
+  }
+  .input-modal{
+    width: 100%;
+  }
+  
+  .input-modal-date{
+    display: inline;
+  }
+  
+  .label-event{
+    text-decoration: underline ;
+    font-weight: bold;
+    margin-bottom: 5px;
   }
