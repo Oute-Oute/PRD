@@ -1162,7 +1162,6 @@ function verifyHistoryPush(array, idAppointment){
 function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents();
   listScheduledActivities.forEach((scheduledActivity) => {
-    console.log(scheduledActivity)
     if(scheduledActivity.display != "background"){
       var appointmentAlreadyExist = false;
       if(listErrorMessages != []){
@@ -1212,7 +1211,7 @@ function updateErrorMessages() {
       }
     }
   })
-  console.log(listErrorMessages)
+  //console.log(listErrorMessages)
   updateListErrorMessages();
 }
 
@@ -1519,13 +1518,72 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
 function getMessageUnavailability(scheduledActivity, resourceId){
   var message = "";
 
+  calendar.getEvents().forEach((compareScheduledActivity) => {
+    if(compareScheduledActivity._def.extendedProps.type == "unavailability"){
+      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+          if(compareResourceId != "h-default" && compareResourceId != "m-default"){
+            if(compareResourceId == resourceId){
+              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
+                var resourceName ="";
+                var listResources;
+                if(resourceId.substring(0,5) == "human"){
+                  listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+                }
+                else {
+                  listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+                }
+                listResources.forEach((resource) => {
+                  if(resource.id == compareResourceId){
+                    resourceName = resource.title;
+                  }
+                })
 
-
+                message = message + resourceName + " est indisponible sur ce créneau. ";
+              }
+            }
+          }
+        })
+      }
+    }
+  })
   return message;
 }
 
 function getMessageAlreadyExist(scheduledActivity, resourceId){
   var message = "";
+
+  calendar.getEvents().forEach((compareScheduledActivity) => {
+    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){
+      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+          if(compareResourceId != "h-default" && compareResourceId != "m-default"){
+            if(compareResourceId == resourceId){
+              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
+                var resourceName ="";
+                if(compareScheduledActivity._def.extendedProps.humanResources != []){
+                  compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
+                    if(humanResource.id == compareResourceId){
+                      resourceName = humanResource.title
+                    }
+                  })
+                }
+                if(compareScheduledActivity._def.extendedProps.materialResources != []){
+                  compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
+                    if(materialResource.id == compareResourceId){
+                      resourceName = materialResource.title
+                    }
+                  })
+                }
+
+                message = message + compareScheduledActivity._def.title + " est également prévue sur le même créneau avec " + resourceName +". ";
+              }
+            }
+          }
+        })
+      }
+    }
+  })
 
   return message;
 }
