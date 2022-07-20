@@ -229,12 +229,11 @@ ul.ui-autocomplete {
     pointer-events:none;
 }
 
-#load{
+#load,#load-large{
     position: absolute;
     display : flex;
     justify-content: center;
     z-index:9999;
-    margin:250px 250px 250px 250px;
     border: 16px solid #bdc3c7;
     width: 100px;
     height: 100px;
@@ -243,6 +242,12 @@ ul.ui-autocomplete {
     border-radius: 50%;
     animation: chargeur 4s linear infinite;
   }
+  #load{
+    margin:250px 250px 250px 250px;
+  }
+#load-large{
+    margin:250px 250px 450px 450px;
+}
   
   @keyframes chargeur {
     0%{

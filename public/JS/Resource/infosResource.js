@@ -1,29 +1,16 @@
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
+var idHR;
  function showInfosModalHuman(idHumanResource, resourceName) {
     document.getElementById('human-resource1').innerHTML = resourceName;
     document.getElementById('human-resource2').innerHTML = resourceName;
     document.getElementById('human-resource3').innerHTML = resourceName;
-   
+    idHR = idHumanResource;
     var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
     date=new Date();
-    dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxHumanResource',
-        data : {idHumanResource: idHumanResource,date:dateStr},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data["categories"], "humanresource");
-            addToCalendar(data);
-        },
-        error: function(){
-            console.log("error");
-        }
-        });
-        
+    getAjaxHumanResources(idHumanResource, date,tableBody);        
     createCalendarResource("humanresource");
     getWorkingHours(idHumanResource);
     change_tab_human_infos('planning');
@@ -96,6 +83,22 @@ function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategNa
         });
 
     $('#infos-material-resource-category-modal').modal("show");
+}
+function getAjaxHumanResources(idHumanResource, date,tableBody){
+    dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxHumanResource',
+        data : {idHumanResource: idHumanResource,date:dateStr},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data["categories"], "humanresource");
+            addToCalendar(data);
+        },
+        error: function(){
+            console.log("error");
+        }
+        });
 }
 
 function tableResource(tableBody, data, switch_param){
@@ -308,6 +311,79 @@ function change_tab_material_infos(id)
             end: events[i].dayappointment+"T"+events[i].endtime,
             description: events[i].activity,
         })
-  calendar.render();
   }
+  document.getElementById('load-large').style.visibility="hidden";
+  calendar.render();
 }
+
+/**
+ * @brief This function is called when we want to go to the previous day
+ */
+ function PreviousWeek() {
+    var oldDate = calendar.getDate() //get the old day in the calendar
+    var newDate = new Date(
+      oldDate.getFullYear(),
+      oldDate.getMonth() ,
+      oldDate.getDate() -7
+    ); //create a new day after the old one
+    var day = newDate.getDate(); //get the day
+    var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = newDate.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,newDate,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(newDate)
+    document.getElementById('load-large').style.visibility="visible";
+  }
+  
+  
+  /**
+   * @brief This function is called when we want to go to the next day
+   */
+  function NextWeek() {
+    var oldDate = calendar.getDate() //get the old day in the calendar
+    var newDate = new Date(
+      oldDate.getFullYear(),
+      oldDate.getMonth(),
+      oldDate.getDate() + 7
+    ); //create a new day after the old one
+    var day = newDate.getDate(); //get the day
+    var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = newDate.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,newDate,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(newDate)
+    document.getElementById('load-large').style.visibility="visible";
+  }
+  
+  
+  /**
+   * @brief This function is called when we want to go to the date of today
+   */
+  function Today() {
+    var today = new Date(); //get the date of today
+    var day = today.getDate(); //get the day
+    var month = today.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = today.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,today,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(today)
+    document.getElementById('load-large').style.visibility="visible";
+  }
