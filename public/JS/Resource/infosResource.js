@@ -15,6 +15,7 @@ var idHR;
     getWorkingHours(idHumanResource);
     change_tab_human_infos('planning');
     $('#infos-human-resource-modal').modal("show");
+    document.getElementById('load-large').style.visibility="visible";
 }
 
 function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
@@ -293,6 +294,22 @@ function change_tab_material_infos(id)
           trigger: "hover",
           container: "body",
         });
+        },
+        eventClick: function (event) {
+      //get the data of the event
+      var id = event.event._def.publicId; //get the id of the event
+      var activity = calendar.getEventById(id); //get the event with the id
+      var start = activity.start; //get the start date of the event
+      var end = activity.end; //get the end date of the event
+
+      //set data to display in the modal window
+      $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
+      $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
+      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
+
+      $("#hr-planning-modal").modal("show"); //open the window
       },
     });
     calendar.render(); //render the calendar
@@ -310,6 +327,10 @@ function change_tab_material_infos(id)
             start: events[i].dayappointment+"T"+events[i].starttime,
             end: events[i].dayappointment+"T"+events[i].endtime,
             description: events[i].activity,
+            extendedProps: {
+                pathway: events[i].pathway,
+                patient: events[i].patient,
+            }
         })
   }
   document.getElementById('load-large').style.visibility="hidden";

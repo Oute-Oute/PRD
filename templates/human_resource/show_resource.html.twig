@@ -88,3 +88,35 @@
 		</div>
 	</div>
 </div>
+<div class="modal" id="hr-planning-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title"></span>
+				</h2>
+			</div>
+			<form method="post" action="/ModificationPlanning">
+				<div class="modal-body">
+					<label class="label-event">Horaires de l'activité :
+					</label>
+					<div class="input-container onWhite">
+						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+						<label class="label-event">Parcours :</label>
+						</br>
+						<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+						</br>
+						<label class="label-event">Patient :</label>
+						</br>
+						<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+						</br>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</form> 
+		</div>
+	</div>
