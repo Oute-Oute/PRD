@@ -1621,6 +1621,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       for(let i=0; i<listErrorMessages.length; i++){
         console.log()
         if(RepertoryErrors.repertory.includes(i)){
+          var indexAppointment=RepertoryErrors.repertory.indexOf(i); 
           var div = document.createElement('div');
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
@@ -1655,6 +1656,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           
           //messageDelay for each ScheduledActivity
           for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
+            if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){
+              var divColumn=document.createElement('divColumn');
+              divColumn.setAttribute('style','font-weight: bolder;')
+              div.append(divColumn); 
+              var nameSA=listErrorMessages[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';    
+              divColumn.append(nameSA); 
+              
+
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
                 var divColumn=document.createElement('divColumn');
                 div.append(divColumn); 
@@ -1733,8 +1742,13 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 }
 
               }
-
-            }
+              if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
+                var space=document.createElement('space');
+                space.innerHTML='</br>';
+                div.append(space);
+              }
+            } 
+          }
           document.getElementById('lateral-panel-bloc').appendChild(div);
         }
       }
@@ -1755,6 +1769,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
   function countAppointmentErrorList(){
     var countAppointmentError=0; 
     var repertoryAppointmentError=[]; 
+    var repertoryAppointmentSAError=[]; 
     for(let i=0; i<listErrorMessages.length; i++){
       var errorInappointment=false; 
 
@@ -1769,30 +1784,38 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       }
       
       //messageDelay for each ScheduledActivity
+      var repertorySAError=[]; 
       for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
+          var errorInScheduledActivity=false; 
           if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
             errorInappointment=true;
+            errorInScheduledActivity=true; 
           }
 
           for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
             
             for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
             }
 
@@ -1801,31 +1824,39 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
           
             for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
               
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true; 
+                errorInScheduledActivity=true;
               }
             }
 
           }
-
+          if(errorInScheduledActivity==true){
+            repertorySAError.push(listeSAiterator); 
+          }
         }
         if(errorInappointment==true){
           countAppointmentError++; 
           repertoryAppointmentError.push(i);
+          repertoryAppointmentSAError.push({appointment:i,repertorySA:repertorySAError});
+
         }
     }
-  return {count:countAppointmentError,repertory:repertoryAppointmentError}; 
+  return {count:countAppointmentError,repertory:repertoryAppointmentError,repertoryAppointmentSAError:repertoryAppointmentSAError}; 
 }
 
 function updateColorErrorButton(state) {
