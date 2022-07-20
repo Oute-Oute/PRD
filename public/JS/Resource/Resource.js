@@ -1,9 +1,12 @@
 var SELECT_ID = 0;
 var NB_CATEGORY = 0;
-var WORKING_HOURS;
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
-    WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value)    
+})
+
+document.addEventListener('DOMContentLoaded', () => {
 })
 
 function showNewHumanModalForm(){
@@ -156,6 +159,28 @@ function materialResourceVerify() {
     // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('categories-container')
     let btnAdd = document.getElementById('btn-none-add-human-resource')
+    let nbCategory = document.getElementById('nbCategory');
+    var nbCateg = 0;
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
+        }
+        
+    }
+    nbCategory.value = nbCateg
+    btnAdd.click();    
+}
+
+function materialResourceVerifyEdit() {
+
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('categories-container')
+    let btnAdd = document.getElementById('btn-none-edit-human-resource')
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
     // On parcours toutes nos activités 

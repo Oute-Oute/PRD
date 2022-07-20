@@ -115,6 +115,28 @@ class MaterialResourceController extends AbstractController
     
 }
 
+
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listCategoriesByMaterialResources()
+    {
+        $categoriesByMaterialResourcesRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $categoriesByMaterialResources = $categoriesByMaterialResourcesRepository->findAll();
+        $categoriesByMaterialResourcesArray = array();
+
+        if ($categoriesByMaterialResources != null) {
+            foreach ($categoriesByMaterialResources as $category) {
+                $categoriesByMaterialResourcesArray[] = array('id' => strval($category->getId()),
+                    'materialresource_id' => $category->getMaterialresource()->getId(),
+                    'materialresourcecategory_id' => $category->getMaterialresourcecategory()->getId()                    
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $categoriesByMaterialResourcesArrayJson = new JsonResponse($categoriesByMaterialResourcesArray);
+        return $categoriesByMaterialResourcesArrayJson;    
+    }
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
