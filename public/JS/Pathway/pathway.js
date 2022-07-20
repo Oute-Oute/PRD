@@ -599,32 +599,42 @@ function fillHRCList() {
 
     let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
 
+    availableResourceCount = 0
+
     if (len > 0) {
         for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
-            // On crée le li qui va stocker la ressource (visuellement) 
-            var li = document.createElement('li');
-            let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
-            let resourceName = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].name
-            li.innerText = resourceName +' ('+resourceNb+')'
-        
 
-            let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
-            imgDelete.setAttribute('title', 'Supprimer la ressource')
-            imgDelete.style.width='20px'
-            imgDelete.style.marginRight = '10%'
-            imgDelete.setAttribute('id', 'resource-h-'+indexHRC)
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
+                // On crée le li qui va stocker la ressource (visuellement) 
+                var li = document.createElement('li');
+                let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
+                let resourceName = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].name
+                li.innerText = resourceName +' ('+resourceNb+')'
+            
 
-            div = document.createElement('div')
-            div.appendChild(imgDelete)
-            div.appendChild(li)
-            div.style.display = 'flex'
-            div.style.alignItems = 'center'
+                let imgDelete = new Image();
+                imgDelete.src = '../img/delete.svg'
+                imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
+                imgDelete.setAttribute('title', 'Supprimer la ressource')
+                imgDelete.style.width='20px'
+                imgDelete.style.marginRight = '10%'
+                imgDelete.setAttribute('id', 'resource-h-'+indexHRC)
 
-            ul.appendChild(div)
+                div = document.createElement('div')
+                div.appendChild(imgDelete)
+                div.appendChild(li)
+                div.style.display = 'flex'
+                div.style.alignItems = 'center'
+
+                ul.appendChild(div)
+
+                availableResourceCount++
+            } 
+
         }
-    } else {
+    } 
+    
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
@@ -646,32 +656,42 @@ function fillMRCList(id) {
 
     let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
 
+    availableResourceCount = 0
+
     if (len > 0) {
         for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
-            // On crée le li qui va stocker la ressource (visuellement) 
-            var li = document.createElement('li');
-    
-            let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb 
-            let resourceName = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].name
-            li.innerText = resourceName +' ('+resourceNb+')'
+
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
+
+                // On crée le li qui va stocker la ressource (visuellement) 
+                var li = document.createElement('li');
         
-            let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
-            imgDelete.setAttribute('title', 'Supprimer la ressource')
-            imgDelete.style.width='20px'
-            imgDelete.style.marginRight = '10%'
-            imgDelete.setAttribute('id', 'resource-m-'+indexMRC)
+                let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb 
+                let resourceName = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].name
+                li.innerText = resourceName +' ('+resourceNb+')'
+            
+                let imgDelete = new Image();
+                imgDelete.src = '../img/delete.svg'
+                imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
+                imgDelete.setAttribute('title', 'Supprimer la ressource')
+                imgDelete.style.width='20px'
+                imgDelete.style.marginRight = '10%'
+                imgDelete.setAttribute('id', 'resource-m-'+indexMRC)
 
-            div = document.createElement('div')
-            div.appendChild(imgDelete)
-            div.appendChild(li)
-            div.style.display = 'flex'
-            div.style.alignItems = 'center'
+                div = document.createElement('div')
+                div.appendChild(imgDelete)
+                div.appendChild(li)
+                div.style.display = 'flex'
+                div.style.alignItems = 'center'
 
-            ul.appendChild(div)
+                ul.appendChild(div)
+                availableResourceCount++
+
+            }
         }
-    } else {
+    } 
+
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource materielle pour le moment !'
         ul.appendChild(li)
