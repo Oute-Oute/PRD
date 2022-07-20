@@ -33,7 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('oui oui')
     console.log(PATHWAY)
 
-    
+    document.getElementById('pathwayid').value = PATHWAY.id
+    console.log('non non')
+
+    console.log(document.getElementById('pathwayid').value)
     document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
 
@@ -60,6 +63,14 @@ function initActivitiesList() {
         RESOURCES_BY_ACTIVITIES[i].materialResourceCategories = PATHWAY.activities[i].materialResourceCategories
         RESOURCES_BY_ACTIVITIES[i].available = true 
 
+        let len = RESOURCES_BY_ACTIVITIES[i].humanResourceCategories.length
+        for (let indexHR = 0; indexHR < len; indexHR++) {
+            RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].already = true
+        }
+        let len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
+        for (let indexMR = 0; indexMR < len; indexMR++) {
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].already = true
+        }
         /*
         for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
             let res = new Object();
@@ -70,7 +81,7 @@ function initActivitiesList() {
         
         }
         */
-
+        RESOURCES_BY_ACTIVITIES[i].id = PATHWAY.activities[i].id
         RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
         RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
     }
@@ -470,7 +481,8 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-    
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
+
         fillHRCList()
     } else {
         // ! Si le bouton material est activé !
@@ -490,6 +502,7 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
     
         fillMRCList()
     }

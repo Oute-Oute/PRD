@@ -36,7 +36,7 @@ class MaterialResourceController extends AbstractController
         $nbMaterialResourceCategory = count($materialResourceCategories);
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
-
+        $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON();
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
@@ -73,6 +73,7 @@ class MaterialResourceController extends AbstractController
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
+            'categoriesByMaterialResources' => $categoriesByMaterialResources
         ]); 
     }
 
@@ -115,6 +116,28 @@ class MaterialResourceController extends AbstractController
     
 }
 
+
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listCategoriesByMaterialResourcesJSON()
+    {
+        $categoriesByMaterialResourcesRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $categoriesByMaterialResources = $categoriesByMaterialResourcesRepository->findAll();
+        $categoriesByMaterialResourcesArray = array();
+
+        if ($categoriesByMaterialResources != null) {
+            foreach ($categoriesByMaterialResources as $category) {
+                $categoriesByMaterialResourcesArray[] = array('id' => strval($category->getId()),
+                    'materialresource_id' => $category->getMaterialresource()->getId(),
+                    'materialresourcecategory_id' => $category->getMaterialresourcecategory()->getId()                    
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $categoriesByMaterialResourcesArrayJson = new JsonResponse($categoriesByMaterialResourcesArray);
+        return $categoriesByMaterialResourcesArrayJson;    
+    }
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
@@ -186,6 +209,14 @@ class MaterialResourceController extends AbstractController
      */
     public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository): Response
     {
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+
+        $em=$this->getDoctrine()->getManager();
+        $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+        for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
+            $em->remove($categsOfResources[$indexCategOf]);
+        }
+        $em->flush();
         if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
             $listCategoryOfMaterialResource = $categoryOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
 
