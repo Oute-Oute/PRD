@@ -36,7 +36,7 @@ class MaterialResourceController extends AbstractController
         $nbMaterialResourceCategory = count($materialResourceCategories);
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
-
+        $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON();
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
@@ -73,6 +73,7 @@ class MaterialResourceController extends AbstractController
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
+            'categoriesByMaterialResources' => $categoriesByMaterialResources
         ]); 
     }
 
@@ -119,7 +120,7 @@ class MaterialResourceController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
-    public function listCategoriesByMaterialResources()
+    public function listCategoriesByMaterialResourcesJSON()
     {
         $categoriesByMaterialResourcesRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
         $categoriesByMaterialResources = $categoriesByMaterialResourcesRepository->findAll();
