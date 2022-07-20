@@ -168,9 +168,12 @@ class AppointmentController extends AbstractController
 
     public function getTargets(ManagerRegistry $doctrine, AppointmentRepository $AR)
     {
-        global $date;
+        $date = new \DateTime();
+        if (isset($_POST["date"])) {
+            $date = \DateTime::createFromFormat('Y-m-d', $_POST["date"]);
+        }
         $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
-        $targets = $this->getTargetByPathwayJSON($doctrine, $pathway, $AR);
+        $targets = $this->getTargetByPathwayJSON($doctrine, $pathway, $AR, $date);
         return new JsonResponse($targets);
     }
 
@@ -180,13 +183,12 @@ class AppointmentController extends AbstractController
         return $pathway;
     }
 
-    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway, AppointmentRepository $AR)
+    public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway, AppointmentRepository $AR, $date)
     {
         $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
         $targetsJSON = [];
-        $currentMonth=new \DateTime();
-        $month=$currentMonth->format('m');
-        $year=$currentMonth->format('Y');
+        $month=$date->format('m');
+        $year=$date->format('Y');
         $numberOfDay=0;
         switch($month){
             case '02':

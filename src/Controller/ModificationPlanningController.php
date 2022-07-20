@@ -580,7 +580,8 @@ class ModificationPlanningController extends AbstractController
         {
             $categoryOfMaterialResourceArray[] = array(
                 'idcategory' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
-                'idresource' => 'material-' . $categoryOfMaterialResource->getMaterialresource()->getId()
+                'idresource' => 'material-' . $categoryOfMaterialResource->getMaterialresource()->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()))
             );
         }
         return new JsonResponse($categoryOfMaterialResourceArray);
@@ -594,7 +595,8 @@ class ModificationPlanningController extends AbstractController
         {
             $categoryOfHumanResourceArray[] = array(
                 'idcategory' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
-                'idresource' => 'human-' . $categoryOfHumanResource->getHumanresource()->getId()
+                'idresource' => 'human-' . $categoryOfHumanResource->getHumanresource()->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()))
             );
         }
         return new JsonResponse($categoryOfHumanResourceArray);
