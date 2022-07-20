@@ -1212,7 +1212,6 @@ function updateErrorMessages() {
       }
     }
   })
-  console.log(listErrorMessages)
   updateListErrorMessages();
 }
 
