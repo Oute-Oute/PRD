@@ -233,11 +233,13 @@ function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*divActivitiesList.innerHTML = ''
+    /*
+    divActivitiesList.innerHTML = ''
     let label = document.createElement('label')
     label.setAttribute('class', 'label')
     label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)*/
+    divActivitiesList.appendChild(label)
+    */
 
     let indexActivityAvailable = 0
 
