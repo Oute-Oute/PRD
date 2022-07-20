@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
+use App\Entity\UnavailabilityHumanResource;
 use App\Entity\WorkingHours;
 use App\Form\HumanResourceType;
 use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\CategoryOfHumanResourceRepository;
+use App\Repository\UnavailabilityHumanResourceRepository;
 use App\Repository\WorkingHoursRepository;
 use DateTimeInterface;
 use DateTime;
@@ -579,7 +581,16 @@ class HumanResourceController extends AbstractController
     {
         if(isset($_POST["idHumanResource"])){
             $categories = $this->getCategoryByHumanResourceId($_POST["idHumanResource"], $doctrine);
-            return new JsonResponse($categories);
+            $workingHours = $this->getWorkingHoursByHumanResourceId($_POST["idHumanResource"], $doctrine);
+            $unavailability= $this->getUnavailabilityByHumanResourceId($_POST["idHumanResource"], $doctrine);
+            $activities = $this->getActivities($_POST["idHumanResource"],$_POST["date"]);
+            $data = array(
+                "categories" => $categories,
+                "workingHours" => $workingHours,
+                "unavailability" => $unavailability,
+                "activities" => $activities
+            );
+            return new JsonResponse($data);
         }
         if(isset($_POST["idHumanResourceCategory"])){
             $resources = $this->getResourceByHumanResourceCategoryId($_POST["idHumanResourceCategory"], $doctrine);
@@ -612,5 +623,56 @@ class HumanResourceController extends AbstractController
             }
         }
         return $resourceArray;
+    }
+    
+    public function getWorkingHoursByHumanResourceId($id, ManagerRegistry $doctrine){
+        $workingHours = $doctrine->getManager()->getRepository("App\Entity\WorkingHours")->findBy(['humanresource' => $id]);
+        $workingHoursArray=[];
+        foreach ($workingHours as $workingHour) {
+                $workingHoursArray[] = [
+                    'starttime' => $workingHour->getStarttime()->format('H:i:s'),
+                    'endtime' => $workingHour->getEndtime()->format('H:i:s'),
+                    'dayweek' => $workingHour->getDayweek(),
+                ];
+        }
+        return $workingHoursArray;
+    }
+
+    public function getUnavailabilityByHumanResourceId($id, ManagerRegistry $doctrine){
+        $unavailability = $doctrine->getManager()->getRepository("App\Entity\UnavailabilityHumanResource")->findBy(['humanresource' => $id]);
+        $unavailabilityArray=[];
+        foreach ($unavailability as $unavail) {
+                $unavailabilityArray[] = [
+                    'starttime' => str_replace(" ","T",$unavail->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'endtime' =>  str_replace(" ","T",$unavail->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                ];
+        }
+        return $unavailabilityArray;
+    }
+
+    public function getActivities($id, $dateStr){
+        $activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled")->findBy(['humanresource' => $id]);
+        $activitiesArray=[];
+        $date=new \DateTime($dateStr);
+        $dayOfWeek=date('w', $date->getTimestamp());
+        $date->modify('-'.$dayOfWeek.' days');
+        $monday=new \DateTime($date->format('Y-m-d'));
+        $monday->modify('+1 days');
+        $date->modify('+7 days');
+        $sunday=new \DateTime($date->format('Y-m-d'));
+        foreach ($activities as $activity) {
+            if($activity->getScheduledActivity()->getAppointment()->getDayappointment() >= $monday 
+            && $activity->getScheduledActivity()->getAppointment()->getDayappointment() <= $sunday){
+                $activitiesArray[] = [
+                    'dayappointment' => $activity->getScheduledActivity()->getAppointment()->getDayappointment()->format('Y-m-d'),
+                    'activity' => $activity->getScheduledActivity()->getActivity()->getActivityname(),
+                    'pathway' => $activity->getScheduledActivity()->getActivity()->getPathway()->getPathwayname(),
+                    'starttime' => $activity->getScheduledActivity()->getStarttime()->format('H:i:s'),
+                    'endtime' => $activity->getScheduledActivity()->getEndtime()->format('H:i:s'),
+                    'patient' => $activity->getScheduledActivity()->getAppointment()->getPatient()->getLastname()." ".$activity->getScheduledActivity()->getAppointment()->getPatient()->getFirstname(),
+                ];
+            }
+        }
+        return $activitiesArray;
     }
 }
