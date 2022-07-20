@@ -41,25 +41,30 @@ function addAppointment() {
     tagsPathways.push(pathName);
   }
 }
+function getTargetsbyMonth(date) {
+  console.log(date);
+  dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+  var pathwayName = $('#autocompletePathwayAdd').val();
+  $.ajax({
+    type : 'POST',
+    url  : '/ajaxAppointment',
+    data : { pathway: pathwayName, date:dateStr },
+    dataType : "json",
+    success : function(data)
+          {
+               addTargetsToCalendar(data);
+            },
+    error: function(data)
+    {
+      console.log("error");
+    }
+    });
+  }
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
-  var pathwayName = $('#autocompletePathwayAdd').val();
-      $.ajax({
-
-        type : 'POST',
-        url  : '/ajaxAppointment',
-        data : { pathway: pathwayName},
-        dataType : "json",
-        success : function(data)
-              {
-                   addTargetsToCalendar(data);
-                },
-        error: function(data)
-        {
-          console.log("error");
-        }
-        });
+  var dateToGet=new Date();
+  getTargetsbyMonth(dateToGet);
   document.getElementById("buttonSelect").onclick=function(){validate(type);}
   document.getElementById("buttonCancel").onclick=function(){hideDayModale(type);}
   document.getElementById('load').style.visibility="";
@@ -155,6 +160,11 @@ console.log(document.getElementById("dateSelected").value);
     selectable: true, //set the calendar to be selectable
     editable: true, //set the calendar not to be editable
     nowIndicator: true,
+    headerToolbar: {
+      start: null,
+      center: "title",
+      end: null,
+    },
     eventDidMount: function (info) {
       $(info.el).tooltip({
         title: info.event.extendedProps.description,
@@ -192,4 +202,78 @@ function addTargetsToCalendar(targets) {
 });
 calendar.render();
 document.getElementById('load').style.visibility="hidden";
+}
+
+/**
+ * @brief This function is called when we want to go to the previous day
+ */
+ function PreviousMonth() {
+  var oldDate = calendar.getDate() //get the old day in the calendar
+  var newDate = new Date(
+    oldDate.getFullYear(),
+    oldDate.getMonth() - 1,
+    oldDate.getDate() 
+  ); //create a new day after the old one
+  var day = newDate.getDate(); //get the day
+  var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+  var year = newDate.getFullYear(); //get the year
+  if (day < 10) {
+    day = "0" + day;
+  } //if the day is less than 10, add a 0 before to fit with DateTime format
+  if (month < 10) {
+    month = "0" + month;
+  } //if the month is less than 10, add a 0 before to fit with DateTime format
+  calendar.removeAllEvents();
+  getTargetsbyMonth(newDate)
+  calendar.gotoDate(newDate)
+  document.getElementById('load').style.visibility="visible";
+}
+
+
+/**
+ * @brief This function is called when we want to go to the next day
+ */
+function NextMonth() {
+  var oldDate = calendar.getDate() //get the old day in the calendar
+  var newDate = new Date(
+    oldDate.getFullYear(),
+    oldDate.getMonth() + 1,
+    oldDate.getDate() 
+  ); //create a new day after the old one
+  var day = newDate.getDate(); //get the day
+  var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+  var year = newDate.getFullYear(); //get the year
+  if (day < 10) {
+    day = "0" + day;
+  } //if the day is less than 10, add a 0 before to fit with DateTime format
+  if (month < 10) {
+    month = "0" + month;
+  } //if the month is less than 10, add a 0 before to fit with DateTime format
+  calendar.removeAllEvents();
+  console.log(calendar.getEvents());
+  getTargetsbyMonth(newDate)
+  calendar.gotoDate(newDate)
+  document.getElementById('load').style.visibility="visible";
+}
+
+
+/**
+ * @brief This function is called when we want to go to the date of today
+ */
+function Today() {
+  var today = new Date(); //get the date of today
+  var day = today.getDate(); //get the day
+  var month = today.getMonth() + 1; //get the month (add 1 because it starts at 0)
+  var year = today.getFullYear(); //get the year
+  if (day < 10) {
+    day = "0" + day;
+  } //if the day is less than 10, add a 0 before to fit with DateTime format
+  if (month < 10) {
+    month = "0" + month;
+  } //if the month is less than 10, add a 0 before to fit with DateTime format
+  calendar.removeAllEvents();
+  getTargetsbyMonth(today)
+  console.log(calendar.getEvents());
+  calendar.gotoDate(today)
+  document.getElementById('load').style.visibility="visible";
 }

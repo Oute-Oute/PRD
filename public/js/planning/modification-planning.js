@@ -1160,8 +1160,8 @@ function verifyHistoryPush(array, idAppointment){
 function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents();
   listScheduledActivities.forEach((scheduledActivity) => {
+    console.log(scheduledActivity)
     if(scheduledActivity.display != "background"){
-      console.log(scheduledActivity)
       var appointmentAlreadyExist = false;
       if(listErrorMessages != []){
         listErrorMessages.forEach((errorMessage) => {
@@ -1299,8 +1299,8 @@ function getListCategoryHumanResources(scheduledActivity){
               if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){
                 categoryHumanResourceAlreadyExist = true;
 
-                categoryHumanResource.messageCategoryQuantity = getMessageCategoryQuantity(categoryOfHumanResource.idcategory);
-                categoryHumanResource.messageWrongCategory = getMessageWrongCategory(categoryOfHumanResource.idcategory);
+                categoryHumanResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human");
+                categoryHumanResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human");
 
                 var humanResourceAlreadyExist = false;
                 categoryHumanResource.listHumanResources.forEach((existingHumanResource) => {
@@ -1326,8 +1326,8 @@ function getListCategoryHumanResources(scheduledActivity){
           if(categoryHumanResourceAlreadyExist == false){
             listCategoryHumanResources.push({
               categoryHumanResourceId: categoryOfHumanResource.idcategory,
-              messageCategoryQuantity: getMessageCategoryQuantity(categoryOfHumanResource.idcategory),
-              messageWrongCategory: getMessageWrongCategory(categoryOfHumanResource.idcategory),
+              messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
               listHumanResources: [{
                 humanResourceId: humanResource,
                 humanResourceName: getResourceTitle(humanResource),
@@ -1360,8 +1360,8 @@ function getListCategoryMaterialResources(scheduledActivity){
               if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){
                 categoryMaterialResourceAlreadyExist = true;
 
-                categoryMaterialResource.messageCategoryQuantity = getMessageCategoryQuantity(categoryOfMaterialResource.idcategory);
-                categoryMaterialResource.messageWrongCategory = getMessageWrongCategory(categoryOfMaterialResource.idcategory);
+                categoryMaterialResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
+                categoryMaterialResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
 
                 var materialResourceAlreadyExist = false;
                 categoryMaterialResource.listMaterialResources.forEach((existingMaterialResource) => {
@@ -1386,8 +1386,8 @@ function getListCategoryMaterialResources(scheduledActivity){
           if(categoryMaterialResourceAlreadyExist == false){
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
-              messageCategoryQuantity: getMessageCategoryQuantity(categoryOfMaterialResource.idcategory),
-              messageWrongCategory: getMessageWrongCategory(categoryOfMaterialResource.idcategory),
+              messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
               listMaterialResources: [{
                 materialResourceId: materialResource,
                 materialResourceName: getResourceTitle(materialResource),
@@ -1405,23 +1405,118 @@ function getListCategoryMaterialResources(scheduledActivity){
 }
 
 function getResourceTitle(resourceId) {
-  
+  var listResources;
+  if(resourceId.substring(0,5) == "human"){
+    listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+  }
+  else {
+    listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+  }
+
+  var resourceName = "undefined";
+
+  listResources.forEach((resource) => {
+    if(resource.id == resourceId){
+      resourceName = resource.title;
+    }
+  })
+
+  return resourceName;
 }
 
-function getMessageCategoryQuantity(categoryResourceId){
+function getMessageCategoryQuantity(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
+
+  if(getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == ""){
+    var listCategoryOfResources;
+    if(typeResources == "human"){
+      listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+    }
+    else {
+      listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+    }
+    
+    var categoryQuantity = 0;
+    listCategoryOfResources.forEach((categoryOfResource) => {
+      if(categoryOfResource.idcategory == categoryResourceId){
+        scheduledActivity._def.resourceIds.forEach((scheduledActivityResource) => {
+          if(scheduledActivityResource == categoryOfResource.idresource){
+            categoryQuantity++;
+          }
+        })
+      }
+    })
+
+    if(typeResources == "human"){
+      scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
+        if(categoryHumanResource.id == categoryResourceId){
+          if(categoryHumanResource.quantity < categoryQuantity){
+            message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryHumanResource.categoryname + " alors qu'il n'en suffit que de " + categoryHumanResource.quantity + " .";
+          }
+        }
+      })
+    }
+    else {
+      scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
+        if(categoryMaterialResource.id == categoryResourceId){
+          if(categoryMaterialResource.quantity < categoryQuantity){
+            message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryMaterialResource.categoryname + " alors qu'il n'en suffit que de " + categoryMaterialResource.quantity + " .";
+          }
+        }
+      })
+    }
+  }
 
   return message;
 }
 
-function getMessageWrongCategory(categoryResourceId){
+function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
+
+  var categoryExist = false;
+  var categoryName = "";
+  if(typeResources == "human"){
+    scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
+      if(categoryHumanResource.id == categoryResourceId){
+        categoryExist = true;
+      }
+    })
+    if(categoryExist == false){
+      var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+      listCategoryOfResources.forEach((categoryOfResource) => {
+        if(categoryOfResource.idcategory == categoryResourceId){
+          categoryName = categoryOfResource.categoryname
+        }
+      })
+    }
+  }
+  else {
+    scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
+      if(categoryMaterialResource.id == categoryResourceId){
+        categoryExist = true;
+      }
+    })
+    if(categoryExist == false){
+      var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+      listCategoryOfResources.forEach((categoryOfResource) => {
+        if(categoryOfResource.idcategory == categoryResourceId){
+          categoryName = categoryOfResource.categoryname
+        }
+      })
+    }
+  }
+
+  if(categoryExist == false){
+    message = scheduledActivity.title + " n'a pas besoin de " + categoryName + ".";
+  }
 
   return message;
 }
 
 function getMessageUnavailability(scheduledActivity, resourceId){
   var message = "";
+
+  
 
   return message;
 }

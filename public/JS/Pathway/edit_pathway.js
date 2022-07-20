@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //addActivity() 
     initActivity()
     handleHumanButton()
+    initActivitiesList()
     fillActivityList()
 
     // calcul de la taille de la liste
@@ -50,6 +51,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })
 
+
+function initActivitiesList() {
+    //console.log(PATHWAY.activities)
+    for (let i = 0; i < PATHWAY.activities.length; i++) {
+        RESOURCES_BY_ACTIVITIES[i] = new Object()
+        RESOURCES_BY_ACTIVITIES[i].humanResourceCategories = PATHWAY.activities[i].humanResourceCategories
+        RESOURCES_BY_ACTIVITIES[i].materialResourceCategories = PATHWAY.activities[i].materialResourceCategories
+        RESOURCES_BY_ACTIVITIES[i].available = true 
+
+        /*
+        for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
+            let res = new Object();
+            res.id = PATHWAY.activities[i].materialResourceCategories[indexMR].id
+            res.name = PATHWAY.activities[i].materialResourceCategories[indexMR].name
+            res.nb = PATHWAY.activities[i].materialResourceCategories[indexMR].nb
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.push(res)
+        
+        }
+        */
+
+        RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
+        RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
+    }
+   
+    console.log('TABLEAU')
+    console.log(RESOURCES_BY_ACTIVITIES)
+
+}
 
 /**
  * Permet d'afficher la fenêtre modale d'informations
@@ -131,7 +160,6 @@ function addArray() {
     RESOURCES_BY_ACTIVITIES[len].materialResourceCategories = new Array()
     RESOURCES_BY_ACTIVITIES[len].available = true
 
-
     for (let indexHR = 0; indexHR < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHR++) {
         let res = new Object();
         res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].id
@@ -140,7 +168,6 @@ function addArray() {
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
-
     for (let indexMR = 0; indexMR < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMR++) {
         let res = new Object();
         res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].id
@@ -148,8 +175,10 @@ function addArray() {
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
+
     RESOURCES_BY_ACTIVITIES[len].activityname = document.getElementById('input-name').value
     RESOURCES_BY_ACTIVITIES[len].activityduration = document.getElementById('input-duration').value
+    RESOURCES_BY_ACTIVITIES[len].id = Number(-1)
 }
 
 /**
@@ -172,8 +201,8 @@ function addActivity() {
 
     if (verif) {
         if (IS_EDIT_MODE) {
-            console.log('verif ok confirm')
-            console.log(document.getElementById('input-name').value)
+            //console.log('verif ok confirm')
+            //console.log(document.getElementById('input-name').value)
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
             fillActivityList()
@@ -181,6 +210,7 @@ function addActivity() {
         } else {
             // ajout de l'activité au tableau
             addArray()
+            //console.log(RESOURCES_BY_ACTIVITIES)
             NB_ACTIVITY = NB_ACTIVITY + 1;
             document.getElementById('nbactivity').value = NB_ACTIVITY
 
@@ -248,9 +278,9 @@ function fillActivityList() {
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
             
-            pindex = document.createElement('p')
+           /* pindex = document.createElement('p')
             pindex.innerText = indexActivity
-            activity.appendChild(pindex)
+            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)
@@ -293,7 +323,7 @@ function deleteSelect(id) {
     //SELECT_ID = SELECT_ID - 1;
     fillActivityList()
 }
-
+ 
 
 /**
  * Permet de modifier une activité  
