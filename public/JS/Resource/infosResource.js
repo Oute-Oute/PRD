@@ -1,31 +1,21 @@
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
+var idHR;
  function showInfosModalHuman(idHumanResource, resourceName) {
     document.getElementById('human-resource1').innerHTML = resourceName;
     document.getElementById('human-resource2').innerHTML = resourceName;
     document.getElementById('human-resource3').innerHTML = resourceName;
-   
+    idHR = idHumanResource;
     var tableBody = document.getElementById('tbody-human-resource');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxHumanResource',
-        data : {idHumanResource: idHumanResource},
-        dataType : "json",
-        success : function(data){  
-            tableResource(tableBody, data, "humanresource");
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-        
+    date=new Date();
+    getAjaxHumanResources(idHumanResource, date,tableBody);        
     createCalendarResource("humanresource");
     getWorkingHours(idHumanResource);
     change_tab_human_infos('planning');
     $('#infos-human-resource-modal').modal("show");
+    document.getElementById('load-large').style.visibility="visible";
 }
 
 function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
@@ -42,7 +32,7 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
         success : function(data){  
             tableResource(tableBody, data, "humanresourcecategory");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -65,7 +55,7 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
         success : function(data){  
             tableResource(tableBody, data, "materialresource");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
@@ -88,12 +78,28 @@ function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategNa
         success : function(data){  
             tableResource(tableBody, data, "materialresourcecategory");
         },
-        error: function(data){
+        error: function(){
             console.log("error");
         }
         });
 
     $('#infos-material-resource-category-modal').modal("show");
+}
+function getAjaxHumanResources(idHumanResource, date,tableBody){
+    dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+    $.ajax({
+        type : 'POST',
+        url  : '/ajaxHumanResource',
+        data : {idHumanResource: idHumanResource,date:dateStr},
+        dataType : "json",
+        success : function(data){  
+            tableResource(tableBody, data["categories"], "humanresource");
+            addToCalendar(data);
+        },
+        error: function(){
+            console.log("error");
+        }
+        });
 }
 
 function tableResource(tableBody, data, switch_param){
@@ -219,16 +225,19 @@ function change_tab_human_infos(id)
         planning.style.display = 'block';
         workinghours.style.display = 'none';
         categories.style.display = 'none';
+        document.getElementById("modal-dialog").style.maxWidth="1000px";
     break;
     case 'workinghours':
         planning.style.display = 'none';
         workinghours.style.display = 'block';
         categories.style.display = 'none';
+        document.getElementById("modal-dialog").style.maxWidth="600px";
     break;
     case 'categoriesbyresource':
         planning.style.display = 'none'
         workinghours.style.display = 'none';
         categories.style.display = 'block';
+        document.getElementById("modal-dialog").style.maxWidth="600px";
     break;
   }
 }
@@ -262,40 +271,140 @@ function change_tab_material_infos(id)
     console.log("createCalendarResource");
     date = new Date(); //create a new date with the date in the hidden input
     var calendarEl = document.getElementById("calendar-hr"); //create the calendar variable
-
     //create the calendar
     calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
         timeZone: 'UTC',
     initialView: 'timeGridWeek',
+    contentHeight: '500px',
+    locale: "frLocale", //set the language in french
+    firstDay: 1, //set the first day of the week to monday
+    timeZone: "Europe/Paris", //set the timezone for France
+    selectable: false, //set the calendar to be selectable
+    editable: false, //set the calendar not to be editable
     headerToolbar: {
         left: '',
         center: '',
         right: ''
     },
-    events: 'https://fullcalendar.io/api/demo-feeds/events.json',
       eventDidMount: function (info) {
         $(info.el).tooltip({
-          //title: info.event.extendedProps.description,
+          title: info.event.extendedProps.description,
           placement: "top",
           trigger: "hover",
           container: "body",
         });
+        },
+        eventClick: function (event) {
+      //get the data of the event
+      var id = event.event._def.publicId; //get the id of the event
+      var activity = calendar.getEventById(id); //get the event with the id
+      var start = activity.start; //get the start date of the event
+      var end = activity.end; //get the end date of the event
+
+      //set data to display in the modal window
+      $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
+      $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
+      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
+      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
+      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
+
+      $("#hr-planning-modal").modal("show"); //open the window
       },
     });
     calendar.render(); //render the calendar
 }   
-  function addTargetsToCalendar(targets) {
-    targets.forEach(element => {
-      calendar.addEvent({
-        allDay: true,
-        start: element.start,
-        description: element.description,
-        display:'background',
-        color:element.color,
-  
-    });
-    
-  });
+  function addToCalendar(data) {
+    console.log(data)
+    events=data["activities"]
+    console.log(events)
+    unavailability=data["unavailability"]
+    for(let i=0; i<events.length; i++){
+        console.log(events[i])
+        startDateTime=events[i]
+        calendar.addEvent({
+            title: events[i].activity,
+            start: events[i].dayappointment+"T"+events[i].starttime,
+            end: events[i].dayappointment+"T"+events[i].endtime,
+            description: events[i].activity,
+            extendedProps: {
+                pathway: events[i].pathway,
+                patient: events[i].patient,
+            }
+        })
+  }
+  document.getElementById('load-large').style.visibility="hidden";
   calendar.render();
+}
+
+/**
+ * @brief This function is called when we want to go to the previous day
+ */
+ function PreviousWeek() {
+    var oldDate = calendar.getDate() //get the old day in the calendar
+    var newDate = new Date(
+      oldDate.getFullYear(),
+      oldDate.getMonth() ,
+      oldDate.getDate() -7
+    ); //create a new day after the old one
+    var day = newDate.getDate(); //get the day
+    var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = newDate.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,newDate,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(newDate)
+    document.getElementById('load-large').style.visibility="visible";
+  }
+  
+  
+  /**
+   * @brief This function is called when we want to go to the next day
+   */
+  function NextWeek() {
+    var oldDate = calendar.getDate() //get the old day in the calendar
+    var newDate = new Date(
+      oldDate.getFullYear(),
+      oldDate.getMonth(),
+      oldDate.getDate() + 7
+    ); //create a new day after the old one
+    var day = newDate.getDate(); //get the day
+    var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = newDate.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,newDate,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(newDate)
+    document.getElementById('load-large').style.visibility="visible";
+  }
+  
+  
+  /**
+   * @brief This function is called when we want to go to the date of today
+   */
+  function Today() {
+    var today = new Date(); //get the date of today
+    var day = today.getDate(); //get the day
+    var month = today.getMonth() + 1; //get the month (add 1 because it starts at 0)
+    var year = today.getFullYear(); //get the year
+    if (day < 10) {
+      day = "0" + day;
+    } //if the day is less than 10, add a 0 before to fit with DateTime format
+    if (month < 10) {
+      month = "0" + month;
+    } //if the month is less than 10, add a 0 before to fit with DateTime format
+    calendar.removeAllEvents();
+    getAjaxHumanResources(idHR,today,document.getElementById('tbody-human-resource'))
+    calendar.gotoDate(today)
+    document.getElementById('load-large').style.visibility="visible";
   }

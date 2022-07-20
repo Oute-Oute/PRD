@@ -137,7 +137,7 @@ class PathwayController extends AbstractController
         }
         
         $pathwayArray += [ 'activities' => $activitiesArray ];
-/*
+        /*
         $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
 
         $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
@@ -444,6 +444,7 @@ class PathwayController extends AbstractController
             //$em->flush();
 
             // Création de tous les repository
+            $pathwayRepository = new PathwayRepository($this->getDoctrine());
             $activityRepository = new ActivityRepository($this->getDoctrine());
             $successorRepository = new SuccessorRepository($this->getDoctrine());
             $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
@@ -464,7 +465,7 @@ class PathwayController extends AbstractController
             // Premierement on s'occupe d'ajouter le parcours dans la bd :
             
             // On crée l'objet parcours
-            $pathway = new Pathway();
+            $pathway = $pathwayRepository->findBy(["id"=>$param['pathwayid']])[0];
             $pathway->setPathwayname($param['pathwayname']);
             //$pathway->setAvailable(true);
 
@@ -494,12 +495,12 @@ class PathwayController extends AbstractController
 
                         // On verifie si l'activité exsite déjà (si son id est different de -1)
                         if ($resourcesByActivities[$indexActivity]->id == -1) {
-                            $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
-
                             // Création de l'activité
                             $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
                             $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
                             $activity->setPathway($pathway);
+
+                            //dd($activity);
                             $activityRepository->add($activity, true);
 
                         } else {
@@ -511,30 +512,60 @@ class PathwayController extends AbstractController
                             $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
                             //$activity->setPathway($pathway);
                             $em->flush();
-            
                         }
 
+
+                        // On supprime toutes les activités 
+                        //$activityHumanResource = $AHRRepository->findAll();
+
+                        //$entityManager->remove($activityHumanResource);
+                        //$entityManager->flush($activityHumanResource);
 
                         // Ajout des liens activity - ressources humaines
                         
-                        $nbHRC = count($resourcesByActivities[$indexActivity]->humanResourceCategories);
+                        $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
                     
-                        if ($nbHRC != 0) {
-                            for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
+                        if ($nbMRC != 0) {
+                            for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
 
                                 // Premierement on recupere la categorie de la bd
-                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
-                                                                
+                                $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                
                                 // Ensuite on crée l'objet ActivityMaterialResource
-                                $activityHumanResource = new ActivityHumanResource();
-                                $activityHumanResource->setActivity($activity);
-                                $activityHumanResource->setHumanresourcecategory($HRC);
-                                $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
-                                                                
+                                $activityMaterialResource = new ActivityMaterialResource();
+                                $activityMaterialResource->setActivity($activity);
+                                $activityMaterialResource->setMaterialresourcecategory($MRC);
+                                $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                
                                 // Puis on l'ajoute dans la bd
-                                $AHRRepository->add($activityHumanResource , true);
+                                $AMRRepository->add($activityMaterialResource , true);
                             }
                         }
+                        /*
+                        //MODIFICATION
+                        // on recupere l'objet ActivityMaterialResource
+                        $activityHumanResource = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC]);
+                        $activityHumanResource->setActivity($activity);
+                        $activityHumanResource->setHumanresourcecategory($HRC);
+                        $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                        
+                        // Puis on met a jour la bd
+                        $entityManager->flush($activityHumanResource);
+                        //
+                        //SUPPRESSION
+                        $activityHumanResource = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC]);
+
+                        $entityManager->remove($activityHumanResource);
+                        $entityManager->flush($activityHumanResource);
+                        //
+                        //AJOUT
+                        // on crée l'objet ActivityMaterialResource
+                        $activityHumanResource = new ActivityHumanResource();
+                        $activityHumanResource->setActivity($activity);
+                        $activityHumanResource->setHumanresourcecategory($HRC);
+                        $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                        */
+                               
                     
 
                         // Ajout des liens activity - ressources materielles
@@ -558,6 +589,15 @@ class PathwayController extends AbstractController
                             }
                         }
 
+                    } else {
+                        // si l'activité est en available = false
+                        // on doit verifier si elle existe dans la bd pour la supprimer 
+                        if ($resourcesByActivities[$indexActivity]->id != -1) {
+
+                            $activity = $activityRepository->findById($resourcesByActivities[$indexActivity]->id)[0];
+                            $em->remove($activity);
+                            $em->flush($activity);
+                        }
                     }
 
                 }
