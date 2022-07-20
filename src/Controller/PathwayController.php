@@ -17,12 +17,15 @@ use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use App\Form\PathwayType;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\Length;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
@@ -773,26 +776,109 @@ class PathwayController extends AbstractController
             return new JsonResponse('');
         }
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
+
         $activities = $doctrine->getManager()->getRepository("App\Entity\Activity")->findBy(["pathway"=>$pathway]);
         $activityArray=[];
         foreach ($activities as $activity) {
-            $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findBy(["activitya"=>$activity]);
-            $arraySuccessor = [];
-            foreach($successors as $successor){
-                $arraySuccessor[] = [
-                    'name' => $successor->getActivityb()->getActivityName(),
-                    'delaymin' => $successor->getDelaymin(),
-                    'delaymax' => $successor->getDelaymax(),
-                ];
-            }
-            $activityArray[] = [
-                'name' => $activity->getActivityname(),
-                'duration' => $activity->getDuration(),
-                'successor' => $arraySuccessor,
+            $activityArray[] = $this->activityToArray($doctrine, $activity);
+        }
+
+        $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findAll();
+        $arraySuccessor = [];
+        foreach($successors as $successor){
+            $arraySuccessor[] = [
+                'idA' => $successor->getActivityA()->getId(),
+                'idB' => $successor->getActivityb()->getId(),
+                'name' => $successor->getActivityb()->getActivityName(),
+                'delaymin' => $successor->getDelaymin(),
+                'delaymax' => $successor->getDelaymax(),
             ];
         }
 
-        return new JsonResponse($activityArray);
+        $test = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
+        $data = $this->updateActivitiesLevel($test, $doctrine);
+        return new JsonResponse($data);
+    }
+
+    public function sortActivities($activityArray, $arraySuccessor, ManagerRegistry $doctrine){
+        $activitiesSorted = [];
+        
+        for($i=0; $i < count($activityArray); $i++){
+            $racine = true;
+            for($j=0; $j < count($arraySuccessor); $j++){
+                if($activityArray[$i]['id'] == $arraySuccessor[$j]['idB']){
+                    $racine = false;
+                }
+            }
+            if($racine){
+                $activityRacine = $activityArray[$i];
+            }
+        }
+
+        return $this->sortActivitiesRecursive($doctrine, $activitiesSorted, $activityRacine, 0);
+    }
+
+    public function sortActivitiesRecursive(ManagerRegistry $doctrine, $activitiesArray, $activityToAdd, $level){
+        $listSuccessors = $activityToAdd['successor'];
+        if($listSuccessors == []){
+            return [
+                'activity' => $activityToAdd,
+                'level' => $level,
+        ];
+        }
+
+        $activitiesArray[] = [
+            'activity' => $activityToAdd,
+            'level' => $level,
+        ];
+
+        for($j = 0; $j < count($listSuccessors); $j++){
+            $nextActivity = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$activityToAdd['successor'][$j]['idB']]);
+            $nextActivityArray = $this->activityToArray($doctrine, $nextActivity);
+            $activitiesArray += $this->sortActivitiesRecursive($doctrine, $activitiesArray, $nextActivityArray, $level+1);
+        }
+        
+        return $activitiesArray;
+    }
+
+    function updateActivitiesLevel($activitiesArray, ManagerRegistry $doctrine){
+        for($i=0; $i < count($activitiesArray)-3; $i++){
+            $successors = $activitiesArray[$i]['activity']['successor'];
+            foreach($successors as $successor){
+                $nextActivity = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$successor['idB']]);
+                $levelSuccessor = -1;
+                for($j=0; $j < count($activitiesArray)-2; $j++){
+                    if($activitiesArray[$j]['activity']['id'] == $nextActivity->getId()){
+                        $levelSuccessor = $activitiesArray[$j]['level'];
+                        if($levelSuccessor != -1 && $levelSuccessor <= $activitiesArray[$i]['level']){
+                            $activitiesArray[$j]['level'] = $activitiesArray[$i]['level'] + 1;
+                        }
+                    }
+                    
+                }
+            }
+        }
+        $activitiesArray['level']++;
+        return $activitiesArray;
+    }
+
+    public function activityToArray(ManagerRegistry $doctrine, $activity){
+        $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findBy(["activitya"=>$activity]);
+        $arraySuccessor = [];
+        foreach($successors as $successor){
+            $arraySuccessor[] = [
+                'idB' => $successor->getActivityb()->getId(),
+                'delaymin' => $successor->getDelaymin(),
+                'delaymax' => $successor->getDelaymax(),
+            ];
+        }
+        $activityArray = [
+            'id' => $activity->getId(),
+            'name' => $activity->getActivityname(),
+            'duration' => $activity->getDuration(),
+            'successor' => $arraySuccessor,
+        ];
+        return $activityArray;
     }
 
     public function getAppointmentsByPathwayId(ManagerRegistry $doctrine)

@@ -158,16 +158,11 @@ function showEditModalForm(id, name, index){
 
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
-    console.log(id)
-    console.log(CATEGORIES_BY_HUMAN_RESOURCES[0].id)
     for (let j = 0; j < CATEGORIES_BY_HUMAN_RESOURCES.length; j++){
         if(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresource_id == id){
         categoriesId.push(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresourcecategory_id)
         }
     }
-    console.log(categoriesContainer.children[0].children[0])
-    console.log("categoriesId :"+categoriesId)
-
 
     /*for (let y = 0; y <= 6; y++){
         beginHours.children[y].value = currentTime
@@ -206,15 +201,23 @@ function showEditModalFormMaterial(id, name, index){
     document.getElementById('edit--resourcename').value = name
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
-    
-    for (let j = 0; j < categoriesByResources[index].categories.length; j++) {
-        categoriesId.push(categoriesByResources[index].categories[j].idCategory)
+    for (let j = 0; j < CATEGORIES_BY_MATERIAL_RESOURCES.length; j++){
+        if(CATEGORIES_BY_MATERIAL_RESOURCES[j].materialresource_id == id){
+        categoriesId.push(CATEGORIES_BY_MATERIAL_RESOURCES[j].materialresourcecategory_id)
+        }
     }
 
-    for (let i = 0; i <= categoriesContainer.children.length; i++) {
-        categoriesContainer.children[i].children[0].checked = false;
+    /*for (let y = 0; y <= 6; y++){
+        beginHours.children[y].value = currentTime
+    }*/
+    //TODO : check pq erreur dans console, mettre la length -1 dans le for?
+    //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
 
-        if(categoriesId.includes(categoriesContainer.children[i].children[0].value)) {
+
+
+    for (let i = 0; i < categoriesContainer.children.length; i++) {
+        categoriesContainer.children[i].children[0].checked = false;
+        if(categoriesId.includes(Number(categoriesContainer.children[i].children[0].value))) {
             categoriesContainer.children[i].children[0].checked = true;
         }
     }
