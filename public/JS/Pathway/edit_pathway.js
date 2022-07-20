@@ -30,13 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
     PATHWAY = JSON.parse(
         document.getElementById("json-pathway").value
     );
+    document.getElementById('resource-nb').value = 1
     console.log('oui oui')
     console.log(PATHWAY)
 
     document.getElementById('pathwayid').value = PATHWAY.id
-    console.log('non non')
 
-    console.log(document.getElementById('pathwayid').value)
     document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
 
@@ -66,10 +65,13 @@ function initActivitiesList() {
         let len = RESOURCES_BY_ACTIVITIES[i].humanResourceCategories.length
         for (let indexHR = 0; indexHR < len; indexHR++) {
             RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].already = true
+            RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].available = true
         }
-        let len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
+
+        len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
         for (let indexMR = 0; indexMR < len; indexMR++) {
             RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].already = true
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].available = true
         }
         /*
         for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
@@ -176,6 +178,9 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].id
         res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].name
         res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].nb
+        res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].already
+        res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].available
+
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
@@ -184,6 +189,9 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].id
         res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].name
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
+        res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].already
+        res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
+
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
 
@@ -482,6 +490,7 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
         ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].available = true
 
         fillHRCList()
     } else {
@@ -503,7 +512,8 @@ function addResources() {
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
         ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
-    
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].available = true
+
         fillMRCList()
     }
 
@@ -701,10 +711,12 @@ function deleteResource(id) {
     idRessource = idSplitted[idSplitted.length - 1]
 
     if (typeRessource === 'h') {
-        ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[idRessource].available = false
         fillHRCList();
     } else {
-        ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[idRessource].available = false
         fillMRCList();
     }
 
