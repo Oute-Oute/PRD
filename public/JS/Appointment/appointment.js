@@ -42,7 +42,6 @@ function addAppointment() {
   }
 }
 function getTargetsbyMonth(date) {
-  console.log(date);
   dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
   var pathwayName = $('#autocompletePathwayAdd').val();
   $.ajax({
@@ -60,6 +59,7 @@ function getTargetsbyMonth(date) {
     }
     });
   }
+
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
@@ -132,7 +132,7 @@ function hideNewModalForm() {
 function validate(type){
   if(type=="new"){
   document.getElementById("dateSelected").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
-console.log(document.getElementById("dateSelected").value);  
+
 }
   else if(type=="edit")
   {
@@ -250,7 +250,6 @@ function NextMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  console.log(calendar.getEvents());
   getTargetsbyMonth(newDate)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility="visible";
@@ -273,7 +272,6 @@ function Today() {
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
   getTargetsbyMonth(today)
-  console.log(calendar.getEvents());
   calendar.gotoDate(today)
   document.getElementById('load').style.visibility="visible";
 }
