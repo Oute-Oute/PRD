@@ -1332,16 +1332,22 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
             var divColumn=document.createElement('divColumn');
             div.append(divColumn); 
-            var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML=listErrorMessages[i].messageEarliestAppointmentTime;  
+            var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML='-'+listErrorMessages[i].messageEarliestAppointmentTime;  
             divColumn.append(messageEarliestAppointmentTime);
+            var space=document.createElement('space');
+            space.innerHTML='</br>';
+            div.append(space);
           }
 
           //messageLatestAppointmentTime
           if(listErrorMessages[i].messageLatestAppointmentTime!=''){
             var divColumn=document.createElement('divColumn');
             div.append(divColumn); 
-            var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML=listErrorMessages[i].messageLatestAppointmentTime;  
+            var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML='-'+listErrorMessages[i].messageLatestAppointmentTime;  
             divColumn.append(messageLatestAppointmentTime);
+            var space=document.createElement('space');
+            space.innerHTML='</br>';
+            div.append(space);
           }
           
           //messageDelay for each ScheduledActivity
@@ -1355,9 +1361,10 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
               
 
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+                  
                 var divColumn=document.createElement('divColumn');
                 div.append(divColumn); 
-                var messageDelay= document.createElement('messageDelay').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
+                var messageDelay= document.createElement('messageDelay').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
                 divColumn.append(messageDelay);
               }
 
@@ -1365,13 +1372,13 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn); 
-                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
                   divColumn.append(messageWrongCategory);
                 }
                 
@@ -1379,21 +1386,21 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
+                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
                     divColumn.append(messageWorkingHours);
                   }
 
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
                   listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
                     divColumn.append(messageAlreadyScheduled);
                   }
                 }
@@ -1404,13 +1411,13 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
                   divColumn.append(messageWrongCategory);
                 }
               
@@ -1419,14 +1426,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
+                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
 
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
+                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
                     divColumn.append(messageAlreadyScheduled);
                   }
                 }
