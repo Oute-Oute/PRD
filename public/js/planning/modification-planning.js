@@ -1211,7 +1211,7 @@ function updateErrorMessages() {
       }
     }
   })
-  //console.log(listErrorMessages)
+  console.log(listErrorMessages)
   updateListErrorMessages();
 }
 
@@ -1561,22 +1561,18 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
             if(compareResourceId == resourceId){
               if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
                 var resourceName ="";
-                if(compareScheduledActivity._def.extendedProps.humanResources != []){
-                  compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
-                    if(humanResource.id == compareResourceId){
-                      resourceName = humanResource.title
-                    }
-                  })
-                }
-                if(compareScheduledActivity._def.extendedProps.materialResources != []){
-                  compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
-                    if(materialResource.id == compareResourceId){
-                      resourceName = materialResource.title
-                    }
-                  })
-                }
+                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
+                  if(("human-" + humanResource.id) == compareResourceId){
+                    resourceName = humanResource.title
+                  }
+                })
+                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
+                  if(("material-" + materialResource.id) == compareResourceId){
+                    resourceName = materialResource.title
+                  }
+                })
 
-                message = message + compareScheduledActivity._def.title + " est également prévue sur le même créneau avec " + resourceName +". ";
+                message = message + resourceName + " est déjà programé sur " + compareScheduledActivity.title + ". ";
               }
             }
           }
@@ -1590,6 +1586,8 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
 
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
   var message = "";
+
+
 
   return message;
 }
