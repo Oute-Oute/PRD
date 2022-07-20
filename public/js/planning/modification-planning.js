@@ -938,8 +938,6 @@ function createCalendar(typeResource,useCase) {
       var modifyEvent = event.event;
       //updateEventsAppointment(oldEvent);
       calendar.render();
-      verifyHistoryPush(historyEvents,-1);
-      updateErrorMessages();
       
       listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
       listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
@@ -967,6 +965,9 @@ function createCalendar(typeResource,useCase) {
       modifyEvent._def.resourceIds.forEach((resource) => {
         listResource.push(resource)
       })
+
+      verifyHistoryPush(historyEvents,-1);
+      updateErrorMessages();
     },
   });
   switch (typeResource) {
@@ -1560,14 +1561,14 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
           if(compareResourceId != "h-default" && compareResourceId != "m-default"){
             if(compareResourceId == resourceId){
               if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
-                var resourceName ="";
+                var resourceName = "";
                 compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
-                  if(("human-" + humanResource.id) == compareResourceId){
+                  if(humanResource.id == compareResourceId){
                     resourceName = humanResource.title
                   }
                 })
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
-                  if(("material-" + materialResource.id) == compareResourceId){
+                  if(materialResource.id == compareResourceId){
                     resourceName = materialResource.title
                   }
                 })
@@ -1587,7 +1588,17 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
   var message = "";
 
-
+  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+  humanResources.forEach((resource) => {
+    if(resource.id == humanResourceId){
+      workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
+      workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+      if(!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) && 
+      new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+        message = message + resource.title + " n'est pas en horaire de travail sur ce créneau, il risque d'y avoir un conflit. ";
+      }
+    }
+  })
 
   return message;
 }
@@ -1617,7 +1628,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     if(RepertoryErrors.count!=0){
       updateColorErrorButton(true); 
       for(let i=0; i<listErrorMessages.length; i++){
-        console.log()
         if(RepertoryErrors.repertory.includes(i)){
           var div = document.createElement('div');
           div.setAttribute('class', 'alert alert-warning');
