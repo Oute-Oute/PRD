@@ -476,7 +476,7 @@ class ModificationPlanningController extends AbstractController
             $scheduledActivitesHumanResourcesArray = array();
             foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
                 $scheduledActivitesHumanResourcesArray[] = array(
-                    'id' => $scheduledActivitiesHumanResource->getHumanresource()->getId(),
+                    'id' => "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId(),
                     'title' => $scheduledActivitiesHumanResource->getHumanresource()->getHumanresourcename(),
                 );
                 $quantityHumanResources = $quantityHumanResources - 1;
@@ -487,7 +487,7 @@ class ModificationPlanningController extends AbstractController
             $scheduledActivitiesMaterialResourceArray = array();
             foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
                 $scheduledActivitiesMaterialResourceArray[] = array(
-                    'id' => $scheduledActivitiesMaterialResource->getMaterialresource()->getId(),
+                    'id' => "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId(),
                     'title' => $scheduledActivitiesMaterialResource->getMaterialresource()->getMaterialresourcename(),
                 );
                 $quantityMaterialResources = $quantityMaterialResources - 1;

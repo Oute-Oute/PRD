@@ -142,7 +142,7 @@ PathwayEditPage:
 
 PathwayEdit:
   path: /pathway/edit
-  controller: App\Controller\PathwayController:edit
+  controller: App\Controller\PathwayController:pathwayEdit
   methods: [POST]
 
 PathwayDelete:

@@ -1,67 +1,95 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des rendez-vous{% endblock %}
+{% block title %}Liste des rendez-vous
+{% endblock %}
 {% block stylesheets %}
-        <!-- insertion de bootstrap et jquery -->
-        <script src="js/Appointment/appointment.js"></script>
-        <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-        <!-- insertion des fichier js et css spécifique à modification planning -->
-        <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
-        <link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
-        <script src='js/fullcalendar-scheduler/lib/main.js'></script>
-        
-        {% endblock %}
-        
+	<!-- insertion de bootstrap et jquery -->
+	<script src="js/Appointment/appointment.js"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+	<!-- insertion des fichier js et css spécifique à modification planning -->
+	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+	<link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
+	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+
+{% endblock %}
+
 {% block body %}
-    <div class="index">    
-    <h1 id="title">Liste des rendez-vous du {{ currentdate|date("d/m/Y") }}</h1>
+	<div class="index">
+		<h1 id="title">Liste des rendez-vous du
+			{{ currentdate|date("d/m/Y") }}</h1>
 
-    <!-- bouton pour l'ajout d'un nouveau rendez-vous -->
-    <button type="button" class ="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
+		<!-- bouton pour l'ajout d'un nouveau rendez-vous -->
+		<button type="button" class="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
 
-    <!-- affichage de la liste de tous les rendez-vous -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Identifiant</th>
-                <th>Patient</th>
-                <th>Parcours</th>
-                <th>Jour du rendez-vous 
-                    <div class="datepicker">
-                        <input type='date' required class="form-control" id="Date" onchange="changeDate()"  value="{{ currentdate|date("Y-m-d") }}" .str_replace('t12:00:00','')></input>
-                    </div>
-                </th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for appointment in currentappointments %}
-                <tr>
-                    <td>{{ appointment.id }}</td>
-                    <td>{{ appointment.patient.lastname }} {{ appointment.patient.firstname }}</td>
-                    <td>{{ appointment.pathway.pathwayname }}</td>
-                    <td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
-                    <td>
-                        <button type="button" class = "btn-infos btn-secondary" onclick="">Informations</a>
-                        <button type="button" class = "btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date("Y-m-d") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
-                        <form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
-                            <input type="hidden" name="appointment" value="{{ appointment.id }}">
-                            <button class="btn-delete btn-secondary">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-            {% else %}
-            <tr>
-                <td colspan="5">Pas de rendez-vous créés !</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+		<!-- affichage de la liste de tous les rendez-vous -->
+		<table class="table table-striped" id='tableAppointment'>
+			<thead>
+				<tr class="AppointmentPathway">
+					<th>Identifiant</th>
 
+					<th><input type="text" id="autocompleteInputPatientNname" onkeyup="filterPatient('autocompleteInputPatientNname')" placeholder="Nom du patient"></th>
+					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
+
+					<th>Jour du rendez-vous
+						<div class="datepicker">
+							<input type='date' required class="form-control" id="Date" onchange="changeDate()" value="{{ currentdate|date("Y-m-d") }}" .str_replace('t12:00:00','')></input>
+					</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+		</div>
+	</th>
+
+</tr></thead><tbody>
+{% for appointment in currentappointments %}
+	<tr>
+		<td>{{ appointment.id }}</td>
+		<td>{{ appointment.patient.lastname }}
+			{{ appointment.patient.firstname }}</td>
+		<td>{{ appointment.pathway.pathwayname }}</td>
+		<td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
+		<td>
+			<button type="button" class="btn-infos btn-secondary" onclick="showAppointment('{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}' , '{{ appointment.dayappointment|date(" y-m-d") }}')">Informations</a>
+			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date(" y-m-d") }}', '{{ appointment.earliestappointmenttime|date("h:i") }}', '{{ appointment.latestappointmenttime|date("h:i") }}')">Éditer</a>
+			<form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
+				<input type="hidden" name="appointment" value="{{ appointment.id }}">
+				<button class="btn-delete btn-secondary">Supprimer</button>
+			</form>
+		</td>
+	</tr>
+{% else %}
+	<tr>
+		<td colspan="5">Pas de rendez-vous créés !</td>
+	</tr>
+{% endfor %}
+</tbody>
+</table>
 {{ include ('appointment/add_appointment.html.twig') }}
 {{ include ('appointment/edit_appointment.html.twig') }}
+{{ include ('appointment/show_appointment.html.twig') }}
 {{ include ('appointment/select_day.html.twig')}}
+
+<script>
+	$( "#autocompleteInputPatientNname" ).autocomplete({
+	source: PatientsArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPatient('autocompleteInputPatientNname', ui.item.value);
+	}
+	}
+	);
+	$( "#autocompleteInputPathwayNname" ).autocomplete({
+	source: PathwaysArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPathway('autocompleteInputPathwayNname', ui.item.value);
+	}
+	}
+	);
+	</script>
+
 {% endblock %}
+	

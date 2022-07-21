@@ -6,7 +6,12 @@ var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
 var timerAlert;
 var modifAlertTime = 480000;
-var listErrorMessages = [];
+var messageUnscheduledAppointment = [];
+var listScheduledAppointment = [];
+var listErrorMessages = {
+  messageUnscheduledAppointment: messageUnscheduledAppointment,
+  listScheduledAppointment: listScheduledAppointment
+};
 
 var listEvents;
 var historyEvents=[]; 
@@ -74,20 +79,15 @@ function modifyEvent() {
     }
   })
   
-  
   $("#modify-planning-modal").modal("toggle");
-
 }
 
 function formatDate(date) {
-  return (
-    [
+  return ([
       date.getFullYear(),
       (date.getMonth() + 1).toString().padStart(2, "0"),
       date.getDate().toString().padStart(2, "0"),
-    ].join("-") +
-    " " +
-    [
+    ].join("-") + " " + [
       date.getHours().toString().padStart(2, "0"),
       date.getMinutes().toString().padStart(2, "0"),
       date.getSeconds().toString().padStart(2, "0"),
@@ -116,19 +116,21 @@ function zoomChange() {
 }
 
 
-//function permettant l'ouverture de la modal d'ajout d'un parcours
+/**
+ * Open the modal to Add a pathway
+ */
 function addEvent() {
   let listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
   let appointmentSelection = document.getElementById("select-appointment");
 
-  //Reset toutes les options de la liste
+  //Reset all options from the list
   for (let i = appointmentSelection.options.length - 1; i >= 0; i--) {
     appointmentSelection.remove(i);
   }
 
-  //Ajoute les appointment non plannifiés dans la liste
+  //Add all non shculed appointments into the list
   var nbOptions = 0;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i].scheduled == false) {
@@ -154,28 +156,22 @@ function addEvent() {
   }
 }
 
+/**
+ * This function is called when clicking on the button 'Valider' into Add Modal. 
+ * Add All the Activities from a choosen appointment in the Calendar
+ */
 function AddEventValider() {
-  //Récupération de la bdd nécéssaire à l'ajout d'un parcours
-  var listeSuccessors = JSON.parse(
-    document.getElementById("listeSuccessors").value
-  );
-  var listeActivities = JSON.parse(
-    document.getElementById("listeActivities").value
-  );
-  var listeAppointments = JSON.parse(
-    document.getElementById("listeAppointments").value
-  );
-
-  var listeActivitHumanResource = JSON.parse(
-    document.getElementById("listeActivityHumanResource").value
-  );
-  var listeActivityMaterialResource = JSON.parse(
-    document.getElementById("listeActivityMaterialResource").value
-  );
-    
+  //Get databases informations to add the activities appointment on the calendar
+  var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
+  var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var categoryOfMaterialResourceArray=JSON.parse(document.getElementById('categoryOfMaterialResourceJSON').value.replaceAll('3aZt3r',' ')); 
+  var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
+  var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
+  var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
-  //Récupération du rdv choisit par l'utilisateur et de la place de l'élément dans listeAppointment
+  //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
@@ -187,55 +183,32 @@ function AddEventValider() {
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
 
-  //Date de début du parcours
+  //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
   var PathwayBeginDate = new Date(
     new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
       2 * 60 * 60000
   );
 
-  //Test pour savoir si l'heure renseignée est comprise dans l'interval earliestappointmenttime et lastestappointmenttime
-  var earliestAppointmentDate = new Date(
-    appointment.earliestappointmenttime
-  ).getTime();
-  var latestAppointmentDate = new Date(
-    appointment.latestappointmenttime
-  ).getTime();
-  var choosenAppointmentDate = new Date(
-    "1970-01-01 " + PathwayBeginTime
-  ).getTime();
 
-  var EndPathwayDate = new Date(choosenAppointmentDate);
-
-  //Récupération des activités du parcours
+  //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivities.length; i++) {
     if (
       "pathway_" + listeActivities[i]["idPathway"] ==
       appointment["idPathway"][0].id
     ) {
-      activitiesInPathwayAppointment.push(listeActivities[i]);
+      activitiesInPathwayAppointment.push(listeActivities[i]); 
     }
   }
 
-  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
-    EndPathwayDate = new Date(
-      new Date(EndPathwayDate).getTime() +
-        activitiesInPathwayAppointment[i].duration * 60000
-    );
-  }
-
-  if (earliestAppointmentDate >= choosenAppointmentDate || EndPathwayDate >= latestAppointmentDate) {
-      alert("l'heure de début définie ne correspond pas avec les paramètres du rendez-vous")
-    }
-
-    //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
+    //Get all actiity b in the successors to find the ids of firsts activities in pathway
     var successorsActivitybIdList = [];
     for (let i = 0; i < listeSuccessors.length; i++) {
       successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
     }
 
-    //get the first activities of the pathway
+    //get the first activities of the pathway with ids 
     var firstActivitiesPathway=[]; 
     for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
       if (
@@ -245,7 +218,7 @@ function AddEventValider() {
     }
 
     var activitiesA=[];
-    //Tableau permettant de vérifier qu'il n'y ai pas la même activityB qui est push dans le tableau activtiesA
+    //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
     var allActivtiesA=[]; 
     for(let i=0; i<firstActivitiesPathway.length; i++){
       let activityA={activity:firstActivitiesPathway[i],delaymin:0}; 
@@ -254,32 +227,56 @@ function AddEventValider() {
     }
     do{
 
-      //Création des activités dans FullCalendar
+      //Creating Activities in FullCalendar
       for(let i=0; i<activitiesA.length; i++){
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-        //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+        
+        //Find for all Activities of the pathway, the number of Humanresources to define. 
+        var categoryHumanResources=[]; 
+        
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfHumanResourceArray.length; k++){
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
+              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+            }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
         }
+      
 
-        //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
+        
+
+        
+        var categoryMaterialResources=[]; 
+        
+        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
+              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+            }
+            quantityMaterialResources += listeActivityMaterialResource[j].quantity;
+          }
+        }
+
+        //Put the number of human resouorces in the ResourcesArray of the event
+
         for (let j = 0; j< quantityHumanResources; j++) {
           activityResourcesArray.push("h-default");
         }
 
-        //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
-        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
-          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-            quantityMaterialResources +=
-            listeActivityMaterialResource[j].quantity;
-          }
+        for(let j=0; j<quantityMaterialResources;j++){
+          activityResourcesArray.push("m-default");
         }
+
+
+        //counting for the ids of events
         countAddEvent++;
-        //Ajout d'un event au calendar
+
+        //Add one event in the Calendar
         var event = calendar.addEvent({
           id: "new" + countAddEvent,
           description: "",
@@ -294,6 +291,8 @@ function AddEventValider() {
           humanResources: [],
           materialResources: [],
           pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+          categoryMaterialResource: categoryMaterialResources, 
+          categoryHumanResource: categoryHumanResources, 
         });
 
         event._def.ui.backgroundColor = RessourcesAllocated(event);
@@ -306,7 +305,7 @@ function AddEventValider() {
        for(let i=successorsActivitiesA.length-1; i>0; i--){
         successorsActivitiesA.splice(i);
       }
-      //Récupération de chaque idActivityB pour chaque Activités A 
+      //Get each Activities B for each Activities A 
       
       for(let i=0; i<activitiesA.length; i++){
         for(let j=0; j<listeSuccessors.length; j++){
@@ -317,7 +316,7 @@ function AddEventValider() {
         }
       }
 
-      //On garde pour chaque activityB différentes dans successorsActivitiesA celle qui a le delaymin le plus grand
+      //Keeping for each différent activityB in successorsActivitiesA the biggest delaymin
       for(let i=0; i<successorsActivitiesA.length; i++){
         for(let j=0; j<successorsActivitiesA.length;j++){
           if(successorsActivitiesA[i].activityB==successorsActivitiesA[j].activityB && i!=j){
@@ -331,25 +330,23 @@ function AddEventValider() {
         }
       }
 
-      //On passe les SuccessorsActivitiesA dans le tableau ActivitiesA
-      //on récupère tout d'aboprd la plus longue activité pour toutes les Activities A
-      var biggerDuration=0; 
+      //Put SuccessorsActivitiesA in ActivitiesA
+      //Get the longestActivity for all ActivityA.
+      var biggestDuration=0; 
       for(let i=0; i<activitiesA.length; i++){ 
-          if(biggerDuration<activitiesA[i].activity.duration){
-            biggerDuration=activitiesA[i].activity.duration; 
+          if(biggestDuration<activitiesA[i].activity.duration){
+            biggestDuration=activitiesA[i].activity.duration; 
           }
       }
-      //On supprime les éléments de ActivitiesA
+      //Deleting All activities A
       for(let i=activitiesA.length-1;i>=0;i--){
         activitiesA.splice(i); 
       }
       
-      //On retrouve les Activités dans la liste d'activités et on les ajoutes au tableau
+      //Put activitiesA into AllActivitiesA and ActivitiesB in ActivitiesA
       for(let i=0; i<successorsActivitiesA.length; i++){
         for(let j=0; j<listeActivities.length; j++){
-          
           if(successorsActivitiesA[i].activityB==listeActivities[j].id){ 
-            
             for(let k=0; k<allActivtiesA.length;k++){
               if(allActivtiesA.includes(listeActivities[j].id)==false){
                 let activityA={activity:listeActivities[j],delaymin:successorsActivitiesA[i].delaymin}
@@ -360,13 +357,13 @@ function AddEventValider() {
           }
         }
       }
-      let biggerdelay=0; 
+      let biggestdelay=0; 
       for(let i=0; i<activitiesA.length; i++){
-          if(activitiesA[i].delaymin>biggerdelay){
-            biggerdelay=activitiesA[i].delaymin; 
+          if(activitiesA[i].delaymin>biggestdelay){
+            biggestdelay=activitiesA[i].delaymin; 
           }
       }
-      PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
+      PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggestDuration*60000+biggestdelay*60000); 
 
     } while (successorsActivitiesA.length!=0);
     verifyHistoryPush(historyEvents,appointmentid); 
@@ -508,292 +505,36 @@ function changePlanning() {
 }
 
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
-function updateEventsAppointment(oldEvent) {
-  verifyHistoryPush(historyEvents,-1);
-  var listEvent = calendar.getEvents();
-  let listOldEvent = calendar.getEvents();
-  var appointmentId = oldEvent._def.extendedProps.appointment;
-  var materialResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
-  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
-  var categoryOfMaterialResource = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
-  var categoryOfHumanResource = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
-  var listActivityHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value.replaceAll("3aZt3r", " "));
-  var listActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value.replaceAll("3aZt3r", " "));
-  var listEventAppointment = [];
-  listEvent.forEach((currentEvent) => {
-    if (currentEvent._def.extendedProps.appointment == appointmentId) {
-      if (currentEvent._def.publicId == oldEvent._def.publicId) {
-        listEventAppointment.push(oldEvent);
-      } else {
-        listEventAppointment.push(currentEvent);
+function updateEventsAppointment(modifyEvent) {
+  listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
+      listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
+      //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
+      clearArray(modifyEvent._def.extendedProps.humanResources); 
+      clearArray(modifyEvent._def.extendedProps.materialResources)
+      for(let i=0; i<modifyEvent._def.resourceIds.length; i++){
+        if(modifyEvent._def.resourceIds[i]!='h-default' && modifyEvent._def.resourceIds[i]!='m-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i])==false){
+          for(let j=0; j<listeHumanResources.length; j++){
+            if(listeHumanResources[j].id==modifyEvent._def.resourceIds[i]){
+              var humanArray={id:modifyEvent._def.resourceIds[i],title:listeHumanResources[j].title}
+              modifyEvent._def.extendedProps.humanResources.push(humanArray); 
+            }  
+          }
+          for(let j=0; j<listeMaterialResources.length;j++){
+            if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
+              var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
+              modifyEvent._def.extendedProps.materialResources.push(materialArray); 
+            }  
+          }
+        }
       }
-    }
-  });
 
-  var newEvent = calendar.getEventById(oldEvent._def.publicId);
-
-  var listeAppointments = JSON.parse(
-    document.getElementById("listeAppointments").value
-  );
-  var appointment;
-  for (let i = 0; i < listeAppointments.length; i++) {
-    if (listeAppointments[i]["id"] == appointmentId) {
-      appointment = listeAppointments[i];
-    }
-  }
-  let earliestAppointmentDate = new Date(
-    currentDateStr.split("T")[0] +
-      " " +
-      appointment.earliestappointmenttime.split("T")[1]
-  );
-  let latestAppointmentDate = new Date(
-    currentDateStr.split("T")[0] +
-      " " +
-      appointment.latestappointmenttime.split("T")[1]
-  );
-
-  var currentDate = new Date(currentDateStr.split("T")[0] + " 00:00:00");
-  var workingHoursStart = new Date(currentDateStr.split("T")[0] + " 00:00:00");
-  var workingHoursEnd = new Date(currentDateStr.split("T")[0] + " 23:59:00");
-
-  var newEventAppointment = calendar.getEventById(oldEvent._def.publicId);
-  let categoryHumanResourceOld = [];
-  let categoryHumanResourceNew = [];
-  let categoryMaterialResourceOld = [];
-  let categoryMaterialResourceNew = [];
-
-    humanResources.forEach((resource) => {
-      newEventAppointment._def.resourceIds.forEach((resourceId => {
-        if(resource.id == resourceId){
-          var isOld = false;
-          oldEvent._def.resourceIds.forEach((oldResourceId) => {
-            if(resource.id == oldResourceId){
-              isOld = true;
-              categoryOfHumanResource.forEach((humanEventRelation) => {
-                if(humanEventRelation.idresource == resource.id){
-                  if(categoryHumanResourceOld != []){
-                    var alreadyExist = false;
-                    categoryHumanResourceOld.forEach((categoryHuman) => {
-                      if(categoryHuman.id == humanEventRelation.idcategory){
-                        alreadyExist = true;
-                        categoryHuman.quantity = categoryHuman.quantity + 1;
-                      }
-                    })
-                    if(!alreadyExist){
-                      categoryHumanResourceOld.push({
-                        id: humanEventRelation.idcategory,
-                        quantity: 1
-                      });
-                    }
-                  }
-                  else {
-                    categoryHumanResourceOld.push({
-                      id: humanEventRelation.idcategory,
-                      quantity: 1
-                    });
-                  }
-                }
-              })
-            }
-          })
-          if(isOld == false){
-            workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
-            workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
-            if(!(workingHoursStart <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) && 
-            new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
-              alert(resource.title + " n'est pas en horaire de travail, il risque d'y avoir un conflit.");
-            }
-            categoryOfHumanResource.forEach((humanEventRelation) => {
-              if(humanEventRelation.idresource == resource.id){
-                if(categoryHumanResourceNew != []){
-                  var alreadyExist = false;
-                  categoryHumanResourceNew.forEach((categoryHuman) => {
-                    if(categoryHuman.id == humanEventRelation.idcategory){
-                      alreadyExist = true;
-                      categoryHuman.quantity = categoryHuman.quantity + 1;
-                    }
-                  })
-                  if(!alreadyExist){
-                    categoryHumanResourceNew.push({
-                      id: humanEventRelation.idcategory,
-                      quantity: 1
-                    });
-                  }
-                }
-                else {
-                  categoryHumanResourceNew.push({
-                    id: humanEventRelation.idcategory,
-                    quantity: 1
-                  });
-                }
-              }
-            })
-          }
-        }
-      }))
-    })
-
-    materialResources.forEach((resource) => {
-      newEventAppointment._def.resourceIds.forEach((resourceId => {
-        if(resource.id == resourceId){
-          var isOld = false;
-          oldEvent._def.resourceIds.forEach((oldResourceId) => {
-            if(resource.id == oldResourceId){
-              isOld = true;
-              categoryOfMaterialResource.forEach((materialEventRelation) => {
-                if(materialEventRelation.idresource == resource.id){
-                  if(categoryMaterialResourceOld != []){
-                    var alreadyExist = false;
-                    categoryMaterialResourceOld.forEach((categoryMaterial) => {
-                      if(categoryMaterial.id == materialEventRelation.idcategory){
-                        alreadyExist = true;
-                        categoryMaterial.quantity = categoryMaterial.quantity + 1;
-                      }
-                    })
-                    if(!alreadyExist){
-                      categoryMaterialResourceOld.push({
-                        id: materialEventRelation.idcategory,
-                        quantity: 1
-                      });
-                    }
-                  }
-                  else {
-                    categoryMaterialResourceOld.push({
-                      id: materialEventRelation.idcategory,
-                      quantity: 1
-                    });
-                  }
-                }
-              })
-            }
-          })
-          if(isOld == false){
-            categoryOfMaterialResource.forEach((materialEventRelation) => {
-              if(materialEventRelation.idresource == resource.id){
-                if(categoryMaterialResourceNew != []){
-                  var alreadyExist = false;
-                  categoryMaterialResourceNew.forEach((categoryMaterial) => {
-                    if(categoryMaterial.id == materialEventRelation.idcategory){
-                      alreadyExist = true;
-                      categoryMaterial.quantity = categoryMaterial.quantity + 1;
-                    }
-                  })
-                  if(!alreadyExist){
-                    categoryMaterialResourceNew.push({
-                      id: materialEventRelation.idcategory,
-                      quantity: 1
-                    });
-                  }
-                }
-                else {
-                  categoryMaterialResourceNew.push({
-                    id: materialEventRelation.idcategory,
-                    quantity: 1
-                  });
-                }
-              }
-            })
-          }
-        }
-      }))
-    })
-
-    if(categoryHumanResourceNew != []){
-      categoryHumanResourceNew.forEach((newCategoryHumanResource) => {
-        var categoryIsGood = false;
-        listActivityHumanResource.forEach((activityHumanResource) => {
-          if(newCategoryHumanResource.id == activityHumanResource.humanResourceCategoryId){
-            categoryIsGood = true;
-            var quantity = newCategoryHumanResource.quantity;
-            categoryHumanResourceOld.forEach((oldCategoryHumanResource) => {
-              if(oldCategoryHumanResource. id == newCategoryHumanResource.id){
-                quantity = quantity + oldCategoryHumanResource.quantity;
-              }
-            })
-            if(quantity > activityHumanResource.quantity){
-              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
-            }
-          }
-        })
-        if(categoryIsGood == false){
-          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
-        }
+      let listResource = [];
+      modifyEvent._def.resourceIds.forEach((resource) => {
+        listResource.push(resource)
       })
-    }
-    else if(categoryMaterialResourceNew != []){
-      categoryMaterialResourceNew.forEach((newCategoryMaterialResource) => {
-        var categoryIsGood = false;
-        listActivityMaterialResource.forEach((activityMaterialResource) => {
-          if(newCategoryMaterialResource.id == activityMaterialResource.materialResourceCategoryId){
-            categoryIsGood = true;
-            var quantity = newCategoryMaterialResource.quantity;
-            categoryMaterialResourceOld.forEach((oldCategoryMaterialResource) => {
-              if(oldCategoryMaterialResource. id == newCategoryMaterialResource.id){
-                quantity = quantity + oldCategoryMaterialResource.quantity;
-              }
-            })
-            if(quantity > activityMaterialResource.quantity){
-              alert("L'employé attribué n'est pas nécessaire, il y a assez de (catégorie de la ressource) pour cette activité.")
-            }
-          }
-        })
-        if(categoryIsGood == false){
-          alert("L'employé attribué n'est pas adapté pour cette activité, cell-ci n'a pas besoin de (catégorie de la ressource).");
-        }
-      })
-    }
 
-    if (
-      earliestAppointmentDate <= new Date(newEvent.start.getTime() - 2 * 60 * 60 * 1000) &&
-      new Date(newEvent.end.getTime() - 2 * 60 * 60 * 1000) <= latestAppointmentDate
-    ) {
-      calendar.getEventById(oldEvent._def.publicId)._def.ui.backgroundColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-      calendar.getEventById(oldEvent._def.publicId)._def.ui.borderColor = RessourcesAllocated(calendar.getEventById(oldEvent._def.publicId));
-      calendar.getEventById(oldEvent._def.publicId).setEnd(calendar.getEventById(oldEvent._def.publicId).end);
-
-      listOldEvent.forEach((oldEventSet) => {
-        if(oldEventSet._def.extendedProps.type == "activity"){
-          oldEventSet._def.resourceIds.forEach((oldResource) => {
-            newEventAppointment._def.resourceIds.forEach((newResource) => {
-              if(newResource != "h-default" && newResource != "m-default"){
-                  if(!(newEventAppointment.start > oldEventSet.end || newEventAppointment.end < oldEventSet.start) || (newEventAppointment.start < oldEventSet.start && newEventAppointment.end > oldEventSet.end) || (newEventAppointment.start == oldEventSet.start && newEventAppointment.end == oldEventSet.end)){
-                    if(newResource == oldResource) {
-                      var resourceTitle = "";
-                      if (newResource.substring(0, 8) == "material"){
-                        materialResources.forEach((material) => {
-                          if(material.id == newResource){
-                            resourceTitle = material.title;
-                          }
-                        })
-                      }
-                      else if (newResource.substring(0, 5) == "human"){
-                        humanResources.forEach((human) => {
-                          if(human.id == newResource){
-                            resourceTitle = human.title;
-                          }
-                        })
-                      }
-                      if(newEventAppointment._def.extendedProps.appointment != oldEventSet._def.extendedProps.appointment){
-                        alert(oldEventSet._def.extendedProps.patient + " est déjà prévu sur ce crénaux avec " + resourceTitle + " pour l'activité " + oldEventSet._def.title + ", il risque d'y avoir un conflit avec " + newEventAppointment._def.extendedProps.patient + " sur ce même créneau pour l'activité " + newEventAppointment._def.title + ".");
-                      }
-                      else if(newEventAppointment._def.publicId != oldEventSet._def.publicId){
-                        alert(newEventAppointment._def.extendedProps.patient + " est déjà sur ce même créneaux avec " + resourceTitle + ", cela risque de créer un conflit.")
-                      }
-                    }
-                    else {
-                      
-                    }
-                }
-              }
-            })
-          })
-        }
-        })
-    }
-    else {
-      alert("Le parcours n'est plus compris entre " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " et " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0"));
-    }
-    
+      verifyHistoryPush(historyEvents,-1);
+      updateErrorMessages();
 }
 
 
@@ -813,23 +554,18 @@ function createCalendar(typeResource,useCase) {
       first = false;
       switch(useCase){
         case 'recreate':
-          //Test pour savoir si il s'agit d'un ajout
-            if(historyEvents[historyEvents.length-2]!=undefined){
-              if(historyEvents[historyEvents.length-1].idAppointment!=-1){
-                //récupère la liste des Appointments
-                var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
+            if(historyEvents[historyEvents.length-2]!=undefined){         
+              if(historyEvents[historyEvents.length-1].idAppointment!=-1){    //test to know if we remove an 'add' modification 
+                var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  //get the list appointments
                 for (let i = 0; i < listeAppointments.length; i++) {
-                  if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-1].idAppointment) {
-                    //On défini le rdv comme non plannifié
-                    listeAppointments[i].scheduled = false;
+                  if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-1].idAppointment) { //searching the right appointment that match with the id given
+                    listeAppointments[i].scheduled = false; //define appointment on not scheduled to be selectionnable in the adding modal
                   }
                 }
-                //On update la liste de rendez-vous
-                document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+                document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments); //update appointment list
               }
-            
-              listEvent=historyEvents[historyEvents.length-2].events; 
-              historyEvents.splice(historyEvents.length-1,1);  
+              listEvent=historyEvents[historyEvents.length-2].events; //gives all events to recreate the calendar
+              historyEvents.splice(historyEvents.length-1,1);  //removing the latest modification in historyEvents because we undo it
             }
           break; 
       default: 
@@ -879,11 +615,8 @@ function createCalendar(typeResource,useCase) {
         meridiem: false,
         hour12: false,
       },
-
       resourceAreaWidth: "20%",
       resourceAreaHeaderContent: headerResources,
-
-
 
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
       eventClick: function (event) {
@@ -904,7 +637,6 @@ function createCalendar(typeResource,useCase) {
             }
           }
           //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
-          
 
           var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
           
@@ -934,39 +666,8 @@ function createCalendar(typeResource,useCase) {
     },
 
     eventDrop: function (event) {
-      var oldEvent = event.oldEvent;
       var modifyEvent = event.event;
-      //updateEventsAppointment(oldEvent);
-      calendar.render();
-      verifyHistoryPush(historyEvents,-1);
-      updateErrorMessages();
-      
-      listeHumanResources=JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r',' ')); 
-      listeMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r',' '));
-      //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
-      clearArray(modifyEvent._def.extendedProps.humanResources); 
-      clearArray(modifyEvent._def.extendedProps.materialResources)
-      for(let i=0; i<modifyEvent._def.resourceIds.length; i++){
-        if(modifyEvent._def.resourceIds[i]!='h-default' && modifyEvent._def.resourceIds[i]!='m-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i])==false){
-          for(let j=0; j<listeHumanResources.length; j++){
-            if(listeHumanResources[j].id==modifyEvent._def.resourceIds[i]){
-              var humanArray={id:modifyEvent._def.resourceIds[i],title:listeHumanResources[j].title}
-              modifyEvent._def.extendedProps.humanResources.push(humanArray); 
-            }  
-          }
-          for(let j=0; j<listeMaterialResources.length;j++){
-            if(listeMaterialResources[j].id==modifyEvent._def.resourceIds[i]){
-              var materialArray={id:modifyEvent._def.resourceIds[i],title:listeMaterialResources[j].title}
-              modifyEvent._def.extendedProps.materialResources.push(materialArray); 
-            }  
-          }
-        }
-      }
-
-      let listResource = [];
-      modifyEvent._def.resourceIds.forEach((resource) => {
-        listResource.push(resource)
-      })
+      updateEventsAppointment(modifyEvent)
     },
   });
   switch (typeResource) {
@@ -1121,116 +822,174 @@ function deleteModifInDB() {
   );
 }
 
+/**
+ * This function gives the color to apply to an event on the planning. 
+ * red if the Activity is not associated to the riht resources (material and human)
+ * green if the Activity have all resources that it need. 
+ * unavailabilities are red in any case.  
+ * @param {*} event 
+ * @returns color of the event
+ */
 function RessourcesAllocated(event) {
-  if (event._def.resourceIds.includes("m-default")) {
+  if (event._def.resourceIds.includes("m-default")) { //if a material resource is not allocated
     return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.resourceIds.includes("h-default")) {
+  } else if (event._def.resourceIds.includes("h-default")) { //if a human resource is not allocated
     return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.ui.display == "background") {
-    //get the unavailabilities events
+  } else if (event._def.ui.display == "background") {  //for unavailabilities 
     return "#ff0000";
   } else {
-    return "#20c997";
+    return "#20c997"; //if all is allocated, return green color
   }
 }
 
+/**
+ * This function clears an array of all his rows
+ * @param {*} array 
+ */
 function clearArray(array){
   while (array.length) {
-    array.pop();
+    array.pop();      //removing rows by rows 
   }
 }
 
+/**
+ * This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
+ */
 function undoEvent(){ 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
 }
 
+/**
+ * This function stock in an array the history of all modifications on the Calendar, for performance reasons, we save only the last 10 modifications. 
+ * @param {*} array           //get historyEvents array 
+ * @param {*} idAppointment   //gives information on the appointment, usefull when undo is applied on added appointment (to get it back into the list of selectionnable appoinments to add)
+ */
 function verifyHistoryPush(array, idAppointment){
   
-  if(array.length<10){
-    array.push({events:calendar.getEvents(),idAppointment:idAppointment}); 
-  }
-  else{
-    for(let i=0; array.length>=10; i++){
+  if(array.length>10){  //10 for performance reasons
+    for(let i=0; array.length>=10; i++){  //remove before push 
       array.splice(i,1); 
     }
-    array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
-  };
+   
+  }
+  array.push({events:calendar.getEvents(),idAppointment:idAppointment});   //push into the history of modifications
 }
 
+/**
+ * @brief This function update list error messages 
+ */
 function updateErrorMessages() {
-  var listScheduledActivities = calendar.getEvents();
+  var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
+
+  listErrorMessages.messageUnscheduledAppointment = [];
+  var listAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  listAppointments.forEach((currentAppointment) => {
+    var unscheduledAppointment = true;
+    listScheduledActivities.forEach((scheduledActivity) => {
+      if(currentAppointment.id == scheduledActivity._def.extendedProps.appointment){
+        unscheduledAppointment = false;
+      }
+    })
+    if(unscheduledAppointment == true){
+      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours : " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
+      listErrorMessages.messageUnscheduledAppointment.push(message);
+    }
+  })
+
+  //browse all events
   listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity.display != "background"){
+    if(scheduledActivity.display != "background"){ //check if the scheduled activity is not an unavailability
       var appointmentAlreadyExist = false;
-      if(listErrorMessages != []){
-        listErrorMessages.forEach((errorMessage) => {
-          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){
+      if(listErrorMessages.listScheduledAppointment != []){ //check if list error messages is not empty
+        listErrorMessages.listScheduledAppointment.forEach((errorMessage) => { //browse the list error messages
+          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){ //check if the appointment is already register in the list
             appointmentAlreadyExist = true;
 
+            //set the error messages for earliest and latest appointment time
             errorMessage.messageEarliestAppointmentTime = getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment);
             errorMessage.messageLatestAppointmentTime = getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment);
 
             var scheduledActivityAlreadyExist = false;
-            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => {
-              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){
+            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => { //browse the scheduled activities related to the appointment
+              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){ //if the scheduled activity already exist in the list
                 scheduledActivityAlreadyExist = true;
-                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity);
-                existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity);
-                existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity);
+
+                //update the data
+                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
+                existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for human resources
+                existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity); //set data for material resources
               }
             })
-            if(scheduledActivityAlreadyExist == false){
+            if(scheduledActivityAlreadyExist == false){ //if the scheduled activity doesn't exist
+              //add new scheduled activity in the list
               errorMessage.listScheduledActivity.push({
+                //add data for the scheduled activity
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
-                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
-                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
-                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+
+                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
+                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for human resources
+                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity) //add data for material resources
               })
             }
           }
         })
       }
-      if(appointmentAlreadyExist == false){
-        listErrorMessages.push({
+      if(appointmentAlreadyExist == false){ //if the appointment doesn't exist
+        //add new appointment
+        listErrorMessages.listScheduledAppointment.push({
+          //add data for the appointment
           appointmentId: scheduledActivity._def.extendedProps.appointment,
           patientName: scheduledActivity._def.extendedProps.patient,
           pathwayName: scheduledActivity._def.extendedProps.pathway,
-          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+
+          //add error message for earliest and latest appointment time
+          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment), 
           messageLatestAppointmentTime: getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
-          listScheduledActivity: [{
+          
+          //add the new scheduled activity
+          listScheduledActivity: [{ 
+            //add data for the scheduled activity
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
-            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
-            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
-            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+
+            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
+            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for human resources
+            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity) //add data for material resources
           }]
         })
       }
     }
   })
-  console.log(listErrorMessages)
-  updateListErrorMessages();
+  updatePanelErrorMessages(); //update the panel error messages
 }
 
+/**
+ * @brief This function return an error message if the appointment starts too early, return "" if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} appointmentId appointment id require
+ * @returns the error message
+ */
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
-  var message = "";
+  var message = [];
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
-  listeAppointments.forEach((currentAppointment) => {
-    if(currentAppointment.id == appointmentId){
-      appointment = currentAppointment
+  listeAppointments.forEach((currentAppointment) => { //browse the list appointments
+    if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
+      appointment = currentAppointment //set the appointment for get all his data
     }
   })
   let earliestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.earliestappointmenttime.split("T")[1]);
 
-  listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+  listScheduledActivities.forEach((scheduledActivity) => { //browse all events
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){ //if the scheduled activity is related to the appointment
+      //we check if the start time is earlier than the earliest appointment time
       if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
-        message = message + scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivé au plus tôt du patient. ";
+        //if it's earlier, we set an error message
+        message.push(scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivée au plus tôt du patient. ");
       }
     }
   })
@@ -1238,22 +997,30 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
   return message;
 }
 
+/**
+ * @brief This function return an error message if the appointment end too late, return "" if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} appointmentId appointment id require
+ * @returns the error message
+ */
 function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
-  var message = "";
+  var message = [];
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
-  listeAppointments.forEach((currentAppointment) => {
-    if(currentAppointment.id == appointmentId){
-      appointment = currentAppointment
+  listeAppointments.forEach((currentAppointment) => { //browse the list appointments
+    if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
+      appointment = currentAppointment //set the appointment for get all his data
     }
   })
   let latestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.latestappointmenttime.split("T")[1]);
 
-  listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+  listScheduledActivities.forEach((scheduledActivity) => { //browse all events
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){ //if the scheduled activity is related to the appointment
+      //we check if the end time is later than the latest appointment time
       if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
-        message = message + scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ";
+        //if it's later, we set an error message
+        message.push(scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ");
       }
     }
   })
@@ -1261,20 +1028,31 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
   return message;
 }
 
+/**
+ * @brief This function return error messages if the delay between the scheduled activity and one of its successors was not good, 
+ * return [] if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the error message
+ */
 function getMessageDelay(listScheduledActivities, scheduledActivity){
   var messages = [];
   
-  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
-  listSuccessors.forEach((successor) => {
-    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){
-      listScheduledActivities.forEach((scheduledActivityB) => {
-        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){
+  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value); //recover list successors
+
+  listSuccessors.forEach((successor) => { //browse all successors
+    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){ //if the scheduled activity has a successor
+      listScheduledActivities.forEach((scheduledActivityB) => { //browse all events
+        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){ //if the scheduled activity check is a successor of the scheduled activity verified
+          //we check the delay between the two scheduled activities
           var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime())/(60*1000);
           if(duration < successor.delaymin){
+            //if the delay is shorter, we set an error message
             var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est inférieur à : " + successor.delaymin + " minutes qui est le délai minimum.";
             messages.push(message);
           }
           if(duration > successor.delaymax){
+            //if the delay is longer, we set an error message
             var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est supèrieur à : " + successor.delaymax + " minutes qui est le délai maximum.";
             messages.push(message);
           }
@@ -1286,34 +1064,44 @@ function getMessageDelay(listScheduledActivities, scheduledActivity){
   return messages;
 }
 
+/**
+ * @brief This function return all category related to the human resources related to the scheduled activity, 
+ * return [] if we have no human resources.
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the list of category human resources related to the scheduled activity
+ */
 function getListCategoryHumanResources(scheduledActivity){
   var listCategoryHumanResources = [];
 
+  //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
 
-  scheduledActivity._def.resourceIds.forEach((humanResource) => {
-    if(humanResource.substring(0,5) == "human"){
-      listCategoryOfHumanResources.forEach((categoryOfHumanResource) => {
-        if(categoryOfHumanResource.idresource == humanResource){
+  scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
+    if(humanResource.substring(0,5) == "human"){ //check only the human resources
+      listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
+        if(categoryOfHumanResource.idresource == humanResource){ //if we find the category of the human resource 
           var categoryHumanResourceAlreadyExist = false;
           if(listCategoryHumanResources != []){
             listCategoryHumanResources.forEach((categoryHumanResource) => {
-              if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){
+              if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){ //if the category already exist in the list
                 categoryHumanResourceAlreadyExist = true;
 
+                //we set error messages for the quantity of human resources and if it's a wrong category
                 categoryHumanResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human");
                 categoryHumanResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human");
 
                 var humanResourceAlreadyExist = false;
-                categoryHumanResource.listHumanResources.forEach((existingHumanResource) => {
-                  if(existingHumanResource.humanResourceId == humanResource){
+                categoryHumanResource.listHumanResources.forEach((existingHumanResource) => { 
+                  if(existingHumanResource.humanResourceId == humanResource){ //we check if the human resource is already present on the list
                     humanResourceAlreadyExist = true;
+                    //if it's already present, we set the error messages for working hours, unavailability and if the resource is already scheduled in an other activity
                     existingHumanResource.messageWorkingHours = getMessageWorkingHours(scheduledActivity, humanResource);
                     existingHumanResource.messageUnavailability = getMessageUnavailability(scheduledActivity, humanResource);
                     existingHumanResource.messageAlreadyScheduled = getMessageAlreadyExist(scheduledActivity, humanResource);
                   }
                 })
-                if(humanResourceAlreadyExist == false){
+                if(humanResourceAlreadyExist == false){ //if the human resource doesn't exist in the list
+                  //add new human resource
                   categoryHumanResource.listHumanResources.push({
                     humanResourceId: humanResource,
                     humanResourceName: getResourceTitle(humanResource),
@@ -1325,7 +1113,8 @@ function getListCategoryHumanResources(scheduledActivity){
               }
             })
           }
-          if(categoryHumanResourceAlreadyExist == false){
+          if(categoryHumanResourceAlreadyExist == false){ //if the category doesn't exist in the list
+            //add the new category and the new human resource
             listCategoryHumanResources.push({
               categoryHumanResourceId: categoryOfHumanResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
@@ -1347,34 +1136,45 @@ function getListCategoryHumanResources(scheduledActivity){
   return listCategoryHumanResources;
 }
 
+/**
+ * @brief This function return all category related to the material resources related to the scheduled activity, 
+ * return [] if we have no material resources.
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the list of category material resources related to the scheduled activity
+ */
 function getListCategoryMaterialResources(scheduledActivity){
   var listCategoryMaterialResources = [];
 
+  //recover all relation between categories and material resources
   var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
 
-  scheduledActivity._def.resourceIds.forEach((materialResource) => {
-    if(materialResource.substring(0,8) == "material"){
-      listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => {
-        if(categoryOfMaterialResource.idresource == materialResource){
+  scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
+    if(materialResource.substring(0,8) == "material"){ //check only the material resources
+      listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
+        if(categoryOfMaterialResource.idresource == materialResource){ //if we find the category of the human resource 
           var categoryMaterialResourceAlreadyExist = false;
           if(listCategoryMaterialResources != []){
             listCategoryMaterialResources.forEach((categoryMaterialResource) => {
-              if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){
+              if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){ //if the category already exist in the list
                 categoryMaterialResourceAlreadyExist = true;
 
+                //we set error messages for the quantity of material resources and if it's a wrong category
                 categoryMaterialResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
                 categoryMaterialResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
 
                 var materialResourceAlreadyExist = false;
                 categoryMaterialResource.listMaterialResources.forEach((existingMaterialResource) => {
-                  if(existingMaterialResource.humanResourceId == materialResource){
+                  if(existingMaterialResource.humanResourceId == materialResource){ //we check if the material resource is already present on the list
                     materialResourceAlreadyExist = true;
+
+                    //if it's already present, we set the error messages for working hours, unavailability and if the resource is already scheduled in an other activity
                     existingMaterialResource.messageWorkingHours = getMessageWorkingHours(scheduledActivity, materialResource);
                     existingMaterialResource.messageUnavailability = getMessageUnavailability(scheduledActivity, materialResource);
                     existingMaterialResource.messageAlreadyScheduled = getMessageAlreadyExist(scheduledActivity, materialResource);
                   }
                 })
-                if(materialResourceAlreadyExist == false){
+                if(materialResourceAlreadyExist == false){ //if the material resource doesn't exist in the list
+                  //add new material resource
                   categoryMaterialResource.listMaterialResources.push({
                     materialResourceId: materialResource,
                     materialResourceName: getResourceTitle(materialResource),
@@ -1385,7 +1185,8 @@ function getListCategoryMaterialResources(scheduledActivity){
               }
             })
           }
-          if(categoryMaterialResourceAlreadyExist == false){
+          if(categoryMaterialResourceAlreadyExist == false){ //if the category doesn't exist in the list
+            //add the new category and the new material resource
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
@@ -1406,19 +1207,25 @@ function getListCategoryMaterialResources(scheduledActivity){
   return listCategoryMaterialResources;
 }
 
+/**
+ * @brief This function return the resource name
+ * @param {*} resourceId resource identifier verified
+ * @returns resource name
+ */
 function getResourceTitle(resourceId) {
-  var listResources;
-  if(resourceId.substring(0,5) == "human"){
+  var listResources; 
+  if(resourceId.substring(0,5) == "human"){ //set the list resources if it's a human resource
     listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   }
-  else {
+  else { //set the list resources if it's a material resource
     listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
   }
 
   var resourceName = "undefined";
 
-  listResources.forEach((resource) => {
-    if(resource.id == resourceId){
+  listResources.forEach((resource) => { //browse all resources
+    if(resource.id == resourceId){ //if we find the resource
+      //we set the resource name
       resourceName = resource.title;
     }
   })
@@ -1426,42 +1233,53 @@ function getResourceTitle(resourceId) {
   return resourceName;
 }
 
+/**
+ * @brief This function return an error message if the quantity of resource from the category is superior than necessary, 
+ * return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} categoryResourceId category identifier verified
+ * @param {*} typeResources type of the resource : material or human
+ * @returns error message
+ */
 function getMessageCategoryQuantity(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
 
-  if(getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == ""){
+  if(getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == ""){ //we can check the quantity only if it's not awring category
     var listCategoryOfResources;
-    if(typeResources == "human"){
+    if(typeResources == "human"){ //set the list category resources if it's a human resource
       listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
     }
-    else {
+    else { //set the list category resources if it's a material resource
       listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
     }
     
     var categoryQuantity = 0;
-    listCategoryOfResources.forEach((categoryOfResource) => {
-      if(categoryOfResource.idcategory == categoryResourceId){
-        scheduledActivity._def.resourceIds.forEach((scheduledActivityResource) => {
-          if(scheduledActivityResource == categoryOfResource.idresource){
+    listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resources
+      if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+        scheduledActivity._def.resourceIds.forEach((scheduledActivityResource) => { //browse all resources related to the scheduled activity
+          if(scheduledActivityResource == categoryOfResource.idresource){ //if the resource scheduled is from the category
+            //we add to the quantity 1
             categoryQuantity++;
           }
         })
       }
     })
 
-    if(typeResources == "human"){
-      scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
-        if(categoryHumanResource.id == categoryResourceId){
-          if(categoryHumanResource.quantity < categoryQuantity){
+    if(typeResources == "human"){ //if the category type is human
+      scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all category human resources related to the scheduled activity
+        if(categoryHumanResource.id == categoryResourceId){ //if it's the good category
+          if(categoryHumanResource.quantity < categoryQuantity){ //if the quantity is superior of necessary
+            //we set error message
             message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryHumanResource.categoryname + " alors qu'il n'en suffit que de " + categoryHumanResource.quantity + " .";
           }
         }
       })
     }
-    else {
-      scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
-        if(categoryMaterialResource.id == categoryResourceId){
-          if(categoryMaterialResource.quantity < categoryQuantity){
+    else { //if the category type is material
+      scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all category material resources related to the scheduled activity
+        if(categoryMaterialResource.id == categoryResourceId){ //if it's the good category
+          if(categoryMaterialResource.quantity < categoryQuantity){ //if the quantity is superior of necessary
+            //we set error message
             message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryMaterialResource.categoryname + " alors qu'il n'en suffit que de " + categoryMaterialResource.quantity + " .";
           }
         }
@@ -1472,74 +1290,92 @@ function getMessageCategoryQuantity(scheduledActivity, categoryResourceId, typeR
   return message;
 }
 
+/**
+ * @brief This function return an error message if the category of resource is not necessary, 
+ * return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} categoryResourceId category identifier verified
+ * @param {*} typeResources type of the resource : material or human
+ * @returns error message
+ */
 function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
 
   var categoryExist = false;
   var categoryName = "";
-  if(typeResources == "human"){
-    scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
-      if(categoryHumanResource.id == categoryResourceId){
+  if(typeResources == "human"){ //if the resource is human
+    scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
+      if(categoryHumanResource.id == categoryResourceId){ //if the category exist
+        //we don't set a message
         categoryExist = true;
       }
     })
-    if(categoryExist == false){
+    if(categoryExist == false){ //if the category doesn't exist
       var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
-      listCategoryOfResources.forEach((categoryOfResource) => {
-        if(categoryOfResource.idcategory == categoryResourceId){
+      listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
+        if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+          //set the category name
           categoryName = categoryOfResource.categoryname
         }
       })
     }
   }
-  else {
-    scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
-      if(categoryMaterialResource.id == categoryResourceId){
+  else { //if the resource is material
+    scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all material resources categories
+      if(categoryMaterialResource.id == categoryResourceId){ //if the category exist
+        //we don't set a message
         categoryExist = true;
       }
     })
-    if(categoryExist == false){
+    if(categoryExist == false){ //if the category doesn't exist
       var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
-      listCategoryOfResources.forEach((categoryOfResource) => {
-        if(categoryOfResource.idcategory == categoryResourceId){
+      listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
+        if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+          //set the category name
           categoryName = categoryOfResource.categoryname
         }
       })
     }
   }
 
-  if(categoryExist == false){
+  if(categoryExist == false){ //if the category doesn't exist
+    //we set the error message
     message = scheduledActivity.title + " n'a pas besoin de " + categoryName + ".";
   }
 
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is unavailable during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} resourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = "";
+  var message = [];
 
-  calendar.getEvents().forEach((compareScheduledActivity) => {
-    if(compareScheduledActivity._def.extendedProps.type == "unavailability"){
-      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
-        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+  calendar.getEvents().forEach((unavailability) => { //browse all events
+    if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
+      if(unavailability._def.publicId != scheduledActivity._def.publicId){
+        unavailability._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the unavailability
           if(compareResourceId != "h-default" && compareResourceId != "m-default"){
             if(compareResourceId == resourceId){
-              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
-                var resourceName ="";
-                var listResources;
+              //if the resource is unavailable at the same time as the scheduled activity
+              if((scheduledActivity.start > unavailability.start && scheduledActivity.start < unavailability.end) || (scheduledActivity.end > unavailability.start && scheduledActivity.end < unavailability.end) || (scheduledActivity.start <= unavailability.start && scheduledActivity.end >= unavailability.end)){
+                var listResources; //set the list resources
                 if(resourceId.substring(0,5) == "human"){
                   listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
                 }
                 else {
                   listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
                 }
-                listResources.forEach((resource) => {
+                listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
-                    resourceName = resource.title;
+                    //set an error message with the resource name
+                    message.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
-
-                message = message + resourceName + " est indisponible sur ce créneau. ";
               }
             }
           }
@@ -1550,29 +1386,35 @@ function getMessageUnavailability(scheduledActivity, resourceId){
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is already scheduled during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} resourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = "";
+  var message = [];
 
-  calendar.getEvents().forEach((compareScheduledActivity) => {
-    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){
+  calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
+    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
       if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
-        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the scheduled activity compared
           if(compareResourceId != "h-default" && compareResourceId != "m-default"){
             if(compareResourceId == resourceId){
+              //if the resource is already scheduled at the same time as the scheduled activity
               if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
-                var resourceName ="";
-                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
-                  if(("human-" + humanResource.id) == compareResourceId){
-                    resourceName = humanResource.title
+                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
+                  if(humanResource.id == compareResourceId){ //if the resource is a human resource
+                    //set an error message
+                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
                   }
                 })
-                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
-                  if(("material-" + materialResource.id) == compareResourceId){
-                    resourceName = materialResource.title
+                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
+                  if(materialResource.id == compareResourceId){ //if the resource is a material resource
+                    //set an error message
+                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
-
-                message = message + resourceName + " est déjà programé sur " + compareScheduledActivity.title + ". ";
               }
             }
           }
@@ -1584,42 +1426,85 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is not in working hours during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} humanResourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
-  var message = "";
+  var message = [];
 
-
+  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //recover all human resources
+  humanResources.forEach((resource) => { //browse all human resources
+    if(resource.id == humanResourceId){
+      workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
+      workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+      //if the human resource is not in working hours
+      if(!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) && 
+      new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+        //set an error message
+        message.push(resource.title + " n'est pas en horaire de travail sur ce créneau, il risque d'y avoir un conflit.");
+      }
+    }
+  })
 
   return message;
 }
 
-  function displayListErrorMessages(){
-    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
+/**
+ * Called when button 'erreurs' is clicked, display or hide the lateral-panel-bloc and call the function to update informations. 
+ */
+  function displayPanelErrorMessages(){
+    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc');   
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
-    if(lateralPannelInput==true){
-      lateralPannelBloc[0].style.display='block'; 
+    if(lateralPannelInput==true){                   //Test the value of the checkbox
+      lateralPannelBloc[0].style.display='block';  //display the panel
       lateralPannel[0].style.width='40em';
-      updateListErrorMessages();
+      updatePanelErrorMessages();  //Update informations in the panel
     }
     else{
-      lateralPannelBloc[0].style.display='';
+      lateralPannelBloc[0].style.display=''; //hide the pannel
       lateralPannel[0].style.width='';
     }
     
   }
 
-  function updateListErrorMessages(){
-    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
-    while(nodesNotification.length!=3){
-      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
+  /**
+   * Update the Panel of List error by removing all notifications and re-creating it with the new informations. 
+   */
+  function updatePanelErrorMessages(){
+    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes;                             //Get the div in lateral-panel-bloc
+    while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
+      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
-    var RepertoryErrors =countAppointmentErrorList(); 
-    if(RepertoryErrors.count!=0){
-      updateColorErrorButton(true); 
-      for(let i=0; i<listErrorMessages.length; i++){
-        console.log()
-        if(RepertoryErrors.repertory.includes(i)){
-          var div = document.createElement('div');
+    var repertoryErrors =repertoryListErrors();                   //Get the repertory of errors 
+    if(repertoryErrors.count!=0){
+      updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
+      //add div for unscheduled appointment
+      if(listErrorMessages.messageUnscheduledAppointment.length != 0){
+        var div = document.createElement('div');
+        div.setAttribute('class', 'alert alert-warning');
+        div.setAttribute('role','alert');
+        div.setAttribute('id','notification');
+        div.setAttribute('style','display: flex; flex-direction : column;'); 
+        var divRow=document.createElement('divRow'); 
+        divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+        div.append(divRow);
+        listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
+          var divColumn=document.createElement('divColumn');
+          div.append(divColumn); 
+          var messageUnscheduledAppointment= document.createElement('earliestAppointmentDate').innerHTML='-'+oneMessageUnscheduledAppointment;  
+          divColumn.append(messageUnscheduledAppointment);
+        })
+        document.getElementById('lateral-panel-bloc').appendChild(div);
+      }
+
+      for(let i=0; i<listErrorMessages.listScheduledAppointment.length; i++){                    //All Appointments of the day
+        if(repertoryErrors.repertory.includes(i)){                      //if the Appointment[i] has an error we have to display it
+          var indexAppointment=repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
+          var div = document.createElement('div');                      //Creating the div for the Appointment
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
           div.setAttribute('id','notification');
@@ -1630,210 +1515,312 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           var img = document.createElement("img");
           img.src="/img/exclamation-triangle-fill.svg"; 
           var text=document.createElement('h3'); 
-          text.innerHTML=listErrorMessages[i].patientName + ' / '+ listErrorMessages[i].pathwayName; 
+          text.innerHTML=listErrorMessages.listScheduledAppointment[i].patientName + ' / '+ listErrorMessages.listScheduledAppointment[i].pathwayName; 
           divRow.append(img,text);
-
-
         
           //messageEarliestAppointmentTime
-          if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
-            var divColumn=document.createElement('divColumn');
-            div.append(divColumn); 
-            var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML=listErrorMessages[i].messageEarliestAppointmentTime;  
-            divColumn.append(messageEarliestAppointmentTime);
+          if(listErrorMessages.listScheduledAppointment[i].messageEarliestAppointmentTime!=[]){
+            listErrorMessages.listScheduledAppointment[i].messageEarliestAppointmentTime.forEach((messageEarliest) => {
+              var divColumn=document.createElement('divColumn');
+              div.append(divColumn); 
+              var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML='-'+messageEarliest;  
+              divColumn.append(messageEarliestAppointmentTime);
+              var space=document.createElement('space');
+              space.innerHTML='</br>';
+              div.append(space);
+            })
           }
 
           //messageLatestAppointmentTime
-          if(listErrorMessages[i].messageLatestAppointmentTime!=''){
-            var divColumn=document.createElement('divColumn');
-            div.append(divColumn); 
-            var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML=listErrorMessages[i].messageLatestAppointmentTime;  
-            divColumn.append(messageLatestAppointmentTime);
+          if(listErrorMessages.listScheduledAppointment[i].messageLatestAppointmentTime!=[]){
+            listErrorMessages.listScheduledAppointment[i].messageLatestAppointmentTime.forEach((messageLatest) => {
+              var divColumn=document.createElement('divColumn');
+              div.append(divColumn); 
+              var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML='-'+messageLatest;  
+              divColumn.append(messageLatestAppointmentTime);
+              var space=document.createElement('space');
+              space.innerHTML='</br>';
+              div.append(space);
+            })
           }
           
-          //messageDelay for each ScheduledActivity
-          for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn); 
-                var messageDelay= document.createElement('messageDelay').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
-                divColumn.append(messageDelay);
-              }
-
-              for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
-                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
+          //for each ScheduledActivity in Appointment 
+          for(let listeSAiterator=0; listeSAiterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity.length; listeSAiterator++){
+            if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){          //Testing if there are errors on this Activity
+              var divColumn=document.createElement('divColumn');
+              divColumn.setAttribute('style','font-weight: bolder;')
+              div.append(divColumn); 
+              var nameSA=listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';        //Display Activity Name 
+              divColumn.append(nameSA); 
+              
+              //messageDelay
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=[]){
+                listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay.forEach((oneMessageDelay) => {
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn); 
-                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
+                  var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
+                  divColumn.append(messageDelay);
+                })
+              }
+
+              //foreach CategoryHumanResources in ScheduledActivity
+              for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+                
+                //messageCategoryQuantity
+                if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
-                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
+
+                //messageWrongCategory
+                if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;  
                   divColumn.append(messageWrongCategory);
                 }
                 
-                for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
-                    divColumn.append(messageWorkingHours);
+                //foreach HumanResources
+                for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+                  
+                  //messageWorkingHours
+                  if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=[]){
+                    listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours.forEach((oneMessageWorkingHours) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML='-'+oneMessageWorkingHours;  
+                      divColumn.append(messageWorkingHours);
+                    })
                   }
 
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
-                    divColumn.append(messageUnavailability);
+
+                  //messageUnavailability
+                  if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=[]){
+                    listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability.forEach((oneMessageUnavailability) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+oneMessageUnavailability;  
+                      divColumn.append(messageUnavailability);
+                    })
                   }
-                  listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
-                    divColumn.append(messageAlreadyScheduled);
+
+                  //messageAlreadyScheduled
+                  if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=[]){
+                    listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled.forEach((oneMessageAlreadyScheduled) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+oneMessageAlreadyScheduled;  
+                      divColumn.append(messageAlreadyScheduled);
+                    })
                   }
                 }
 
               }
               
-              for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
-                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
+              //foreach MaterialResourcesCategory in ScheduledActivity
+              for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+               
+                //messageCategoryQuantity
+                if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
+                  var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
-                if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
+
+                //messageWrongCategory
+                if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
-                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
+                  var messageWrongCategory= document.createElement('messageWrongCategory').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;  
                   divColumn.append(messageWrongCategory);
                 }
               
-                for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
+                //foreach MaterialResources in MaterialResourceCategory 
+                for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
                   
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
-                    divColumn.append(messageUnavailability);
+                  //messageUnavailability
+                  if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=[]){
+                    listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability.forEach((oneMessageUnavailability) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+oneMessageUnavailability;  
+                      divColumn.append(messageUnavailability);
+                    })
                   }
 
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML=listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
-                    divColumn.append(messageAlreadyScheduled);
+                  //messageAlreadyScheduled
+                  if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=[]){
+                    listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled.forEach((oneMessageAlreadyScheduled) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+oneMessageAlreadyScheduled;  
+                      divColumn.append(messageAlreadyScheduled);
+                    })
                   }
                 }
 
               }
-
-            }
-          document.getElementById('lateral-panel-bloc').appendChild(div);
+              if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
+                var space=document.createElement('space'); //skip to line if there is an error in another activity in this appointment
+                space.innerHTML='</br>';
+                div.append(space);
+              }
+            } 
+          }
+          document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
     }
-    else{
+    else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
        div.setAttribute('role','alert'); 
        div.setAttribute('style','text-align: center');
-       var message= document.createElement('message').innerHTML="Aucune erreur détectée."; 
+       var message= document.createElement('message').innerHTML="Aucune erreur détectée.";  //Display 'no error' message
        div.append(message);
        document.getElementById('lateral-panel-bloc').appendChild(div);
 
-      updateColorErrorButton(false); 
+      updateColorErrorButton(false);  //Update color of the button                                                    
     }
   }
 
-  function countAppointmentErrorList(){
+  /**
+   * This function count the number of Appointments with errors and get the Activities repertory of errors, used only in updatePanelErrorMessages()
+   * @returns count is the number of Apppointments with errors
+   * @returns repertory is the repertory of Appointments with errors, usefull to display Appointments 
+   * @returns repertoryAppointmentSAError is the repertory of ScheduledActivites with error for an appointment, usefull to display ScheduledActivities. 
+   */
+  function repertoryListErrors(){
     var countAppointmentError=0; 
     var repertoryAppointmentError=[]; 
-    for(let i=0; i<listErrorMessages.length; i++){
+    var repertoryAppointmentSAError=[]; 
+    if(listErrorMessages.messageUnscheduledAppointment != []){
+      listErrorMessages.messageUnscheduledAppointment.forEach((message) => {
+        countAppointmentError++;
+      })
+    }
+    for(let i=0; i<listErrorMessages.listScheduledAppointment.length; i++){
       var errorInappointment=false; 
 
       //messageEarliestAppointmentTime
-      if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
+      if(listErrorMessages.listScheduledAppointment[i].messageEarliestAppointmentTime!=''){
         errorInappointment=true; 
       }
 
       //messageLatestAppointmentTime
-      if(listErrorMessages[i].messageLatestAppointmentTime!=''){
+      if(listErrorMessages.listScheduledAppointment[i].messageLatestAppointmentTime!=''){
         errorInappointment=true;
       }
       
-      //messageDelay for each ScheduledActivity
-      for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
-          if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+      //foreach ScheduledActivity in appointment
+      var repertorySAError=[]; 
+      for(let listeSAiterator=0; listeSAiterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity.length; listeSAiterator++){
+          var errorInScheduledActivity=false; 
+
+          //messageDelay
+          if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
             errorInappointment=true;
+            errorInScheduledActivity=true; 
           }
 
-          for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
-            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
+          //foreach CategoryhumanResources in ScheduledActivity
+          for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+            
+            //messageCategoryQuantity
+            if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
-            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
+
+            //messageWrongCategory
+            if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
             
-            for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
+            //foreach HUmanResources in CategoryHumanResources
+            for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
+              //messageUnavailability
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
+              //messageAlreadyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
             }
 
           }
           
-          for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
-            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
+          //foreach CategoryMaterialResources in ScheduledActivity
+          for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+            
+            //messageCategoryQuantity
+            if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
-            if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
+
+            //messageWrongCategory
+            if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
+              errorInScheduledActivity=true;
             }
           
-            for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
+            //foreach MaterialResource in CategoryMaterialResources
+            for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
               
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
+              //messageUnavailability
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
+                errorInScheduledActivity=true;
               }
 
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
+              //messageAlreadyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true; 
+                errorInScheduledActivity=true;
               }
             }
 
           }
-
+          if(errorInScheduledActivity==true){         //if true there is an error in the ScheduledActivity
+            repertorySAError.push(listeSAiterator); 
+          }
         }
-        if(errorInappointment==true){
+        if(errorInappointment==true){               //if true there is an error in the appointment
           countAppointmentError++; 
           repertoryAppointmentError.push(i);
+          repertoryAppointmentSAError.push({appointment:i,repertorySA:repertorySAError});
+
         }
     }
-  return {count:countAppointmentError,repertory:repertoryAppointmentError}; 
+  return {count:countAppointmentError,repertory:repertoryAppointmentError,repertoryAppointmentSAError:repertoryAppointmentSAError}; 
 }
 
+/**
+ * This function changes dynamically the color and color of the text for the label 'erreurs'.  
+ * @param state boolean, give the information to know what is the apropriate color for the situation
+ */
 function updateColorErrorButton(state) {
-  var button=document.getElementById('lateral-panel-label'); 
+  var button=document.getElementById('lateral-panel-label');  //Get the label
   switch(state){
     case true : 
-    button.setAttribute('style','background : indianred; color :white'); 
+    button.setAttribute('style','background : indianred; color :white');  //one or more error(s)
     break; 
   case false : 
-    button.setAttribute('style','background : white; color : indianred')
+    button.setAttribute('style','background : white; color : indianred')  //zero error
 }
     
 }

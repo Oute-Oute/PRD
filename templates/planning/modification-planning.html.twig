@@ -187,7 +187,7 @@
 			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
 			<option value="02:00:00">Zoom : 12,5%</option>
 			<option value="01:00:00">Zoom : 25%</option>
-			<option value="0:40:00">Zoom : x50%</option>
+			<option value="0:40:00">Zoom : 50%</option>
 			<option value='00:20:00' selected>Zoom : 100% (Default)</option>
 			<option value="00:10:00">Zoom : 200%</option>
 			<option value="00:05:00">Zoom : 400%</option>
@@ -207,11 +207,11 @@
 	</div>
 
 	<div id="lateral-panel">
-		<input id="lateral-panel-input" type="checkbox" onclick="displayListErrorMessages()">
+		<input id="lateral-panel-input" type="checkbox" onclick="displayPanelErrorMessages()">
 		<label id="lateral-panel-label" for="lateral-panel-input"><div id="text-lateral-panel-label"> Erreurs</div></label>
 		<div id="lateral-panel-bloc">
-			<div style='text-align:center'>
-				<h2>Liste des erreurs de Plannification</h2>
+			<div style='text-align:center; font-weight: bold;font-size: 2.3em;'>
+				Liste des erreurs de plannification
 			</div>
 		</div>
 	</div>

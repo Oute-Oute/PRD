@@ -55,7 +55,7 @@
 			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
 			<option value="02:00:00">Zoom : 12,5%</option>
 			<option value="01:00:00">Zoom : 25%</option>
-			<option value="0:40:00">Zoom : x50%</option>
+			<option value="0:40:00">Zoom : 50%</option>
 			<option value='00:20:00' selected>Zoom : 100% (Default)</option>
 			<option value="00:10:00">Zoom : 200%</option>
 			<option value="00:05:00">Zoom : 400%</option>
@@ -85,10 +85,27 @@
 					<div class="input-container onWhite">
 						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
 						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
-					<label class="label-event">Parcours :</label>
-				</br>
-				<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
-		</br>
-		<label class="label-event">Patient :</label>
-	</br>
-	<input class="input-modal" type="text" id="patient" name="patient" disabled></input></br><label class="label-event">Ressource Humaine :</label></br><input class="input-modal" type="text" id="rh" name="rh" disabled></input></br><label class="label-event">Ressource Matérielle :</label></br><input class="input-modal" type="text" id="rm" name="rm" disabled></input></div><div class="modal-footer"><button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button></div></div></form> </div></div>{% endblock %}
+						<label class="label-event">Parcours :</label>
+						</br>
+						<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+						</br>
+						<label class="label-event">Patient :</label>
+						</br>
+						<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+						</br>
+						<label class="label-event">Ressource Humaine :</label>
+						</br>
+						<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
+						</br>
+						<label class="label-event">Ressource Matérielle :</label>
+						</br>
+						<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</form> 
+		</div>
+	</div>
+	{% endblock %}
