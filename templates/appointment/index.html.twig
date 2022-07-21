@@ -30,8 +30,8 @@
 				<tr class="AppointmentPathway">
 					<th>Identifiant</th>
 
-					<th><input type="text" id="inputPatientNname" onkeyup="filterPatient('inputPatientNname')" placeholder="Nom du patient"></th>
-					<th><input type="text" id="inputPathwayNname" onkeyup="filterPathway('inputPathwayNname')" placeholder="Nom de parcours"></th>
+					<th><input type="text" id="autocompleteInputPatientNname" onkeyup="filterPatient('autocompleteInputPatientNname')" placeholder="Nom du patient"></th>
+					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
 
 					<th>Jour du rendez-vous
 						<div class="datepicker">
@@ -53,7 +53,7 @@
 		<td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
 		<td>
 			<button type="button" class="btn-infos btn-secondary" onclick="showAppointment('{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}' , '{{ appointment.dayappointment|date(" y-m-d") }}')">Informations</a>
-			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date(" y-m-d") }}', '{{ appointment.earliestappointmenttime|date(" h:i") }}', '{{ appointment.latestappointmenttime|date(" h:i") }}')">Éditer</a>
+			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date(" y-m-d") }}', '{{ appointment.earliestappointmenttime|date("h:i") }}', '{{ appointment.latestappointmenttime|date("h:i") }}')">Éditer</a>
 			<form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
 				<input type="hidden" name="appointment" value="{{ appointment.id }}">
 				<button class="btn-delete btn-secondary">Supprimer</button>
@@ -64,4 +64,32 @@
 	<tr>
 		<td colspan="5">Pas de rendez-vous créés !</td>
 	</tr>
-{% endfor %}</tbody></table>{{ include ('appointment/add_appointment.html.twig') }}{{ include ('appointment/edit_appointment.html.twig') }}{{ include ('appointment/show_appointment.html.twig') }}{{ include ('appointment/select_day.html.twig')}}{% endblock %}
+{% endfor %}
+</tbody>
+</table>
+{{ include ('appointment/add_appointment.html.twig') }}
+{{ include ('appointment/edit_appointment.html.twig') }}
+{{ include ('appointment/show_appointment.html.twig') }}
+{{ include ('appointment/select_day.html.twig')}}
+
+<script>
+	$( "#autocompleteInputPatientNname" ).autocomplete({
+	source: PatientsArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPatient('autocompleteInputPatientNname', ui.item.value);
+	}
+	}
+	);
+	$( "#autocompleteInputPathwayNname" ).autocomplete({
+	source: PathwaysArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPathway('autocompleteInputPathwayNname', ui.item.value);
+	}
+	}
+	);
+	</script>
+
+{% endblock %}
+	

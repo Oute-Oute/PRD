@@ -1,6 +1,6 @@
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
-
+var autocompleteArray = new Array()
 
 var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
@@ -687,14 +687,22 @@ function submitPathway() {
     }
 }
 
-function filterPathway(idInput) {
-
+function filterPathway(idInput,selected=null) {
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var filter = document.querySelector('#' + idInput).value;
     for (let i = 0; i < trs.length; i++) {
         var regex = new RegExp(filter, 'i');
-        var pathwayName1 = trs[i].cells[1].outerText;
-        if (regex.test(pathwayName1) == false) {
+        var pathwayName = trs[i].cells[1].outerText;
+        if(autocompleteArray.indexOf(pathwayName) == -1){
+            autocompleteArray.push(pathwayName);
+            }
+        if (regex.test(pathwayName) == false) {
             trs[i].style.display = 'none';
         }
         else {

@@ -7,14 +7,15 @@
 	<script src="js/Pathway/pathway.js"></script>
 	<script src="{{ asset('./JS/jquery-ui/external/jquery/jquery.js')}}"></script>
 	<script src="{{ asset('./JS/bootstrap/bootstrap.min.js')}}" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-	{# <script src="js/Pathway/EditForm.js"> </script> #}
-	{# <script src="js/Pathway/pathway.js"> </script> #}
+    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
+    <script src="js/jquery-ui/jquery-ui.js"></script>    
 {% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+	<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -32,7 +33,7 @@
 			<thead>
 				<tr class="headerPathway">
 					<th>Identifiant</th>
-					<th><input type="text" id="inputPathwayNname" onkeyup="filterPathway('inputPathwayNname')" placeholder="Nom de parcours"></th>
+					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -90,5 +91,14 @@
 		{# Fenêtre modale d'information #}
 	{{ include ('pathway/show.html.twig') }}
 
+	<script>
+	$( "#autocompleteInputPathwayNname" ).autocomplete({
+	source: autocompleteArray,
+	select: function( event, ui ) {
+		filterPathway('autocompleteInputPathwayNname', ui.item.value);
+	}
+	}
+	);
+	</script>
 
 {% endblock %}
