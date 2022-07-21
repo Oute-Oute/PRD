@@ -160,10 +160,10 @@ function AddEventValider() {
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
-
+  var categoryOfMaterialResourceArray=JSON.parse(document.getElementById('categoryOfMaterialResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
   var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
-    
+  var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
@@ -227,26 +227,47 @@ function AddEventValider() {
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-
+        
         //Find for all Activities of the pathway, the number of Humanresources to define. 
+        var categoryHumanResources=[]; 
+        
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfHumanResourceArray.length; k++){
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
+              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+            }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
+          }
+        }
+      
+
+        
+
+        
+        var categoryMaterialResources=[]; 
+        
+        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
+              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+            }
+            quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           }
         }
 
         //Put the number of human resouorces in the ResourcesArray of the event
+
         for (let j = 0; j< quantityHumanResources; j++) {
           activityResourcesArray.push("h-default");
         }
 
-        //Find for all Activities of the pathway, the number of Materialresources to define.
-        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
-          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-            quantityMaterialResources +=
-            listeActivityMaterialResource[j].quantity;
-          }
+        for(let j=0; j<quantityMaterialResources;j++){
+          activityResourcesArray.push("m-default");
         }
+
+
         //counting for the ids of events
         countAddEvent++;
 
@@ -265,6 +286,8 @@ function AddEventValider() {
           humanResources: [],
           materialResources: [],
           pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+          categoryMaterialResource: categoryMaterialResources, 
+          categoryHumanResource: categoryHumanResources, 
         });
 
         event._def.ui.backgroundColor = RessourcesAllocated(event);
