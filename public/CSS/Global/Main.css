@@ -164,3 +164,10 @@ div#conn-form div#container form {
     background-color: #6c757d;
     cursor: not-allowed;
 }
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
