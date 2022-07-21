@@ -845,61 +845,86 @@ function verifyHistoryPush(array, idAppointment){
   };
 }
 
+/**
+ * @brief This method update list error messages 
+ */
 function updateErrorMessages() {
-  var listScheduledActivities = calendar.getEvents();
+  var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
+
+  //browse the all events
   listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity.display != "background"){
+    if(scheduledActivity.display != "background"){ //check if the scheduled activity is not an unavailability
       var appointmentAlreadyExist = false;
-      if(listErrorMessages != []){
-        listErrorMessages.forEach((errorMessage) => {
-          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){
+      if(listErrorMessages != []){ //check if list error messages is not empty
+        listErrorMessages.forEach((errorMessage) => { //browse the list error messages
+          if(scheduledActivity._def.extendedProps.appointment == errorMessage.appointmentId){ //check if the appointment is already register in the list
             appointmentAlreadyExist = true;
 
+            //set the error messages for earliest and latest appointment time
             errorMessage.messageEarliestAppointmentTime = getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment);
             errorMessage.messageLatestAppointmentTime = getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment);
 
             var scheduledActivityAlreadyExist = false;
-            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => {
-              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){
+            errorMessage.listScheduledActivity.forEach((existingScheduledActivity) => { //browse the scheduled activities related to the appointment
+              if(existingScheduledActivity.scheduledActivityId == scheduledActivity._def.publicId){ //if the scheduled activity already exist in the list
                 scheduledActivityAlreadyExist = true;
-                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity);
-                existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity);
-                existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity);
+
+                //update the data
+                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
+                existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for human resources
+                existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity); //set data for material resources
               }
             })
-            if(scheduledActivityAlreadyExist == false){
+            if(scheduledActivityAlreadyExist == false){ //if the scheduled activity doesn't exist
+              //add new scheduled activity in the list
               errorMessage.listScheduledActivity.push({
+                //add data for the scheduled activity
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
-                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
-                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
-                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+
+                messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
+                listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for human resources
+                listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity) //add data for material resources
               })
             }
           }
         })
       }
-      if(appointmentAlreadyExist == false){
+      if(appointmentAlreadyExist == false){ //if the appointment doesn't exist
+        //add new appointment
         listErrorMessages.push({
+          //add data for the appointment
           appointmentId: scheduledActivity._def.extendedProps.appointment,
           patientName: scheduledActivity._def.extendedProps.patient,
           pathwayName: scheduledActivity._def.extendedProps.pathway,
-          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
+
+          //add error message for earliest and latest appointment time
+          messageEarliestAppointmentTime: getMessageEarliestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment), 
           messageLatestAppointmentTime: getMessageLatestAppointmentTime(listScheduledActivities, scheduledActivity._def.extendedProps.appointment),
-          listScheduledActivity: [{
+          
+          //add the new scheduled activity
+          listScheduledActivity: [{ 
+            //add data for the scheduled activity
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
-            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity),
-            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity),
-            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity)
+
+            messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
+            listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for human resources
+            listCategoryMaterialResources: getListCategoryMaterialResources(scheduledActivity) //add data for material resources
           }]
         })
       }
     }
   })
-  updateListErrorMessages();
+  updateListErrorMessages(); //update the panel error messages
 }
 
+/**
+ * 
+ * @param {*} listScheduledActivities 
+ * @param {*} appointmentId 
+ * @returns 
+ */
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
   var message = "";
 
