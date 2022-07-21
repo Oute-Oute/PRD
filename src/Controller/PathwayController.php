@@ -211,7 +211,7 @@ class PathwayController extends AbstractController
 
             $pathway = $pathwayRepository->findBy(['id' => $id]);
             $pathwayJson = $this->pathwayJSON($pathway[0]);
-            dd($pathwayJson);
+            //dd($pathwayJson);
 
             $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
 
@@ -219,7 +219,7 @@ class PathwayController extends AbstractController
             $resourcesByActivities = array();
             //for ()
 
-            return $this->render('path0.way/edit.html.twig', [
+            return $this->render('pathway/edit.html.twig', [
                 'pathway' => $pathway,
                 'pathwayJson' => $pathwayJson,
                 'activitiesByPathways' => $activitiesByPathways,
@@ -531,7 +531,7 @@ class PathwayController extends AbstractController
 
                         // Ajout des liens activity - ressources humaines
                         
-                        dd($resourcesByActivities[$indexActivity]->materialResourceCategories);
+                        //dd($resourcesByActivities[$indexActivity]->materialResourceCategories);
                         $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
                     
                         if ($nbMRC != 0) {
@@ -558,12 +558,48 @@ class PathwayController extends AbstractController
                                     //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
                                     if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already) {
                                         //il faut le trouver dans la bd et le delete
-                                        //$AMRRepository->findBy([""])
+                                        $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC, "quantity" => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb]);
+                                        
+                                        $em->remove($linkAMR);
+                                        $em->flush();
                                     }
                                 }
+                            }
+                        }
 
 
-                              
+                        $nbHRC = count($resourcesByActivities[$indexActivity]->humanResourceCategories);
+                    
+                        if ($nbHRC != 0) {
+                            for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
+
+                                // Premierement on recupere la categorie de la bd
+                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                
+                                /// on verifie si il n'a pas été supprimé par l'utilisateur
+                                if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->available) {
+                                    if (!($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already)) {
+                                        //si il est valable mais qu'il n'était présent : il faut l'ajouter dans la bd
+                                        
+                                        // On crée l'objet ActivityHumanResource
+                                        $activityHumanResource = new ActivityHumanResource();
+                                        $activityHumanResource->setActivity($activity);
+                                        $activityHumanResource->setHumanresourcecategory($HRC);
+                                        $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                        
+                                        // Puis on l'ajoute dans la bd
+                                        $AHRRepository->add($activityHumanResource , true);
+                                    }
+                                } else {
+                                    //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
+                                    if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already) {
+                                        //il faut le trouver dans la bd et le delete
+                                        $linkAHR = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC, "quantity" => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb]);
+                                        
+                                        $em->remove($linkAHR);
+                                        $em->flush();
+                                    }
+                                }
                             }
                         }
                         /*
@@ -594,7 +630,7 @@ class PathwayController extends AbstractController
                     
 
                         // Ajout des liens activity - ressources materielles
-                        
+                        /*
                         $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
                     
                         if ($nbMRC != 0) {
@@ -621,7 +657,7 @@ class PathwayController extends AbstractController
                                     }
                                 }
                             }
-                        }
+                        }*/
 
                     } else {
                         // si l'activité est en available = false
@@ -630,7 +666,7 @@ class PathwayController extends AbstractController
 
                             $activity = $activityRepository->findById($resourcesByActivities[$indexActivity]->id)[0];
                             $em->remove($activity);
-                            $em->flush($activity);
+                            $em->flush();
                         }
                     }
 
