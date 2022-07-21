@@ -2,20 +2,22 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES
-var MATERIAL_RESOURCE_CATEGORIES
+var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
+var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
+
 var RESOURCES_BY_ACTIVITIES = new Array()
-var ACTIVITY_IN_PROGRESS
+
+var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
 
 /**
- * Appelée au chargement de la page de création d'un parcours (circuit)
+ * Appelée au chargement de la page de création d'un parcours (pathway)
  */
 document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
-    //showNewModalForm()
+
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-human-resource-categories").value
     );
@@ -129,22 +131,6 @@ function drawActivities(data){
     }
 }
 
-/**
- * Permet d'afficher la fenêtre modale d'ajout
- */
-function showNewModalForm(){
-    $('#add-pathway-modal').modal("show");
-    //$('#add-pathway-resources-modal').modal("show");
-    //document.getElementById('add-pathway-resources-modal').style.display = 'flex'
-
-}
-
-/**
- * Permet de fermer la fenêtre modale d'ajout
- */
-function hideNewModalForm() {
-    $('#add-pathway-modal').modal("hide");
-}
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -168,6 +154,7 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].id
         res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].name
         res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].nb
+        res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].available
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
@@ -177,8 +164,10 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].id
         res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].name
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
+        res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
+
     RESOURCES_BY_ACTIVITIES[len].activityname = document.getElementById('input-name').value
     RESOURCES_BY_ACTIVITIES[len].activityduration = document.getElementById('input-duration').value
 }
@@ -195,11 +184,16 @@ function addActivity() {
     console.log(document.getElementById('input-name').value)
     console.log(document.getElementById('input-duration').value)
 
+
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
         verif = false
         alert("Le nom de l'activité ne peut pas être vide")
     }
+    else if (Number(document.getElementById('input-duration').value) < 0) {
+        verif = false
+        alert("La durée de l'activité n'est pas correcte ")
+    }    
     else if (document.getElementById('input-duration').value == '') {
         verif = false
         alert("La durée de l'activité n'est pas correcte ")
@@ -207,8 +201,6 @@ function addActivity() {
 
     if (verif) {
         if (IS_EDIT_MODE) {
-            console.log('verif ok confirm')
-            console.log(document.getElementById('input-name').value)
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
             fillActivityList()
@@ -346,6 +338,7 @@ function editActivity(id) {
     ID_EDITED_ACTIVITY = id
     
     ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
+
     handleHumanButton()
     document.getElementById('input-name').value = ACTIVITY_IN_PROGRESS.activityname
     document.getElementById('input-duration').value = ACTIVITY_IN_PROGRESS.activityduration
@@ -394,150 +387,6 @@ function confirmEditActivity() {
 
 }
 
-/**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
- */
-function verifyChanges() {
-    let formOk = true
-    // D'abord on recupere la div qui contient toutes les activity
-    let activitiesContainer = document.getElementsByClassName('activities-container')[0]
-
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
-    let indexActivityAvailable = 0;
-    for (let i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-
-        // On ne considere que les activités qui n'ont pas été supprimées
-        if (RESOURCES_BY_ACTIVITIES[i].available === true) {
-            inputName  = document.getElementById('input-activity-name-'+i)
-            inputDuration  = document.getElementById('input-activity-duration-'+i)
-            RESOURCES_BY_ACTIVITIES[i].activityname = inputName.value
-            RESOURCES_BY_ACTIVITIES[i].activityduration = inputDuration.value
-
-            indexActivityAvailable = indexActivityAvailable + 1
-        }
-
-        /*activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
-        let name = activitiesContainer.children[i].children[1].children[0].value
-        activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))
-        let duration = activitiesContainer.children[i].children[1].children[1].value
-
-        // On verifie les inputs 
-        if (name === '') {
-            formOk = false
-        }
-        if (duration === '') {
-            formOk = false
-        }
-        if (Number(duration) < 0 ) {
-            formOk = false
-        }*/
-
-    }
-
-    /*if (document.getElementById('pathwayname').value === '') {
-        formOk = false
-    }
-*/
-
-    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-
-}
-
-
-
-function createDivEdit() {
-
-    /* Div parent pour l'ajout de ressource */
-    divEditActivity = document.createElement('div')
-    divEditActivity.setAttribute('class', 'div-edit-activities')
-    divEditActivity.setAttribute('id', 'div-edit-activity-'+SELECT_ID)
-    divEditActivity.style.display = 'none'
-    //divEditActivity.style.height = '0px'
-
-    /* Premier enfant : les 2 boutons pour choisir materielles humaines */
-
-    divBtnsResources = document.createElement('div')
-    divBtnsResources.setAttribute('class', 'div-buttons-resources')
-    btnHuman = document.createElement('button')
-    btnHuman.innerText = 'Humaines'
-    btnHuman.setAttribute('type', 'button')
-    btnHuman.setAttribute('id', 'bh-'+SELECT_ID)
-    btnHuman.setAttribute('onclick', 'handleHumanButton(this.id)')
-
-    btnMaterial = document.createElement('button')
-    btnMaterial.innerText = 'Materielles'
-    btnMaterial.setAttribute('type', 'button')
-    btnMaterial.setAttribute('id', 'bm-'+SELECT_ID)
-    btnMaterial.setAttribute('onclick', 'handleMaterialButton(this.id)')
-
-    RESOURCES_BY_ACTIVITIES[SELECT_ID].btnHM= 'human'
-
-    divBtnsResources.appendChild(btnHuman)
-    divBtnsResources.appendChild(btnMaterial)
-
-
-    /* Deuxieme enfant : Div qui contiendra la liste des ressources */
-
-    divResources = document.createElement('div')
-    divResources.setAttribute('class', 'div-resources')
-    //divRH = document.createElement('div')
-    //divRH.setAttribute('class', 'div-resources-h')
-    divRM = document.createElement('div')
-    //divRM.setAttribute('class', 'div-resources-m')
-    //divResources.appendChild(divRH)
-    ul = document.createElement('ul')
-    ul.setAttribute('id', 'list-resources-'+SELECT_ID)
-
-    divRM.appendChild(ul)
-
-    divResources.appendChild(divRM)
-
-
-    /* Troisieme enfant : select  */
-
-    divAddResources = document.createElement('div')
-    divAddResources.setAttribute('class', 'div-add-resources')
-    divAddResources.setAttribute('title', 'Choisissez la ressource à ajouter')
-    selectResources = document.createElement('select')
-    selectResources.setAttribute('id', 'select-resources-'+SELECT_ID)
-    //for (let indexHR = 0; )
-
-    inputNbResources = document.createElement('input')
-    inputNbResources.setAttribute('type', 'number')
-    inputNbResources.setAttribute('title', 'Entrer le nombre de ressources à ajouter')
-    inputNbResources.setAttribute('placeholder', 'Qte')
-    inputNbResources.setAttribute('id', 'resource-nb-'+SELECT_ID)
-    //title="Enter input here"
-    imgAdd = new Image()
-    imgAdd.src = '../img/plus.png'
-    imgAdd.setAttribute('id', 'img-')
-    imgAdd.setAttribute('onclick', 'addResources('+SELECT_ID+')')
-    imgAdd.setAttribute('title', 'Ajouter la ressource a la liste')
-    imgAdd.style.width = '20px'
-    imgAdd.style.height = '20px'
-    //imgAdd.src = '../'
-    btnPlus = document.createElement('button')
-    btnPlus.setAttribute('type', 'button')
-    btnPlus.innerHTML = '+'
-    btnPlus.setAttribute('title', 'Ajouter la ressource a la liste')
-    btnPlus.setAttribute('id', 'btn-'+SELECT_ID)
-    btnPlus.setAttribute('onclick', 'addResources(this.id)')
-    
-    divAddResources.appendChild(selectResources)
-    divAddResources.appendChild(inputNbResources)
-    divAddResources.appendChild(imgAdd)
-    
-    /* Ajout de tous les enfants a la div parent */
-    divEditActivity.appendChild(divBtnsResources)
-    divEditActivity.appendChild(divResources)
-    divEditActivity.appendChild(divAddResources)
-
-    //
-
-    return divEditActivity
-}
-
 
 function getId(str) {
     str = str.toString()
@@ -546,58 +395,69 @@ function getId(str) {
 }
 
 function addResources() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
-    //id = getId(id)
 
-    // ! Si le bouton human est activé !
-
-    if (ACTIVITY_IN_PROGRESS.btnHM == 'human') {
-        let resourceNb = document.getElementById('resource-nb').value
-        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
-
-        let resourceName ='';
-        for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-            if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
-            }
-        }
-
-        ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-        let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-    
-        fillHRCList()
-    } else {
-        // ! Si le bouton material est activé !
-
-        let resourceNb = document.getElementById('resource-nb').value
-        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
-
-        let resourceName ='';
-        for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
-            if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
-                resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
-            }
-        }
-
-        ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
-        let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
-    
-        fillMRCList()
+    // On verifie que le champs quantité est bien rempli 
+    let verif = true
+    if (document.getElementById('resource-nb').value == '') {
+        verif = false
+        alert("La quantité de la ressource n'est pas correcte")
+    }
+    else if (Number(document.getElementById('resource-nb').value) < 1) {
+        verif = false
+        alert("La quantité de la ressource ne peut pas être inférieure à 1")
     }
 
+    if (verif) {
 
+        // ! Si le bouton human est activé !
+        if (ACTIVITY_IN_PROGRESS.btnHM == 'human') {
+
+            let resourceNb = document.getElementById('resource-nb').value
+            let resourceId = document.getElementById('select-resources').value 
+
+            let resourceName ='';
+            for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                    resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                }
+            }
+
+            ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].available = true
+
+            fillHRCList()
+        } else {
+            // ! Si le bouton material est activé !
+            
+            let resourceNb = document.getElementById('resource-nb').value
+            let resourceId = document.getElementById('select-resources').value 
+
+            let resourceName ='';
+            for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                    resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                }
+            }
+
+            ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+            let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].available = true
+        
+            fillMRCList()
+        }
+
+    }
 }
 
 /**
  * Remplit la liste des ressources humaines 
- * @param {id de l'activité dans laquelle on veut ajouter des ressources} id 
  */
 function fillHRCList() {
 
@@ -671,7 +531,7 @@ function fillMRCList(id) {
     if (len > 0) {
         for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
 
-            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
+            if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].available) {
 
                 // On crée le li qui va stocker la ressource (visuellement) 
                 var li = document.createElement('li');
@@ -712,8 +572,6 @@ function fillMRCList(id) {
  * Gestion du clic sur le bouton 'humaines' dans les ressources d'une activité
  */
 function handleHumanButton() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
 
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bh = document.getElementById('human-button')
@@ -745,12 +603,8 @@ function handleHumanButton() {
 
 /**
  * Gestion du clic sur le bouton 'materielle' dans les ressources d'une activité
- * @param {id de l'activité donc on veut afficher les ressources materielles} id 
  */
 function handleMaterialButton() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
-
 
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bm = document.getElementById('material-button')
@@ -791,12 +645,11 @@ function removeOptions(selectElement) {
     for (i = L; i >= 0; i--) {
         selectElement.remove(i); 
     } 
-
 }
 
 /**
  * Permet de supprimer une ressource d'une activité
- * @param {*} id 
+ * @param {id de l'element html} id 
  */
 function deleteResource(id) {
 
@@ -806,20 +659,35 @@ function deleteResource(id) {
     idRessource = idSplitted[idSplitted.length - 1]
 
     if (typeRessource === 'h') {
-        ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[idRessource].available = false
         fillHRCList();
     } else {
-        ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[idRessource].available = false
         fillMRCList();
     }
 
 }
 
 
+/**
+ * Verifie que le nom du parcours est correct
+ * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
+ * Envoie la requete POST au serveur
+ */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
+    let verif = true
 
-    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+    // On verifie que tous les champs sont bons 
+    if (document.getElementById('pathwayname').value == '') {
+        verif = false
+        alert("Le nom du parcours ne peut pas être vide")
+    }
 
-    btnSubmit.click()
+    if (verif) {
+        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+        btnSubmit.click()
+    }
 }

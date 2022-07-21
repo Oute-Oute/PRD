@@ -371,17 +371,21 @@ class PathwayController extends AbstractController
                         if ($nbHRC != 0) {
                             for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
 
-                                // Premierement on recupere la categorie de la bd
-                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
-                                                                
-                                // Ensuite on crée l'objet ActivityMaterialResource
-                                $activityHumanResource = new ActivityHumanResource();
-                                $activityHumanResource->setActivity($activity_old);
-                                $activityHumanResource->setHumanresourcecategory($HRC);
-                                $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
-                                                                
-                                // Puis on l'ajoute dans la bd
-                                $AHRRepository->add($activityHumanResource , true);
+                                if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->available) {
+                                    // Premierement on recupere la categorie de la bd
+                                    $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                                                                            
+                                    // Ensuite on crée l'objet ActivityMaterialResource
+                                    $activityHumanResource = new ActivityHumanResource();
+                                    $activityHumanResource->setActivity($activity_old);
+                                    $activityHumanResource->setHumanresourcecategory($HRC);
+                                    $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                                                    
+                                    // Puis on l'ajoute dans la bd
+                                    $AHRRepository->add($activityHumanResource , true);
+                                }
+
+                     
                             }
                         }
                     
@@ -393,17 +397,21 @@ class PathwayController extends AbstractController
                         if ($nbMRC != 0) {
                             for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
 
-                                // Premierement on recupere la categorie de la bd
-                                $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
-                                
-                                // Ensuite on crée l'objet ActivityMaterialResource
-                                $activityMaterialResource = new ActivityMaterialResource();
-                                $activityMaterialResource->setActivity($activity_old);
-                                $activityMaterialResource->setMaterialresourcecategory($MRC);
-                                $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
-                                
-                                // Puis on l'ajoute dans la bd
-                                $AMRRepository->add($activityMaterialResource , true);
+                                if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->available) {
+
+                                    // Premierement on recupere la categorie de la bd
+                                    $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                    
+                                    // Ensuite on crée l'objet ActivityMaterialResource
+                                    $activityMaterialResource = new ActivityMaterialResource();
+                                    $activityMaterialResource->setActivity($activity_old);
+                                    $activityMaterialResource->setMaterialresourcecategory($MRC);
+                                    $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                    
+                                    // Puis on l'ajoute dans la bd
+                                    $AMRRepository->add($activityMaterialResource , true);
+                                }
+
                             }
                         }
 
