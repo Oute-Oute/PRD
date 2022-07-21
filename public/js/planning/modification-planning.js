@@ -1287,34 +1287,37 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
   return message;
 }
 
+/**
+ * Called when button 'erreurs' is clicked, display or hide the lateral-panel-bloc and call the function to update informations. 
+ */
   function displayListErrorMessages(){
-    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
+    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc');   
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
-    if(lateralPannelInput==true){
-      lateralPannelBloc[0].style.display='block'; 
+    if(lateralPannelInput==true){                   //Test the value of the checkbox
+      lateralPannelBloc[0].style.display='block';  //display the panel
       lateralPannel[0].style.width='40em';
-      updateListErrorMessages();
+      updateListErrorMessages();  //Update informations in the panel
     }
     else{
-      lateralPannelBloc[0].style.display='';
+      lateralPannelBloc[0].style.display=''; //hide the pannel
       lateralPannel[0].style.width='';
     }
     
   }
 
   function updateListErrorMessages(){
-    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
-    while(nodesNotification.length!=3){
-      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
+    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes;                             //Get the div in lateral-panel-bloc
+    while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
+      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
-    var RepertoryErrors =countAppointmentErrorList(); 
+    var RepertoryErrors =countAppointmentErrorList();                   //Get the repertory of errors 
     if(RepertoryErrors.count!=0){
-      updateColorErrorButton(true); 
-      for(let i=0; i<listErrorMessages.length; i++){
-        if(RepertoryErrors.repertory.includes(i)){
-          var indexAppointment=RepertoryErrors.repertory.indexOf(i); 
-          var div = document.createElement('div');
+      updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
+      for(let i=0; i<listErrorMessages.length; i++){                    //All Appointments of the day
+        if(RepertoryErrors.repertory.includes(i)){                      //if the Appointment[i] has an error we have to display it
+          var indexAppointment=RepertoryErrors.repertory.indexOf(i);    //usefull to display activities 
+          var div = document.createElement('div');                      //Creating the div for the Appointment
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
           div.setAttribute('id','notification');
@@ -1350,16 +1353,16 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
             div.append(space);
           }
           
-          //messageDelay for each ScheduledActivity
+          //for each ScheduledActivity in Appointment 
           for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
-            if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){
+            if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){          //Testing if there are errors on this Activity
               var divColumn=document.createElement('divColumn');
               divColumn.setAttribute('style','font-weight: bolder;')
               div.append(divColumn); 
-              var nameSA=listErrorMessages[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';    
+              var nameSA=listErrorMessages[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';        //Display Activity Name 
               divColumn.append(nameSA); 
               
-
+              //messageDelay
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
                   
                 var divColumn=document.createElement('divColumn');
@@ -1368,13 +1371,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 divColumn.append(messageDelay);
               }
 
+              //foreach CategoryHumanResources in ScheduledActivity
               for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+                
+                //messageCategoryQuantity
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn); 
                   var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
+
+                //messageWrongCategory
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
@@ -1382,7 +1390,10 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   divColumn.append(messageWrongCategory);
                 }
                 
+                //foreach HumanResources
                 for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+                  
+                  //messageWorkingHours
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1390,13 +1401,16 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                     divColumn.append(messageWorkingHours);
                   }
 
+
+                  //messageUnavailability
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
                     var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
-                  listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''
+
+                  //messageAlreadyScheduled
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1407,13 +1421,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
               }
               
+              //foreach MaterialResourcesCategory in ScheduledActivity
               for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+               
+                //messageCategoryQuantity
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
                   var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
+
+                //messageWrongCategory
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
@@ -1421,8 +1440,10 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   divColumn.append(messageWrongCategory);
                 }
               
+                //foreach MaterialResources in MaterialResourceCategory 
                 for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
                   
+                  //messageUnavailability
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1430,6 +1451,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                     divColumn.append(messageUnavailability);
                   }
 
+                  //messageAlreadyScheduled
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1440,26 +1462,26 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
               }
               if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
-                var space=document.createElement('space');
+                var space=document.createElement('space'); //skip to line if there is an error in another activity in this appointment
                 space.innerHTML='</br>';
                 div.append(space);
               }
             } 
           }
-          document.getElementById('lateral-panel-bloc').appendChild(div);
+          document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
     }
-    else{
+    else{                                                                                   //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
        div.setAttribute('role','alert'); 
        div.setAttribute('style','text-align: center');
-       var message= document.createElement('message').innerHTML="Aucune erreur détectée."; 
+       var message= document.createElement('message').innerHTML="Aucune erreur détectée.";  //Display 'no error' message
        div.append(message);
        document.getElementById('lateral-panel-bloc').appendChild(div);
 
-      updateColorErrorButton(false); 
+      updateColorErrorButton(false);     //Update color of the button                                                    
     }
   }
 
