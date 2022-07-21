@@ -1,9 +1,9 @@
 /**
  * @brief This function is called when we want to change the date of the page
  */
- var tagsPatients=[];
- var tagsPathways=[];
- function changeDate() {
+var tagsPatients = [];
+var tagsPathways = [];
+function changeDate() {
   var date = new Date(document.getElementById("Date").value); //get the new date in the DatePicker
   var day = date.getDate(); //get the day
   var month = date.getMonth() + 1; //get the month (add 1 because it starts at 0)
@@ -21,53 +21,51 @@
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function addAppointment() {
-  while(tagsPathways.length>0){
+  while (tagsPathways.length > 0) {
     tagsPathways.pop();
   }
-  while(tagsPatients.length>0){
+  while (tagsPatients.length > 0) {
     tagsPatients.pop();
   }
   $("#add-appointment-modal").modal("show");
   var dataPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
-  for(var i=0; i<dataPatients.length; i++){
-    firstname=dataPatients[i]["firstname"];
-    lastname=dataPatients[i]["lastname"];
-    patient=lastname+" "+firstname;
+  for (var i = 0; i < dataPatients.length; i++) {
+    firstname = dataPatients[i]["firstname"];
+    lastname = dataPatients[i]["lastname"];
+    patient = lastname + " " + firstname;
     tagsPatients.push(patient);
   }
-  var dataPathways=JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
-  for(var i=0; i<dataPathways.length; i++){
-    pathName=dataPathways[i]["title"];
+  var dataPathways = JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
+  for (var i = 0; i < dataPathways.length; i++) {
+    pathName = dataPathways[i]["title"];
     tagsPathways.push(pathName);
   }
 }
 function getTargetsbyMonth(date) {
-  dateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+  console.log(date);
+  dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   var pathwayName = $('#autocompletePathwayAdd').val();
   $.ajax({
-    type : 'POST',
-    url  : '/ajaxAppointment',
-    data : { pathway: pathwayName, date:dateStr },
-    dataType : "json",
-    success : function(data)
-          {
-               addTargetsToCalendar(data);
-            },
-    error: function(data)
-    {
+    type: 'POST',
+    url: '/ajaxAppointment',
+    data: { pathway: pathwayName, date: dateStr },
+    dataType: "json",
+    success: function (data) {
+      addTargetsToCalendar(data);
+    },
+    error: function (data) {
       console.log("error");
     }
-    });
-  }
-
+  });
+}
 
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
-  var dateToGet=new Date();
+  var dateToGet = new Date();
   getTargetsbyMonth(dateToGet);
-  document.getElementById("buttonSelect").onclick=function(){validate(type);}
-  document.getElementById("buttonCancel").onclick=function(){hideDayModale(type);}
-  document.getElementById('load').style.visibility="";
+  document.getElementById("buttonSelect").onclick = function () { validate(type); }
+  document.getElementById("buttonCancel").onclick = function () { hideDayModale(type); }
+  document.getElementById('load').style.visibility = "";
   $("#add-appointment-modal").modal("hide");
   $("#select-day-modal").modal("show");
   createCalendar(type);
@@ -84,17 +82,17 @@ function editAppointment(
   earliestappointmenttime,
   latestappointmenttime
 ) {
-  while(tagsPathways.length>0){
+  while (tagsPathways.length > 0) {
     tagsPathways.pop();
   }
-  while(tagsPatients.length>0){
+  while (tagsPatients.length > 0) {
     tagsPatients.pop();
   }
   //on initialise les informations affichées avec les données du rendez-vous modifié
   document.getElementById("idappointment").value = idappointment;
-  document.getElementById("autocompletePatientEdit").value = lastnamepatient+" "+firstnamepatient;
+  document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
-  document.getElementById("dayAppointment").value = dayappointment;
+  document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
@@ -119,24 +117,23 @@ function hideNewModalForm() {
 /**
  * Permet de cacher la fenêtre modale de selection du jour
  */
- function hideDayModale(type) {
+function hideDayModale(type) {
   $("#select-day-modal").modal("hide");
-  if(type=="new"){
-  $("#add-appointment-modal").modal("show");
+  if (type == "new") {
+    $("#add-appointment-modal").modal("show");
   }
-  if(type=="edit"){
+  if (type == "edit") {
     $("#edit-appointment-modal").modal("show");
   }
 }
 
-function validate(type){
-  if(type=="new"){
-  document.getElementById("dateSelected").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
-
-}
-  else if(type=="edit")
-  {
-    document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
+function validate(type) {
+  if (type == "new") {
+    document.getElementById("dateSelected").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
+    console.log(document.getElementById("dateSelected").value);
+  }
+  else if (type == "edit") {
+    document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
   }
   hideDayModale(type);
 }
@@ -146,7 +143,7 @@ function validate(type){
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} resources the type of resources to display (Patients, Resources...)
  */
- function createCalendar(type) {
+function createCalendar(type) {
   date = new Date(); //create a new date with the date in the hidden input
   var calendarEl = document.getElementById("calendar-appointment"); //create the calendar variable
 
@@ -173,16 +170,16 @@ function validate(type){
         container: "body",
       });
     },
-    dateClick: function(info) {
-      document.getElementById("buttonSelect").style="background-color : #37BC9B; border : 1px solid #37BC9B;"
-      document.getElementById("buttonSelect").disabled=false;
+    dateClick: function (info) {
+      document.getElementById("buttonSelect").style = "background-color : #37BC9B; border : 1px solid #37BC9B;"
+      document.getElementById("buttonSelect").disabled = false;
       document.getElementById("dateTemp").value = info.dateStr; //set the date in the hidden input
     },
   });
-  if(type=="new"){
-  calendar.select(document.getElementById("dateSelected").value);
+  if (type == "new") {
+    calendar.select(document.getElementById("dateSelected").value);
   }
-  if(type=="edit"){
+  if (type == "edit") {
     calendar.select(document.getElementById("dayAppointment").value);
   }
   calendar.render(); //render the calendar
@@ -194,25 +191,25 @@ function addTargetsToCalendar(targets) {
       allDay: true,
       start: element.start,
       description: element.description,
-      display:'background',
-      color:element.color,
+      display: 'background',
+      color: element.color,
+
+    });
 
   });
-  
-});
-calendar.render();
-document.getElementById('load').style.visibility="hidden";
+  calendar.render();
+  document.getElementById('load').style.visibility = "hidden";
 }
 
 /**
  * @brief This function is called when we want to go to the previous day
  */
- function PreviousMonth() {
+function PreviousMonth() {
   var oldDate = calendar.getDate() //get the old day in the calendar
   var newDate = new Date(
     oldDate.getFullYear(),
     oldDate.getMonth() - 1,
-    oldDate.getDate() 
+    oldDate.getDate()
   ); //create a new day after the old one
   var day = newDate.getDate(); //get the day
   var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
@@ -226,7 +223,7 @@ document.getElementById('load').style.visibility="hidden";
   calendar.removeAllEvents();
   getTargetsbyMonth(newDate)
   calendar.gotoDate(newDate)
-  document.getElementById('load').style.visibility="visible";
+  document.getElementById('load').style.visibility = "visible";
 }
 
 
@@ -238,7 +235,7 @@ function NextMonth() {
   var newDate = new Date(
     oldDate.getFullYear(),
     oldDate.getMonth() + 1,
-    oldDate.getDate() 
+    oldDate.getDate()
   ); //create a new day after the old one
   var day = newDate.getDate(); //get the day
   var month = newDate.getMonth() + 1; //get the month (add 1 because it starts at 0)
@@ -250,9 +247,10 @@ function NextMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
+  console.log(calendar.getEvents());
   getTargetsbyMonth(newDate)
   calendar.gotoDate(newDate)
-  document.getElementById('load').style.visibility="visible";
+  document.getElementById('load').style.visibility = "visible";
 }
 
 
@@ -272,6 +270,50 @@ function Today() {
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
   getTargetsbyMonth(today)
+  console.log(calendar.getEvents());
   calendar.gotoDate(today)
-  document.getElementById('load').style.visibility="visible";
+  document.getElementById('load').style.visibility = "visible";
+}
+
+function showAppointment(a, b, c, d) {
+  document.getElementById('val1').innerText = a
+  document.getElementById('val2').textContent = b
+  document.getElementById('val3').textContent = c
+  document.getElementById('val4').textContent = d
+
+
+  $('#infos-appointment-modal').modal("show");
+}
+
+function filterPathway(idInput) {
+
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
+  var filter = document.querySelector('#' + idInput).value;
+  for (let i = 0; i < trs.length; i++) {
+    var regex = new RegExp(filter, 'i');
+    var pathwayName1 = trs[i].cells[2].outerText;
+    if (regex.test(pathwayName1) == false) {
+      trs[i].style.display = 'none';
+    }
+    else {
+      trs[i].style.display = '';
+    }
+  }
+}
+
+function filterPatient(idInput) {
+
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
+  var filter = document.querySelector('#' + idInput).value;
+  for (let i = 0; i < trs.length; i++) {
+    var regex = new RegExp(filter, 'i');
+    var patientName = trs[i].cells[1].outerText;
+    console.log(trs[i].cells[2].outerText)
+    if (regex.test(patientName) == false) {
+      trs[i].style.display = 'none';
+    }
+    else {
+      trs[i].style.display = '';
+    }
+  }
 }
