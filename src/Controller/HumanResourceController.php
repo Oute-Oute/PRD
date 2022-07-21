@@ -4,15 +4,11 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
-use App\Entity\UnavailabilityHumanResource;
 use App\Entity\WorkingHours;
-use App\Form\HumanResourceType;
 use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\CategoryOfHumanResourceRepository;
-use App\Repository\UnavailabilityHumanResourceRepository;
 use App\Repository\WorkingHoursRepository;
-use DateTimeInterface;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,13 +26,13 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/", name="app_human_resource_index", methods={"GET"})
      */
-    public function index(HumanResourceRepository $humanResourceRepository): Response
+    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
-        $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+        $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
-        $workingHours = $this->listWorkingHoursJSON();
-        $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON();
+        $workingHours = $this->listWorkingHoursJSON($doctrine);
+        $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON($doctrine);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
@@ -48,9 +44,9 @@ class HumanResourceController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
-    public function listWorkingHoursJSON()
+    public function listWorkingHoursJSON(ManagerRegistry $doctrine)
     {
-        $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
+        $workingHoursRepository = new WorkingHoursRepository($doctrine);
         $workingHours = $workingHoursRepository->findAll();
         $workingHoursArray = array();
 
@@ -73,9 +69,9 @@ class HumanResourceController extends AbstractController
         /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
-    public function listCategoriesByHumanResourcesJSON()
+    public function listCategoriesByHumanResourcesJSON(ManagerRegistry $doctrine)
     {
-        $categoriesByHumanResourcesRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+        $categoriesByHumanResourcesRepository = new CategoryOfHumanResourceRepository($doctrine);
         $categoriesByHumanResources = $categoriesByHumanResourcesRepository->findAll();
         $categoriesByHumanResourcesArray = array();
 
@@ -99,7 +95,7 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/new", name="app_human_resource_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, HumanResourceRepository $humanResourceRepository): Response
+    public function new(Request $request, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
@@ -120,16 +116,16 @@ class HumanResourceController extends AbstractController
             array_push($saturday, $param['saturday-begin'].':00', $param['saturday-end'].':00');
             array_push($sunday, $param['sunday-begin'].':00', $param['sunday-end'].':00');
             $humanResource->setHumanresourcename($name);
-            $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
+            $humanResourceRepository = new HumanResourceRepository($doctrine);
             $humanResourceRepository->add($humanResource, true);
-            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
 
             // On récupère toutes les catégories
-            $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+            $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
             $categories = $categoryOfHumanResourceRepository->findAll(); 
 
             // On récupère les working hours
-            $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
+            $workingHoursRepository = new WorkingHoursRepository($doctrine);
             
             // On récupère le nombre de catégories
             $nbCategory = $param['nbCategory'];
@@ -248,7 +244,7 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request) 
+    public function edit(Request $request,ManagerRegistry $doctrine) 
     { 
         // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
@@ -257,7 +253,7 @@ class HumanResourceController extends AbstractController
             $param = $request->request->all();
 
             // On récupère l'objet parcours que l'on souhaite modifier grace a son id
-            $humanResourceRepository = new HumanResourceRepository($this->getDoctrine());
+            $humanResourceRepository = new HumanResourceRepository($doctrine);
             $humanResource = $humanResourceRepository->findById($param['id'])[0];
             $humanResource->setHumanResourceName($param['resourcename']);
             //$pathway->setAvailable(true);
@@ -281,16 +277,16 @@ class HumanResourceController extends AbstractController
             // On s'occupe ensuite ds liens entre le parcours et les activités :
 
             // On récupère toutes les activités
-            $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
+            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
             $categOfHumanResource = $categOfHumanResourceRepository->findAll();
             $humanResourcesCategories = $humanResourceCategoryRepository->findAll();
 
             // On récupère les working hours
-            $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
+            $workingHoursRepository = new WorkingHoursRepository($doctrine);
 
             // On supprime toutes les activités et leurs successor
-            $em=$this->getDoctrine()->getManager();
+            $em=$doctrine->getManager();
             $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
             for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
                 $em->remove($categsOfResources[$indexCategOf]);
@@ -333,7 +329,7 @@ class HumanResourceController extends AbstractController
                                 $em->flush();       
                             }
                             else {
-                                $em=$this->getDoctrine()->getManager();
+                                $em=$doctrine->getManager();
                                 $em->remove($workingHoursRepoSunday[0]);
                                 $em->flush();
                             }
@@ -370,7 +366,7 @@ class HumanResourceController extends AbstractController
                                 $em->flush();       
                             }
                             else {
-                                $em=$this->getDoctrine()->getManager();
+                                $em=$doctrine->getManager();
                                 $em->remove($workingHoursRepoMonday[0]);
                                 $em->flush();
                             }
@@ -406,7 +402,7 @@ class HumanResourceController extends AbstractController
                             $em->flush();       
                         }
                         else {
-                            $em=$this->getDoctrine()->getManager();
+                            $em=$doctrine->getManager();
                             $em->remove($workingHoursRepoTuesday[0]);
                             $em->flush();
                         }
@@ -442,7 +438,7 @@ class HumanResourceController extends AbstractController
                                 $em->flush();       
                             }
                             else {
-                                $em=$this->getDoctrine()->getManager();
+                                $em=$doctrine->getManager();
                                 $em->remove($workingHoursRepoWednesday[0]);
                                 $em->flush();
                             }
@@ -478,7 +474,7 @@ class HumanResourceController extends AbstractController
                         $em->flush();       
                     }
                     else {
-                        $em=$this->getDoctrine()->getManager();
+                        $em=$doctrine->getManager();
                         $em->remove($workingHoursRepoThursday[0]);
                         $em->flush();
                     }
@@ -514,7 +510,7 @@ class HumanResourceController extends AbstractController
                         $em->flush();       
                     }
                     else {
-                        $em=$this->getDoctrine()->getManager();
+                        $em=$doctrine->getManager();
                         $em->remove($workingHoursRepoFriday[0]);
                         $em->flush();
                     }
@@ -550,7 +546,7 @@ class HumanResourceController extends AbstractController
                         $em->flush();       
                     }
                     else {
-                        $em=$this->getDoctrine()->getManager();
+                        $em=$doctrine->getManager();
                         $em->remove($workingHoursRepoSaturday[0]);
                         $em->flush();
                     }
@@ -598,11 +594,11 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/{id}", name="app_human_resource_delete", methods={"POST"})
      */
-    public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository): Response
+    public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
-        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-        $workingHoursRepository = new WorkingHoursRepository($this->getDoctrine());
-        $em=$this->getDoctrine()->getManager();
+        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
+        $workingHoursRepository = new WorkingHoursRepository($doctrine);
+        $em=$doctrine->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
@@ -619,17 +615,19 @@ class HumanResourceController extends AbstractController
     public function getDataHumanResource(ManagerRegistry $doctrine)
     {
         if(isset($_POST["idHumanResource"])){
-            $categories = $this->getCategoryByHumanResourceId($_POST["idHumanResource"], $doctrine);
-            $workingHours = $this->getWorkingHoursByHumanResourceId($_POST["idHumanResource"], $doctrine);
-            $unavailability= $this->getUnavailabilityByHumanResourceId($_POST["idHumanResource"], $doctrine);
-            $activities = $this->getActivities($_POST["idHumanResource"],$_POST["date"]);
-            $data = array(
-                "categories" => $categories,
-                "workingHours" => $workingHours,
-                "unavailability" => $unavailability,
-                "activities" => $activities
-            );
-            return new JsonResponse($data);
+            if(isset($_POST["date"])){
+                $categories = $this->getCategoryByHumanResourceId($_POST["idHumanResource"], $doctrine);
+                $workingHours = $this->getWorkingHoursByHumanResourceId($_POST["idHumanResource"], $doctrine);
+                $unavailability= $this->getUnavailabilityByHumanResourceId($_POST["idHumanResource"], $doctrine);
+                $activities = $this->getActivities($_POST["idHumanResource"],$_POST["date"],$doctrine);
+                $data = array(
+                    "categories" => $categories,
+                    "workingHours" => $workingHours,
+                    "unavailability" => $unavailability,
+                    "activities" => $activities
+                );
+                return new JsonResponse($data);
+            }
         }
         if(isset($_POST["idHumanResourceCategory"])){
             $resources = $this->getResourceByHumanResourceCategoryId($_POST["idHumanResourceCategory"], $doctrine);
@@ -689,8 +687,8 @@ class HumanResourceController extends AbstractController
         return $unavailabilityArray;
     }
 
-    public function getActivities($id, $dateStr){
-        $activities = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled")->findBy(['humanresource' => $id]);
+    public function getActivities($id, $dateStr,ManagerRegistry $doctrine){
+        $activities = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled")->findBy(['humanresource' => $id]);
         $activitiesArray=[];
         $date=new \DateTime($dateStr);
         $dayOfWeek=date('w', $date->getTimestamp());
