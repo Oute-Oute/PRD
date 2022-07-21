@@ -41,13 +41,13 @@ function edit__deleteSelect(id) {
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
     id = id[id.length - 1] 
     // On peut donc recuperer la div
-    let divToDelete = document.getElementsByClassName('category-'+id)[0]
+    let divToDelete = document.getElementsByClassName('unavailability-'+id)[0]
     // puis la supprimer
-    let divAddCategory = document.getElementById('edit--categories-container')
+    let divAddCategory = document.getElementById('edit--unavailabilities-container')
     divAddCategory.removeChild(divToDelete)
     // On actusalise l'input qui contient le nb d'activité
-    NB_CATEGORY_EDIT = NB_CATEGORY_EDIT - 1;
-    document.getElementById('edit--nbcategory').value = NB_CATEGORY_EDIT
+    NB_UNAVAIBILITY_EDIT = NB_UNAVAIBILITY_EDIT - 1;
+    document.getElementById('edit--nbunavailability').value = NB_UNAVAIBILITY_EDIT
 
     SELECT_ID_EDIT = SELECT_ID_EDIT - 1;
 }
@@ -224,48 +224,40 @@ function showEditModalFormMaterial(id, name, index){
    
 }
 
+function showUnavailabilityHuman(id, name){
+   $('#edit--unavailability-human-resource-modal').modal("show");
+   document.getElementById('human-resource-id-unavailability').value = id;
+   document.getElementById('human-resource-name-unavailability').innerHTML = name;
+
+
+}
 /**
  * Gestion d'ajout d'activité dans un parcours pour le formulaire d'édition
  */
-function edit__handleAddCategory() {
-    let selectSample = document.getElementsByClassName('select-category-sample')[0];
-    if(selectSample.length != 0) {
-
-        let newSelect = document.createElement('select');
-        let btnSubmit = document.getElementById('edit--submit')
-        newSelect.addEventListener('change', function() {
-                btnSubmit.disabled = true;
-        });
+function edit__handleAddUnavailability() {
         
-        //Boucle pour remplir toutes les categs dans chaque select
-        for (let i = 0; i < selectSample.length; i++){
-            let option = document.createElement('option')
-            option.value = selectSample.options[i].value;
-            option.text = selectSample.options[i].text;
-            newSelect.add(option);
-        } 
-        let categoriesContainer = document.getElementById('edit--categories-container');
+        let categoriesContainer = document.getElementById('edit--unavailabilities-container');
         let formField = document.createElement("div");
-        formField.setAttribute('class', 'form-field category-'+SELECT_ID_EDIT);
-        newSelect.style.border = 'none';
+        let inputUnavailability = document.createElement('input');
+        inputUnavailability.setAttribute('type', 'datetime-local')
+        formField.setAttribute('class', 'form-field unavailability-'+SELECT_ID_EDIT);
         //Image pour delete une categ
+
         let image = new Image();
         image.src = 'img/delete.svg';
         image.style.marginLeft = '30px';
         image.setAttribute('id','img-'+SELECT_ID_EDIT)
         image.setAttribute('onclick', 'edit__deleteSelect(this.id)')
-        formField.appendChild(newSelect);
+        formField.appendChild(inputUnavailability)
         formField.appendChild(image);
         categoriesContainer.appendChild(formField);
         SELECT_ID_EDIT = SELECT_ID_EDIT +1;
 
-        NB_CATEGORY_EDIT = NB_CATEGORY_EDIT +1;
-        document.getElementById('edit--nbcategory').value = NB_CATEGORY_EDIT;
+        NB_UNAVAILBILITY_EDIT = NB_UNAVAILBILITY_EDIT +1;
+        document.getElementById('edit--unavailibility').value = NB_UNAVAILBILITY_EDIT;
     }
-    else {
-        alert('Il n\'y a pas de catégories existantes !')
-    }
-} 
+    
+
 
 /**
  * Permet de verifier les champs et de leur donner un 'name' pour la requete
@@ -289,6 +281,33 @@ function edit__handleAddCategory() {
     } 
         
     nbCategory.value = nbCateg;
+    btnAdd.click();
+
+}
+
+/**
+ * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ */
+ function edit__verifyUnavailability() {
+
+    // D'abord on recupere la div qui contient toutes les activity
+    let categoriesContainer = document.getElementById('edit--unavailabilities-container')
+    let btnAdd = document.getElementById('btn-none-edit-human-unavailability')
+    let nbCategory = document.getElementById('edit--nbunavailability');
+    var nbCateg = 0;
+    // On parcours toutes nos activités 
+    // On set leur 'name' et on verifie leurs contenus
+    /*for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
+        if(categoriesContainer.children[i].children[0].checked) {
+        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
+        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
+        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
+        nbCateg = nbCateg +1;
+        }
+        
+    } */
+        
+    //nbCategory.value = nbCateg;
     btnAdd.click();
 
 }

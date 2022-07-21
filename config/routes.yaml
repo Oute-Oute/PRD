@@ -155,6 +155,16 @@ HumanResourceEdit:
   controller: App\Controller\HumanResourceController::edit
   methods: [POST]
 
+HumanResourceUnavailability:
+  path: /human-resource/unavailability
+  controller: App\Controller\HumanResourceController::unavailability
+  methods: [POST]
+
+MaterialResourceUnavailability:
+  path: /material-resource/unavailability
+  controller: App\Controller\MaterialResourceController::unavailability
+  methods: [POST]
+
 MaterialResourceEdit:
   path: /material-resource/edit
   controller: App\Controller\MaterialResourceController::edit
