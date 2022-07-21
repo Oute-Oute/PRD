@@ -282,6 +282,7 @@ function change_tab_material_infos(id)
     timeZone: "Europe/Paris", //set the timezone for France
     selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
+    allDaySlot: false,
     headerToolbar: {
         left: '',
         center: '',
@@ -317,10 +318,10 @@ function change_tab_material_infos(id)
   function addToCalendar(data) {
     console.log(data)
     events=data["activities"]
-    console.log(events)
     unavailability=data["unavailability"]
+    workinghours=data["workingHours"]
+    console.log(workinghours)
     for(let i=0; i<events.length; i++){
-        console.log(events[i])
         startDateTime=events[i]
         calendar.addEvent({
             title: events[i].activity,
@@ -333,6 +334,33 @@ function change_tab_material_infos(id)
             }
         })
   }
+  for(let i=0; i<unavailability.length; i++){
+        calendar.addEvent({
+            start: unavailability[i].starttime,
+            end: unavailability[i].endtime,
+            description: "Non disponible",
+            display:"background",
+            color:"#ff0000",
+        })
+    }
+    for(let i=0; i<workinghours.length; i++){
+        calendar.addEvent({
+            startTime: "00:00:00",
+            endTime: workinghours[i].starttime,
+            description: "",
+            display:"background",
+            color:"#000000",
+            daysOfWeek: [workinghours[i].dayweek],
+        })
+        calendar.addEvent({
+            startTime: workinghours[i].endtime,
+            endTime: "23:59",
+            description: "",
+            display:"background",
+            color:"#000000",
+            daysOfWeek: [workinghours[i].dayweek],
+        })
+    }
   document.getElementById('load-large').style.visibility="hidden";
   calendar.render();
 }
