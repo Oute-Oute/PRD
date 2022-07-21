@@ -1331,6 +1331,9 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     
   }
 
+  /**
+   * Update the Panel of List error by removing all notifications and re-creating it with the new informations. 
+   */
   function updatePanelErrorMessages(){
     var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes;                             //Get the div in lateral-panel-bloc
     while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
