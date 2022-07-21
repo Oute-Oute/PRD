@@ -3,6 +3,8 @@
  */
 var tagsPatients = [];
 var tagsPathways = [];
+var PathwaysArray = [];
+var PatientsArray = [];
 function changeDate() {
   var date = new Date(document.getElementById("Date").value); //get the new date in the DatePicker
   var day = date.getDate(); //get the day
@@ -291,8 +293,11 @@ function filterPathway(idInput) {
   var filter = document.querySelector('#' + idInput).value;
   for (let i = 0; i < trs.length; i++) {
     var regex = new RegExp(filter, 'i');
-    var pathwayName1 = trs[i].cells[2].outerText;
-    if (regex.test(pathwayName1) == false) {
+    var pathwayName = trs[i].cells[2].outerText;
+    if(PathwaysArray.indexOf(pathwayName) == -1){
+      PathwaysArray.push(pathwayName);
+      }
+    if (regex.test(pathwayName) == false) {
       trs[i].style.display = 'none';
     }
     else {
@@ -308,7 +313,9 @@ function filterPatient(idInput) {
   for (let i = 0; i < trs.length; i++) {
     var regex = new RegExp(filter, 'i');
     var patientName = trs[i].cells[1].outerText;
-    console.log(trs[i].cells[2].outerText)
+    if(PatientsArray.indexOf(patientName) == -1){
+      PatientsArray.push(patientName);
+      }
     if (regex.test(patientName) == false) {
       trs[i].style.display = 'none';
     }

@@ -30,8 +30,8 @@
 				<tr class="AppointmentPathway">
 					<th>Identifiant</th>
 
-					<th><input type="text" id="inputPatientNname" onkeyup="filterPatient('inputPatientNname')" placeholder="Nom du patient"></th>
-					<th><input type="text" id="inputPathwayNname" onkeyup="filterPathway('inputPathwayNname')" placeholder="Nom de parcours"></th>
+					<th><input type="text" id="autocompleteInputPatientNname" onkeyup="filterPatient('autocompleteInputPatientNname')" placeholder="Nom du patient"></th>
+					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
 
 					<th>Jour du rendez-vous
 						<div class="datepicker">
@@ -64,4 +64,32 @@
 	<tr>
 		<td colspan="5">Pas de rendez-vous créés !</td>
 	</tr>
-{% endfor %}</tbody></table>{{ include ('appointment/add_appointment.html.twig') }}{{ include ('appointment/edit_appointment.html.twig') }}{{ include ('appointment/show_appointment.html.twig') }}{{ include ('appointment/select_day.html.twig')}}{% endblock %}
+{% endfor %}
+</tbody>
+</table>
+{{ include ('appointment/add_appointment.html.twig') }}
+{{ include ('appointment/edit_appointment.html.twig') }}
+{{ include ('appointment/show_appointment.html.twig') }}
+{{ include ('appointment/select_day.html.twig')}}
+
+<script>
+	$( "#autocompleteInputPatientNname" ).autocomplete({
+	source: PatientsArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPatient('autocompleteInputPatientNname', ui.item.value);
+	}
+	}
+	);
+	$( "#autocompleteInputPathwayNname" ).autocomplete({
+	source: PathwaysArray,
+	select: function( event, ui ) {
+        console.log(ui.item.value);
+		filterPathway('autocompleteInputPathwayNname', ui.item.value);
+	}
+	}
+	);
+	</script>
+
+{% endblock %}
+	
