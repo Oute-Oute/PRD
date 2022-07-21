@@ -179,11 +179,6 @@ function addActivity() {
 
     let verif = true
 
-    console.log('verif ok confirm')
-    console.log(document.getElementById('input-name').value)
-    console.log(document.getElementById('input-duration').value)
-
-
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
         verif = false
@@ -291,6 +286,7 @@ function fillActivityList() {
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
         noactivity.innerHTML = "Aucune activité pour le moment !"
+        noactivity.style.marginLeft ="10px"
         divActivitiesList.appendChild(noactivity)
     }
 

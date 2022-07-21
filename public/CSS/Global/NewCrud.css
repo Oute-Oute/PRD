@@ -9,11 +9,14 @@ div#pathway-form-body {
 div#create-activity-container {
     width: 55%;
     /*border: 1px solid lightgray;*/
-    border: 1px solid var(--main-blue);
-    padding: 10px;
+    /*border: 1px solid var(--main-blue);*/
+    box-shadow: 0px 0px 10px lightgray;
+    padding: 10px 20px;
 
 }
-
+.title{
+    margin: 20px;
+}
 
 #creation-form {
     display : flex;
@@ -30,9 +33,11 @@ div#create-activity-container {
 
 div#activities-list {
     width: 35%;
-    border: 1px solid var(--main-blue);
-    padding: 10px;
+    /*border: 1px solid var(--main-blue);*/
+    box-shadow: 0px 0px 10px lightgray;
+    padding: 20px 0px;
 }
+
 div#activities-list #list{
     display: flex;
     flex-direction: column;
@@ -40,7 +45,7 @@ div#activities-list #list{
 }
 
 .div-activity {
-    margin: 5px 0px;
+    margin: 5px 10px;
     height: 35px;
     border-radius: 10px;
     background-color: #fff;
@@ -178,6 +183,87 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     flex-direction : column;
 
 }
+
+
+/* ------------------ MODIFICATION RESOURCE DANS UNE ACTIVITY DANS UN PATHWAY ------------------ */
+
+#div-edit-activity {
+    display: flex;
+    flex-direction: column;
+   /* height: 100px;*/
+    border: 1px solid lightgrey;
+    /*max-height: 400px;*/
+    /*overflow-y: scroll;*/
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: #fff; 
+    width: 100%;
+}  
+/* bouton de selection materielles / humaines */
+#buttons-resources {
+    display: flex;
+    flex-direction: row;
+}
+#buttons-resources button{
+    border: none;
+    width: 50%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* div qui contient le tableau des resources */
+#div-resources {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    height: 100%;
+    position: relative;
+    padding: 10px;
+    overflow-y: scroll;
+    max-height: 150px;
+    height: 150px;
+}
+.div-resources-h {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+}
+.div-resources-m {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+}
+/* div pour ajouter une ressource (avec le select) */
+#div-add-resources {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid lightgray; 
+    border-radius: 10px;
+    border-top-right-radius: 0px;
+    align-items: center;
+    height: 35px;
+    background-color: #fff; 
+}   
+
+
+#div-add-resources select {
+    width: 70%;
+    border: none;
+    height: 100%;
+}
+#div-add-resources input {
+    width: 30%;
+    border: none;
+    border-right: 1px solid lightgray; 
+    border-left: 1px solid lightgray; 
+    height: 100%;
+
+}
+
 
 #lgd-working-hours{
     margin-left : 100px;

@@ -560,7 +560,7 @@ class PathwayController extends AbstractController
                                         //il faut le trouver dans la bd et le delete
                                         $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC, "quantity" => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb]);
                                         
-                                        $em->remove($linkAMR);
+                                        $em->remove($linkAMR[0]);
                                         $em->flush();
                                     }
                                 }
@@ -596,7 +596,7 @@ class PathwayController extends AbstractController
                                         //il faut le trouver dans la bd et le delete
                                         $linkAHR = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC, "quantity" => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb]);
                                         
-                                        $em->remove($linkAHR);
+                                        $em->remove($linkAHR[0]);
                                         $em->flush();
                                     }
                                 }
