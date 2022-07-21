@@ -92,7 +92,7 @@ function editAppointment(
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
-  document.getElementById("dayAppointment").value = dayappointment;
+  document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
@@ -129,11 +129,11 @@ function hideDayModale(type) {
 
 function validate(type) {
   if (type == "new") {
-    document.getElementById("dateSelected").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
+    document.getElementById("dateSelected").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
     console.log(document.getElementById("dateSelected").value);
   }
   else if (type == "edit") {
-    document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value;//set the date from the hidden input in the real input
+    document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
   }
   hideDayModale(type);
 }
