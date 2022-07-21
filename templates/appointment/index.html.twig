@@ -25,21 +25,24 @@
 		<button type="button" class="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
 
 		<!-- affichage de la liste de tous les rendez-vous -->
-		<table class="table table-striped">
+		<table class="table table-striped" id='tableAppointment'>
 			<thead>
-				<tr>
+				<tr class="AppointmentPathway">
 					<th>Identifiant</th>
-					<th>Patient</th>
-					<th>Parcours</th>
+
+					<th><input type="text" id="inputPatientNname" onkeyup="filterPatient('inputPatientNname')" placeholder="Nom du patient"></th>
+					<th><input type="text" id="inputPathwayNname" onkeyup="filterPathway('inputPathwayNname')" placeholder="Nom de parcours"></th>
+
 					<th>Jour du rendez-vous
 						<div class="datepicker">
 							<input type='date' required class="form-control" id="Date" onchange="changeDate()" value="{{ currentdate|date("Y-m-d") }}" .str_replace('t12:00:00','')></input>
 					</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 		</div>
 	</th>
-	<th>Actions</th>
+
 </tr></thead><tbody>
 {% for appointment in currentappointments %}
 	<tr>

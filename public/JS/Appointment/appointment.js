@@ -276,11 +276,6 @@ function Today() {
 }
 
 function showAppointment(a, b, c, d) {
-
-
-
-
-
   document.getElementById('val1').innerText = a
   document.getElementById('val2').textContent = b
   document.getElementById('val3').textContent = c
@@ -288,4 +283,37 @@ function showAppointment(a, b, c, d) {
 
 
   $('#infos-appointment-modal').modal("show");
+}
+
+function filterPathway(idInput) {
+
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
+  var filter = document.querySelector('#' + idInput).value;
+  for (let i = 0; i < trs.length; i++) {
+    var regex = new RegExp(filter, 'i');
+    var pathwayName1 = trs[i].cells[2].outerText;
+    if (regex.test(pathwayName1) == false) {
+      trs[i].style.display = 'none';
+    }
+    else {
+      trs[i].style.display = '';
+    }
+  }
+}
+
+function filterPatient(idInput) {
+
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
+  var filter = document.querySelector('#' + idInput).value;
+  for (let i = 0; i < trs.length; i++) {
+    var regex = new RegExp(filter, 'i');
+    var patientName = trs[i].cells[1].outerText;
+    console.log(trs[i].cells[2].outerText)
+    if (regex.test(patientName) == false) {
+      trs[i].style.display = 'none';
+    }
+    else {
+      trs[i].style.display = '';
+    }
+  }
 }
