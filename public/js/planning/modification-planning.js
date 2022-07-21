@@ -916,7 +916,7 @@ function updateErrorMessages() {
       }
     }
   })
-  updateListErrorMessages(); //update the panel error messages
+  updatePanelErrorMessages(); //update the panel error messages
 }
 
 /**
@@ -1315,14 +1315,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 /**
  * Called when button 'erreurs' is clicked, display or hide the lateral-panel-bloc and call the function to update informations. 
  */
-  function displayListErrorMessages(){
+  function displayPanelErrorMessages(){
     var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc');   
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
     if(lateralPannelInput==true){                   //Test the value of the checkbox
       lateralPannelBloc[0].style.display='block';  //display the panel
       lateralPannel[0].style.width='40em';
-      updateListErrorMessages();  //Update informations in the panel
+      updatePanelErrorMessages();  //Update informations in the panel
     }
     else{
       lateralPannelBloc[0].style.display=''; //hide the pannel
@@ -1331,7 +1331,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     
   }
 
-  function updateListErrorMessages(){
+  function updatePanelErrorMessages(){
     var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes;                             //Get the div in lateral-panel-bloc
     while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
