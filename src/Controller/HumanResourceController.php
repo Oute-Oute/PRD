@@ -4,10 +4,16 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
+use App\Entity\Unavailability;
 use App\Entity\WorkingHours;
 use App\Repository\HumanResourceCategoryRepository;
 use App\Repository\HumanResourceRepository;
 use App\Repository\CategoryOfHumanResourceRepository;
+use App\Repository\UnavailabilityHumanResourceRepository;
+
+use App\Entity\UnavailabilityHumanResource;
+
+use App\Repository\UnavailabilityRepository;
 use App\Repository\WorkingHoursRepository;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -603,6 +609,7 @@ class HumanResourceController extends AbstractController
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
+        
         $workingHours = $workingHoursRepository->findBy(['humanresource' => $humanResource]);
         for($indexWorkingHour = 0; $indexWorkingHour < count($workingHours); $indexWorkingHour++) {
             $em->remove($workingHours[$indexWorkingHour]);
@@ -661,6 +668,36 @@ class HumanResourceController extends AbstractController
         }
         return $resourceArray;
     }
+
+    public function unavailability(Request $request) {
+
+        $param = $request->request->all(); 
+        $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
+        $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
+
+        $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
+        $unavailabilities = $unavailabilitiesRepository->findAll();
+        $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
+        $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findAll();
+        $humanResourcesRepository = new HumanResourceRepository($this->getDoctrine());
+        $humanResource = $humanResourcesRepository->findBy(['id' => $param['id-human-resource-unavailability']]);
+
+        
+        $unavailability = new Unavailability();
+        $unavailabilityHumanResource = new UnavailabilityHumanResource();
+        $unavailability->setStartdatetime($startTime);
+        $unavailability->setEnddatetime($endTime);
+        $unavailabilitiesRepository->add($unavailability, true);
+        $unavailabilityHumanResource->setHumanresource($humanResource[0]);
+        $unavailabilityHumanResource->setUnavailability($unavailability);
+        $unavailabilitiesHumanRepository->add($unavailabilityHumanResource, true);
+        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+
+
+        //$unavailabilityHumanResource->setHumanresource()
+    }
+
+
     
     public function getWorkingHoursByHumanResourceId($id, ManagerRegistry $doctrine){
         $workingHours = $doctrine->getManager()->getRepository("App\Entity\WorkingHours")->findBy(['humanresource' => $id]);
