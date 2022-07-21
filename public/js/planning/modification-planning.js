@@ -884,7 +884,7 @@ function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
 
   listErrorMessages.messageUnscheduledAppointment = [];
-  var listAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var listAppointments = JSON.parse(document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " "));
   listAppointments.forEach((currentAppointment) => {
     var unscheduledAppointment = true;
     listScheduledActivities.forEach((scheduledActivity) => {
@@ -975,7 +975,7 @@ function updateErrorMessages() {
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
   var message = [];
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")); //recover list appointments
   var appointment;
   listeAppointments.forEach((currentAppointment) => { //browse the list appointments
     if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
@@ -1006,7 +1006,7 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
 function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
   var message = [];
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")); //recover list appointments
   var appointment;
   listeAppointments.forEach((currentAppointment) => { //browse the list appointments
     if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
