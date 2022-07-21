@@ -477,12 +477,12 @@ function fillHRCList() {
     ul.innerHTML = ''
 
     let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+    let availableResourceCount = 0
 
     if (len > 0) {
         for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
 
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
-
                 // On crée le li qui va stocker la ressource (visuellement) 
                 var li = document.createElement('li');
                 let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
@@ -505,9 +505,12 @@ function fillHRCList() {
                 div.style.alignItems = 'center'
 
                 ul.appendChild(div)
+                availableResourceCount++
             }
         }
-    } else {
+    } 
+
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
@@ -528,7 +531,8 @@ function fillMRCList(id) {
     ul.innerHTML = ''
 
     let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-
+    let availableResourceCount = 0
+    
     if (len > 0) {
         for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
 
@@ -555,11 +559,14 @@ function fillMRCList(id) {
                 div.style.alignItems = 'center'
 
                 ul.appendChild(div)
+                availableResourceCount++
             }
         }
-    } else {
+    }
+
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
-        li.innerText = 'Aucune ressource materielle pour le moment !'
+        li.innerText = 'Aucune ressource materielles pour le moment !'
         ul.appendChild(li)
     }
 }
@@ -657,6 +664,7 @@ function deleteResource(id) {
     if (typeRessource === 'h') {
         //ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
         ACTIVITY_IN_PROGRESS.humanResourceCategories[idRessource].available = false
+        console.log(ACTIVITY_IN_PROGRESS)
         fillHRCList();
     } else {
         //ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
