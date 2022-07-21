@@ -846,12 +846,12 @@ function verifyHistoryPush(array, idAppointment){
 }
 
 /**
- * @brief This method update list error messages 
+ * @brief This function update list error messages 
  */
 function updateErrorMessages() {
   var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
 
-  //browse the all events
+  //browse all events
   listScheduledActivities.forEach((scheduledActivity) => {
     if(scheduledActivity.display != "background"){ //check if the scheduled activity is not an unavailability
       var appointmentAlreadyExist = false;
@@ -920,26 +920,28 @@ function updateErrorMessages() {
 }
 
 /**
- * 
- * @param {*} listScheduledActivities 
- * @param {*} appointmentId 
- * @returns 
+ * @brief This function return an error message if the appointment starts too early, return "" if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} appointmentId appointment id require
+ * @returns the error message
  */
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
   var message = "";
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
-  listeAppointments.forEach((currentAppointment) => {
-    if(currentAppointment.id == appointmentId){
-      appointment = currentAppointment
+  listeAppointments.forEach((currentAppointment) => { //browse the list appointments
+    if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
+      appointment = currentAppointment //set the appointment for get all his data
     }
   })
   let earliestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.earliestappointmenttime.split("T")[1]);
 
-  listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+  listScheduledActivities.forEach((scheduledActivity) => { //browse all events
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){ //if the scheduled activity is related to the appointment
+      //we check if the start time is earlier than the earliest appointment time
       if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
+        //if it's earlier, we set an error message
         message = message + scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivé au plus tôt du patient. ";
       }
     }
@@ -948,21 +950,29 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
   return message;
 }
 
+/**
+ * @brief This function return an error message if the appointment end too late, return "" if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} appointmentId appointment id require
+ * @returns the error message
+ */
 function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
   var message = "";
 
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
-  listeAppointments.forEach((currentAppointment) => {
-    if(currentAppointment.id == appointmentId){
-      appointment = currentAppointment
+  listeAppointments.forEach((currentAppointment) => { //browse the list appointments
+    if(currentAppointment.id == appointmentId){ //if we find the appointment linked to the identifier
+      appointment = currentAppointment //set the appointment for get all his data
     }
   })
   let latestAppointmentDate = new Date(currentDateStr.split("T")[0] + " " + appointment.latestappointmenttime.split("T")[1]);
 
-  listScheduledActivities.forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+  listScheduledActivities.forEach((scheduledActivity) => { //browse all events
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){ //if the scheduled activity is related to the appointment
+      //we check if the end time is later than the latest appointment time
       if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
+        //if it's later, we set an error message
         message = message + scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ";
       }
     }
@@ -971,20 +981,31 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
   return message;
 }
 
+/**
+ * @brief This function return error messages if the delay between the scheduled activity and one of its successors was not good, 
+ * return [] if we have no problem.
+ * @param {*} listScheduledActivities list of all calendar events
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the error message
+ */
 function getMessageDelay(listScheduledActivities, scheduledActivity){
   var messages = [];
   
-  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
-  listSuccessors.forEach((successor) => {
-    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){
-      listScheduledActivities.forEach((scheduledActivityB) => {
-        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){
+  var listSuccessors = JSON.parse(document.getElementById("listeSuccessors").value); //recover list successors
+
+  listSuccessors.forEach((successor) => { //browse all successors
+    if(successor.idactivitya == scheduledActivity._def.extendedProps.activity){ //if the scheduled activity has a successor
+      listScheduledActivities.forEach((scheduledActivityB) => { //browse all events
+        if(successor.idactivityb == scheduledActivityB._def.extendedProps.activity){ //if the scheduled activity check is a successor of the scheduled activity verified
+          //we check the delay between the two scheduled activities
           var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime())/(60*1000);
           if(duration < successor.delaymin){
+            //if the delay is shorter, we set an error message
             var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est inférieur à : " + successor.delaymin + " minutes qui est le délai minimum.";
             messages.push(message);
           }
           if(duration > successor.delaymax){
+            //if the delay is longer, we set an error message
             var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est supèrieur à : " + successor.delaymax + " minutes qui est le délai maximum.";
             messages.push(message);
           }
@@ -996,34 +1017,44 @@ function getMessageDelay(listScheduledActivities, scheduledActivity){
   return messages;
 }
 
+/**
+ * @brief This function return all category related to the human resources related to the scheduled activity, 
+ * return [] if we have no human resources.
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the list of category human resources related to the scheduled activity
+ */
 function getListCategoryHumanResources(scheduledActivity){
   var listCategoryHumanResources = [];
 
+  //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
 
-  scheduledActivity._def.resourceIds.forEach((humanResource) => {
-    if(humanResource.substring(0,5) == "human"){
-      listCategoryOfHumanResources.forEach((categoryOfHumanResource) => {
-        if(categoryOfHumanResource.idresource == humanResource){
+  scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
+    if(humanResource.substring(0,5) == "human"){ //check only the human resources
+      listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
+        if(categoryOfHumanResource.idresource == humanResource){ //if we find the category of the human resource 
           var categoryHumanResourceAlreadyExist = false;
           if(listCategoryHumanResources != []){
             listCategoryHumanResources.forEach((categoryHumanResource) => {
-              if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){
+              if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){ //if the category already exist in the list
                 categoryHumanResourceAlreadyExist = true;
 
+                //we set error messages for the quantity of human resources and if it's a wrong category
                 categoryHumanResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human");
                 categoryHumanResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human");
 
                 var humanResourceAlreadyExist = false;
-                categoryHumanResource.listHumanResources.forEach((existingHumanResource) => {
-                  if(existingHumanResource.humanResourceId == humanResource){
+                categoryHumanResource.listHumanResources.forEach((existingHumanResource) => { 
+                  if(existingHumanResource.humanResourceId == humanResource){ //we check if the human resource is already present on the list
                     humanResourceAlreadyExist = true;
+                    //if it's already present, we set the error messages for working hours, unavailability and if the resource is already scheduled in an other activity
                     existingHumanResource.messageWorkingHours = getMessageWorkingHours(scheduledActivity, humanResource);
                     existingHumanResource.messageUnavailability = getMessageUnavailability(scheduledActivity, humanResource);
                     existingHumanResource.messageAlreadyScheduled = getMessageAlreadyExist(scheduledActivity, humanResource);
                   }
                 })
-                if(humanResourceAlreadyExist == false){
+                if(humanResourceAlreadyExist == false){ //if the human resource doesn't exist in the list
+                  //add new human resource
                   categoryHumanResource.listHumanResources.push({
                     humanResourceId: humanResource,
                     humanResourceName: getResourceTitle(humanResource),
@@ -1035,7 +1066,8 @@ function getListCategoryHumanResources(scheduledActivity){
               }
             })
           }
-          if(categoryHumanResourceAlreadyExist == false){
+          if(categoryHumanResourceAlreadyExist == false){ //if the category doesn't exist in the list
+            //add the new category and the new human resource
             listCategoryHumanResources.push({
               categoryHumanResourceId: categoryOfHumanResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
@@ -1057,34 +1089,45 @@ function getListCategoryHumanResources(scheduledActivity){
   return listCategoryHumanResources;
 }
 
+/**
+ * @brief This function return all category related to the material resources related to the scheduled activity, 
+ * return [] if we have no material resources.
+ * @param {*} scheduledActivity scheduled activity verified
+ * @returns the list of category material resources related to the scheduled activity
+ */
 function getListCategoryMaterialResources(scheduledActivity){
   var listCategoryMaterialResources = [];
 
+  //recover all relation between categories and material resources
   var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
 
-  scheduledActivity._def.resourceIds.forEach((materialResource) => {
-    if(materialResource.substring(0,8) == "material"){
-      listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => {
-        if(categoryOfMaterialResource.idresource == materialResource){
+  scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
+    if(materialResource.substring(0,8) == "material"){ //check only the material resources
+      listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
+        if(categoryOfMaterialResource.idresource == materialResource){ //if we find the category of the human resource 
           var categoryMaterialResourceAlreadyExist = false;
           if(listCategoryMaterialResources != []){
             listCategoryMaterialResources.forEach((categoryMaterialResource) => {
-              if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){
+              if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){ //if the category already exist in the list
                 categoryMaterialResourceAlreadyExist = true;
 
+                //we set error messages for the quantity of material resources and if it's a wrong category
                 categoryMaterialResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
                 categoryMaterialResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
 
                 var materialResourceAlreadyExist = false;
                 categoryMaterialResource.listMaterialResources.forEach((existingMaterialResource) => {
-                  if(existingMaterialResource.humanResourceId == materialResource){
+                  if(existingMaterialResource.humanResourceId == materialResource){ //we check if the material resource is already present on the list
                     materialResourceAlreadyExist = true;
+
+                    //if it's already present, we set the error messages for working hours, unavailability and if the resource is already scheduled in an other activity
                     existingMaterialResource.messageWorkingHours = getMessageWorkingHours(scheduledActivity, materialResource);
                     existingMaterialResource.messageUnavailability = getMessageUnavailability(scheduledActivity, materialResource);
                     existingMaterialResource.messageAlreadyScheduled = getMessageAlreadyExist(scheduledActivity, materialResource);
                   }
                 })
-                if(materialResourceAlreadyExist == false){
+                if(materialResourceAlreadyExist == false){ //if the material resource doesn't exist in the list
+                  //add new material resource
                   categoryMaterialResource.listMaterialResources.push({
                     materialResourceId: materialResource,
                     materialResourceName: getResourceTitle(materialResource),
@@ -1095,7 +1138,8 @@ function getListCategoryMaterialResources(scheduledActivity){
               }
             })
           }
-          if(categoryMaterialResourceAlreadyExist == false){
+          if(categoryMaterialResourceAlreadyExist == false){ //if the category doesn't exist in the list
+            //add the new category and the new material resource
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
@@ -1116,19 +1160,25 @@ function getListCategoryMaterialResources(scheduledActivity){
   return listCategoryMaterialResources;
 }
 
+/**
+ * @brief This function return the resource name
+ * @param {*} resourceId resource identifier verified
+ * @returns resource name
+ */
 function getResourceTitle(resourceId) {
-  var listResources;
-  if(resourceId.substring(0,5) == "human"){
+  var listResources; 
+  if(resourceId.substring(0,5) == "human"){ //set the list resources if it's a human resource
     listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
   }
-  else {
+  else { //set the list resources if it's a material resource
     listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
   }
 
   var resourceName = "undefined";
 
-  listResources.forEach((resource) => {
-    if(resource.id == resourceId){
+  listResources.forEach((resource) => { //browse all resources
+    if(resource.id == resourceId){ //if we find the resource
+      //we set the resource name
       resourceName = resource.title;
     }
   })
@@ -1136,42 +1186,53 @@ function getResourceTitle(resourceId) {
   return resourceName;
 }
 
+/**
+ * @brief This function return an error message if the quantity of resource from the category is superior than necessary, 
+ * return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} categoryResourceId category identifier verified
+ * @param {*} typeResources type of the resource : material or human
+ * @returns error message
+ */
 function getMessageCategoryQuantity(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
 
-  if(getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == ""){
+  if(getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == ""){ //we can check the quantity only if it's not awring category
     var listCategoryOfResources;
-    if(typeResources == "human"){
+    if(typeResources == "human"){ //set the list category resources if it's a human resource
       listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
     }
-    else {
+    else { //set the list category resources if it's a material resource
       listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
     }
     
     var categoryQuantity = 0;
-    listCategoryOfResources.forEach((categoryOfResource) => {
-      if(categoryOfResource.idcategory == categoryResourceId){
-        scheduledActivity._def.resourceIds.forEach((scheduledActivityResource) => {
-          if(scheduledActivityResource == categoryOfResource.idresource){
+    listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resources
+      if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+        scheduledActivity._def.resourceIds.forEach((scheduledActivityResource) => { //browse all resources related to the scheduled activity
+          if(scheduledActivityResource == categoryOfResource.idresource){ //if the resource scheduled is from the category
+            //we add to the quantity 1
             categoryQuantity++;
           }
         })
       }
     })
 
-    if(typeResources == "human"){
-      scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
-        if(categoryHumanResource.id == categoryResourceId){
-          if(categoryHumanResource.quantity < categoryQuantity){
+    if(typeResources == "human"){ //if the category type is human
+      scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all category human resources related to the scheduled activity
+        if(categoryHumanResource.id == categoryResourceId){ //if it's the good category
+          if(categoryHumanResource.quantity < categoryQuantity){ //if the quantity is superior of necessary
+            //we set error message
             message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryHumanResource.categoryname + " alors qu'il n'en suffit que de " + categoryHumanResource.quantity + " .";
           }
         }
       })
     }
-    else {
-      scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
-        if(categoryMaterialResource.id == categoryResourceId){
-          if(categoryMaterialResource.quantity < categoryQuantity){
+    else { //if the category type is material
+      scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all category material resources related to the scheduled activity
+        if(categoryMaterialResource.id == categoryResourceId){ //if it's the good category
+          if(categoryMaterialResource.quantity < categoryQuantity){ //if the quantity is superior of necessary
+            //we set error message
             message = scheduledActivity.title + " à " + categoryQuantity + " " + categoryMaterialResource.categoryname + " alors qu'il n'en suffit que de " + categoryMaterialResource.quantity + " .";
           }
         }
@@ -1182,74 +1243,92 @@ function getMessageCategoryQuantity(scheduledActivity, categoryResourceId, typeR
   return message;
 }
 
+/**
+ * @brief This function return an error message if the category of resource is not necessary, 
+ * return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} categoryResourceId category identifier verified
+ * @param {*} typeResources type of the resource : material or human
+ * @returns error message
+ */
 function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources){
   var message = "";
 
   var categoryExist = false;
   var categoryName = "";
-  if(typeResources == "human"){
-    scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => {
-      if(categoryHumanResource.id == categoryResourceId){
+  if(typeResources == "human"){ //if the resource is human
+    scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
+      if(categoryHumanResource.id == categoryResourceId){ //if the category exist
+        //we don't set a message
         categoryExist = true;
       }
     })
-    if(categoryExist == false){
+    if(categoryExist == false){ //if the category doesn't exist
       var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
-      listCategoryOfResources.forEach((categoryOfResource) => {
-        if(categoryOfResource.idcategory == categoryResourceId){
+      listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
+        if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+          //set the category name
           categoryName = categoryOfResource.categoryname
         }
       })
     }
   }
-  else {
-    scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => {
-      if(categoryMaterialResource.id == categoryResourceId){
+  else { //if the resource is material
+    scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all material resources categories
+      if(categoryMaterialResource.id == categoryResourceId){ //if the category exist
+        //we don't set a message
         categoryExist = true;
       }
     })
-    if(categoryExist == false){
+    if(categoryExist == false){ //if the category doesn't exist
       var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
-      listCategoryOfResources.forEach((categoryOfResource) => {
-        if(categoryOfResource.idcategory == categoryResourceId){
+      listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
+        if(categoryOfResource.idcategory == categoryResourceId){ //if we find the good category
+          //set the category name
           categoryName = categoryOfResource.categoryname
         }
       })
     }
   }
 
-  if(categoryExist == false){
+  if(categoryExist == false){ //if the category doesn't exist
+    //we set the error message
     message = scheduledActivity.title + " n'a pas besoin de " + categoryName + ".";
   }
 
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is unavailable during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} resourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageUnavailability(scheduledActivity, resourceId){
   var message = "";
 
-  calendar.getEvents().forEach((compareScheduledActivity) => {
-    if(compareScheduledActivity._def.extendedProps.type == "unavailability"){
-      if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
-        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+  calendar.getEvents().forEach((unavailability) => { //browse all events
+    if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
+      if(unavailability._def.publicId != scheduledActivity._def.publicId){
+        unavailability._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the unavailability
           if(compareResourceId != "h-default" && compareResourceId != "m-default"){
             if(compareResourceId == resourceId){
-              if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
-                var resourceName ="";
-                var listResources;
+              //if the resource is unavailable at the same time as the scheduled activity
+              if((scheduledActivity.start > unavailability.start && scheduledActivity.start < unavailability.end) || (scheduledActivity.end > unavailability.start && scheduledActivity.end < unavailability.end) || (scheduledActivity.start <= unavailability.start && scheduledActivity.end >= unavailability.end)){
+                var listResources; //set the list resources
                 if(resourceId.substring(0,5) == "human"){
                   listResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
                 }
                 else {
                   listResources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
                 }
-                listResources.forEach((resource) => {
+                listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
-                    resourceName = resource.title;
+                    //set an error message with the resource name
+                    message = message + resource.title + " est indisponible sur ce créneau. ";
                   }
                 })
-
-                message = message + resourceName + " est indisponible sur ce créneau. ";
               }
             }
           }
@@ -1260,29 +1339,35 @@ function getMessageUnavailability(scheduledActivity, resourceId){
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is already scheduled during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} resourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
   var message = "";
 
-  calendar.getEvents().forEach((compareScheduledActivity) => {
-    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){
+  calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
+    if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
       if(compareScheduledActivity._def.publicId != scheduledActivity._def.publicId){
-        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => {
+        compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the scheduled activity compared
           if(compareResourceId != "h-default" && compareResourceId != "m-default"){
             if(compareResourceId == resourceId){
+              //if the resource is already scheduled at the same time as the scheduled activity
               if((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)){
-                var resourceName = "";
-                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => {
-                  if(humanResource.id == compareResourceId){
-                    resourceName = humanResource.title
+                compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
+                  if(humanResource.id == compareResourceId){ //if the resource is a human resource
+                    //set an error message
+                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
                   }
                 })
-                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => {
-                  if(materialResource.id == compareResourceId){
-                    resourceName = materialResource.title
+                compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
+                  if(materialResource.id == compareResourceId){ //if the resource is a material resource
+                    //set an error message
+                    message = message + materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
                   }
                 })
-
-                message = message + resourceName + " est déjà programé sur " + compareScheduledActivity.title + ". ";
               }
             }
           }
@@ -1294,16 +1379,24 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
   return message;
 }
 
+/**
+ * @brief This function return an error message if the ressource is not in working hours during the scheduled activity, return "" if we have no problem
+ * @param {*} scheduledActivity scheduled activity verified
+ * @param {*} humanResourceId resource identifier verified
+ * @returns the error message
+ */
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
   var message = "";
 
-  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
-  humanResources.forEach((resource) => {
+  var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //recover all human resources
+  humanResources.forEach((resource) => { //browse all human resources
     if(resource.id == humanResourceId){
       workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
       workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+      //if the human resource is not in working hours
       if(!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) && 
       new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
+        //set an error message
         message = message + resource.title + " n'est pas en horaire de travail sur ce créneau, il risque d'y avoir un conflit. ";
       }
     }
