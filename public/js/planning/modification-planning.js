@@ -953,7 +953,7 @@ function updateErrorMessages() {
  * @returns the error message
  */
 function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentId){
-  var message = "";
+  var message = [];
 
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
@@ -969,7 +969,7 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
       //we check if the start time is earlier than the earliest appointment time
       if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
         //if it's earlier, we set an error message
-        message = message + scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivé au plus tôt du patient. ";
+        message.push(scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivée au plus tôt du patient. ");
       }
     }
   })
@@ -984,7 +984,7 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
  * @returns the error message
  */
 function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId){
-  var message = "";
+  var message = [];
 
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value); //recover list appointments
   var appointment;
@@ -1000,7 +1000,7 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
       //we check if the end time is later than the latest appointment time
       if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
         //if it's later, we set an error message
-        message = message + scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ";
+        message.push(scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ");
       }
     }
   })
@@ -1333,7 +1333,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
  * @returns the error message
  */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = "";
+  var message = [];
 
   calendar.getEvents().forEach((unavailability) => { //browse all events
     if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
@@ -1353,7 +1353,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
                 listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
                     //set an error message with the resource name
-                    message = message + resource.title + " est indisponible sur ce créneau. ";
+                    message.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
               }
@@ -1373,7 +1373,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = "";
+  var message = [];
 
   calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
     if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
@@ -1392,7 +1392,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
                   if(materialResource.id == compareResourceId){ //if the resource is a material resource
                     //set an error message
-                    message = message + materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
               }
@@ -1413,7 +1413,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageWorkingHours(scheduledActivity, humanResourceId){
-  var message = "";
+  var message = [];
 
   var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //recover all human resources
   humanResources.forEach((resource) => { //browse all human resources
@@ -1424,7 +1424,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       if(!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) && 
       new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)){
         //set an error message
-        message = message + resource.title + " n'est pas en horaire de travail sur ce créneau, il risque d'y avoir un conflit. ";
+        message.push(resource.title + " n'est pas en horaire de travail sur ce créneau, il risque d'y avoir un conflit.");
       }
     }
   })
@@ -1480,25 +1480,29 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           divRow.append(img,text);
         
           //messageEarliestAppointmentTime
-          if(listErrorMessages[i].messageEarliestAppointmentTime!=''){
-            var divColumn=document.createElement('divColumn');
-            div.append(divColumn); 
-            var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML='-'+listErrorMessages[i].messageEarliestAppointmentTime;  
-            divColumn.append(messageEarliestAppointmentTime);
-            var space=document.createElement('space');
-            space.innerHTML='</br>';
-            div.append(space);
+          if(listErrorMessages[i].messageEarliestAppointmentTime!=[]){
+            listErrorMessages[i].messageEarliestAppointmentTime.forEach((messageEarliest) => {
+              var divColumn=document.createElement('divColumn');
+              div.append(divColumn); 
+              var messageEarliestAppointmentTime= document.createElement('earliestAppointmentDate').innerHTML='-'+messageEarliest;  
+              divColumn.append(messageEarliestAppointmentTime);
+              var space=document.createElement('space');
+              space.innerHTML='</br>';
+              div.append(space);
+            })
           }
 
           //messageLatestAppointmentTime
-          if(listErrorMessages[i].messageLatestAppointmentTime!=''){
-            var divColumn=document.createElement('divColumn');
-            div.append(divColumn); 
-            var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML='-'+listErrorMessages[i].messageLatestAppointmentTime;  
-            divColumn.append(messageLatestAppointmentTime);
-            var space=document.createElement('space');
-            space.innerHTML='</br>';
-            div.append(space);
+          if(listErrorMessages[i].messageLatestAppointmentTime!=[]){
+            listErrorMessages[i].messageLatestAppointmentTime.forEach((messageLatest) => {
+              var divColumn=document.createElement('divColumn');
+              div.append(divColumn); 
+              var messageLatestAppointmentTime= document.createElement('messageLatestAppointmentTime').innerHTML='-'+messageLatest;  
+              divColumn.append(messageLatestAppointmentTime);
+              var space=document.createElement('space');
+              space.innerHTML='</br>';
+              div.append(space);
+            })
           }
           
           //for each ScheduledActivity in Appointment 
@@ -1511,12 +1515,13 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
               divColumn.append(nameSA); 
               
               //messageDelay
-              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
-                  
-                var divColumn=document.createElement('divColumn');
-                div.append(divColumn); 
-                var messageDelay= document.createElement('messageDelay').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay;  
-                divColumn.append(messageDelay);
+              if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=[]){
+                listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay.forEach((oneMessageDelay) => {
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
+                  divColumn.append(messageDelay);
+                })
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
@@ -1542,28 +1547,34 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
                   
                   //messageWorkingHours
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours;  
-                    divColumn.append(messageWorkingHours);
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=[]){
+                    listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours.forEach((oneMessageWorkingHours) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageWorkingHours= document.createElement('messageWorkingHours').innerHTML='-'+oneMessageWorkingHours;  
+                      divColumn.append(messageWorkingHours);
+                    })
                   }
 
 
                   //messageUnavailability
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
-                    divColumn.append(messageUnavailability);
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=[]){
+                    listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability.forEach((oneMessageUnavailability) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+oneMessageUnavailability;  
+                      divColumn.append(messageUnavailability);
+                    })
                   }
 
                   //messageAlreadyScheduled
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled;  
-                    divColumn.append(messageAlreadyScheduled);
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=[]){
+                    listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled.forEach((oneMessageAlreadyScheduled) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+oneMessageAlreadyScheduled;  
+                      divColumn.append(messageAlreadyScheduled);
+                    })
                   }
                 }
 
@@ -1592,19 +1603,23 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
                   
                   //messageUnavailability
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability;  
-                    divColumn.append(messageUnavailability);
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=[]){
+                    listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability.forEach((oneMessageUnavailability) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+oneMessageUnavailability;  
+                      divColumn.append(messageUnavailability);
+                    })
                   }
 
                   //messageAlreadyScheduled
-                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
-                    var divColumn=document.createElement('divColumn');
-                    div.append(divColumn);
-                    var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled;  
-                    divColumn.append(messageAlreadyScheduled);
+                  if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=[]){
+                    listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled.forEach((oneMessageAlreadyScheduled) => {
+                      var divColumn=document.createElement('divColumn');
+                      div.append(divColumn);
+                      var messageAlreadyScheduled= document.createElement('messageAlreadyScheduled').innerHTML='-'+oneMessageAlreadyScheduled;  
+                      divColumn.append(messageAlreadyScheduled);
+                    })
                   }
                 }
 
