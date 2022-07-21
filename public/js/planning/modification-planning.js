@@ -1336,12 +1336,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
-    var RepertoryErrors =countAppointmentErrorList();                   //Get the repertory of errors 
-    if(RepertoryErrors.count!=0){
+    var repertoryErrors =repertoryListErrors();                   //Get the repertory of errors 
+    if(repertoryErrors.count!=0){
       updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
       for(let i=0; i<listErrorMessages.length; i++){                    //All Appointments of the day
-        if(RepertoryErrors.repertory.includes(i)){                      //if the Appointment[i] has an error we have to display it
-          var indexAppointment=RepertoryErrors.repertory.indexOf(i);    //usefull to display activities 
+        if(repertoryErrors.repertory.includes(i)){                      //if the Appointment[i] has an error we have to display it
+          var indexAppointment=repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
           var div = document.createElement('div');                      //Creating the div for the Appointment
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
@@ -1380,7 +1380,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           
           //for each ScheduledActivity in Appointment 
           for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
-            if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){          //Testing if there are errors on this Activity
+            if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){          //Testing if there are errors on this Activity
               var divColumn=document.createElement('divColumn');
               divColumn.setAttribute('style','font-weight: bolder;')
               div.append(divColumn); 
@@ -1486,7 +1486,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 }
 
               }
-              if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
+              if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
                 var space=document.createElement('space'); //skip to line if there is an error in another activity in this appointment
                 space.innerHTML='</br>';
                 div.append(space);
@@ -1497,7 +1497,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         }
       }
     }
-    else{                                                                                   //No errors
+    else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
        div.setAttribute('role','alert'); 
@@ -1506,11 +1506,17 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
        div.append(message);
        document.getElementById('lateral-panel-bloc').appendChild(div);
 
-      updateColorErrorButton(false);     //Update color of the button                                                    
+      updateColorErrorButton(false);  //Update color of the button                                                    
     }
   }
 
-  function countAppointmentErrorList(){
+  /**
+   * This function count the number of Appointments with errors and get the Activities repertory of errors, used only in updatePanelErrorMessages()
+   * @returns count is the number of Apppointments with errors
+   * @returns repertory is the repertory of Appointments with errors, usefull to display Appointments 
+   * @returns repertoryAppointmentSAError is the repertory of ScheduledActivites with error for an appointment, usefull to display ScheduledActivities. 
+   */
+  function repertoryListErrors(){
     var countAppointmentError=0; 
     var repertoryAppointmentError=[]; 
     var repertoryAppointmentSAError=[]; 
@@ -1527,36 +1533,46 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         errorInappointment=true;
       }
       
-      //messageDelay for each ScheduledActivity
+      //foreach ScheduledActivity in appointment
       var repertorySAError=[]; 
       for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
           var errorInScheduledActivity=false; 
+
+          //messageDelay
           if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }
 
+          //foreach CategoryhumanResources in ScheduledActivity
           for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+            
+            //messageCategoryQuantity
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
+
+            //messageWrongCategory
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
             
+            //foreach HUmanResources in CategoryHumanResources
             for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageUnavailability
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageAlreadyScheduled
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
@@ -1565,23 +1581,31 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           }
           
+          //foreach CategoryMaterialResources in ScheduledActivity
           for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+            
+            //messageCategoryQuantity
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
+
+            //messageWrongCategory
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
           
+            //foreach MaterialResource in CategoryMaterialResources
             for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
               
+              //messageUnavailability
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageAlreadyScheduled
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true; 
                 errorInScheduledActivity=true;
@@ -1589,11 +1613,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
             }
 
           }
-          if(errorInScheduledActivity==true){
+          if(errorInScheduledActivity==true){         //if true there is an error in the ScheduledActivity
             repertorySAError.push(listeSAiterator); 
           }
         }
-        if(errorInappointment==true){
+        if(errorInappointment==true){               //if true there is an error in the appointment
           countAppointmentError++; 
           repertoryAppointmentError.push(i);
           repertoryAppointmentSAError.push({appointment:i,repertorySA:repertorySAError});
@@ -1603,14 +1627,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
   return {count:countAppointmentError,repertory:repertoryAppointmentError,repertoryAppointmentSAError:repertoryAppointmentSAError}; 
 }
 
+/**
+ * This function changes dynamically the color and color of the text for the label 'erreurs'.  
+ * @param state boolean, give the information to know what is the apropriate color for the situation
+ */
 function updateColorErrorButton(state) {
-  var button=document.getElementById('lateral-panel-label'); 
+  var button=document.getElementById('lateral-panel-label');  //Get the label
   switch(state){
     case true : 
-    button.setAttribute('style','background : indianred; color :white'); 
+    button.setAttribute('style','background : indianred; color :white');  //one or more error(s)
     break; 
   case false : 
-    button.setAttribute('style','background : white; color : indianred')
+    button.setAttribute('style','background : white; color : indianred')  //zero error
 }
     
 }
