@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fillActivityList()
 
     let heightTitle = document.getElementById('name').offsetHeight
-    let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
+    let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
     heightCreationDiv = heightCreationDiv - heightTitle
-    document.getElementById('list').style.height = heightCreationDiv+'px'
+    document.getElementById('list').style.height = heightCreationDiv + 'px'
 
 })
 
@@ -44,43 +44,43 @@ document.addEventListener('DOMContentLoaded', () => {
 function showInfosPathway(idPathway, name) {
     document.getElementById('pathway1').innerHTML = name;
     document.getElementById('pathway2').innerHTML = name;
-   
+
     var tableBody = document.getElementById('tbodyShow');
     tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
 
     $.ajax({
-        type : 'POST',
-        url  : '/ajaxPathwayAppointments',
-        data : {idPathway: idPathway},
-        dataType : "json",
-        success : function(data){        
+        type: 'POST',
+        url: '/ajaxPathwayAppointments',
+        data: { idPathway: idPathway },
+        dataType: "json",
+        success: function (data) {
             tableAppointment(tableBody, data);
         },
-        error: function(data){
+        error: function (data) {
             console.log("error : can't access appointments");
         }
-        });
-    
+    });
+
     $.ajax({
-        type : 'POST',
-        url  : '/ajaxPathwayActivities',
-        data : {idPathway: idPathway},
-        dataType : "json",
-        success : function(data){        
-           console.log(data);
-           //drawActivities(data);
+        type: 'POST',
+        url: '/ajaxPathwayActivities',
+        data: { idPathway: idPathway },
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            //drawActivities(data);
         },
-        error: function(data){
+        error: function (data) {
             console.log("error : can't access activities");
         }
-        });
+    });
 
     change_tab('activities');
     $('#infos-pathway-modal').modal("show");
 }
 
-function tableAppointment(tableBody, data){
-    if(data.length <= 0){
+function tableAppointment(tableBody, data) {
+    if (data.length <= 0) {
         var tr = document.createElement('TR');
         tableBody.appendChild(tr);
         var td = document.createElement('TD');
@@ -88,45 +88,44 @@ function tableAppointment(tableBody, data){
         td.append("Pas de patients prévus pour ce parcours");
         tr.appendChild(td);
     }
-    else{
-        for(i = 0; i < data.length; i++){
+    else {
+        for (i = 0; i < data.length; i++) {
             var tr = document.createElement('TR');
             tableBody.appendChild(tr);
             var td1 = document.createElement('TD');
             var td2 = document.createElement('TD');
             td1.append(data[i]['lastname'] + ' ' + data[i]['firstname']);
             td2.append(data[i]['date']);
-            tr.appendChild(td1);tr.appendChild(td2);
+            tr.appendChild(td1); tr.appendChild(td2);
         }
     }
 }
 
-function change_tab(id)
-{
-  document.getElementById("activities").className="notselected";
-  document.getElementById("appointments").className="notselected";
-  document.getElementById(id).className="selected";
+function change_tab(id) {
+    document.getElementById("activities").className = "notselected";
+    document.getElementById("appointments").className = "notselected";
+    document.getElementById(id).className = "selected";
 
-  let activities = document.getElementById("pathway-activities");
-  let appointments = document.getElementById("pathway-appointments");
-  
-  switch(id){
-    case 'activities':
-        activities.style.display = 'block';
-        appointments.style.display = 'none';
-    break;
-    case 'appointments':
-        activities.style.display = 'none';
-        appointments.style.display = 'block';
-    break;
-  }
+    let activities = document.getElementById("pathway-activities");
+    let appointments = document.getElementById("pathway-appointments");
+
+    switch (id) {
+        case 'activities':
+            activities.style.display = 'block';
+            appointments.style.display = 'none';
+            break;
+        case 'appointments':
+            activities.style.display = 'none';
+            appointments.style.display = 'block';
+            break;
+    }
 }
 
-function drawActivities(data){
+function drawActivities(data) {
     var canvas = document.querySelector('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width;
-    for(i = 0; i < data.length; i++){
+    for (i = 0; i < data.length; i++) {
 
     }
 }
@@ -193,7 +192,7 @@ function addActivity() {
     else if (Number(document.getElementById('input-duration').value) < 0) {
         verif = false
         alert("La durée de l'activité n'est pas correcte ")
-    }    
+    }
     else if (document.getElementById('input-duration').value == '') {
         verif = false
         alert("La durée de l'activité n'est pas correcte ")
@@ -206,20 +205,20 @@ function addActivity() {
             fillActivityList()
 
         } else {
-        // ajout de l'activité au tableau
-        addArray()
-        NB_ACTIVITY = NB_ACTIVITY + 1;
-        document.getElementById('nbactivity').value = NB_ACTIVITY
+            // ajout de l'activité au tableau
+            addArray()
+            NB_ACTIVITY = NB_ACTIVITY + 1;
+            document.getElementById('nbactivity').value = NB_ACTIVITY
 
-        // on reinitialise les champs 
-        ACTIVITY_IN_PROGRESS = new Object()
-        ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
-        ACTIVITY_IN_PROGRESS.available = true
-        ACTIVITY_IN_PROGRESS.btnHM = 'human'
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-        handleHumanButton()
+            // on reinitialise les champs 
+            ACTIVITY_IN_PROGRESS = new Object()
+            ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
+            ACTIVITY_IN_PROGRESS.available = true
+            ACTIVITY_IN_PROGRESS.btnHM = 'human'
+            document.getElementById('input-name').value = ''
+            document.getElementById('input-duration').value = ''
+            handleHumanButton()
         }
         fillActivityList()
         return 1
@@ -250,15 +249,15 @@ function fillActivityList() {
             let activity = document.createElement('div')
             activity.setAttribute('class', 'div-activity')
             //activity.setAttribute('disabled', 'disabled')
-            let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
+            let str = 'Activité ' + Number(indexActivityAvailable + 1) + ' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
-            str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
+            str += ' (' + RESOURCES_BY_ACTIVITIES[indexActivity].activityduration + 'min)'
             let p = document.createElement('p')
             p.innerHTML = str
 
             let imgDelete = new Image();
             imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('id','imgd-'+indexActivity)
+            imgDelete.setAttribute('id', 'imgd-' + indexActivity)
             imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
@@ -266,7 +265,7 @@ function fillActivityList() {
 
             let imgEdit = new Image();
             imgEdit.src = '../img/edit.svg'
-            imgEdit.setAttribute('id','imge-'+indexActivity)
+            imgEdit.setAttribute('id', 'imge-' + indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
             imgEdit.style.width = '20px'
@@ -276,7 +275,7 @@ function fillActivityList() {
             let div = document.createElement('div')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
-            
+
             /*pindex = document.createElement('p')
             pindex.innerText = indexActivity
             activity.appendChild(pindex)*/
@@ -287,7 +286,7 @@ function fillActivityList() {
             indexActivityAvailable++
         }
     }
-    
+
 
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
@@ -307,13 +306,13 @@ function deleteSelect(id) {
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
     id = getId(id)
-    
+
     // On peut donc recuperer la div
     /*let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
     let divAddActivity = document.getElementsByClassName('activities-container')[0]
     divAddActivity.removeChild(divToDelete)*/
-    
+
     // On actusalise l'input qui contient le nb d'activité
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -333,10 +332,10 @@ function editActivity(id) {
     document.getElementById('btn-confirm-activity').style.display = 'flex'
     document.getElementById('btn-add-activity').style.display = 'none'
     document.getElementById('lbl-title-create').innerText = 'Édition d\'une activité'
-    
+
     id = getId(id)
     ID_EDITED_ACTIVITY = id
-    
+
     ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
 
     handleHumanButton()
@@ -367,19 +366,19 @@ function cancelEditActivity() {
  */
 function confirmEditActivity() {
 
-    let res = addActivity() 
+    let res = addActivity()
     if (res) {
         initActivity()
-        document.getElementById('btn-cancel-activity').style.display = 'none'    
+        document.getElementById('btn-cancel-activity').style.display = 'none'
         document.getElementById('btn-confirm-activity').style.display = 'none'
         document.getElementById('btn-add-activity').style.display = 'flex'
-    
+
         document.getElementById('input-name').value = ''
         document.getElementById('input-duration').value = ''
 
         document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
         IS_EDIT_MODE = false
-        
+
     } else {
         // l'edition n'a pas fonctionné
     }
@@ -413,9 +412,9 @@ function addResources() {
         if (ACTIVITY_IN_PROGRESS.btnHM == 'human') {
 
             let resourceNb = document.getElementById('resource-nb').value
-            let resourceId = document.getElementById('select-resources').value 
+            let resourceId = document.getElementById('select-resources').value
 
-            let resourceName ='';
+            let resourceName = '';
             for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
                 if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
                     resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
@@ -424,19 +423,19 @@ function addResources() {
 
             ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
             let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].available = true
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
 
             fillHRCList()
         } else {
             // ! Si le bouton material est activé !
-            
-            let resourceNb = document.getElementById('resource-nb').value
-            let resourceId = document.getElementById('select-resources').value 
 
-            let resourceName ='';
+            let resourceNb = document.getElementById('resource-nb').value
+            let resourceId = document.getElementById('select-resources').value
+
+            let resourceName = '';
             for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
                 if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
                     resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
@@ -445,11 +444,11 @@ function addResources() {
 
             ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
             let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].available = true
-        
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true
+
             fillMRCList()
         }
 
@@ -461,10 +460,10 @@ function addResources() {
  */
 function fillHRCList() {
 
-    
+
     // On recupere la liste dans laquelle on va ajouter notre ressource
     ul = document.getElementById('list-resources')
-    ul.style.listStyle='none'
+    ul.style.listStyle = 'none'
     ul.innerHTML = ''
 
     let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
@@ -472,23 +471,23 @@ function fillHRCList() {
     availableResourceCount = 0
 
     if (len > 0) {
-        for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
+        for (let indexHRC = 0; indexHRC < len; indexHRC++) {
 
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
                 // On crée le li qui va stocker la ressource (visuellement) 
                 var li = document.createElement('li');
-                let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
+                let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb
                 let resourceName = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].name
-                li.innerText = resourceName +' ('+resourceNb+')'
-            
+                li.innerText = resourceName + ' (' + resourceNb + ')'
+
 
                 let imgDelete = new Image();
                 imgDelete.src = '../img/delete.svg'
                 imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
                 imgDelete.setAttribute('title', 'Supprimer la ressource')
-                imgDelete.style.width='20px'
+                imgDelete.style.width = '20px'
                 imgDelete.style.marginRight = '10%'
-                imgDelete.setAttribute('id', 'resource-h-'+indexHRC)
+                imgDelete.setAttribute('id', 'resource-h-' + indexHRC)
 
                 div = document.createElement('div')
                 div.appendChild(imgDelete)
@@ -499,11 +498,11 @@ function fillHRCList() {
                 ul.appendChild(div)
 
                 availableResourceCount++
-            } 
+            }
 
         }
-    } 
-    
+    }
+
     if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
@@ -519,7 +518,7 @@ function fillHRCList() {
  * @param {id de l'activité dans laquelle on veut ajouter des ressources} id 
  */
 function fillMRCList(id) {
-    
+
     // On recupere la liste dans laquelle on va ajouter notre ressource
     ul = document.getElementById('list-resources')
     ul.innerHTML = ''
@@ -529,24 +528,24 @@ function fillMRCList(id) {
     availableResourceCount = 0
 
     if (len > 0) {
-        for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
+        for (let indexMRC = 0; indexMRC < len; indexMRC++) {
 
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].available) {
 
                 // On crée le li qui va stocker la ressource (visuellement) 
                 var li = document.createElement('li');
-        
-                let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb 
+
+                let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb
                 let resourceName = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].name
-                li.innerText = resourceName +' ('+resourceNb+')'
-            
+                li.innerText = resourceName + ' (' + resourceNb + ')'
+
                 let imgDelete = new Image();
                 imgDelete.src = '../img/delete.svg'
                 imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
                 imgDelete.setAttribute('title', 'Supprimer la ressource')
-                imgDelete.style.width='20px'
+                imgDelete.style.width = '20px'
                 imgDelete.style.marginRight = '10%'
-                imgDelete.setAttribute('id', 'resource-m-'+indexMRC)
+                imgDelete.setAttribute('id', 'resource-m-' + indexMRC)
 
                 div = document.createElement('div')
                 div.appendChild(imgDelete)
@@ -559,7 +558,7 @@ function fillMRCList(id) {
 
             }
         }
-    } 
+    }
 
     if (availableResourceCount == 0) {
         var li = document.createElement('li');
@@ -593,7 +592,7 @@ function handleHumanButton() {
         option.text = HUMAN_RESOURCE_CATEGORIES[indexHR].categoryname
         select.appendChild(option)
     }
-    
+
     // human / material
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 
@@ -615,7 +614,7 @@ function handleMaterialButton() {
     let bh = document.getElementById('human-button')
     bh.style.textDecoration = 'none'
     bh.style.fontWeight = 'normal'
- 
+
     // remplissage du select avec les données de la bd
     let select = document.getElementById('select-resources')
     removeOptions(select)
@@ -641,10 +640,10 @@ function handleMaterialButton() {
  */
 function removeOptions(selectElement) {
     var i, L = selectElement.options.length - 1;
-    
+
     for (i = L; i >= 0; i--) {
-        selectElement.remove(i); 
-    } 
+        selectElement.remove(i);
+    }
 }
 
 /**
@@ -689,5 +688,21 @@ function submitPathway() {
     if (verif) {
         document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
         btnSubmit.click()
+    }
+}
+
+function filterPathway(idInput) {
+
+    var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
+    var filter = document.querySelector('#' + idInput).value;
+    for (let i = 0; i < trs.length; i++) {
+        var regex = new RegExp(filter, 'i');
+        var pathwayName1 = trs[i].cells[1].outerText;
+        if (regex.test(pathwayName1) == false) {
+            trs[i].style.display = 'none';
+        }
+        else {
+            trs[i].style.display = '';
+        }
     }
 }
