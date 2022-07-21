@@ -1,5 +1,5 @@
 <div class="modal" id="infos-material-resource-modal">
-    <div class="modal-dialog">
+    <div class="modal-dialog" id="modal-dialog">
         <div class="modal-content">
             <div id="main_content">
                 <li class="selected" id="planning" onclick="change_tab_material_infos(this.id);">Planning</li>
@@ -10,12 +10,20 @@
                     <h1 id='material-resource1'></h1>
                 </div>
                 <div class="modal-body">
-                    <div id="calendar-container" class="calendar-container">
-					    <!-- affichage du calendar -->
-					    <div id='calendar-mr'></div>
-				    </div>
+                    <div id="load-large"></div>
+						<div id="calendar-container" class="calendar-container">
+							<button id="previousButton" class="btn-calendar-edit" onclick="PreviousWeek('material')" title="Aller au jour d'avant">
+								<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+							</button>
+							<button class="btn-calendar-edit" onclick="Today('material')" title="Aller à aujourd'hui">Aujourd'hui</button>
+							<button id="previousButton" class="btn-calendar-edit" onclick="NextWeek('material')" title="Aller au jour d'après">
+								<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+							</button>
+							<!-- affichage du calendar -->
+							<div id='calendar-mr'></div>
+						</div>
+					</div>
                 </div>
-            </div>
             
             <div id = 'material-resource-categories'>
                 <div class="modal-header">
@@ -37,3 +45,35 @@
         </div>
     </div>
 </div>
+<div class="modal" id="planning-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title"></span>
+				</h2>
+			</div>
+			<form method="post" action="/ModificationPlanning">
+				<div class="modal-body">
+					<label class="label-event">Horaires de l'activité :
+					</label>
+					<div class="input-container onWhite">
+						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled></br>
+						<label class="label-event">Parcours :</label>
+						</br>
+						<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
+						</br>
+						<label class="label-event">Patient :</label>
+						</br>
+						<input class="input-modal" type="text" id="patient" name="patient" disabled></input>
+						</br>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</form> 
+		</div>
+	</div>
