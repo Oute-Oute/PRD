@@ -16,13 +16,13 @@
           <div class="flex-col">
             <label class="label" for='idpatient'> Patient </label>
             <input type="hidden" id="patientValues" name="patientValues" value={{patientsJSON.content}} />
-            <input class="input" type="text" id="autocompletePatientAdd" name="patient" required/>
+            <input class="input" type="text" id="autocompletePatientAdd" name="patient" autocomplete="off" required/>
           </div>
           </br>
           <div class="flex-col">
             <label class="label" for='idpathway'> Parcours </label>
             <input type="hidden" id="pathwayValues" name="pathwayValues" value={{pathwaysJSON.content}} />
-            <input class="input" type="text" id="autocompletePathwayAdd" name="pathway"  required/>
+            <input class="input" type="text" id="autocompletePathwayAdd" name="pathway" autocomplete="off" required/>
           </div>
           </br>
           <div class="flex-col">
@@ -51,7 +51,7 @@
 </div>
 <script>
 $( "#autocompletePatientAdd" ).autocomplete({
-	source: autocompleteArray
+	source: tagsPatients
 });
 $( "#autocompletePathwayAdd" ).autocomplete({
 	source: tagsPathways
