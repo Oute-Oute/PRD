@@ -11,7 +11,9 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
     <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+    <link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
+    <script src="js/jquery-ui/jquery-ui.js"></script>    
 	
 {% endblock %}
 
@@ -27,7 +29,7 @@
 			<thead>
 				<tr class="headerPatient">
 					<th>Id</th>
-					<th><input type="text" id="inputLastname" onkeyup="filterPatient('inputLastname')" placeholder="Nom"></th>
+					<th><input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom"></th>
 					<th>Prénom</th>
 					<th>Actions</th>
 				</tr>
@@ -59,7 +61,15 @@
 	{{ include ('patient/new_patient.html.twig') }}
 	{{ include ('patient/show_patient.html.twig') }}
 
-
+	<script>
+	$( "#autocompleteInputLastname" ).autocomplete({
+	source: autocompleteArray,
+	select: function( event, ui ) {
+		filterPatient('autocompleteInputLastname', ui.item.value);
+	}
+	}
+	);
+	</script>
 
 
 

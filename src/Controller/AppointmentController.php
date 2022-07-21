@@ -81,7 +81,8 @@ class AppointmentController extends AbstractController
         //parse_str($nameParsed[0], $nameParsed);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-        $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', $param['dayappointment'].' '."00:00:00");
+
+        $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', str_replace("/","-",$param['dayappointment'].' '."00:00:00"));
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
 
@@ -107,10 +108,9 @@ class AppointmentController extends AbstractController
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-        $dayappointment = \DateTime::createFromFormat('Y-m-d', $param['dayappointment']." 00:00:00");
+        $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', str_replace("/","-",$param['dayappointment'].' '."00:00:00"));
         $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
-
         //on modifie les données du rendez-vous
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);

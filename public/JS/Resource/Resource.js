@@ -1,6 +1,9 @@
 var SELECT_ID = 0;
 var NB_CATEGORY = 0;
-
+var hrArray = [];
+var hcrArray = [];
+var mrArray = [];
+var mcrArray = [];
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -264,13 +267,20 @@ function change_tab_human(id)
 // .modal-form             #form-add-activity
 
 
-function filterHumanResource(idInput){
+function filterHumanResource(idInput,selected=null){
     var trs = document.querySelectorAll('#tableHumanResource tr:not(.headerHumanResource)');
-    var filter = document.querySelector('#'+idInput).value; 
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
         var name=trs[i].cells[1].outerText;
-
+        if(hrArray.indexOf(name) == -1){
+            hrArray.push(name);
+            }
         if(regex.test(name)==false){
             trs[i].style.display='none';
         }
@@ -280,13 +290,21 @@ function filterHumanResource(idInput){
     }
   }
 
-  function filterHumanResourceCategory(idInput){
+  function filterHumanResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
-    var filter = document.querySelector('#'+idInput).value; 
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     console.log(filter);
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
         var name=trs[i].cells[1].outerText;
+        if(hcrArray.indexOf(name) == -1){
+            hcrArray.push(name);
+            }
         if(regex.test(name)==false){
             trs[i].style.display='none';
         }
@@ -296,13 +314,20 @@ function filterHumanResource(idInput){
     }
   }
 
-  function filterMaterialResource(idInput){
+  function filterMaterialResource(idInput,selected=null){
     var trs = document.querySelectorAll('#tableMaterialResource tr:not(.headerMaterialResource)');
-    var filter = document.querySelector('#'+idInput).value; 
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
         var name=trs[i].cells[1].outerText;
-
+        if(mrArray.indexOf(name) == -1){
+            mrArray.push(name);
+            }
         if(regex.test(name)==false){
             trs[i].style.display='none';
         }
@@ -312,13 +337,20 @@ function filterHumanResource(idInput){
     }
   }
 
-  function filterMaterialResourceCategory(idInput){
+  function filterMaterialResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
-    var filter = document.querySelector('#'+idInput).value; 
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
         var name=trs[i].cells[1].outerText;
-
+        if(mcrArray.indexOf(name) == -1){
+            mcrArray.push(name);
+            }
         if(regex.test(name)==false){
             trs[i].style.display='none';
         }

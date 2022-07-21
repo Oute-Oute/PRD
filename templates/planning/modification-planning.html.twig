@@ -72,6 +72,39 @@
 		</div>
 	</div>
 
+	<div class="modal" id="display-appointment-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title">Informations 
+						<span id="show-information-appointment-title"></span>
+					</h2>
+				</div>
+				<div class="modal-body">
+					<label class="label-event">Début du rendez-vous au plus tôt : </label>
+					<div class="input-container onWhite">
+						<input  type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled>
+						</br>
+						<label class="label-event">Fin du rendez-vous au plus tard :</label>
+						</br>
+						<input type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled></input>
+						</br>
+						<label style='font-weight:bold;' class="label-event">Début du parcours</label>
+						</br>
+						
+						<div class="modal-footer">
+
+							<!-- bouton permettant de fermer la modal ou de valider les modification -->
+							<input type="hidden" id="eventClicked"/> 
+							<button type="button" class="btn-valide btn-secondary" onclick="DisplayModifyEventModal(eventClicked.value)">Informations sur l'activité</button>
+							<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	<!-- add-planning-modal -->
 
@@ -187,7 +220,7 @@
 			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
 			<option value="02:00:00">Zoom : 12,5%</option>
 			<option value="01:00:00">Zoom : 25%</option>
-			<option value="0:40:00">Zoom : x50%</option>
+			<option value="0:40:00">Zoom : 50%</option>
 			<option value='00:20:00' selected>Zoom : 100% (Default)</option>
 			<option value="00:10:00">Zoom : 200%</option>
 			<option value="00:05:00">Zoom : 400%</option>

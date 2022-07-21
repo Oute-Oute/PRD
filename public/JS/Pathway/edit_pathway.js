@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function initActivitiesList() {
-    //console.log(PATHWAY.activities)
     for (let i = 0; i < PATHWAY.activities.length; i++) {
         RESOURCES_BY_ACTIVITIES[i] = new Object()
         RESOURCES_BY_ACTIVITIES[i].humanResourceCategories = PATHWAY.activities[i].humanResourceCategories
@@ -85,9 +84,6 @@ function initActivitiesList() {
         RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
         RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
     }
-   
-    console.log('TABLEAU')
-    console.log(RESOURCES_BY_ACTIVITIES)
 
 }
 
@@ -206,8 +202,6 @@ function addActivity() {
 
     if (verif) {
         if (IS_EDIT_MODE) {
-            //console.log('verif ok confirm')
-            //console.log(document.getElementById('input-name').value)
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
             fillActivityList()
@@ -215,7 +209,6 @@ function addActivity() {
         } else {
             // ajout de l'activité au tableau
             addArray()
-            //console.log(RESOURCES_BY_ACTIVITIES)
             NB_ACTIVITY = NB_ACTIVITY + 1;
             document.getElementById('nbactivity').value = NB_ACTIVITY
 
@@ -255,11 +248,13 @@ function fillActivityList() {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
             let activity = document.createElement('div')
             activity.setAttribute('class', 'div-activity')
+            activity.style.height = 'auto'
             //activity.setAttribute('disabled', 'disabled')
             let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
             let p = document.createElement('p')
+            p.style.width = '80%';
             p.innerHTML = str
 
             let imgDelete = new Image();
@@ -298,6 +293,7 @@ function fillActivityList() {
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
         noactivity.innerHTML = "Aucune activité pour le moment !"
+        noactivity.style.marginLeft ="10px"
         divActivitiesList.appendChild(noactivity)
     }
 
@@ -477,12 +473,12 @@ function fillHRCList() {
     ul.innerHTML = ''
 
     let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+    let availableResourceCount = 0
 
     if (len > 0) {
         for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
 
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
-
                 // On crée le li qui va stocker la ressource (visuellement) 
                 var li = document.createElement('li');
                 let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
@@ -505,9 +501,12 @@ function fillHRCList() {
                 div.style.alignItems = 'center'
 
                 ul.appendChild(div)
+                availableResourceCount++
             }
         }
-    } else {
+    } 
+
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
@@ -528,7 +527,8 @@ function fillMRCList(id) {
     ul.innerHTML = ''
 
     let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-
+    let availableResourceCount = 0
+    
     if (len > 0) {
         for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
 
@@ -555,11 +555,14 @@ function fillMRCList(id) {
                 div.style.alignItems = 'center'
 
                 ul.appendChild(div)
+                availableResourceCount++
             }
         }
-    } else {
+    }
+
+    if (availableResourceCount == 0) {
         var li = document.createElement('li');
-        li.innerText = 'Aucune ressource materielle pour le moment !'
+        li.innerText = 'Aucune ressource materielles pour le moment !'
         ul.appendChild(li)
     }
 }

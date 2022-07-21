@@ -250,4 +250,8 @@ a:hover{
   flex-direction: row;
 }
 
+#modify-planning-modal{
+  z-index: 1056;
+}
+
 
