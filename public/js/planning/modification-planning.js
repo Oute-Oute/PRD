@@ -111,19 +111,21 @@ function zoomChange() {
 }
 
 
-//function permettant l'ouverture de la modal d'ajout d'un parcours
+/**
+ * Open the modal to Add a pathway
+ */
 function addEvent() {
   let listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
   let appointmentSelection = document.getElementById("select-appointment");
 
-  //Reset toutes les options de la liste
+  //Reset all options from the list
   for (let i = appointmentSelection.options.length - 1; i >= 0; i--) {
     appointmentSelection.remove(i);
   }
 
-  //Ajoute les appointment non plannifiés dans la liste
+  //Add all non shculed appointments into the list
   var nbOptions = 0;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i].scheduled == false) {
@@ -149,18 +151,22 @@ function addEvent() {
   }
 }
 
+/**
+ * This function is called when clicking on the button 'Valider' into Add Modal. 
+ * Add All the Activities from a choosen appointment in the Calendar
+ */
 function AddEventValider() {
-  //Récupération de la bdd nécéssaire à l'ajout d'un parcours
+  //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
-
+  var categoryOfMaterialResourceArray=JSON.parse(document.getElementById('categoryOfMaterialResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
   var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
-    
+  var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
-  //Récupération du rdv choisit par l'utilisateur et de la place de l'élément dans listeAppointment
+  //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i]["id"] == appointmentid) {
@@ -172,49 +178,32 @@ function AddEventValider() {
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
 
-  //Date de début du parcours
+  //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
   var PathwayBeginDate = new Date(
     new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
       2 * 60 * 60000
   );
 
-  //Test pour savoir si l'heure renseignée est comprise dans l'interval earliestappointmenttime et lastestappointmenttime
-  var earliestAppointmentDate = new Date(appointment.earliestappointmenttime).getTime();
-  var latestAppointmentDate = new Date(appointment.latestappointmenttime).getTime();
-  var choosenAppointmentDate = new Date("1970-01-01 " + PathwayBeginTime).getTime();
 
-  var EndPathwayDate = new Date(choosenAppointmentDate);
-
-  //Récupération des activités du parcours
+  //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivities.length; i++) {
     if (
       "pathway_" + listeActivities[i]["idPathway"] ==
       appointment["idPathway"][0].id
     ) {
-      activitiesInPathwayAppointment.push(listeActivities[i]);
+      activitiesInPathwayAppointment.push(listeActivities[i]); 
     }
   }
 
-  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
-    EndPathwayDate = new Date(
-      new Date(EndPathwayDate).getTime() +
-        activitiesInPathwayAppointment[i].duration * 60000
-    );
-  }
-
-  if (earliestAppointmentDate >= choosenAppointmentDate || EndPathwayDate >= latestAppointmentDate) {
-      alert("l'heure de début définie ne correspond pas avec les paramètres du rendez-vous")
-    }
-
-    //On récupère l'ensemble des id activité b de la table successor pour trouver la première activité du parcours
+    //Get all actiity b in the successors to find the ids of firsts activities in pathway
     var successorsActivitybIdList = [];
     for (let i = 0; i < listeSuccessors.length; i++) {
       successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
     }
 
-    //get the first activities of the pathway
+    //get the first activities of the pathway with ids 
     var firstActivitiesPathway=[]; 
     for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
       if (
@@ -224,7 +213,7 @@ function AddEventValider() {
     }
 
     var activitiesA=[];
-    //Tableau permettant de vérifier qu'il n'y ai pas la même activityB qui est push dans le tableau activtiesA
+    //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
     var allActivtiesA=[]; 
     for(let i=0; i<firstActivitiesPathway.length; i++){
       let activityA={activity:firstActivitiesPathway[i],delaymin:0}; 
@@ -233,32 +222,56 @@ function AddEventValider() {
     }
     do{
 
-      //Création des activités dans FullCalendar
+      //Creating Activities in FullCalendar
       for(let i=0; i<activitiesA.length; i++){
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-        //Trouver pour chaques activités du parcours le nombre de resources humaines à définir
+        
+        //Find for all Activities of the pathway, the number of Humanresources to define. 
+        var categoryHumanResources=[]; 
+        
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfHumanResourceArray.length; k++){
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
+              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+            }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
         }
+      
 
-        //Rentrer le nombre de resources humaines dans le tableau de Resources de l'event
+        
+
+        
+        var categoryMaterialResources=[]; 
+        
+        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+            for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
+              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+            }
+            quantityMaterialResources += listeActivityMaterialResource[j].quantity;
+          }
+        }
+
+        //Put the number of human resouorces in the ResourcesArray of the event
+
         for (let j = 0; j< quantityHumanResources; j++) {
           activityResourcesArray.push("h-default");
         }
 
-        //Trouver pour chaques activités du parcours le nombre de resources matérielles à définir
-        for (let j = 0; j < listeActivityMaterialResource.length; j++) {
-          if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-            quantityMaterialResources +=
-            listeActivityMaterialResource[j].quantity;
-          }
+        for(let j=0; j<quantityMaterialResources;j++){
+          activityResourcesArray.push("m-default");
         }
+
+
+        //counting for the ids of events
         countAddEvent++;
-        //Ajout d'un event au calendar
+
+        //Add one event in the Calendar
         var event = calendar.addEvent({
           id: "new" + countAddEvent,
           description: "",
@@ -273,6 +286,8 @@ function AddEventValider() {
           humanResources: [],
           materialResources: [],
           pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+          categoryMaterialResource: categoryMaterialResources, 
+          categoryHumanResource: categoryHumanResources, 
         });
 
         event._def.ui.backgroundColor = RessourcesAllocated(event);
@@ -285,7 +300,7 @@ function AddEventValider() {
        for(let i=successorsActivitiesA.length-1; i>0; i--){
         successorsActivitiesA.splice(i);
       }
-      //Récupération de chaque idActivityB pour chaque Activités A 
+      //Get each Activities B for each Activities A 
       
       for(let i=0; i<activitiesA.length; i++){
         for(let j=0; j<listeSuccessors.length; j++){
@@ -296,7 +311,7 @@ function AddEventValider() {
         }
       }
 
-      //On garde pour chaque activityB différentes dans successorsActivitiesA celle qui a le delaymin le plus grand
+      //Keeping for each différent activityB in successorsActivitiesA the biggest delaymin
       for(let i=0; i<successorsActivitiesA.length; i++){
         for(let j=0; j<successorsActivitiesA.length;j++){
           if(successorsActivitiesA[i].activityB==successorsActivitiesA[j].activityB && i!=j){
@@ -310,20 +325,20 @@ function AddEventValider() {
         }
       }
 
-      //On passe les SuccessorsActivitiesA dans le tableau ActivitiesA
-      //on récupère tout d'aboprd la plus longue activité pour toutes les Activities A
-      var biggerDuration=0; 
+      //Put SuccessorsActivitiesA in ActivitiesA
+      //Get the longestActivity for all ActivityA.
+      var biggestDuration=0; 
       for(let i=0; i<activitiesA.length; i++){ 
-          if(biggerDuration<activitiesA[i].activity.duration){
-            biggerDuration=activitiesA[i].activity.duration; 
+          if(biggestDuration<activitiesA[i].activity.duration){
+            biggestDuration=activitiesA[i].activity.duration; 
           }
       }
-      //On supprime les éléments de ActivitiesA
+      //Deleting All activities A
       for(let i=activitiesA.length-1;i>=0;i--){
         activitiesA.splice(i); 
       }
       
-      //On retrouve les Activités dans la liste d'activités et on les ajoutes au tableau
+      //Put activitiesA into AllActivitiesA and ActivitiesB in ActivitiesA
       for(let i=0; i<successorsActivitiesA.length; i++){
         for(let j=0; j<listeActivities.length; j++){
           if(successorsActivitiesA[i].activityB==listeActivities[j].id){ 
@@ -337,13 +352,13 @@ function AddEventValider() {
           }
         }
       }
-      let biggerdelay=0; 
+      let biggestdelay=0; 
       for(let i=0; i<activitiesA.length; i++){
-          if(activitiesA[i].delaymin>biggerdelay){
-            biggerdelay=activitiesA[i].delaymin; 
+          if(activitiesA[i].delaymin>biggestdelay){
+            biggestdelay=activitiesA[i].delaymin; 
           }
       }
-      PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggerDuration*60000+biggerdelay*60000); 
+      PathwayBeginDate=new Date(PathwayBeginDate.getTime()+biggestDuration*60000+biggestdelay*60000); 
 
     } while (successorsActivitiesA.length!=0);
     verifyHistoryPush(historyEvents,appointmentid); 
@@ -534,23 +549,18 @@ function createCalendar(typeResource,useCase) {
       first = false;
       switch(useCase){
         case 'recreate':
-          //Test pour savoir si il s'agit d'un ajout
-            if(historyEvents[historyEvents.length-2]!=undefined){
-              if(historyEvents[historyEvents.length-1].idAppointment!=-1){
-                //récupère la liste des Appointments
-                var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  
+            if(historyEvents[historyEvents.length-2]!=undefined){         
+              if(historyEvents[historyEvents.length-1].idAppointment!=-1){    //test to know if we remove an 'add' modification 
+                var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);  //get the list appointments
                 for (let i = 0; i < listeAppointments.length; i++) {
-                  if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-1].idAppointment) {
-                    //On défini le rdv comme non plannifié
-                    listeAppointments[i].scheduled = false;
+                  if (listeAppointments[i]["id"] == historyEvents[historyEvents.length-1].idAppointment) { //searching the right appointment that match with the id given
+                    listeAppointments[i].scheduled = false; //define appointment on not scheduled to be selectionnable in the adding modal
                   }
                 }
-                //On update la liste de rendez-vous
-                document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+                document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments); //update appointment list
               }
-            
-              listEvent=historyEvents[historyEvents.length-2].events; 
-              historyEvents.splice(historyEvents.length-1,1);  
+              listEvent=historyEvents[historyEvents.length-2].events; //gives all events to recreate the calendar
+              historyEvents.splice(historyEvents.length-1,1);  //removing the latest modification in historyEvents because we undo it
             }
           break; 
       default: 
@@ -807,42 +817,59 @@ function deleteModifInDB() {
   );
 }
 
+/**
+ * This function gives the color to apply to an event on the planning. 
+ * red if the Activity is not associated to the riht resources (material and human)
+ * green if the Activity have all resources that it need. 
+ * unavailabilities are red in any case.  
+ * @param {*} event 
+ * @returns color of the event
+ */
 function RessourcesAllocated(event) {
-  if (event._def.resourceIds.includes("m-default")) {
+  if (event._def.resourceIds.includes("m-default")) { //if a material resource is not allocated
     return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.resourceIds.includes("h-default")) {
+  } else if (event._def.resourceIds.includes("h-default")) { //if a human resource is not allocated
     return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.ui.display == "background") {
-    //get the unavailabilities events
+  } else if (event._def.ui.display == "background") {  //for unavailabilities 
     return "#ff0000";
   } else {
-    return "#20c997";
+    return "#20c997"; //if all is allocated, return green color
   }
 }
 
+/**
+ * This function clears an array of all his rows
+ * @param {*} array 
+ */
 function clearArray(array){
   while (array.length) {
-    array.pop();
+    array.pop();      //removing rows by rows 
   }
 }
 
+/**
+ * This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
+ */
 function undoEvent(){ 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
 }
 
+/**
+ * This function stock in an array the history of all modifications on the Calendar, for performance reasons, we save only the last 10 modifications. 
+ * @param {*} array           //get historyEvents array 
+ * @param {*} idAppointment   //gives information on the appointment, usefull when undo is applied on added appointment (to get it back into the list of selectionnable appoinments to add)
+ */
 function verifyHistoryPush(array, idAppointment){
   
-  if(array.length<10){
-    array.push({events:calendar.getEvents(),idAppointment:idAppointment}); 
-  }
-  else{
-    for(let i=0; array.length>=10; i++){
+  if(array.length>10){  //10 for performance reasons
+    for(let i=0; array.length>=10; i++){  //remove before push 
       array.splice(i,1); 
     }
-    array.push({events:calendar.getEvents(),idAppointment:idAppointment});  
-  };
+   
+  }
+  array.push({events:calendar.getEvents(),idAppointment:idAppointment});   //push into the history of modifications
 }
 
 /**
@@ -916,7 +943,7 @@ function updateErrorMessages() {
       }
     }
   })
-  updateListErrorMessages(); //update the panel error messages
+  updatePanelErrorMessages(); //update the panel error messages
 }
 
 /**
@@ -1405,34 +1432,40 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
   return message;
 }
 
-  function displayListErrorMessages(){
-    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc'); 
+/**
+ * Called when button 'erreurs' is clicked, display or hide the lateral-panel-bloc and call the function to update informations. 
+ */
+  function displayPanelErrorMessages(){
+    var lateralPannelBloc=document.querySelectorAll('#'+'lateral-panel-bloc');   
     var lateralPannel=document.querySelectorAll('#'+'lateral-panel');
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
-    if(lateralPannelInput==true){
-      lateralPannelBloc[0].style.display='block'; 
+    if(lateralPannelInput==true){                   //Test the value of the checkbox
+      lateralPannelBloc[0].style.display='block';  //display the panel
       lateralPannel[0].style.width='40em';
-      updateListErrorMessages();
+      updatePanelErrorMessages();  //Update informations in the panel
     }
     else{
-      lateralPannelBloc[0].style.display='';
+      lateralPannelBloc[0].style.display=''; //hide the pannel
       lateralPannel[0].style.width='';
     }
     
   }
 
-  function updateListErrorMessages(){
-    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes; 
-    while(nodesNotification.length!=3){
-      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]); 
+  /**
+   * Update the Panel of List error by removing all notifications and re-creating it with the new informations. 
+   */
+  function updatePanelErrorMessages(){
+    var nodesNotification=document.getElementById('lateral-panel-bloc').childNodes;                             //Get the div in lateral-panel-bloc
+    while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
+      document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
-    var RepertoryErrors =countAppointmentErrorList(); 
-    if(RepertoryErrors.count!=0){
-      updateColorErrorButton(true); 
-      for(let i=0; i<listErrorMessages.length; i++){
-        if(RepertoryErrors.repertory.includes(i)){
-          var indexAppointment=RepertoryErrors.repertory.indexOf(i); 
-          var div = document.createElement('div');
+    var repertoryErrors =repertoryListErrors();                   //Get the repertory of errors 
+    if(repertoryErrors.count!=0){
+      updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
+      for(let i=0; i<listErrorMessages.length; i++){                    //All Appointments of the day
+        if(repertoryErrors.repertory.includes(i)){                      //if the Appointment[i] has an error we have to display it
+          var indexAppointment=repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
+          var div = document.createElement('div');                      //Creating the div for the Appointment
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
           div.setAttribute('id','notification');
@@ -1468,16 +1501,16 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
             div.append(space);
           }
           
-          //messageDelay for each ScheduledActivity
+          //for each ScheduledActivity in Appointment 
           for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
-            if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){
+            if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)){          //Testing if there are errors on this Activity
               var divColumn=document.createElement('divColumn');
               divColumn.setAttribute('style','font-weight: bolder;')
               div.append(divColumn); 
-              var nameSA=listErrorMessages[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';    
+              var nameSA=listErrorMessages[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';        //Display Activity Name 
               divColumn.append(nameSA); 
               
-
+              //messageDelay
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
                   
                 var divColumn=document.createElement('divColumn');
@@ -1486,13 +1519,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 divColumn.append(messageDelay);
               }
 
+              //foreach CategoryHumanResources in ScheduledActivity
               for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+                
+                //messageCategoryQuantity
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn); 
                   var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
+
+                //messageWrongCategory
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
@@ -1500,7 +1538,10 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   divColumn.append(messageWrongCategory);
                 }
                 
+                //foreach HumanResources
                 for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
+                  
+                  //messageWorkingHours
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1508,13 +1549,16 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                     divColumn.append(messageWorkingHours);
                   }
 
+
+                  //messageUnavailability
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
                     var messageUnavailability= document.createElement('messageUnavailability').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability;  
                     divColumn.append(messageUnavailability);
                   }
-                  listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''
+
+                  //messageAlreadyScheduled
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1525,13 +1569,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
               }
               
+              //foreach MaterialResourcesCategory in ScheduledActivity
               for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+               
+                //messageCategoryQuantity
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
                   var messageCategoryQuantity= document.createElement('messageCategoryQuantity').innerHTML='-'+listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;  
                   divColumn.append(messageCategoryQuantity);
                 }
+
+                //messageWrongCategory
                 if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
                   var divColumn=document.createElement('divColumn');
                   div.append(divColumn);
@@ -1539,8 +1588,10 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   divColumn.append(messageWrongCategory);
                 }
               
+                //foreach MaterialResources in MaterialResourceCategory 
                 for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
                   
+                  //messageUnavailability
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1548,6 +1599,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                     divColumn.append(messageUnavailability);
                   }
 
+                  //messageAlreadyScheduled
                   if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                     var divColumn=document.createElement('divColumn');
                     div.append(divColumn);
@@ -1557,31 +1609,37 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 }
 
               }
-              if(RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=RepertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
-                var space=document.createElement('space');
+              if(repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.indexOf(listeSAiterator)!=repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.length-1){
+                var space=document.createElement('space'); //skip to line if there is an error in another activity in this appointment
                 space.innerHTML='</br>';
                 div.append(space);
               }
             } 
           }
-          document.getElementById('lateral-panel-bloc').appendChild(div);
+          document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
     }
-    else{
+    else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
        div.setAttribute('role','alert'); 
        div.setAttribute('style','text-align: center');
-       var message= document.createElement('message').innerHTML="Aucune erreur détectée."; 
+       var message= document.createElement('message').innerHTML="Aucune erreur détectée.";  //Display 'no error' message
        div.append(message);
        document.getElementById('lateral-panel-bloc').appendChild(div);
 
-      updateColorErrorButton(false); 
+      updateColorErrorButton(false);  //Update color of the button                                                    
     }
   }
 
-  function countAppointmentErrorList(){
+  /**
+   * This function count the number of Appointments with errors and get the Activities repertory of errors, used only in updatePanelErrorMessages()
+   * @returns count is the number of Apppointments with errors
+   * @returns repertory is the repertory of Appointments with errors, usefull to display Appointments 
+   * @returns repertoryAppointmentSAError is the repertory of ScheduledActivites with error for an appointment, usefull to display ScheduledActivities. 
+   */
+  function repertoryListErrors(){
     var countAppointmentError=0; 
     var repertoryAppointmentError=[]; 
     var repertoryAppointmentSAError=[]; 
@@ -1598,36 +1656,46 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         errorInappointment=true;
       }
       
-      //messageDelay for each ScheduledActivity
+      //foreach ScheduledActivity in appointment
       var repertorySAError=[]; 
       for(let listeSAiterator=0; listeSAiterator<listErrorMessages[i].listScheduledActivity.length; listeSAiterator++){
           var errorInScheduledActivity=false; 
+
+          //messageDelay
           if(listErrorMessages[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }
 
+          //foreach CategoryhumanResources in ScheduledActivity
           for(let listCategoryHumanResourcesItorator=0;listCategoryHumanResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources.length; listCategoryHumanResourcesItorator++){
+            
+            //messageCategoryQuantity
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
+
+            //messageWrongCategory
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
             
+            //foreach HUmanResources in CategoryHumanResources
             for(let listHumanResourcesIterator=0; listHumanResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources.length; listHumanResourcesIterator++ ){
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageWorkingHours!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageUnavailability
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageAlreadyScheduled
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].listHumanResources[listHumanResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
@@ -1636,23 +1704,31 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           }
           
+          //foreach CategoryMaterialResources in ScheduledActivity
           for(let listCategoryMaterialResourcesItorator=0;listCategoryMaterialResourcesItorator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources.length; listCategoryMaterialResourcesItorator++){
+            
+            //messageCategoryQuantity
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
+
+            //messageWrongCategory
             if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory!=''){
               errorInappointment=true;
               errorInScheduledActivity=true;
             }
           
+            //foreach MaterialResource in CategoryMaterialResources
             for(let listMaterialResourcesIterator=0; listMaterialResourcesIterator<listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources.length; listMaterialResourcesIterator++ ){
               
+              //messageUnavailability
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageUnavailability!=''){
                 errorInappointment=true;
                 errorInScheduledActivity=true;
               }
 
+              //messageAlreadyScheduled
               if(listErrorMessages[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].listMaterialResources[listMaterialResourcesIterator].messageAlreadyScheduled!=''){
                 errorInappointment=true; 
                 errorInScheduledActivity=true;
@@ -1660,11 +1736,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
             }
 
           }
-          if(errorInScheduledActivity==true){
+          if(errorInScheduledActivity==true){         //if true there is an error in the ScheduledActivity
             repertorySAError.push(listeSAiterator); 
           }
         }
-        if(errorInappointment==true){
+        if(errorInappointment==true){               //if true there is an error in the appointment
           countAppointmentError++; 
           repertoryAppointmentError.push(i);
           repertoryAppointmentSAError.push({appointment:i,repertorySA:repertorySAError});
@@ -1674,14 +1750,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
   return {count:countAppointmentError,repertory:repertoryAppointmentError,repertoryAppointmentSAError:repertoryAppointmentSAError}; 
 }
 
+/**
+ * This function changes dynamically the color and color of the text for the label 'erreurs'.  
+ * @param state boolean, give the information to know what is the apropriate color for the situation
+ */
 function updateColorErrorButton(state) {
-  var button=document.getElementById('lateral-panel-label'); 
+  var button=document.getElementById('lateral-panel-label');  //Get the label
   switch(state){
     case true : 
-    button.setAttribute('style','background : indianred; color :white'); 
+    button.setAttribute('style','background : indianred; color :white');  //one or more error(s)
     break; 
   case false : 
-    button.setAttribute('style','background : white; color : indianred')
+    button.setAttribute('style','background : white; color : indianred')  //zero error
 }
     
 }
