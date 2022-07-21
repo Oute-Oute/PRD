@@ -25,10 +25,10 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/", name="app_material_resource_index", methods={"GET"})
      */
-    public function index(MaterialResourceRepository $materialResourceRepository): Response
+    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
-        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
-        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $materialResourceCategories = $materialResourceCategoryRepository->findAll();
         $materialResources = $materialResourceRepository->findAll();
         $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
@@ -36,7 +36,7 @@ class MaterialResourceController extends AbstractController
         $nbMaterialResourceCategory = count($materialResourceCategories);
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
-        $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON();
+        $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON($doctrine);
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
@@ -80,20 +80,20 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/new", name="app_material_resource_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, MaterialResourceRepository $materialResourceRepository): Response
+    public function new(Request $request, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
             $materialResource = new MaterialResource();
             $param = $request->request->all();
             $name = $param['resourcename'];
             $materialResource->setMaterialresourcename($name);
-            $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
+            $materialResourceRepository = new MaterialResourceRepository($doctrine);
             $materialResourceRepository->add($materialResource, true);
-            $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
 
 
             // On récupère toutes les catégories
-            $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+            $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
             $categories = $categoryOfMaterialResourceRepository->findAll();            
 
             // On récupère le nombre de catégories
@@ -120,9 +120,9 @@ class MaterialResourceController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
-    public function listCategoriesByMaterialResourcesJSON()
+    public function listCategoriesByMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
-        $categoriesByMaterialResourcesRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $categoriesByMaterialResourcesRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $categoriesByMaterialResources = $categoriesByMaterialResourcesRepository->findAll();
         $categoriesByMaterialResourcesArray = array();
 
@@ -141,7 +141,7 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request)
+    public function edit(Request $request,ManagerRegistry $doctrine)
     {
        // Méthode POST pour ajouter un circuit
        if ($request->getMethod() === 'POST' ) {
@@ -149,7 +149,7 @@ class MaterialResourceController extends AbstractController
         // On recupere toutes les données de la requete
         $param = $request->request->all();
         // On récupère l'objet parcours que l'on souhaite modifier grace a son id
-        $materialResourceRepository = new MaterialResourceRepository($this->getDoctrine());
+        $materialResourceRepository = new MaterialResourceRepository($doctrine);
         $materialResource = $materialResourceRepository->findById($param['id'])[0];
         $materialResource->setMaterialResourceName($param['resourcename']);
         //$pathway->setAvailable(true);
@@ -160,13 +160,13 @@ class MaterialResourceController extends AbstractController
         // On s'occupe ensuite ds liens entre le parcours et les activités :
 
         // On récupère toutes les activités
-        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
-        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
+        $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
         $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
         $materialResourcesCategories = $materialResourceCategoryRepository->findAll();
 
         // On supprime toutes les activités et leurs successor
-        $em=$this->getDoctrine()->getManager();
+        $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
             for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
                 $em->remove($categsOfResources[$indexCategOf]);
@@ -207,11 +207,11 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
-    public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository): Response
+    public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
-        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
 
-        $em=$this->getDoctrine()->getManager();
+        $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
@@ -252,8 +252,17 @@ class MaterialResourceController extends AbstractController
     public function getDataMaterialResource(ManagerRegistry $doctrine)
     {
         if(isset($_POST["idMaterialResource"])){
-            $categories = $this->getCategoryByMaterialResourceId($_POST["idMaterialResource"], $doctrine);
-            return new JsonResponse($categories);
+            if(isset($_POST["date"])){
+                $categories = $this->getCategoryByMaterialResourceId($_POST["idMaterialResource"], $doctrine);
+                $unavailability= $this->getUnavailabilityByMaterialResourceId($_POST["idMaterialResource"], $doctrine);
+                $activities = $this->getActivities($_POST["idMaterialResource"],$_POST["date"],$doctrine);
+                $data = array(
+                    "categories" => $categories,
+                    "unavailability" => $unavailability,
+                    "activities" => $activities
+                );
+                return new JsonResponse($data);
+            }
         }
         if(isset($_POST["idMaterialResourceCategory"])){
             $resources = $this->getResourceByMaterialResourceCategoryId($_POST["idMaterialResourceCategory"], $doctrine);
@@ -286,5 +295,48 @@ class MaterialResourceController extends AbstractController
             }
         }
         return $resourceArray;
+    }
+
+    public function getUnavailabilityByMaterialResourceId($id, ManagerRegistry $doctrine)
+    {
+        $unavailabilities = $doctrine->getManager()->getRepository("App\Entity\UnavailabilityMaterialResource")->findBy(['materialresource' => $id]);
+        $unavailabilityArray=[];
+        foreach ($unavailabilities as $unavailability) {
+            if ($unavailability->getMaterialresource()->getId() == $id){
+                $unavailabilityArray[] = [
+                    'starttime' => str_replace(" ","T",$unavailability->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'endtime' =>  str_replace(" ","T",$unavailability->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                ];
+            }
+        }
+        return $unavailabilityArray;
+    }
+
+    public function getActivities($id, $dateStr, ManagerRegistry $doctrine)
+    {
+        $activities = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled")->findBy(['materialresource' => $id]);
+        $activityArray=[];
+        $activitiesArray=[];
+        $date=new \DateTime($dateStr);
+        $dayOfWeek=date('w', $date->getTimestamp());
+        $date->modify('-'.$dayOfWeek.' days');
+        $monday=new \DateTime($date->format('Y-m-d'));
+        $monday->modify('+1 days');
+        $date->modify('+7 days');
+        $sunday=new \DateTime($date->format('Y-m-d'));
+        foreach ($activities as $activity) {
+            if($activity->getScheduledActivity()->getAppointment()->getDayappointment() >= $monday 
+            && $activity->getScheduledActivity()->getAppointment()->getDayappointment() <= $sunday){
+            $activityArray[] = [
+                'dayappointment' => $activity->getScheduledActivity()->getAppointment()->getDayappointment()->format('Y-m-d'),
+                    'activity' => $activity->getScheduledActivity()->getActivity()->getActivityname(),
+                    'pathway' => $activity->getScheduledActivity()->getActivity()->getPathway()->getPathwayname(),
+                    'starttime' => $activity->getScheduledActivity()->getStarttime()->format('H:i:s'),
+                    'endtime' => $activity->getScheduledActivity()->getEndtime()->format('H:i:s'),
+                    'patient' => $activity->getScheduledActivity()->getAppointment()->getPatient()->getLastname()." ".$activity->getScheduledActivity()->getAppointment()->getPatient()->getFirstname(),
+            ];
+        }
+        }
+        return $activityArray;
     }
 }

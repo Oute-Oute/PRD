@@ -6,19 +6,19 @@ var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
 
 var RESOURCES_BY_ACTIVITIES = new Array()
-var PATHWAY
+var PATHWAY // contient toutes les informations du pathway à éditer
 
-var ACTIVITY_IN_PROGRESS
-var ID_EDITED_ACTIVITY
+var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
+var ID_EDITED_ACTIVITY 
 var IS_EDIT_MODE = false
 
 
 /**
- * Appelée au chargement de la page de création d'un parcours (circuit)
+ * Appelée au chargement de la page de création d'un parcours (pathway)
  */
 document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
-    //showNewModalForm()
+
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-human-resource-categories").value
     );
@@ -30,17 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
     PATHWAY = JSON.parse(
         document.getElementById("json-pathway").value
     );
-    console.log('oui oui')
-    console.log(PATHWAY)
+
+    document.getElementById('resource-nb').value = 1
+  
 
     document.getElementById('pathwayid').value = PATHWAY.id
-    console.log('non non')
 
-    console.log(document.getElementById('pathwayid').value)
     document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
-
-    //addActivity() 
     initActivity()
     handleHumanButton()
     initActivitiesList()
@@ -66,10 +63,13 @@ function initActivitiesList() {
         let len = RESOURCES_BY_ACTIVITIES[i].humanResourceCategories.length
         for (let indexHR = 0; indexHR < len; indexHR++) {
             RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].already = true
+            RESOURCES_BY_ACTIVITIES[i].humanResourceCategories[indexHR].available = true
         }
-        let len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
+
+        len = RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.length
         for (let indexMR = 0; indexMR < len; indexMR++) {
             RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].already = true
+            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].available = true
         }
         /*
         for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
@@ -138,22 +138,6 @@ function tableAppointment(tableBody, data){
     }
 }
 
-/**
- * Permet d'afficher la fenêtre modale d'ajout
- */
-function showNewModalForm(){
-    $('#add-pathway-modal').modal("show");
-    //$('#add-pathway-resources-modal').modal("show");
-    //document.getElementById('add-pathway-resources-modal').style.display = 'flex'
-
-}
-
-/**
- * Permet de fermer la fenêtre modale d'ajout
- */
-function hideNewModalForm() {
-    $('#add-pathway-modal').modal("hide");
-}
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -176,6 +160,9 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].id
         res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].name
         res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].nb
+        res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].already
+        res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].available
+
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
@@ -184,6 +171,9 @@ function addArray() {
         res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].id
         res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].name
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
+        res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].already
+        res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
+
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
 
@@ -205,6 +195,10 @@ function addActivity() {
         verif = false
         alert("Le nom de l'activité ne peut pas être vide")
     }
+    else if (Number(document.getElementById('input-duration').value) < 0) {
+        verif = false
+        alert("La durée de l'activité n'est pas correcte ")
+    }    
     else if (document.getElementById('input-duration').value == '') {
         verif = false
         alert("La durée de l'activité n'est pas correcte ")
@@ -400,56 +394,6 @@ function confirmEditActivity() {
 }
 
 
-/**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
- */
-function verifyChanges() {
-    let formOk = true
-    // D'abord on recupere la div qui contient toutes les activity
-    let activitiesContainer = document.getElementsByClassName('activities-container')[0]
-
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
-    let indexActivityAvailable = 0;
-    for (let i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-
-        // On ne considere que les activités qui n'ont pas été supprimées
-        if (RESOURCES_BY_ACTIVITIES[i].available === true) {
-            inputName  = document.getElementById('input-activity-name-'+i)
-            inputDuration  = document.getElementById('input-activity-duration-'+i)
-            RESOURCES_BY_ACTIVITIES[i].activityname = inputName.value
-            RESOURCES_BY_ACTIVITIES[i].activityduration = inputDuration.value
-
-            indexActivityAvailable = indexActivityAvailable + 1
-        }
-
-        /*activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
-        let name = activitiesContainer.children[i].children[1].children[0].value
-        activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))
-        let duration = activitiesContainer.children[i].children[1].children[1].value
-
-        // On verifie les inputs 
-        if (name === '') {
-            formOk = false
-        }
-        if (duration === '') {
-            formOk = false
-        }
-        if (Number(duration) < 0 ) {
-            formOk = false
-        }*/
-
-    }
-
-    /*if (document.getElementById('pathwayname').value === '') {
-        formOk = false
-    }
-*/
-
-    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-
-}
-
 
 
 function getId(str) {
@@ -459,60 +403,70 @@ function getId(str) {
 }
 
 function addResources() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
-    //id = getId(id)
 
-    // ! Si le bouton human est activé !
-
-    if (ACTIVITY_IN_PROGRESS.btnHM == 'human') {
-        let resourceNb = document.getElementById('resource-nb').value
-        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
-
-        let resourceName ='';
-        for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-            if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
-            }
-        }
-
-        ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-        let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-        ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
-
-        fillHRCList()
-    } else {
-        // ! Si le bouton material est activé !
-
-        let resourceNb = document.getElementById('resource-nb').value
-        let resourceId = document.getElementById('select-resources').value //pas utilisé pour l'instant
-
-        let resourceName ='';
-        for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
-            if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
-                resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
-            }
-        }
-
-        ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
-        let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
-        ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
-    
-        fillMRCList()
+    // On verifie que le champs quantité est bien rempli 
+    let verif = true
+    if (document.getElementById('resource-nb').value == '') {
+        verif = false
+        alert("La quantité de la ressource n'est pas correcte")
+    }
+    else if (Number(document.getElementById('resource-nb').value) < 1) {
+        verif = false
+        alert("La quantité de la ressource ne peut pas être inférieure à 1")
     }
 
+
+    if (verif) {
+        // ! Si le bouton human est activé !
+        if (ACTIVITY_IN_PROGRESS.btnHM == 'human') {
+            let resourceNb = document.getElementById('resource-nb').value
+            let resourceId = document.getElementById('select-resources').value 
+
+            let resourceName ='';
+            for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                    resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                }
+            }
+
+            ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
+            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].available = true
+
+            fillHRCList()
+        } else {
+            // ! Si le bouton material est activé !
+
+            let resourceNb = document.getElementById('resource-nb').value
+            let resourceId = document.getElementById('select-resources').value 
+
+            let resourceName ='';
+            for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                    resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                }
+            }
+
+            ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+            let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
+            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].available = true
+
+            fillMRCList()
+        }
+    }
 
 }
 
 /**
  * Remplit la liste des ressources humaines 
- * @param {id de l'activité dans laquelle on veut ajouter des ressources} id 
  */
 function fillHRCList() {
 
@@ -526,28 +480,32 @@ function fillHRCList() {
 
     if (len > 0) {
         for (let indexHRC = 0 ; indexHRC < len ; indexHRC++) {
-            // On crée le li qui va stocker la ressource (visuellement) 
-            var li = document.createElement('li');
-            let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
-            let resourceName = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].name
-            li.innerText = resourceName +' ('+resourceNb+')'
-        
 
-            let imgDelete = new Image();
-            imgDelete.src = '../../img/delete.svg'
-            imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
-            imgDelete.setAttribute('title', 'Supprimer la ressource')
-            imgDelete.style.width='20px'
-            imgDelete.style.marginRight = '10%'
-            imgDelete.setAttribute('id', 'resource-h-'+indexHRC)
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].available) {
 
-            div = document.createElement('div')
-            div.appendChild(imgDelete)
-            div.appendChild(li)
-            div.style.display = 'flex'
-            div.style.alignItems = 'center'
+                // On crée le li qui va stocker la ressource (visuellement) 
+                var li = document.createElement('li');
+                let resourceNb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].nb 
+                let resourceName = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHRC].name
+                li.innerText = resourceName +' ('+resourceNb+')'
+            
 
-            ul.appendChild(div)
+                let imgDelete = new Image();
+                imgDelete.src = '../../img/delete.svg'
+                imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
+                imgDelete.setAttribute('title', 'Supprimer la ressource')
+                imgDelete.style.width='20px'
+                imgDelete.style.marginRight = '10%'
+                imgDelete.setAttribute('id', 'resource-h-'+indexHRC)
+
+                div = document.createElement('div')
+                div.appendChild(imgDelete)
+                div.appendChild(li)
+                div.style.display = 'flex'
+                div.style.alignItems = 'center'
+
+                ul.appendChild(div)
+            }
         }
     } else {
         var li = document.createElement('li');
@@ -573,28 +531,31 @@ function fillMRCList(id) {
 
     if (len > 0) {
         for (let indexMRC = 0 ; indexMRC < len ; indexMRC++) {
-            // On crée le li qui va stocker la ressource (visuellement) 
-            var li = document.createElement('li');
-    
-            let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb 
-            let resourceName = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].name
-            li.innerText = resourceName +' ('+resourceNb+')'
+
+            if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].available) {
+                // On crée le li qui va stocker la ressource (visuellement) 
+                var li = document.createElement('li');
         
-            let imgDelete = new Image();
-            imgDelete.src = '../../img/delete.svg'
-            imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
-            imgDelete.setAttribute('title', 'Supprimer la ressource')
-            imgDelete.style.width='20px'
-            imgDelete.style.marginRight = '10%'
-            imgDelete.setAttribute('id', 'resource-m-'+indexMRC)
+                let resourceNb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].nb 
+                let resourceName = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMRC].name
+                li.innerText = resourceName +' ('+resourceNb+')'
+            
+                let imgDelete = new Image();
+                imgDelete.src = '../../img/delete.svg'
+                imgDelete.setAttribute('onclick', 'deleteResource(this.id)')
+                imgDelete.setAttribute('title', 'Supprimer la ressource')
+                imgDelete.style.width='20px'
+                imgDelete.style.marginRight = '10%'
+                imgDelete.setAttribute('id', 'resource-m-'+indexMRC)
 
-            div = document.createElement('div')
-            div.appendChild(imgDelete)
-            div.appendChild(li)
-            div.style.display = 'flex'
-            div.style.alignItems = 'center'
+                div = document.createElement('div')
+                div.appendChild(imgDelete)
+                div.appendChild(li)
+                div.style.display = 'flex'
+                div.style.alignItems = 'center'
 
-            ul.appendChild(div)
+                ul.appendChild(div)
+            }
         }
     } else {
         var li = document.createElement('li');
@@ -607,8 +568,6 @@ function fillMRCList(id) {
  * Gestion du clic sur le bouton 'humaines' dans les ressources d'une activité
  */
 function handleHumanButton() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
 
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bh = document.getElementById('human-button')
@@ -640,12 +599,8 @@ function handleHumanButton() {
 
 /**
  * Gestion du clic sur le bouton 'materielle' dans les ressources d'une activité
- * @param {id de l'activité donc on veut afficher les ressources materielles} id 
  */
 function handleMaterialButton() {
-    // recuperation de l'id
-    //id = id[id.length - 1] 
-
 
     // mise en place du style pour le menu selectionné (Humaines ou Materielles)
     let bm = document.getElementById('material-button')
@@ -686,12 +641,11 @@ function removeOptions(selectElement) {
     for (i = L; i >= 0; i--) {
         selectElement.remove(i); 
     } 
-
 }
 
 /**
  * Permet de supprimer une ressource d'une activité
- * @param {*} id 
+ * @param {id de l'element html} id 
  */
 function deleteResource(id) {
 
@@ -701,20 +655,34 @@ function deleteResource(id) {
     idRessource = idSplitted[idSplitted.length - 1]
 
     if (typeRessource === 'h') {
-        ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.humanResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.humanResourceCategories[idRessource].available = false
         fillHRCList();
     } else {
-        ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        //ACTIVITY_IN_PROGRESS.materialResourceCategories.splice(idRessource, 1)
+        ACTIVITY_IN_PROGRESS.materialResourceCategories[idRessource].available = false
         fillMRCList();
     }
-
 }
 
 
+/**
+ * Verifie que le nom du parcours est correct
+ * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
+ * Envoie la requete POST au serveur
+ */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
+    let verif = true
 
-    document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+    // On verifie que tous les champs sont bons 
+    if (document.getElementById('pathwayname').value == '') {
+        verif = false
+        alert("Le nom du parcours ne peut pas être vide")
+    }
 
-    btnSubmit.click()
+    if (verif) {
+        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+        btnSubmit.click()
+    }
 }
