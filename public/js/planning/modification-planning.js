@@ -370,7 +370,7 @@ function AddEventValider() {
     calendar.render();
 
     $("#add-planning-modal").modal("toggle");
-  
+    updateErrorMessages();
   }
 
 function showSelectDate() {
