@@ -5,7 +5,8 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
     <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
-        <link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
+    <link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
+	<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
@@ -16,6 +17,8 @@
     <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
     <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
     <script src='js/fullcalendar-scheduler/lib/main.js'></script>
+    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
+    <script src="js/jquery-ui/jquery-ui.js"></script>    
 {% endblock %}
 {% block body %}
 <div id="main_content">
@@ -32,7 +35,7 @@
         <thead>
             <tr class='headerHumanResource'> 
                 <th>Identifiant</th>
-                <th><input type="text" id="inputHumanName" onkeyup="filterHumanResource('inputHumanName')" placeholder="Nom"></th>
+                <th><input type="text" id="autocompleteInputHumanName" onkeyup="filterHumanResource('autocompleteInputHumanName')" placeholder="Nom"></th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -65,7 +68,7 @@
         <thead>
             <tr class='headerHumanResourceCategory'> 
                 <th>Identifiant</th>
-                <th><input type="text" id="inputHumanNameCategory" onkeyup="filterHumanResourceCategory('inputHumanNameCategory')" placeholder="Nom"></th>
+                <th><input type="text" id="autocompleteInputHumanNameCategory" onkeyup="filterHumanResourceCategory('autocompleteInputHumanNameCategory')" placeholder="Nom"></th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -97,6 +100,23 @@
 {{ include ('human_resource/show_category.html.twig') }}
 {{ include ('human_resource/new_category.html.twig') }}
 {{ include ('human_resource/edit_category.html.twig')}}
+
+	<script>
+	$( "#autocompleteInputHumanName" ).autocomplete({
+	source: hrArray,
+	select: function( event, ui ) {
+		filterHumanResource('autocompleteInputHumanName', ui.item.value);
+	}
+	}
+	);
+    	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
+	source: hcrArray,
+	select: function( event, ui ) {
+		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
+	}
+	}
+	);
+	</script>
 
 {% endblock %}
 
