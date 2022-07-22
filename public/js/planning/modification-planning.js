@@ -279,7 +279,7 @@ function AddEventValider() {
 
         //Add one event in the Calendar
         var event = calendar.addEvent({
-          id: "new",
+          id: "new"+countAddEvent,
           description: "",
           resourceIds: activityResourcesArray,
           title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
