@@ -17,6 +17,7 @@ function showInfosModalHuman(idHumanResource, resourceName) {
   change_tab_human_infos("planning");
   $("#infos-human-resource-modal").modal("show");
   document.getElementById("load-large").style.visibility = "visible";
+  document.getElementById("empty-planning").style.visibility = "hidden";
 }
 
 function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
@@ -53,7 +54,8 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
   createCalendarResource("materialresource");
   change_tab_material_infos("planning");
   $("#infos-material-resource-modal").modal("show");
-  document.getElementById("load-large").style.visibility = "visible";
+  document.getElementById("load-large").style.visibility = "visible";  
+  document.getElementById("empty-planning").style.visibility = "hidden";
 }
 
 function showInfosModalMaterialCateg(
@@ -399,6 +401,12 @@ function addToCalendar(data) {
         daysOfWeek: [workinghours[i].dayweek],
       });
     }
+  }
+  if(events.length == 0){
+    document.getElementById("empty-planning").style.visibility = "visible";
+  }
+  else{
+    document.getElementById("empty-planning").style.visibility = "hidden";
   }
   document.getElementById("load-large").style.visibility = "hidden";
   calendar.render();

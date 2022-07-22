@@ -4,13 +4,17 @@ namespace App\Controller;
 
 use App\Entity\MaterialResource;
 use App\Entity\CategoryOfMaterialResource;
+use App\Entity\Unavailability;
+use App\Entity\UnavailabilityMaterialResource;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
+use App\Repository\UnavailabilityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use DateTime;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryOfMaterialResourceRepository;
 use App\Repository\MaterialResourceScheduledRepository;
@@ -115,7 +119,30 @@ class MaterialResourceController extends AbstractController
         }
     
 }
+public function unavailability(Request $request) {
 
+    $param = $request->request->all(); 
+    $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
+    $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
+
+    $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
+    $unavailabilities = $unavailabilitiesRepository->findAll();
+    $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
+    $unavailabilitiesMaterial = $unavailabilitiesMaterialRepository->findAll();
+    $materialResourcesRepository = new MaterialResourceRepository($this->getDoctrine());
+    $materialResource = $materialResourcesRepository->findBy(['id' => $param['id-material-resource-unavailability']]);
+
+    
+    $unavailability = new Unavailability();
+    $unavailabilityMaterialResource = new UnavailabilityMaterialResource();
+    $unavailability->setStartdatetime($startTime);
+    $unavailability->setEnddatetime($endTime);
+    $unavailabilitiesRepository->add($unavailability, true);
+    $unavailabilityMaterialResource->setMaterialresource($materialResource[0]);
+    $unavailabilityMaterialResource->setUnavailability($unavailability);
+    $unavailabilitiesMaterialRepository->add($unavailabilityMaterialResource, true);
+    return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+}
 
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine

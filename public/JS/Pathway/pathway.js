@@ -70,10 +70,10 @@ function showInfosPathway(idPathway, name) {
             console.log(data);
             //drawActivities(data);
         },
-        error: function (data) {
-            console.log("error : can't access activities");
-        }
-    });
+        error: function() {
+            console.log("can't access activities");
+          }
+        });
 
     change_tab('activities');
     $('#infos-pathway-modal').modal("show");
@@ -121,13 +121,19 @@ function change_tab(id) {
     }
 }
 
-function drawActivities(data) {
-    var canvas = document.querySelector('canvas');
+function drawActivities(data){
+    /*var canvas = document.querySelector('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width;
-    for (i = 0; i < data.length; i++) {
-
+    maxLevel = 0;
+    for(i = 0; i < data.length; i++){
+        if(maxLevel < data[i]['level']){
+            maxLevel = data[i]['level'];
+        }
     }
+    for(i = 0; i < data.length; i++){
+
+    }*/
 }
 
 
