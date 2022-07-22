@@ -22,7 +22,7 @@
     <input type="hidden" id="json-pathway" value="{{ pathwayJson.content }}">
 
     <div id="title-pathway">     
-        <h1> Éditer un parcours </h1>
+        <h1  > Éditer un parcours </h1>
         <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div>
     </div>
 
@@ -44,7 +44,7 @@
             <div id="pathway-form-body">
                 <!-- partie gauche - permet de lister les activités -->
                 <div id="create-activity-container">
-                    <label id="lbl-title-create" dclass="label">Création d'une activité</label>
+                    <h4 class="title"> <label id="lbl-title-create" class="label">Création d'une activité</label> </h4>
 
        
                     <div id="create-activity">
@@ -66,7 +66,7 @@
 
                             <div id="div-add-resources">
                                 <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
-                                <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
+                                <input id="resource-nb" min="1" placeholder="Qte" type="number" title="Choisissez les quantité de la ressource"> </input>
                                 <img onclick="addResources()" src="{{ asset('./img/plus.png')}}" title="Ajouter la ressource"> </img>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
 
                 <!-- partie droite - permet d'éditer une activité -->
                 <div id="activities-list">
-                    <label id="name" class="label" for='name'> Liste des activités </label>    
+                    <h4 class="title"> <label id="name" class="label" for='name'> Liste des activités </label> </h4>   
                     <div id="list">  </div>  
                 </div>
             </div>
