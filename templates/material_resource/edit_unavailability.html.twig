@@ -1,14 +1,14 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 {% endblock %}
-<div class="modal" id="edit--unavailability-human-resource-modal">
+<div class="modal" id="edit--unavailability-material-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Gestion des Indisponibilités de<p id = 'human-resource-name-unavailability'> </p></h2>
+                <h2 class="modal-title">Gestion des Indisponibilités de<p id = 'material-resource-name-unavailability'> </p></h2>
             </div>
-               <form id = "edit-form-resource" action="{{ path('HumanResourceUnavailability') }}" method="post">
-                <input name = "id-human-resource-unavailability" id = "human-resource-id-unavailability" style = "display : none">
+               <form id = "edit-form-resource" action="{{ path('MaterialResourceUnavailability') }}" method="post">
+                <input name = "id-material-resource-unavailability" id = "material-resource-id-unavailability" style = "display : none">
                 <div class="modal-body">
                 Début de la nouvelle indisponibilité : <br>
                 <input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
@@ -17,8 +17,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>
-                    <button type='button' onclick="edit__verifyUnavailabilityHuman()" class="btn-consult btn-secondary"> Valider  </button>
-                    <button id = 'btn-none-edit-human-unavailability' style = "display : none" type = "submit"></button>
+                    <button type='button' onclick="edit__verifyUnavailabilityMaterial()" class="btn-consult btn-secondary"> Valider  </button>
+                    <button id = 'btn-none-edit-material-unavailability' style = "display : none" type = "submit"></button>
                 </div>
                 </form>
         </div>

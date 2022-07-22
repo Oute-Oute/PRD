@@ -692,9 +692,6 @@ class HumanResourceController extends AbstractController
         $unavailabilityHumanResource->setUnavailability($unavailability);
         $unavailabilitiesHumanRepository->add($unavailabilityHumanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
-
-
-        //$unavailabilityHumanResource->setHumanresource()
     }
 
 

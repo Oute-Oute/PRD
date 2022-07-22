@@ -3,8 +3,6 @@
  */
 var tagsPatients = [];
 var tagsPathways = [];
-var PathwaysArray = [];
-var PatientsArray = [];
 function changeDate() {
   var date = new Date(document.getElementById("Date").value); //get the new date in the DatePicker
   var day = date.getDate(); //get the day
@@ -94,7 +92,13 @@ function editAppointment(
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
-  document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
+
+  split1 = dayappointment.split('-')
+  split2 = split1[0].split(' ')
+  newDateFormat = split1[2] + '/' + split1[1] + '/20' + split2[1]
+  document.getElementById("dayAppointment").value = newDateFormat
+
+  //document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
@@ -130,12 +134,18 @@ function hideDayModale(type) {
 }
 
 function validate(type) {
+
+  split1 = document.getElementById("dateTemp").value.split('-')
+  newDateFormat = split1[2] + '/' + split1[1] + '/' + split1[0]
+
   if (type == "new") {
-    document.getElementById("dateSelected").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
+    document.getElementById("dateSelected").value = newDateFormat
+    //document.getElementById("dateSelected").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
     console.log(document.getElementById("dateSelected").value);
   }
   else if (type == "edit") {
-    document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
+    document.getElementById("dayAppointment").value = newDateFormat
+    //document.getElementById("dayAppointment").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
   }
   hideDayModale(type);
 }
@@ -293,11 +303,8 @@ function filterPathway(idInput) {
   var filter = document.querySelector('#' + idInput).value;
   for (let i = 0; i < trs.length; i++) {
     var regex = new RegExp(filter, 'i');
-    var pathwayName = trs[i].cells[2].outerText;
-    if(PathwaysArray.indexOf(pathwayName) == -1){
-      PathwaysArray.push(pathwayName);
-      }
-    if (regex.test(pathwayName) == false) {
+    var pathwayName1 = trs[i].cells[2].outerText;
+    if (regex.test(pathwayName1) == false) {
       trs[i].style.display = 'none';
     }
     else {
@@ -313,9 +320,7 @@ function filterPatient(idInput) {
   for (let i = 0; i < trs.length; i++) {
     var regex = new RegExp(filter, 'i');
     var patientName = trs[i].cells[1].outerText;
-    if(PatientsArray.indexOf(patientName) == -1){
-      PatientsArray.push(patientName);
-      }
+    console.log(trs[i].cells[2].outerText)
     if (regex.test(patientName) == false) {
       trs[i].style.display = 'none';
     }

@@ -23,7 +23,32 @@
 				<tr class="headerUser">
 					<th>Id</th>
 					<th><input type="text" id="autocompleteInputUserNname" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Nom d'utilisateur"></th>
-					<th>Rôle</th>
+					<th>
+					<button id="filterbutton" onclick="filterShow()" class="btn-calendar-edit" title="Selection des rôles à afficher">
+				Rôles
+				
+			</button>
+			<div id="filterId" class="filter-container" style="display:none">
+			<fieldset onchange='filterRole()'>
+       <div>
+      <input type="checkbox" id="admin" checked>
+      <label for="admin">Admin</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="editeur" checked>
+      <label for="editeur">Editeur</label>
+    </div>
+
+	<div>
+      <input type="checkbox" id="visiteur" checked>
+      <label for="visiteur">Visiteur</label>
+    </div>
+</fieldset>
+			
+			
+			</div>
+					</th>
 					<th>Actions</th>
 				</tr>
 			</thead>

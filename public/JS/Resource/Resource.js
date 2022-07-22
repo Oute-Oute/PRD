@@ -226,6 +226,9 @@ function hideEditModalForm() {
     $('#edit--human-resource-modal').modal("hide");
     $('#edit--material-resource-category-modal').modal("hide");
     $('#edit--material-resource-modal').modal("hide");
+    $('#edit--unavailability-material-resource-modal').modal("hide");
+    $('#edit--unavailability-human-resource-modal').modal("hide");
+
 }
 
 function change_tab_material(id)
