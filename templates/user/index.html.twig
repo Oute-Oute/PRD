@@ -7,10 +7,12 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/User/EditUser.css') }}">
+	<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
 	<script src="js/User/user.js"></script>
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+    <script src="js/jquery-ui/jquery-ui.js"></script>    
 {% endblock %}
 {% block body %}
 	<div class="index" id="index-users">
@@ -20,7 +22,7 @@
 			<thead>
 				<tr class="headerUser">
 					<th>Id</th>
-					<th><input type="text" id="inputUserNname" onkeyup="filterUser('inputUserNname')" placeholder="Nom d'utilisateur"></th>
+					<th><input type="text" id="autocompleteInputUserNname" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Nom d'utilisateur"></th>
 					<th>Rôle</th>
 					<th>Actions</th>
 				</tr>
@@ -55,6 +57,13 @@
 		</table>
 		{{ include ('user/edit_user.html.twig') }}
 		{{ include ('user/new_user.html.twig') }}
-
+		<script>
+			$("#autocompleteInputUserNname").autocomplete({
+				source: autocompleteArray,
+				select: function (event, ui) {
+				filterUser('autocompleteInputUserNname', ui.item.value);
+				}
+			});
+		</script>
 
 	{% endblock %}

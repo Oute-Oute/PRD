@@ -162,6 +162,7 @@ div#conn-form div#container form {
     color: #fff;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
     background-color: #6c757d;
+    border: #6c757d;
     cursor: not-allowed;
 }
 
