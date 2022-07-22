@@ -22,8 +22,8 @@
     <input type="hidden" id="json-pathway" value="{{ pathwayJson.content }}">
 
     <div id="title-pathway">     
-        <h1  > Éditer un parcours </h1>
-        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div>
+        <h1> Éditer un parcours </h1>
+        {# <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div> #}
     </div>
 
     <form action="{{ path('PathwayEdit') }}" method="post">
@@ -49,9 +49,17 @@
        
                     <div id="create-activity">
                         <div class="form-field">
-                            <input type="text" id='input-name' class="input-activity" placeholder="Nom">
-                            <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Durée (min)">
-
+                             {# Nom de l'activité #}
+                            <div class="flex-col">
+                                <label class="label" for="input-name"> Nom de l'activité </label>
+                                <input type="text" id="input-name" class="input-activity" placeholder="Ex : Prise de sang">
+                            </div>
+                            {# Durée de l'activité #}
+                            <div class="flex-col">
+                                <label class="label" for='input-name'> Durée de l'activité (min)</label>
+                                <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Ex : 10">
+                            </div>
+                            {# Liste des ressources de l'activité #}
                             <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
                             <div id="div-edit-activity">
                                 <div id="buttons-resources"> 
