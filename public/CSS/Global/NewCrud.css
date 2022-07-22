@@ -47,7 +47,6 @@ div#activities-list #list{
 
 .div-activity {
     margin: 5px 10px;
-    height: 35px;
     border-radius: 10px;
     background-color: #fff;
     border: 1px solid lightgray;
@@ -59,6 +58,7 @@ div#activities-list #list{
 }
 .div-activity p {
     margin: 0px;
+    width: 80%;
 }
 
 /* bouton pour ajouter des activités au parcours */
@@ -255,7 +255,12 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     width: 70%;
     border: none;
     height: 100%;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
+
 #div-add-resources input {
     width: 30%;
     border: none;

@@ -8,39 +8,21 @@
 {% block stylesheets %}
 	<link rel="stylesheet" href="{{ asset('CSS/Global/EditCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Profile.css') }}">
-
-{% endblock %}
-
-{% block javascripts %}
-		<script>
-		function inputGestion(e) {
-			let newPassword1 = document.getElementById('new_password').value;
-			let newPassword2 = document.getElementById('confirm_password').value;
-
-		if (newPassword1 === newPassword2) {
-			document.getElementById('MdpDifferent').style.display = 'none';
-			document.getElementById('submit_button').disabled = false;
-
-		} else {
-			document.getElementById('MdpDifferent').style.display = 'flex';
-			document.getElementById('submit_button').disabled = true;
-		}
-		}
-		</script>
+    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 {% endblock %}
 
 
 {% block body %}
+
+<div class="index">
 	<form id="edit-form" method="POST">
 		<div id="container">
-			<h1 id="title">Mon identifiant :
-				{{ app.user.userIdentifier }}</h1>
-			<p2 id="MessageSucces">
-				{{messageSucces}}
-			</p2>
-			<p3 id="MessageError">
-				{{messageError}}
-			</p3>
+
+			<h1 id="title">Mon identifiant : {{ app.user.userIdentifier }} </h1>
+			{# p2 #}
+			<p class="p-green" id="MessageSucces">{{messageSucces}}</p>
+			{# p3 #}
+			<p class="p-red" id="MessageError"> {{messageError}} </p>
 
 			<div id="bloc">
 				<div>
@@ -52,30 +34,32 @@
 				<div>
 					<label>Nouveau mot de passe</label>
 					<input type="password" oninput="inputGestion()" required="required" name="new_password" id="new_password" class="form-control"/>
-
 				</div>
 
 				<!-- Confirmation mot de passe  -->
 				<div>
 					<label>Confirmation mot de passe</label>
 					<input type="password" oninput="inputGestion()" required="required" name="confirm_password" id="confirm_password" class="form-control"/>
-
 				</div>
 
-
 				<!-- Submit button -->
-				<button type="submit" id="submit_button">Appliquer le changement</button>
+				<button class="btn-edit btn-secondary" type="submit" id="submit_button">Appliquer le changement</button>
 			</div>
-
-			<p1 id="MdpDifferent">Vos nouveaux mots de passe sont differents
-			</p1>
+			{#p1#}
+			<p class="p-red" id="MdpDifferent">Vos nouveaux mots de passe sont differents </p>
 		</div>
+
 		<div>
-
 			<input type="hidden" name="username" id="username" value={{ app.user.userIdentifier }}>
-
 		</div>
 
 	</form>
 
+</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+	<script src="{{ asset('JS/Profile/profile.js')}}"></script>
 {% endblock %}
