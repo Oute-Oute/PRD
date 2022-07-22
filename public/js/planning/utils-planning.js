@@ -103,25 +103,6 @@ function changeFilter(id, resourcesToDisplay) {
   if (document.getElementById(id).checked == true) {
     //if the resource is checked
     switch (headerResources) {
-      case "Patients":
-        console.log(resourcesToDisplay);
-        calendar.addResource({
-          //add the resource to the calendar
-          id: id, //set the id of the resource
-          title: document.getElementById(id).name, //set the title of the resource
-          businessHours: {
-            //set the business hours of the resource
-            startTime:
-              resourcesToDisplay[document.getElementById(id).value][
-                "businessHours"
-              ]["startTime"], //set the start time of the business hours
-            endTime:
-              resourcesToDisplay[document.getElementById(id).value][
-                "businessHours"
-              ]["endTime"], //set the end time of the business hours
-          },
-        });
-        break;
       case "Ressources Humaines":
         var businessHours = []; //create an array to store the working hours
         idTemp = [document.getElementById(id).value];
