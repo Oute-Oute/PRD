@@ -560,7 +560,7 @@ class PathwayController extends AbstractController
                                         //il faut le trouver dans la bd et le delete
                                         $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC, "quantity" => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb]);
                                         
-                                        $em->remove($linkAMR);
+                                        $em->remove($linkAMR[0]);
                                         $em->flush();
                                     }
                                 }
@@ -596,7 +596,7 @@ class PathwayController extends AbstractController
                                         //il faut le trouver dans la bd et le delete
                                         $linkAHR = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC, "quantity" => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb]);
                                         
-                                        $em->remove($linkAHR);
+                                        $em->remove($linkAHR[0]);
                                         $em->flush();
                                     }
                                 }
@@ -879,7 +879,8 @@ class PathwayController extends AbstractController
         ];
 
         $data = $this->checkDuplicate($test);
-        return new JsonResponse($data);
+
+        return new JsonResponse($this->addIndexSuccessors($data));
     }
 
     public function sortActivities($activityArray, $arraySuccessor, ManagerRegistry $doctrine){
@@ -897,7 +898,7 @@ class PathwayController extends AbstractController
             }
         }
 
-        return $this->sortActivitiesRecursive($doctrine, $activitiesSorted, $activityRacine, 0);
+        return $this->sortActivitiesRecursive($doctrine, $activitiesSorted, $activityRacine, 1);
     }
 
     public function sortActivitiesRecursive(ManagerRegistry $doctrine, $activitiesArray, $activityToAdd, $level){
@@ -905,7 +906,7 @@ class PathwayController extends AbstractController
         if($listSuccessors == []){
             return array(
                 'activity' => $activityToAdd,
-                'level' => $level+1,
+                'level' => $level,
             );
         }
 
@@ -923,7 +924,45 @@ class PathwayController extends AbstractController
         return $activitiesArray;
     }
 
-    function checkDuplicate($activitiesArray) { 
+    public function addIndexSuccessors($activitiesArray){
+        $temp_array = [];
+        $i = 0;
+                    
+        foreach($activitiesArray as $activity){
+            $arraySuccessorIndex = [];
+            $listSuccessors = $activity['activity']['successor']; 
+            if($listSuccessors != []){
+                for($j=0; $j < count($listSuccessors); $j++){
+                    $indexSuccessor = 0;
+                    foreach($activitiesArray as $act){
+                        if($act['activity']['id'] == $listSuccessors[$j]['idB']){
+                            $arraySuccessorIndex = array_merge($arraySuccessorIndex, [$indexSuccessor]);
+                        }
+                        $indexSuccessor++;
+                    }
+                }
+            }
+            $temp_array[$i] = [
+                'activity' => $activity['activity'],
+                'level' => $activity['level'],
+                'successorsIndex' => $arraySuccessorIndex
+            ];
+            
+            $i++;
+        }
+
+        foreach($temp_array as $activity){
+            foreach($activity['successorsIndex'] as $successor){
+                if($temp_array[$successor]['level'] <= $activity['level']){
+                    $temp_array[$successor]['level'] = $activity['level']+1;
+                }
+            }
+        }
+        
+        return $temp_array;
+    }
+
+    public function checkDuplicate($activitiesArray) { 
         $temp_array = array(); 
         $i = 0; 
         $key_array = array(); 

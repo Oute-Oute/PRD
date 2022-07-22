@@ -1,6 +1,6 @@
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
-
+var autocompleteArray = new Array()
 
 var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
@@ -70,10 +70,10 @@ function showInfosPathway(idPathway, name) {
             console.log(data);
             //drawActivities(data);
         },
-        error: function (data) {
-            console.log("error : can't access activities");
-        }
-    });
+        error: function() {
+            console.log("can't access activities");
+          }
+        });
 
     change_tab('activities');
     $('#infos-pathway-modal').modal("show");
@@ -121,13 +121,19 @@ function change_tab(id) {
     }
 }
 
-function drawActivities(data) {
-    var canvas = document.querySelector('canvas');
+function drawActivities(data){
+    /*var canvas = document.querySelector('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width;
-    for (i = 0; i < data.length; i++) {
-
+    maxLevel = 0;
+    for(i = 0; i < data.length; i++){
+        if(maxLevel < data[i]['level']){
+            maxLevel = data[i]['level'];
+        }
     }
+    for(i = 0; i < data.length; i++){
+
+    }*/
 }
 
 
@@ -178,11 +184,6 @@ function addArray() {
 function addActivity() {
 
     let verif = true
-
-    console.log('verif ok confirm')
-    console.log(document.getElementById('input-name').value)
-    console.log(document.getElementById('input-duration').value)
-
 
     // On verifie que tous les champs sont bons 
     if (document.getElementById('input-name').value == '') {
@@ -291,6 +292,7 @@ function fillActivityList() {
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
         noactivity.innerHTML = "Aucune activité pour le moment !"
+        noactivity.style.marginLeft ="10px"
         divActivitiesList.appendChild(noactivity)
     }
 
@@ -691,14 +693,22 @@ function submitPathway() {
     }
 }
 
-function filterPathway(idInput) {
-
+function filterPathway(idInput,selected=null) {
+    if(selected == null){
+        var filter = document.querySelector('#'+idInput).value; 
+        }
+        else{
+            var filter = selected;
+        }
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var filter = document.querySelector('#' + idInput).value;
     for (let i = 0; i < trs.length; i++) {
         var regex = new RegExp(filter, 'i');
-        var pathwayName1 = trs[i].cells[1].outerText;
-        if (regex.test(pathwayName1) == false) {
+        var pathwayName = trs[i].cells[1].outerText;
+        if(autocompleteArray.indexOf(pathwayName) == -1){
+            autocompleteArray.push(pathwayName);
+            }
+        if (regex.test(pathwayName) == false) {
             trs[i].style.display = 'none';
         }
         else {
