@@ -2,19 +2,19 @@ var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
-var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
+var HUMAN_RESOURCE_CATEGORIES // list of humans resources categories
+var MATERIAL_RESOURCE_CATEGORIES // list of materials resources categories
 
 var RESOURCES_BY_ACTIVITIES = new Array()
-var PATHWAY // contient toutes les informations du pathway à éditer
+var PATHWAY // Contain all the data of a pathway to edit
 
-var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
+var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / editing process 
 var ID_EDITED_ACTIVITY 
 var IS_EDIT_MODE = false
 
 
 /**
- * Appelée au chargement de la page de création d'un parcours (pathway)
+ * Call at the loading of the add pathway page
  */
 document.addEventListener('DOMContentLoaded', () => {
     SELECT_ID = 0;
@@ -70,16 +70,7 @@ function initActivitiesList() {
             RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].already = true
             RESOURCES_BY_ACTIVITIES[i].materialResourceCategories[indexMR].available = true
         }
-        /*
-        for (let indexMR = 0; indexMR < PATHWAY.activities[i].length; indexMR++) {
-            let res = new Object();
-            res.id = PATHWAY.activities[i].materialResourceCategories[indexMR].id
-            res.name = PATHWAY.activities[i].materialResourceCategories[indexMR].name
-            res.nb = PATHWAY.activities[i].materialResourceCategories[indexMR].nb
-            RESOURCES_BY_ACTIVITIES[i].materialResourceCategories.push(res)
-        
-        }
-        */
+
         RESOURCES_BY_ACTIVITIES[i].id = PATHWAY.activities[i].id
         RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
         RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
@@ -94,7 +85,7 @@ function showInfosPathway(idPathway, name) {
     document.getElementById('pathway').innerHTML = name;
    
     var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+    tableBody.innerHTML = ''; // We delete what we wrote in the modal form precedently
 
     $.ajax({
         type : 'POST',
@@ -133,7 +124,6 @@ function tableAppointment(tableBody, data){
         }
     }
 }
-
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -179,8 +169,8 @@ function addArray() {
 }
 
 /**
- * Permet d'ajouter une activité dans la liste grâce a ACTIVITY_IN_PROGRESS
- * ou de modifier les informations d'une activité déjà présente grâce à IS_EDIT_MODE et ACTIVITY_IN_PROGRESS
+ * All to add an activity to the list, thanks to ACTIVITY_IN_PROGRESS
+ * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
  */
 function addActivity() {
 
@@ -231,16 +221,13 @@ function addActivity() {
     }
 }
 
-/* remplit la liste des activités (sur la droite) */
+/**
+ *  Fill the activity list  
+ */
 function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*divActivitiesList.innerHTML = ''
-    let label = document.createElement('label')
-    label.setAttribute('class', 'label')
-    label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)*/
 
     let indexActivityAvailable = 0
 
@@ -260,7 +247,7 @@ function fillActivityList() {
             let imgDelete = new Image();
             imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id','imgd-'+indexActivity)
-            imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+            imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
@@ -301,13 +288,13 @@ function fillActivityList() {
 }
 
 /**
- * Permet de supprimer un select dans la liste déroulante 
- * @param {*} id : img-0, img-1
+ * Allow to remove an activity in the list 
+ * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
-function deleteSelect(id) {
+function deleteActivity(id) {
 
-    // On récupère le numero de la div a supprimer  
-    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
+    // We got the index of the div to delete  
+    // To do this we get number after '-' in the id of the image : (img-1)
     id = getId(id)
     
     // On peut donc recuperer la div
@@ -316,7 +303,7 @@ function deleteSelect(id) {
     let divAddActivity = document.getElementsByClassName('activities-container')[0]
     divAddActivity.removeChild(divToDelete)*/
     
-    // On actusalise l'input qui contient le nb d'activité
+    // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
@@ -327,7 +314,7 @@ function deleteSelect(id) {
  
 
 /**
- * Permet de modifier une activité  
+ * Allow to edit an activity  
  */
 function editActivity(id) {
     IS_EDIT_MODE = true
@@ -347,7 +334,7 @@ function editActivity(id) {
 }
 
 /**
- * Permet d'annuler la modification d'une activité  
+ * Allow to cancel the changes during the editing of the activity 
  */
 function cancelEditActivity() {
     IS_EDIT_MODE = false
@@ -365,7 +352,7 @@ function cancelEditActivity() {
 
 
 /**
- * Permet de valider les modifications faites lors de l'édition d'une activité 
+ * Allow to confirm the changes during the editing of the activity 
  */
 function confirmEditActivity() {
 
