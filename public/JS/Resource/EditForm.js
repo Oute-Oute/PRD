@@ -301,20 +301,14 @@ function edit__handleAddUnavailability() {
     let btnAdd = document.getElementById('btn-none-edit-human-unavailability')
     let nbCategory = document.getElementById('edit--nbunavailability');
     var nbCateg = 0;
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
-    /*for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
-        if(categoriesContainer.children[i].children[0].checked) {
-        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
-        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
-        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
-        nbCateg = nbCateg +1;
-        }
-        
-    } */
-        
-    //nbCategory.value = nbCateg;
+    let beginTime = document.getElementById('datetime-begin-unavailability').value
+    let endTime = document.getElementById('datetime-end-unavailability').value
+    if(beginTime < endTime) {
     btnAdd.click();
+    }
+    else {
+        alert('Veuillez saisir une date de début antérieure à celle de fin !')
+    }
 
 }
 
@@ -325,20 +319,14 @@ function edit__verifyUnavailabilityMaterial() {
     let btnAdd = document.getElementById('btn-none-edit-material-unavailability')
     let nbCategory = document.getElementById('edit--nbunavailability');
     var nbCateg = 0;
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
-    /*for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
-        if(categoriesContainer.children[i].children[0].checked) {
-        categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
-        categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg) 
-        categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
-        nbCateg = nbCateg +1;
-        }
-        
-    } */
-        
-    //nbCategory.value = nbCateg;
+    let beginTime = document.getElementById('datetime-begin-unavailability').value
+    let endTime = document.getElementById('datetime-end-unavailability').value
+    if(beginTime < endTime) {
     btnAdd.click();
+    }
+    else {
+        alert('Veuillez saisir une date de début antérieure à celle de fin !')
+    }
 
 }
 

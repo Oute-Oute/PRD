@@ -10,7 +10,7 @@
         <link rel="icon" href="/img/hospital_icon.svg">
         
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        <link rel="stylesheet" href="CSS/bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}             
