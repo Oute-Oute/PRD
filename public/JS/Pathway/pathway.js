@@ -11,6 +11,8 @@ var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de cr
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
+var lines= new Array();
+
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -68,7 +70,7 @@ function showInfosPathway(idPathway, name) {
         dataType: "json",
         success: function (data) {
             console.log(data);
-            //drawActivities(data);
+            drawActivities(data);
         },
         error: function() {
             console.log("can't access activities");
@@ -122,20 +124,71 @@ function change_tab(id) {
 }
 
 function drawActivities(data){
-    /*var canvas = document.querySelector('canvas');
-    var ctx = canvas.getContext('2d');
-    canvas.width;
+    var divContent = document.getElementById('divContent');
+    divContent.innerHTML = "";
     maxLevel = 0;
     for(i = 0; i < data.length; i++){
         if(maxLevel < data[i]['level']){
             maxLevel = data[i]['level'];
         }
     }
-    for(i = 0; i < data.length; i++){
 
-    }*/
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .block {
+            flex-basis:` + Math.round(100/maxLevel) + `%;
+        }
+        `;
+    document.head.appendChild(style);
+
+    for(i = 0; i < maxLevel; i++){
+        var div = document.createElement('DIV');
+        div.classList.add("block");
+        div.setAttribute('id', 'content'+ (i+1));
+        
+        divContent.appendChild(div);
+    }
+
+    for(i = 0; i < data.length; i++){
+        var div = document.createElement('DIV');
+        div.setAttribute('id', 'activity'+ i);
+        div.style.height = 'auto';
+        div.style.width = '50%';
+        div.style.margin = '5px 5px 20px 5px';
+        div.style.padding= '5px 5px 5px 5px';
+        div.style.borderStyle = 'solid';
+
+        var p = document.createElement('p');
+        p.style.fontSize = '80%';
+        p.innerHTML = data[i]['activity']['name'];
+        div.appendChild(p);
+        
+        var divLevel = document.getElementById('content' + data[i]['level']);
+        divLevel.appendChild(div);
+
+        
+    }
+    drawArrows(data);
 }
 
+function drawArrows(data){
+    lines = new Array();
+    for(i = 0; i < data.length; i++){
+        for(j = 0; j < data[i]['successorsIndex'].length; j++){
+            start = document.getElementById('activity'+ i);
+            end = document.getElementById('activity'+ data[i]['successorsIndex'][j]);
+            l = new LeaderLine(start, end);
+            lines.push(l);
+        }
+    }
+}
+
+function deleteArrows(){
+    for (var l of lines) {
+        l.remove();
+    }
+    lines = new Array();
+}
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
