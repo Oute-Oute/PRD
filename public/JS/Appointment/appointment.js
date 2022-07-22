@@ -259,7 +259,6 @@ function NextMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  console.log(calendar.getEvents());
   getTargetsbyMonth(newDate)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility = "visible";
@@ -282,7 +281,6 @@ function Today() {
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
   getTargetsbyMonth(today)
-  console.log(calendar.getEvents());
   calendar.gotoDate(today)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -320,7 +318,6 @@ function filterPatient(idInput) {
   for (let i = 0; i < trs.length; i++) {
     var regex = new RegExp(filter, 'i');
     var patientName = trs[i].cells[1].outerText;
-    console.log(trs[i].cells[2].outerText)
     if (regex.test(patientName) == false) {
       trs[i].style.display = 'none';
     }
@@ -328,12 +325,4 @@ function filterPatient(idInput) {
       trs[i].style.display = '';
     }
   }
-}
-
-function changeDateFormat() {
-  console.log("test")
-  //split1 = document.getElementById("dayAppointment").value.split('-')
-  //split2 = split[0].split1(' ')
-  //newDateFormat = split1[2] + '/' + split1[1] + '/20' + split2[1]
-  //document.getElementById("dayAppointment").value = newDateFormat
 }
