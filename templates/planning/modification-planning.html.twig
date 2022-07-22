@@ -210,11 +210,14 @@
 				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
+					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>
 				{% else %}
 					{% set userIdentifier = '' %}
 				{% endif %}
-				<form method="post" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
-					<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
+				<form method="post" id="update-database-form" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
+					<button type="submit" class="btn-edit btn-secondary" onclick="updateDatabase('save', {% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Enregistrer</button>
+					<button type="submit" class="btn-edit btn-secondary" onclick="updateDatabase('validate', {% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Valider</button>
+					<input type="hidden" id='update-type' name="update-type"/>
 					<input type="hidden" id='events' name="events"/>
 					<input type="hidden" id='validation-date' name="validation-date"/>
 					<input type="hidden" id='list-resource' name="list-resource"/>
