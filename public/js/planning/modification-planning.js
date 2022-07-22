@@ -993,7 +993,7 @@ function updateErrorMessages() {
     })
     if(unscheduledAppointment == true){ //if the appointment is not already on the planning
       //we set an error message
-      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours : " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
+      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
       listErrorMessages.messageUnscheduledAppointment.push(message);
     }
   })
