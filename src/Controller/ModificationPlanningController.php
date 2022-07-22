@@ -609,7 +609,6 @@ class ModificationPlanningController extends AbstractController
         //récupération des events et des ressources depuis le twig
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
-        $updateType = json_decode($request->request->get("update-type"));
         $userId = $request->request->get("user-id");
 
         //création d'une nouvelle liste fusionnant les deux listes précédentes : events et ressources
@@ -813,12 +812,7 @@ class ModificationPlanningController extends AbstractController
             }
         }
         $this->modificationDeleteOnUnload($request, $doctrine, $_GET['username']);
-        if($updateType == "save"){
-            return $this->redirect("/ModificationPlanning?date=" . $date . "&id=" . $userId);
-        }
-        else {
-            return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
-        }
+        return $this->redirect("/ModificationPlanning?date=" . $date . "&id=" . $userId);
     }
 
     public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')

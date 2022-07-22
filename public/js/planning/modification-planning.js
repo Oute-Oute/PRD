@@ -95,7 +95,7 @@ function formatDate(date) {
   );
 }
 
-function updateDatabase(updateType, id) {
+function updateDatabase(id) {
   var listCurrentEvents = calendar.getEvents();
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
@@ -106,7 +106,6 @@ function updateDatabase(updateType, id) {
     listResources.push(listResourceCurrentEvent);
   });
   document.getElementById("user-id").value = JSON.stringify(id);
-  document.getElementById("update-type").value = JSON.stringify(updateType);
   document.getElementById("events").value = JSON.stringify(calendar.getEvents());
   document.getElementById("list-resource").value = JSON.stringify(listResources);
   document.getElementById("validation-date").value = $_GET("date");
