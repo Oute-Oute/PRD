@@ -159,6 +159,11 @@ a:hover{
   margin-bottom: 5px;
 }
 
+.label-event-solid{
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
 #lateral-panel {
   position:absolute;
   z-index: 9999;                  /* pour être au dessus des autres éléments */                /* ne suit pas le scroll de la page et sert de réfèrent */
@@ -252,6 +257,11 @@ a:hover{
 
 #modify-planning-modal{
   z-index: 1056;
+}
+
+#input-container-onWhite-appointmenttime{
+  display:flex; 
+  flex-direction: row;
 }
 
 

@@ -329,11 +329,3 @@ function filterPatient(idInput) {
     }
   }
 }
-
-function changeDateFormat() {
-  console.log("test")
-  //split1 = document.getElementById("dayAppointment").value.split('-')
-  //split2 = split[0].split1(' ')
-  //newDateFormat = split1[2] + '/' + split1[1] + '/20' + split2[1]
-  //document.getElementById("dayAppointment").value = newDateFormat
-}

@@ -81,17 +81,20 @@
 					</h2>
 				</div>
 				<div class="modal-body">
-					<label class="label-event">Début du rendez-vous au plus tôt : </label>
+					
 					<div class="input-container onWhite">
-						<input  type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled>
+						<div id='input-container-onWhite-appointmenttime'>
+							<label class="label-event">Début au plus tôt : </label> &nbsp;   
+							<input  type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled>
+							<label> &emsp;</label>
+							<label class="label-event"> Fin au plus tard :    </label> &nbsp;
+							<input type="time" id="input-modal-latestappointmentdate" name="input-modal-earliestappointmentdate" disabled></input>
+						</div>
 						</br>
-						<label class="label-event">Fin du rendez-vous au plus tard :</label>
-						</br>
-						<input type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled></input>
-						</br>
-						<label style='font-weight:bold;' class="label-event">Début du parcours</label>
-						</br>
-						
+						<div id='input-container-onWhite-pathway'>
+							<label style='font-weight:bold;' class="label-event">Parcours</label>
+							</br>
+						</div>
 						<div class="modal-footer">
 
 							<!-- bouton permettant de fermer la modal ou de valider les modification -->

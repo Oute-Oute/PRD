@@ -93,3 +93,31 @@ function filterUser(idInput, selected = null) {
     }
   }
 }
+
+function filterShow() {
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none") {
+    //if the filter is already displayed
+    filter.style.display = "none"; //hide the filter
+  }
+  else {
+    filter.style.display = "inline-block";
+  }
+}
+
+function filterRole() {
+  visiteurChecked = document.getElementById('visiteur').checked
+  adminChecked = document.getElementById('admin').checked
+  editeurChecked = document.getElementById('editeur').checked
+  var trs = document.querySelectorAll("#tableUser tr:not(.headerUser)");
+  for (let i = 0; i < trs.length; i++) {
+    var role = trs[i].cells[2].outerText;
+
+    if ((role == 'Visiteur' && visiteurChecked) || (role == 'Editeur' && editeurChecked) || (role == 'Admin' && adminChecked)) {
+      trs[i].style.display = "";
+    } else {
+      trs[i].style.display = "none";
+    }
+  }
+}
+

@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
-        <link rel="stylesheet" href="../CSS/bootstrap/bootstrap.min.css">
+        {#<link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">#}
 {% endblock %}
 
 
@@ -19,12 +19,13 @@
     {#  inputs pour passer les json venant du serveur #}
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
     <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
-                    
+
+     
     <div id="title-pathway">     
         <h1> Ajouter un parcours </h1>
-        <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img>
-</div>
+        {# <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div> #}
     </div>
+    
 
     <form action="{{ path('PathwayAdd') }}" method="post">
 
@@ -36,21 +37,29 @@
             <div id="pathway-form-top">
                <div class="flex-col"> 
                     <label class="label" for='name'> Nom du parcours </label>        
-                    <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()'>
+                    <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()' placeholder="Ex : Parcours 3">
                 </div>
             </div>
 
             <div id="pathway-form-body">
-                <!-- partie gauche - permet de créer / édtier une activité -->
+                <!-- partie gauche - permet de créer / éditer une activité -->
                 <div id="create-activity-container">
                     <h4 class="title"> <label id="lbl-title-create" class="label">Création d'une activité</label> </h4>
 
        
                     <div id="create-activity">
                         <div class="form-field">
-                            <input type="text" id='input-name' class="input-activity" placeholder="Nom">
-                            <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Durée (min)">
-
+                            {# Nom de l'activité #}
+                            <div class="flex-col">
+                                <label class="label" for="input-name"> Nom de l'activité </label>
+                                <input type="text" id="input-name" class="input-activity" placeholder="Ex : Prise de sang">
+                            </div>
+                            {# Durée de l'activité #}
+                            <div class="flex-col">
+                                <label class="label" for='input-name'> Durée de l'activité (min)</label>
+                                <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Ex : 10">
+                            </div>
+                            {# Liste des ressources de l'activité #}
                             <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
                             <div id="div-edit-activity">
                                 <div id="buttons-resources"> 
@@ -90,9 +99,8 @@
 
             <div id="pathway-form-footer">
                 <button type="button" class="btn-delete btn-secondary" onclick="window.location.href='/pathways'">Annuler</button>
-                <button onclick='submitPathway()' type="button" class="btn-valide btn-secondary" > Ajouter le parcours</button>
-                <button style="display:none;" id='submit' type="submit" class="btn-valide btn-secondary" >  </button>
-
+                <button onclick="submitPathway()" type="button" class="btn-valide btn-secondary" > Ajouter le parcours</button>
+                <button style="display:none;" id="submit" type="submit" class="btn-valide btn-secondary" >  </button>
             </div>
         </div>
     </form>
@@ -108,8 +116,9 @@
 
 
 {% block javascripts %}
-        <script src="../js/jquery-3.6.0.js"></script>
-        <script src="../js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-        <script src="../js/Pathway/EditForm.js"> </script>
-        <script src="../js/Pathway/pathway.js"> </script>
+    {#<script src="{{ asset('JS/jquery-3.6.0.js')}}"></script>#}
+    <script src="{{ asset('JS/bootstrap/bootstrap.min.js') }}" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+    <script src="{{ asset('JS/Pathway/pathway.js') }}"> </script>
+    <script src="{{ asset('JS/jquery-ui/external/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('JS/jquery-ui/jquery-ui.js') }}"></script>  
 {% endblock %}

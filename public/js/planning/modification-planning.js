@@ -171,6 +171,7 @@ function AddEventValider() {
   var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
+  
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -665,45 +666,100 @@ function createCalendar(typeResource,useCase) {
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
       eventClick: function (event) {
         if (event.event.display != "background"){
-          
+          var listAppointment=JSON.parse(document.getElementById('listeAppointments').value.replaceAll("3aZt3r", " ")); 
+          var listActivities=JSON.parse(document.getElementById('listeActivities').value.replaceAll("3aZt3r", " ")); 
+          var listSuccessors=JSON.parse(document.getElementById('listeSuccessors').value);
+          var listActivitiesPathway=[]; 
+          var listSuccessorsPathway=[];
+          var activitiesInlistSuccessorsPathway=[]; 
           var id = event.event._def.publicId; //get the id of the event
           var activity = calendar.getEventById(id); //get the event with the id
-
+          var appointment; 
           var title=activity._def.extendedProps.patient + " / "+activity._def.extendedProps.pathway;
-          var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-          var humanResourcesNames = ""; //create a string with the human resources names
-          if (humanResources != undefined) {
-            for (var i = 0; i < humanResources.length; i++) {
-              //for each human resource except the last one
-    
-              if (humanResources[i].title != undefined) {
-                //if the human resource exist
-                humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+  
+          for(let i=0; i<listAppointment.length;i++){
+            if(activity._def.extendedProps.appointment==listAppointment[i].id){
+              appointment=listAppointment[i];
+            }
+          }
+ 
+          for(let i=0; i<listActivities.length; i++){
+            if(appointment.idPathway[0].id.replaceAll('pathway_','')==listActivities[i].idPathway){
+              listActivitiesPathway.push(listActivities[i]); 
+            }
+          }
+
+          for(let i=0; i<listSuccessors.length; i++){
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessors[i].idactivitya && activitiesInlistSuccessorsPathway.includes(listSuccessors[i].idactivitya)==false){
+                listSuccessorsPathway.push(listSuccessors[i]); 
+                activitiesInlistSuccessorsPathway.push(listSuccessors[i].idactivitya);
               }
             }
           }
-          //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
-    
-          var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+         
+          var listSuccessorsActivitiesPathway=[]; 
+          for(let i=0; i<listSuccessorsPathway.length; i++){
+            var nameActivitya; 
+            var duration; 
+            var nameActivityb; 
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessorsPathway[i].idactivitya){
+                console.log('a');
+                nameActivitya=listActivitiesPathway[j].name;
+                duration=listActivitiesPathway[j].duration;
+              }
+            }
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessorsPathway[i].idactivityb){
+                nameActivityb=listActivitiesPathway[j].name;
+              }
+            }
+            listSuccessorsActivitiesPathway.push({nameactivitya:nameActivitya, nameactivityb:nameActivityb,duration:duration,delaymin:listSuccessorsPathway[i].delaymin, delaymax:listSuccessorsPathway[i].delaymax});
+          }
           
-          var materialResourcesNames = ""; //create a string with the material resources names
-          if (materialResources != undefined) {
-            for (var i = 0; i < materialResources.length; i++) {
-              //for each material resource except the last one
-              if (materialResources[i].title != undefined) {
-                //if the material resource exist
-                materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
-              }
-            }
+          //removing before display
+          var nodesNotification=document.getElementById('input-container-onWhite-pathway').childNodes;                             //Get the div in lateral-panel-bloc
+          while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
+            document.getElementById('input-container-onWhite-pathway').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
           }
-          // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
-    
+          for(let i=0; i<listSuccessorsActivitiesPathway.length; i++){
+            var div = document.createElement('div'); 
+            div.setAttribute('class','alert alert-dark')                    
+            div.setAttribute('role','alert');
+            div.setAttribute('style','display: flex; flex-direction : column;'); 
+            div.innerHTML=listSuccessorsActivitiesPathway[i].nameactivitya + ' -----> '+listSuccessorsActivitiesPathway[i].nameactivityb;
+           
+            //Div to put input in row 
+            var divRow= document.createElement('div');
+            divRow.setAttribute('style','display: flex; flex-direction : column;'); 
+            div.appendChild(divRow); 
+
+            var inputDelaymin=document.createElement('label'); 
+            inputDelaymin.setAttribute('class','label-event-solid');
+            inputDelaymin.innerHTML='Délai minimum : '+listSuccessorsActivitiesPathway[i].delaymin +' min'; 
+
+            var inputDelaymax=document.createElement('label'); 
+            inputDelaymax.setAttribute('class','label-event-solid');
+            inputDelaymax.setAttribute('value',listSuccessorsActivitiesPathway[i].delaymin); 
+            inputDelaymax.innerHTML='Délai maximum : '+listSuccessorsActivitiesPathway[i].delaymax + ' min'; 
+            divRow.appendChild(inputDelaymin); 
+            divRow.appendChild(inputDelaymax);
+
+            document.getElementById('input-container-onWhite-pathway').appendChild(div); 
+          }
+            
+            console.log(appointment.earliestappointmenttime)
+            console.log(appointment.latestappointmenttime)
+          
           //set data to display in the modal window
+
           document.getElementById("show-information-appointment-title").innerHTML = title; //set the title of the event
+          $("#input-modal-earliestappointmentdate").val(appointment.earliestappointmenttime.substring(11, 19));
+          $("#input-modal-latestappointmentdate").val(appointment.latestappointmenttime.substring(11, 19));
+          
           $("#display-appointment-modal").modal("show"); //open the window
           document.getElementById('eventClicked').value=JSON.stringify(event);
-          console.log(event);
-        //DisplayModifyEventModal(event);
         }
       },
 
