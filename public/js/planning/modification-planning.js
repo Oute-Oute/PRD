@@ -1013,6 +1013,7 @@ function updateErrorMessages() {
       }
     }
   })
+  console.log(listErrorMessages)
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1222,27 +1223,6 @@ function getListCategoryMaterialResources(scheduledActivity){
                 //we set error messages for the quantity of material resources and if it's a wrong category
                 categoryMaterialResource.messageCategoryQuantity = getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
                 categoryMaterialResource.messageWrongCategory = getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material");
-
-                var materialResourceAlreadyExist = false;
-                categoryMaterialResource.listMaterialResources.forEach((existingMaterialResource) => {
-                  if(existingMaterialResource.humanResourceId == materialResource){ //we check if the material resource is already present on the list
-                    materialResourceAlreadyExist = true;
-
-                    //if it's already present, we set the error messages for working hours, unavailability and if the resource is already scheduled in an other activity
-                    existingMaterialResource.messageWorkingHours = getMessageWorkingHours(scheduledActivity, materialResource);
-                    existingMaterialResource.messageUnavailability = getMessageUnavailability(scheduledActivity, materialResource);
-                    existingMaterialResource.messageAlreadyScheduled = getMessageAlreadyExist(scheduledActivity, materialResource);
-                  }
-                })
-                if(materialResourceAlreadyExist == false){ //if the material resource doesn't exist in the list
-                  //add new material resource
-                  categoryMaterialResource.listMaterialResources.push({
-                    materialResourceId: materialResource,
-                    materialResourceName: getResourceTitle(materialResource),
-                    messageUnavailability: getMessageUnavailability(scheduledActivity, materialResource),
-                    messageAlreadyScheduled: getMessageAlreadyExist(scheduledActivity, materialResource)
-                  })
-                }
               }
             })
           }
@@ -1251,13 +1231,7 @@ function getListCategoryMaterialResources(scheduledActivity){
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
-              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
-              listMaterialResources: [{
-                materialResourceId: materialResource,
-                materialResourceName: getResourceTitle(materialResource),
-                messageUnavailability: getMessageUnavailability(scheduledActivity, materialResource),
-                messageAlreadyScheduled: getMessageAlreadyExist(scheduledActivity, materialResource)
-              }]
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material")
             })
           }
         }
