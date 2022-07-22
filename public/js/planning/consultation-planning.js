@@ -225,7 +225,8 @@ function createCalendar(resources) {
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"], //set the id
-            title: temp["title"], //set the title
+            title: temp["title"], //set the title            
+            categories: [temp["categories"]], //set the type
             businessHours: businessHours, //get the business hours
           });
         }
@@ -244,6 +245,7 @@ function createCalendar(resources) {
               //add the resources to the calendar
               id: temp["id"], //set the id
               title: temp["title"], //set the title
+              categories: [temp["categories"]], //set the type
             });
           }
         }
