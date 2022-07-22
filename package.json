@@ -17,5 +17,6 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "leader-line": "^1.0.7"
     }
 }

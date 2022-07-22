@@ -215,6 +215,21 @@ ul.ui-autocomplete {
     font-weight: bold;
     margin-bottom: 5px;
   }
+
+  .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .block {
+    flex-basis: 20%;
+  }
+
+  .leader-line {
+    z-index: 10000;
+  }
   #empty-planning{
     position: absolute;
     display : block;
