@@ -1,11 +1,13 @@
 body {
     background-color: lightgray;
-    height : 100vh;
+    height: 100vh;
 }
 
-.btn-consult-users, .btn-valide-user, .btn-delete-user {
-    border : 2px solid #34EB67;
-    margin-top : 20px;
+.btn-consult-users,
+.btn-valide-user,
+.btn-delete-user {
+    border: 2px solid #34EB67;
+    margin-top: 20px;
     border: none;
     background: #404040;
     color: #ffffff;
@@ -14,53 +16,90 @@ body {
     text-decoration: none;
     display: inline-block;
     transition: all 0.3s ease 0s;
-    border : 1px solid black;
+    border: 1px solid black;
 }
 
 
-.btn-valide-user:hover, .btn-consult-users:hover, .btn-delete-user:hover {
+.btn-valide-user:hover,
+.btn-consult-users:hover,
+.btn-delete-user:hover {
     color: #404040;
-    background : none;
-    border : 1px solid black;
+    background: none;
+    border: 1px solid black;
 }
 
 div#edit-user-form {
 
-    display:flex;
+    display: flex;
     align-items: center;
-    flex-direction : column;
-    justify-content : center;
-    height : 100vh;
-    width : 100%;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
 
 }
 
 div#container {
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 24px;
-    padding : 25px 50px;
-    display : flex;
-    align-items : center;
+    padding: 25px 50px;
+    display: flex;
+    align-items: center;
     flex-direction: column;
     border-radius: 20px;
 }
+
 form {
-    display : flex;
-    align-items : center;
-    flex-direction : column;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
-div#user{
-    display : grid;
-    justify-items : end;
-    margin-right : 55px;
+div#user {
+    display: grid;
+    justify-items: end;
+    margin-right: 55px;
 }
 
 input {
-    margin-left : 10px;
+    margin-left: 10px;
 }
 
-p1{
-    visibility: collapse;    
+p1 {
+    visibility: collapse;
     color: #ff0000;
 }
 
+.btn-calendar-edit {
+    margin-top: 10px;
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    fill: white;
+    background-color: var(--main-blue);
+    color: #ffffff;
+}
+
+.btn-calendar-edit:hover {
+    background: #0057A8;
+    border: 1px solid #002242;
+}
+
+.filter-container {
+    order: 4;
+    display: none;
+    position: absolute;
+    z-index: 10000;
+    margin: 30px;
+    padding: 20px 50px 20px 50px;
+    width: fit-content;
+    height: fit-content;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 10px 5px 5px grey;
+}
