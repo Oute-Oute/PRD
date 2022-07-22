@@ -95,7 +95,7 @@ function formatDate(date) {
   );
 }
 
-function setEvents() {
+function updateDatabase(id) {
   var listCurrentEvents = calendar.getEvents();
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
@@ -105,6 +105,7 @@ function setEvents() {
     }
     listResources.push(listResourceCurrentEvent);
   });
+  document.getElementById("user-id").value = JSON.stringify(id);
   document.getElementById("events").value = JSON.stringify(calendar.getEvents());
   document.getElementById("list-resource").value = JSON.stringify(listResources);
   document.getElementById("validation-date").value = $_GET("date");
@@ -843,13 +844,29 @@ function clearArray(array){
 }
 
 /**
- * This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
+ * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
 function undoEvent(){ 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
 }
+
+/**
+ * @brief This function is called when the user clicks a key
+ */
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.key === 'z') { //if user clicks ctrl + z
+    //we call the function undoEvent 
+    undoEvent();
+  }
+  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + s
+    //we call the function undoEvent 
+    var id = document.getElementById("user-id").value;
+    updateDatabase('save', id);
+    document.getElementById("update-database-form").submit();
+  }
+});
 
 /**
  * This function stock in an array the history of all modifications on the Calendar, for performance reasons, we save only the last 10 modifications. 
