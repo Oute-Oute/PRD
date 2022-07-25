@@ -278,3 +278,8 @@ function Today() {
       headerResources
   ); //rerender the page with a new date
 }
+
+function zoomChange() {
+  newZoom = document.getElementById('zoom').value;
+  calendar.setOption('slotDuration', newZoom)
+}
