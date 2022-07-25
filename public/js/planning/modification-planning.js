@@ -941,6 +941,7 @@ function updateErrorMessages() {
                 scheduledActivityAlreadyExist = true;
 
                 //update the data
+                existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
                 existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
@@ -955,6 +956,7 @@ function updateErrorMessages() {
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
 
+                messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -983,6 +985,7 @@ function updateErrorMessages() {
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
 
+            messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -993,6 +996,7 @@ function updateErrorMessages() {
       }
     }
   })
+  console.log(listErrorMessages)
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1055,6 +1059,36 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
     }
   })
 
+  return message;
+}
+
+/**
+ * 
+ * @param {*} scheduledActivity 
+ * @returns 
+ */
+function getMessageNotFullyScheduled(scheduledActivity){
+  var message = "";
+
+  var quantityRequired = 0;
+  scheduledActivity._def.extendedProps.categoryHumanResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+  scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+
+  quantityAllocated = 0;
+  scheduledActivity._def.resourceIds.forEach((resource) => {
+    if(resource != "h-default" && resource != "m-default"){
+      quantityAllocated = quantityAllocated + 1;
+    }
+  })
+
+  if(quantityRequired > quantityAllocated){
+    message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
+  }
+  
   return message;
 }
 
@@ -1423,7 +1457,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
  * @returns the error message
  */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((unavailability) => { //browse all events
     if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
@@ -1443,7 +1477,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
                 listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
                     //set an error message with the resource name
-                    message.push(resource.title + " est indisponible sur ce créneau. ");
+                    messages.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
               }
@@ -1453,7 +1487,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
       }
     }
   })
-  return message;
+  return messages;
 }
 
 /**
@@ -1757,7 +1791,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
