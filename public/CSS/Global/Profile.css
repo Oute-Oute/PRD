@@ -26,29 +26,19 @@ align-items: flex-start;
 font-size: larger;
 }
 
-P1{
-    color: red;
-    display: none;
+.p-green {
+    color: #37BC9B;
 }
-P2{
-    color: green;
-}
-P3{
+.p-red {
     color: red;
 }
-P4{
-    color: red;
+
+#MdpDifferent {
     display: none;
 }
 
-button#submit_button {
-    height : 10vh;
-    width : 100%;
-    font-size: larger;   
-    align-items: center;
-    justify-content: center;    
-    border-radius: 10px;
-}
+
+
 
 
 

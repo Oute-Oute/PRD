@@ -12,10 +12,6 @@ body {
     --main-black: #404040;
 }
 
-h1#title {
-    margin-bottom: 30px;
-}
-
 .flex-row {
     display: flex;
     flex-direction: row;

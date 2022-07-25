@@ -282,7 +282,7 @@ class ModificationPlanningController extends AbstractController
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
         $pathwayArray = array();
         $idpath = $pathway->getId();
-        $idpath = "pathway_" . $idpath; //formatage pour fullcalendar
+        $idpath = "Parcour" . $idpath; //formatage pour fullcalendar
         //ajout des données du pathway dans un tableau
         $pathwayArray[] = array(
             'id' => $idpath,
@@ -299,10 +299,20 @@ class ModificationPlanningController extends AbstractController
 
         if ($humanResources != null) {
             foreach ($humanResources as $humanResource) {
+                $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $humanResource));
+                $categoriesArray=array();
+                foreach ($categories as $category) {
+                    $categoriesArray[]=array(
+                        'id' => $category->getId(),
+                        'name' => $category->getHumanResourceCategory()->getCategoryname()
+                    );
+                }
                 $humanResourcesArray[] = array(
                     'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
                     'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
+                    'categories' => $categoriesArray
+
                 );
             }
         }
@@ -347,12 +357,21 @@ class ModificationPlanningController extends AbstractController
     {
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
         $materialResourcesArray = array();
+        $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResources));
+        $categoriesArray=array();
+        foreach ($categories as $category) {
+            $categoriesArray[]=array(
+                'id' => $category->getId(),
+                'name' => $category->getMaterialResourceCategory()->getCategoryname()
+            );
+        }
 
         if ($materialResources != null) {
             foreach ($materialResources as $materialResource) {
                 $materialResourcesArray[] = array(
                     'id' => ("material-" . str_replace(" ", "3aZt3r", $materialResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
+                    'categories' => $categoriesArray
                 );
             }
         }
