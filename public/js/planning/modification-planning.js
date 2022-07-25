@@ -243,20 +243,22 @@ function AddEventValider() {
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-        
+        var humanAlreadyScheduled=[];
+        var materialAlreadyScheduled=[]; 
         //Find for all Activities of the pathway, the number of Humanresources to define. 
         var categoryHumanResources=[]; 
         
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfHumanResourceArray.length; k++){
-              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
-              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
+                humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
+                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
         }
-      
 
         
 
@@ -266,8 +268,11 @@ function AddEventValider() {
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
-              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
-              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
+                materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           }
