@@ -76,10 +76,15 @@ class UserController extends AbstractController
     public function userDelete(User $user, UserRepository $userRepository): Response
     {
         $modificationRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Modification");
-        $allModification = $modificationRepository->findBy(['id' => $user]);
+        $allModification = $modificationRepository->findBy(['user' => $user]);
 
         foreach ($allModification as $modification) {
             $modificationRepository->remove($modification, true);
+        }
+        $userSettingsRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\UserSettings");
+        $userSettings = $user->getUsersettings();
+        if($userSettings != null){
+            $userSettingsRepository->remove($userSettings, true);
         }
 
         //suppression du patient dans la table User
