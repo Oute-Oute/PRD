@@ -11,7 +11,7 @@
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
  	<script src="js/popper.min.js"></script>  
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-
+	<script src="js/planning/utils-planning.js"></script>
 	<!-- insertion des fichier js et css spécifique à modification planning -->
 	<script src="js/planning/modification-planning.js"></script>
 	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
@@ -81,17 +81,20 @@
 					</h2>
 				</div>
 				<div class="modal-body">
-					<label class="label-event">Début du rendez-vous au plus tôt : </label>
+					
 					<div class="input-container onWhite">
-						<input  type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled>
+						<div id='input-container-onWhite-appointmenttime'>
+							<label class="label-event">Début au plus tôt : </label> &nbsp;   
+							<input  type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled>
+							<label> &emsp;</label>
+							<label class="label-event"> Fin au plus tard :    </label> &nbsp;
+							<input type="time" id="input-modal-latestappointmentdate" name="input-modal-earliestappointmentdate" disabled></input>
+						</div>
 						</br>
-						<label class="label-event">Fin du rendez-vous au plus tard :</label>
-						</br>
-						<input type="time" id="input-modal-earliestappointmentdate" name="input-modal-earliestappointmentdate" disabled></input>
-						</br>
-						<label style='font-weight:bold;' class="label-event">Début du parcours</label>
-						</br>
-						
+						<div id='input-container-onWhite-pathway'>
+							<label style='font-weight:bold;' class="label-event">Parcours</label>
+							</br>
+						</div>
 						<div class="modal-footer">
 
 							<!-- bouton permettant de fermer la modal ou de valider les modification -->
@@ -204,14 +207,15 @@
 		<div id='container-top-right'>
 			<div id='top-right-buttons'>
 				<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
-				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Annuler</button>
+				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Quitter</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
+					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>
 				{% else %}
 					{% set userIdentifier = '' %}
 				{% endif %}
-				<form method="post" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
-					<button type="submit" class="btn-edit btn-secondary" onclick="setEvents()">Valider</button>
+				<form method="post" id="update-database-form" action="{{ path('ModificationPlanningValidation', { username: userIdentifier }) }}">
+					<button type="submit" class="btn-edit btn-secondary" onclick="updateDatabase({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Enregistrer</button>
 					<input type="hidden" id='events' name="events"/>
 					<input type="hidden" id='validation-date' name="validation-date"/>
 					<input type="hidden" id='list-resource' name="list-resource"/>

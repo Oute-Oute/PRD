@@ -11,6 +11,8 @@ var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de cr
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
+var lines= new Array();
+
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -67,8 +69,7 @@ function showInfosPathway(idPathway, name) {
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
-            console.log(data);
-            //drawActivities(data);
+            drawActivities(data);
         },
         error: function() {
             console.log("can't access activities");
@@ -111,10 +112,12 @@ function change_tab(id) {
 
     switch (id) {
         case 'activities':
+            showArrows();
             activities.style.display = 'block';
             appointments.style.display = 'none';
             break;
         case 'appointments':
+            hideArrows();
             activities.style.display = 'none';
             appointments.style.display = 'block';
             break;
@@ -122,20 +125,146 @@ function change_tab(id) {
 }
 
 function drawActivities(data){
-    /*var canvas = document.querySelector('canvas');
-    var ctx = canvas.getContext('2d');
-    canvas.width;
+    var divContent = document.getElementById('divContent');
+    divContent.innerHTML = "";
     maxLevel = 0;
+    arrayActivityByLevel = Array();
     for(i = 0; i < data.length; i++){
         if(maxLevel < data[i]['level']){
             maxLevel = data[i]['level'];
         }
     }
+    for(i = 0; i < maxLevel; i++){
+        arrayActivityByLevel[i] = [0];
+    }
+    
     for(i = 0; i < data.length; i++){
+        arrayActivityByLevel[data[i]['level']-1][0]++;
+        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i, data[i]['activity']['duration']);
+    }
 
-    }*/
+    maxActivityByLevel = 0;
+    for(i = 0; i < arrayActivityByLevel.length; i++){
+        if(maxActivityByLevel < arrayActivityByLevel[i][0]){
+            maxActivityByLevel = arrayActivityByLevel[i][0];
+        }
+    }
+    var divBr= document.getElementById('modal-br');
+    divBr.innerHTML = "";
+    for(i = 0; i < maxActivityByLevel*3; i++){
+        var br = document.createElement("br");
+        divBr.appendChild(br);
+    }
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .block {
+            flex-basis:` + Math.round(100/maxLevel) + `%;
+        }
+        `;
+    document.head.appendChild(style);
+
+    for(i = 0; i < maxLevel; i++){
+        var div = document.createElement('DIV');
+        div.classList.add("block", "wrapper");
+        div.style.flexDirection = "column";
+        div.setAttribute('id', 'content'+ (i+1));
+        
+        divContent.appendChild(div);
+    }
+    console.log(arrayActivityByLevel);
+    for(i=0; i < arrayActivityByLevel.length; i++){
+        nbActivity = arrayActivityByLevel[i][0];
+        switch(nbActivity){
+            case 1:
+                height = 100/(nbActivity*2);
+                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2], arrayActivityByLevel[i][3]);
+            break;
+            default:
+                for(j = 0; j < nbActivity; j++){
+                    if(nbActivity%2 == 0){
+                        if(j < nbActivity/2){
+                            height = 100 + 50/nbActivity;
+                        }
+                        else{
+                            height = 25;
+                        }
+                    }
+                    else{
+                        if(j < nbActivity/2){
+                            height = 100 + 50/nbActivity;
+                        }
+                        if(j == nbActivity/2){
+                            height = 50;
+                        }
+                        if(j > nbActivity/2){
+                            height = 50/nbActivity;
+                        }
+                    }
+                    createActivities(height, i+1, arrayActivityByLevel[i][j*3+1], arrayActivityByLevel[i][j*3+2], arrayActivityByLevel[i][j*3+3]);
+                }
+            break;
+        }
+    }
+
+    drawArrows(data);
 }
 
+function createActivities(height, level, name, idActivity, duration){
+    var divLevel = document.getElementById('content' + level);
+    var div = document.createElement('DIV');
+    div.setAttribute('id', 'activity'+ idActivity);
+    
+    div.style.maxWidth = '50%';
+    div.style.width = 'fit-content';
+    div.style.position = "relative";
+    div.style.transform = 'translate(0%, -' + height + '%)';
+    div.style.padding= '5px 5px 5px 5px';
+    div.style.borderStyle = 'solid';
+
+    var p1 = document.createElement('p');
+    p1.style.fontSize = '80%';
+    p1.innerHTML = name;
+
+    var p2 = document.createElement('p');
+    p2.style.fontSize = '80%';
+    p2.innerHTML = "durée : " + duration + "min"; 
+
+    div.appendChild(p1); div.appendChild(p2);
+
+    divLevel.appendChild(div);
+
+}
+
+function drawArrows(data){
+    lines = new Array();
+    for(i = 0; i < data.length; i++){
+        for(j = 0; j < data[i]['successorsIndex'].length; j++){
+            start = document.getElementById('activity'+ i);
+            end = document.getElementById('activity'+ data[i]['successorsIndex'][j]);
+            l = new LeaderLine(start, end, {color: '#0dac2d'});
+            lines.push(l);
+        }
+    }
+}
+
+function deleteArrows(){
+    for (var l of lines) {
+        l.remove();
+    }
+    lines = new Array();
+}
+
+function hideArrows(){
+    for (var l of lines) {
+        l.hide('none');
+    }
+}
+
+function showArrows(){
+    for (var l of lines) {
+        l.show();
+    }
+}
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -235,13 +364,6 @@ function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*
-    divActivitiesList.innerHTML = ''
-    let label = document.createElement('label')
-    label.setAttribute('class', 'label')
-    label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)
-    */
 
     let indexActivityAvailable = 0
 
@@ -259,7 +381,7 @@ function fillActivityList() {
             let imgDelete = new Image();
             imgDelete.src = '../img/delete.svg'
             imgDelete.setAttribute('id', 'imgd-' + indexActivity)
-            imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+            imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
@@ -276,10 +398,6 @@ function fillActivityList() {
             let div = document.createElement('div')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
-
-            /*pindex = document.createElement('p')
-            pindex.innerText = indexActivity
-            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)
@@ -300,13 +418,13 @@ function fillActivityList() {
 }
 
 /**
- * Permet de supprimer un select dans la liste déroulante 
+ * Allow to remove an Activity
  * @param {*} id : img-0, img-1
  */
-function deleteSelect(id) {
+function deleteActivity(id) {
 
     // On récupère le numero de la div a supprimer  
-    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
+    // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
     // On peut donc recuperer la div
@@ -320,7 +438,6 @@ function deleteSelect(id) {
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
-    //SELECT_ID = SELECT_ID - 1;
     fillActivityList()
 }
 
@@ -395,8 +512,11 @@ function getId(str) {
     return id[id.length - 1]
 }
 
+/**
+ *  Action performed when the '+' button is pressed to add a resource to an activity 
+ */
 function addResources() {
-
+    
     // On verifie que le champs quantité est bien rempli 
     let verif = true
     if (document.getElementById('resource-nb').value == '') {
@@ -416,19 +536,48 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value
 
-            let resourceName = '';
-            for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-                if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                    resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+            index = verifyResourcesDuplicates(resourceId, false)
+            console.log(index)
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                    if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                        resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                        }
+                    }
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                    
                 }
             }
-
-            ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
 
             fillHRCList()
         } else {
@@ -437,24 +586,85 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value
 
-            let resourceName = '';
-            for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
-                if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
-                    resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+            // We verify if the resource already exist in the list
+            index = verifyResourcesDuplicates(resourceId, true)
+
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                    if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                        resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                        if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                            resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                        }
+                    }
+
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
                 }
             }
 
-            ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true
-
             fillMRCList()
+
         }
 
     }
+}
+
+/**
+ * Takes an id in parameter and verify if the resource id already in the list of the activity.
+ * Returns the index of the resource in the list if it exists
+ * @param {*} id 
+ * @param {*} material 
+ */
+function verifyResourcesDuplicates(id, material) {
+    
+    // Si material est true
+    if (material) {
+
+        for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
+            if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
+                return indexMaterial
+            }
+        }
+
+    } else {
+
+        for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
+                return indexHuman
+            }
+        }
+
+    }
+    
+    return -1
 }
 
 /**

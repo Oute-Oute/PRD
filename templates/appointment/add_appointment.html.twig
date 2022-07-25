@@ -27,23 +27,23 @@
           </br>
           <div class="flex-col">
             <label class="label" for='dayappointmentlabel'> Jour du rendez-vous </label>
-            <input class="input" id="dateSelected" value="Cliqez pour selectionner une date" name='dayappointment' onclick="openDayModale('new')" required>
+            <input class="input" id="dateSelected" value="Cliquez pour selectionner une date" name='dayappointment' onclick="openDayModale('new')" required>
           </div>
           </br>
           <div class="flex-col">
             <label class="label" for='earliestappointmenttime'> Heure d'arrivée au plus tôt </label>
-            <input class="input" type='time' name='earliestappointmenttime' required="required">
+            <input class="input" type='time' name='earliestappointmenttime' >
           </div>
           </br>
           <div class="flex-col">
             <label class="label" for='latestappointmenttime'> Heure de fin au plus tard </label>
-            <input class="input" type='time' name='latestappointmenttime' required="required">
+            <input class="input" type='time' name='latestappointmenttime' >
           </div>
           </br>
-          <div class="modal-footer">
-            <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-            <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+          <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
         </div>
 	    </form>
     </div>

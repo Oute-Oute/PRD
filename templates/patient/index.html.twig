@@ -25,11 +25,13 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
+		<input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom ou prenom"></input>	
+
 		<table class="table table-striped" id="tablePatient">
 			<thead>
-				<tr class="headerPatient">
+			<tr class="headerPatient">
 					<th>Id</th>
-					<th><input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom"></th>
+					<th>Nom</th>
 					<th>Prénom</th>
 					<th>Actions</th>
 				</tr>

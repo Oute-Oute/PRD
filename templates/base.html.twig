@@ -1,48 +1,47 @@
-{% if  app.user == null %} 
-{% endif %}
+{% if  app.user == null %}{% endif %}
 
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}{% endblock %}</title>
-        <link rel="icon" href="/img/hospital_icon.svg">
-        
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        <link rel="stylesheet" href="CSS/bootstrap/bootstrap.min.css">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}             
-        <link rel="stylesheet" href="{{ asset('CSS/Global/Menu.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-        <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}{% endblock %}
+		</title>
+		<link
+		rel="icon" href="/img/hospital_icon.svg">
 
-        {% block javascripts %} 
-            {{ encore_entry_script_tags('app') }}
-            {{ encore_entry_script_tags('Menu') }}
+		{# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+		<link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
+		{% endblock %}
+		<link rel="stylesheet" href="{{ asset('CSS/Global/Menu.css') }}">
+		<link rel="stylesheet" href="{{ asset('CSS/Global/Main.css') }}">
+		<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+		<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
 
-             <!-- Include the compiled script-->
-             <script type="text/javascript" src="{{ asset('build/JS/app.js') }}"></script>
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+			{{ encore_entry_script_tags('Menu') }}
 
-        {% endblock %}
-             <script type="text/javascript" src="{{ asset('JS/Menu/Menu.js') }}"></script>
+			<!-- Include the compiled script-->
+			<script type="text/javascript" src="{{ asset('build/JS/app.js') }}"></script>
 
-    </head>
+		{% endblock %}
+		<script type="text/javascript" src="{{ asset('JS/Menu/Menu.js') }}"></script>
 
-    <body>
-        {% include 'Global/Menu.html.twig' %}
-        {% block body %}{% endblock %}
-        
-        {#{% if  app.user != null %} 
-        <div display="hidden" id="OwnUsername">{{ app.user.userIdentifier }} </div>
-        <div display="hidden" id="informations">ID : {{ app.user.userIdentifier }}<br>
-        Rôle : {{ app.user.roles[0] }}
-        </div>
-        {% endif %}#}
-        
+	</head>
 
-    </body>
-</html>
+	<body>
+		{% include 'Global/Menu.html.twig' %}
+		{% block body %}{% endblock %}
 
+		{% if  app.user != null %}
+			<input type="hidden" id="OwnUsername" value="{{ app.user.userIdentifier }}">
+		</input>
+		<input type="hidden" id="informations" value="
+														{{ app.user.userIdentifier }}<br>
+														Rôle :
+														{{ app.user.roles[0] }}"></body>
+</html></input>{% endif %}</body></html>

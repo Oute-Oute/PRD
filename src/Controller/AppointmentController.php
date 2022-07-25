@@ -81,11 +81,23 @@ class AppointmentController extends AbstractController
         //parse_str($nameParsed[0], $nameParsed);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-
         $dayappointment = \DateTime::createFromFormat('d-m-Y H:i:s', str_replace("/","-",$param['dayappointment'].' '."00:00:00"));
-        $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
-        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
-        // Création du rendez-vous
+        
+        if($param["earliestappointmenttime"]!=""){
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
+        }
+        else{
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', "00:00");
+        }
+        if($param["latestappointmenttime"]!=""){
+            
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
+
+        }
+        else{
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', "23:59");
+        }
+            // Création du rendez-vous
         $appointment = new Appointment(); 
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);
@@ -173,7 +185,12 @@ class AppointmentController extends AbstractController
         }
         $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
         $targets = $this->getTargetByPathwayJSON($doctrine, $pathway, $AR, $date);
-        return new JsonResponse($targets);
+        $data[]=
+        [
+            "pathway" => $pathway,
+            "targets" => $targets
+        ];
+        return new JsonResponse($data);
     }
 
     public function getPathwayByName($name, ManagerRegistry $doctrine)
@@ -223,13 +240,16 @@ class AppointmentController extends AbstractController
             $dayWeek = date('w', $dateToGet->getTimestamp());
             $dateToGet=$dateToGet->format('Y-m-d');
             $nbrOfAppt=$AR->getNumberOfAppointmentByPathwayByDate($pathway, $dateToGet);
-            if($nbrOfAppt>0){
+            if($nbrOfAppt>0){//if there is at least one appointment on this day
                 if(array_key_exists($dayWeek, $targetsByDay)){
-                    if($targetsByDay[$dayWeek]>=$nbrOfAppt){
+                    if($targetsByDay[$dayWeek]<=$nbrOfAppt){ // if more or equal appointment than target 
                     $color="#ff0000";
                     }
-                    else{
+                    else if($targetsByDay[$dayWeek]-2<=$nbrOfAppt && $targetsByDay[$dayWeek]-2>=0){ // if more than target - 2 appointment but less than target
                         $color="#ffff00";
+                    }
+                    else{
+                        $color="#00ff00";//default
                     }
                     $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
                     $targetsJSON[] = [
@@ -250,7 +270,7 @@ class AppointmentController extends AbstractController
                 }
             }
             else{
-                if(array_key_exists($dayWeek, $targetsByDay)){
+                if(array_key_exists($dayWeek, $targetsByDay)){ //if target exist but no appointment
                     $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
                     $targetsJSON[] = [
                         'color' => '#00FF00',
@@ -260,7 +280,7 @@ class AppointmentController extends AbstractController
                     ];
                 }
                 else{
-                    $ratioTarget=$nbrOfAppt."/--";
+                    $ratioTarget=$nbrOfAppt."/--";//if no target and no appointment
                     $targetsJSON[] = [
                         'color' => '#0000FF',
                         'description' => $ratioTarget,

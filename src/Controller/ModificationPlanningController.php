@@ -275,14 +275,14 @@ class ModificationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    //Récupération d'un parcour dans la base dee donnée
+    //Récupération d'un parcours dans la base de donnée
     public function getPathway(ManagerRegistry $doctrine, $id)
     {
         //recuperation du pathway depuis la base de données
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
         $pathwayArray = array();
         $idpath = $pathway->getId();
-        $idpath = "pathway_" . $idpath; //formatage pour fullcalendar
+        $idpath = "pathway-" . $idpath; //formatage pour fullcalendar
         //ajout des données du pathway dans un tableau
         $pathwayArray[] = array(
             'id' => $idpath,
@@ -299,10 +299,20 @@ class ModificationPlanningController extends AbstractController
 
         if ($humanResources != null) {
             foreach ($humanResources as $humanResource) {
+                $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $humanResource));
+                $categoriesArray=array();
+                foreach ($categories as $category) {
+                    $categoriesArray[]=array(
+                        'id' => $category->getId(),
+                        'name' => $category->getHumanResourceCategory()->getCategoryname()
+                    );
+                }
                 $humanResourcesArray[] = array(
                     'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
                     'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
+                    'categories' => $categoriesArray
+
                 );
             }
         }
@@ -347,12 +357,21 @@ class ModificationPlanningController extends AbstractController
     {
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
         $materialResourcesArray = array();
+        $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResources));
+        $categoriesArray=array();
+        foreach ($categories as $category) {
+            $categoriesArray[]=array(
+                'id' => $category->getId(),
+                'name' => $category->getMaterialResourceCategory()->getCategoryname()
+            );
+        }
 
         if ($materialResources != null) {
             foreach ($materialResources as $materialResource) {
                 $materialResourcesArray[] = array(
                     'id' => ("material-" . str_replace(" ", "3aZt3r", $materialResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
+                    'categories' => $categoriesArray
                 );
             }
         }
@@ -609,6 +628,7 @@ class ModificationPlanningController extends AbstractController
         //récupération des events et des ressources depuis le twig
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
+        $userId = $request->request->get("user-id");
 
         //création d'une nouvelle liste fusionnant les deux listes précédentes : events et ressources
         $listScheduledEvent = array();
@@ -811,7 +831,7 @@ class ModificationPlanningController extends AbstractController
             }
         }
         $this->modificationDeleteOnUnload($request, $doctrine, $_GET['username']);
-        return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
+        return $this->redirect("/ModificationPlanning?date=" . $date . "&id=" . $userId);
     }
 
     public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')

@@ -1,6 +1,6 @@
 {% if app.user != null %}
 	<div class="dashboard-nav">
-		<nav class="dashboard-nav-list">
+		<nav onclick='filterShowUser()' class="dashboard-nav-list">
 			<div id="menu-top">
 				<header>
 
@@ -49,7 +49,7 @@
 					<img src="/img/user.svg">
 					Utilisateurs
 				</a>
-				<a onclick="window.location.href='{{ path('ProfilEdit', {'id': app.user.id}) }}'" class="dashboard-nav-item">
+				<a href='/profile' class="dashboard-nav-item">
 					<img src="/img/profile.svg">
 
 					Mon profil

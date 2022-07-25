@@ -13,7 +13,7 @@ function editUser(idEdit, usernameEdit) {
 
 //Fonction empechant la suppresion ou l'edition de son propre compte administrateur
 document.addEventListener("DOMContentLoaded", () => {
-  actualUser = document.getElementById("OwnUsername").innerHTML;
+  actualUser = document.getElementById("OwnUsername").value;
   actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
   document.getElementById("buttonEdit" + actualUser).disabled = true;
   document.getElementById("buttonErase" + actualUser).disabled = true;
@@ -93,3 +93,33 @@ function filterUser(idInput, selected = null) {
     }
   }
 }
+
+function filterShowUser(button = null) {
+  let filter = document.getElementById("filterId");
+  if (filter.style.display != "none" || button == null) {
+    //if the filter is already displayed
+    filter.style.display = "none"; //hide the filter
+  }
+  else {
+    filter.style.display = "inline-block";
+  }
+}
+
+function filterRole() {
+  visiteurChecked = document.getElementById('visiteur').checked
+  adminChecked = document.getElementById('admin').checked
+  editeurChecked = document.getElementById('editeur').checked
+  var trs = document.querySelectorAll("#tableUser tr:not(.headerUser)");
+  for (let i = 0; i < trs.length; i++) {
+    var role = trs[i].cells[2].outerText;
+
+    if ((role == 'Visiteur' && visiteurChecked) || (role == 'Editeur' && editeurChecked) || (role == 'Admin' && adminChecked)) {
+      trs[i].style.display = "";
+    } else {
+      trs[i].style.display = "none";
+    }
+  }
+}
+
+
+

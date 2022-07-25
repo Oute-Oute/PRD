@@ -467,6 +467,8 @@ class PathwayController extends AbstractController
             // On recupere le json qui contient la liste de ressources par activités 
             // et on le transforme en tableau PHP
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
+            dd($resourcesByActivities);
+
             //dd($resourcesByActivities);
 
 
@@ -540,6 +542,7 @@ class PathwayController extends AbstractController
                                 // Premierement on recupere la categorie de la bd
                                 $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
                                 
+
                                 /// on verifie si il n'a pas été supprimé par l'utilisateur
                                 if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->available) {
                                     if (!($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already)) {

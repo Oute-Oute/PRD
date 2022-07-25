@@ -82,6 +82,11 @@ function modifyEvent() {
   $("#modify-planning-modal").modal("toggle");
 }
 
+/**
+ * @brief This function get a date and return it in string format
+ * @param {*} date 
+ * @returns a date in string format
+ */
 function formatDate(date) {
   return ([
       date.getFullYear(),
@@ -95,8 +100,12 @@ function formatDate(date) {
   );
 }
 
-function setEvents() {
-  var listCurrentEvents = calendar.getEvents();
+/**
+ * @brief This function set four input in the database update form for give the necessary informations 
+ * @param {*} id user identifier
+ */
+function updateDatabase(id) {
+  var listCurrentEvents = calendar.getEvents(); //get all scheduled activities
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
     var listResourceCurrentEvent = [];
@@ -105,9 +114,10 @@ function setEvents() {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
-  document.getElementById("list-resource").value = JSON.stringify(listResources);
-  document.getElementById("validation-date").value = $_GET("date");
+  document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
+  document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
+  document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
 }
 
 function zoomChange() {
@@ -171,6 +181,7 @@ function AddEventValider() {
   var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
+  
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -195,7 +206,7 @@ function AddEventValider() {
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivities.length; i++) {
     if (
-      "pathway_" + listeActivities[i]["idPathway"] ==
+      "pathway-" + listeActivities[i]["idPathway"] ==
       appointment["idPathway"][0].id
     ) {
       activitiesInPathwayAppointment.push(listeActivities[i]); 
@@ -232,20 +243,22 @@ function AddEventValider() {
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-        
+        var humanAlreadyScheduled=[];
+        var materialAlreadyScheduled=[]; 
         //Find for all Activities of the pathway, the number of Humanresources to define. 
         var categoryHumanResources=[]; 
         
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfHumanResourceArray.length; k++){
-              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
-              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
+                humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
+                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
         }
-      
 
         
 
@@ -255,8 +268,11 @@ function AddEventValider() {
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
-              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
-              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
+                materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           }
@@ -278,7 +294,7 @@ function AddEventValider() {
 
         //Add one event in the Calendar
         var event = calendar.addEvent({
-          id: "new",
+          id: "new" + countAddEvent,
           description: "",
           resourceIds: activityResourcesArray,
           title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
@@ -378,117 +394,6 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
-/**
- * @brief This function is called when we want to go to display the filter window, called when click on the filter button
- */
-function filterShow() {
-  let filter = document.getElementById("filterId");
-  if (filter.style.display != "none") {
-    //if the filter is already displayed
-    filter.style.display = "none"; //hide the filter
-    while (filter.firstChild) {
-      //while there is something in the filter
-      filter.removeChild(filter.firstChild); //remove the old content
-    }
-  } else {
-    var resourcesToDisplay = []; //create an array to store the resources to display
-    switch (headerResources) {
-      case "Patients": //if we want to display by the patients
-        var tempArray = JSON.parse(
-          document
-            .getElementById("appointments")
-            .value.replaceAll("3aZt3r", " ")
-        ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i];
-          resourcesToDisplay.push(temp["patient"][0]); //get the resources data
-        }
-        break;
-      case "Parcours": //if we want to display by the patients
-        var tempArray = JSON.parse(
-          document
-            .getElementById("appointments")
-            .value.replaceAll("3aZt3r", " ")
-        ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i];
-          resourcesToDisplay.push(temp["pathway"][0]); //get the resources data
-        }
-        break;
-      case "Ressources Humaines": //if we want to display by the patients
-        var tempArray = JSON.parse(
-          document.getElementById("human").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i];
-          resourcesToDisplay.push(temp); //get the resources data
-        }
-        break;
-      case "Ressources Matérielles": //if we want to display by the patients
-        var tempArray = JSON.parse(
-          document.getElementById("material").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i];
-          resourcesToDisplay.push(temp); //get the resources data
-        }
-        break;
-    }
-    filter.style.display = "inline-block"; //display the filter
-    if (resourcesToDisplay.length == 0) {
-      //if there is no resource in the calendar
-      var label = document.createElement("label"); //display a label
-      label.innerHTML = "Aucune ressource à filtrer"; //telling "no resources"
-      filter.appendChild(label); //add the label to the filter
-    } else {
-      //fo all the resources in the calendar
-      for (var i = 0; i < resourcesToDisplay.length; i++) {
-        if (document.getElementById(resourcesToDisplay[i].id) == null) {
-          var input = document.createElement("input"); //create a input
-          input.type = "checkbox"; //set the type of the input to checkbox
-          input.id = resourcesToDisplay[i].id; //set the id of the input to the id of the resource
-          input.name = resourcesToDisplay[i].title; //set the name of the input to the title of the resource
-          input.value = i; //set the value of the input to the title of the resource
-          if (calendar.getResourceById(resourcesToDisplay[i].id) == null) {
-            input.checked = false; //set the checkbox to unchecked
-          } else {
-            input.checked = true; //set the checkbox to checked
-          }
-          input.onchange = function () {
-            //set the onchange event
-            changeFilter(this.id, resourcesToDisplay); //call the changeFilter function with the id of the resource
-          };
-          filter.appendChild(input); //add the input to the filter
-          var label = document.createElement("label"); //create a label
-          label.htmlFor = resourcesToDisplay[i].id; //set the htmlFor of the label to the id of the resource
-          label.innerHTML = "&nbsp;" + resourcesToDisplay[i].title; //set the text of the label to the title of the resource
-          filter.appendChild(label); //add the label to the filter
-          filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
-        }
-      }
-    }
-  }
-}
-
-/**
- * @brief This function is called when we want to filter the resources of the calendar
- * @param {*} id the id of resource to filter
- */
-function changeFilter(id, resourcesToDisplay) {
-  if (document.getElementById(id).checked == true) {
-    //if the resource is checked
-
-    calendar.addResource({
-      //add the resource to the calendar
-      id: id, //set the id of the resource
-      title: document.getElementById(id).name, //set the title of the resource
-    });
-  } else {
-    var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
-    resource.remove(); //remove the resource from the calendar
-  }
-}
-
 function changePlanning() {
   var header =
     document.getElementById("displayList").options[
@@ -538,8 +443,8 @@ function updateEventsAppointment(modifyEvent) {
 }
 
 function DisplayModifyEventModal(eventClicked){
+  $("#display-appointment-modal").modal('hide');
   eventClicked=JSON.parse(eventClicked);
-  console.log(eventClicked);
       var id = eventClicked.el.fcSeg.eventRange.def.publicId; //get the id of the event
       var activity = calendar.getEventById(id); //get the event with the id
       var start = activity.start; //get the start date of the event
@@ -665,45 +570,106 @@ function createCalendar(typeResource,useCase) {
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
       eventClick: function (event) {
         if (event.event.display != "background"){
-          
+          var listAppointment=JSON.parse(document.getElementById('listeAppointments').value.replaceAll("3aZt3r", " ")); 
+          var listMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll("3aZt3r", " ")); 
+          var listHumanResources=JSON.parse(document.getElementById('human').value.replaceAll("3aZt3r", " "));
+          var listActivitiesHumanResource=JSON.parse(document.getElementById('listeActivityHumanResource').value.replaceAll("3aZt3r", " ")); 
+          var listActivitiesMaterialResource=JSON.parse(document.getElementById('listeActivityMaterialResource').value.replaceAll("3aZt3r", " ")); 
+          var listActivities=JSON.parse(document.getElementById('listeActivities').value.replaceAll("3aZt3r", " ")); 
+          var listSuccessors=JSON.parse(document.getElementById('listeSuccessors').value);
+          var listActivitiesPathway=[]; 
+          var listSuccessorsPathway=[];
+          var activitiesInlistSuccessorsPathway=[]; 
           var id = event.event._def.publicId; //get the id of the event
           var activity = calendar.getEventById(id); //get the event with the id
-
+          var appointment; 
           var title=activity._def.extendedProps.patient + " / "+activity._def.extendedProps.pathway;
-          var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-          var humanResourcesNames = ""; //create a string with the human resources names
-          if (humanResources != undefined) {
-            for (var i = 0; i < humanResources.length; i++) {
-              //for each human resource except the last one
-    
-              if (humanResources[i].title != undefined) {
-                //if the human resource exist
-                humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+  
+          for(let i=0; i<listAppointment.length;i++){
+            if(activity._def.extendedProps.appointment==listAppointment[i].id){
+              appointment=listAppointment[i];
+            }
+          }
+ 
+          for(let i=0; i<listActivities.length; i++){
+            if(appointment.idPathway[0].id.replaceAll('pathway-','')==listActivities[i].idPathway){
+              listActivitiesPathway.push(listActivities[i]); 
+            }
+          }
+
+          for(let i=0; i<listSuccessors.length; i++){
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessors[i].idactivitya && activitiesInlistSuccessorsPathway.includes(listSuccessors[i].idactivitya)==false){
+                listSuccessorsPathway.push(listSuccessors[i]); 
+                activitiesInlistSuccessorsPathway.push(listSuccessors[i].idactivitya);
               }
             }
           }
-          //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
-    
-          var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+         
+          var listSuccessorsActivitiesPathway=[]; 
+          for(let i=0; i<listSuccessorsPathway.length; i++){
+            var nameActivitya; 
+            var nameActivityb; 
+            var activityId; 
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessorsPathway[i].idactivitya){
+                nameActivitya=listActivitiesPathway[j].name;
+                activityId=listActivitiesPathway[j].id;
+              }
+            }
+            for(let j=0; j<listActivitiesPathway.length; j++){
+              if(listActivitiesPathway[j].id==listSuccessorsPathway[i].idactivityb){
+                nameActivityb=listActivitiesPathway[j].name;
+              }
+            }
+            listSuccessorsActivitiesPathway.push({nameactivitya:nameActivitya, nameactivityb:nameActivityb,delaymin:listSuccessorsPathway[i].delaymin, delaymax:listSuccessorsPathway[i].delaymax, activityId:activityId});
+          }
           
-          var materialResourcesNames = ""; //create a string with the material resources names
-          if (materialResources != undefined) {
-            for (var i = 0; i < materialResources.length; i++) {
-              //for each material resource except the last one
-              if (materialResources[i].title != undefined) {
-                //if the material resource exist
-                materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
-              }
-            }
+          //removing before display
+          var nodesNotification=document.getElementById('input-container-onWhite-pathway').childNodes;                             //Get the div in lateral-panel-bloc
+          while(nodesNotification.length!=3){                                                                         //the 3 first div are not notifications
+            document.getElementById('input-container-onWhite-pathway').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
           }
-          // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
-    
+          for(let i=0; i<listSuccessorsActivitiesPathway.length; i++){
+            var div = document.createElement('div'); 
+            div.setAttribute('class','alert alert-dark')                    
+            div.setAttribute('role','alert');
+            div.setAttribute('style','display: flex; flex-direction : column;font-weight:bold'); 
+            div.innerHTML=listSuccessorsActivitiesPathway[i].nameactivitya; 
+           
+            //Div to put input in row 
+            var divRow= document.createElement('div');
+            divRow.setAttribute('style','display: flex; flex-direction : column;'); 
+            div.appendChild(divRow); 
+
+            var successor=document.createElement('label'); 
+            successor.setAttribute('class','label-event-solid');
+            successor.innerHTML='Successeur : '+  listSuccessorsActivitiesPathway[i].nameactivityb;
+            divRow.appendChild(successor);
+
+            var inputDelaymin=document.createElement('label'); 
+            inputDelaymin.setAttribute('class','label-event-solid');
+            inputDelaymin.innerHTML='Délai minimum : '+listSuccessorsActivitiesPathway[i].delaymin +' min'; 
+            divRow.appendChild(inputDelaymin); 
+
+            var inputDelaymax=document.createElement('label'); 
+            inputDelaymax.setAttribute('class','label-event-solid');
+            inputDelaymax.innerHTML='Délai maximum : '+listSuccessorsActivitiesPathway[i].delaymax + ' min'; 
+            divRow.appendChild(inputDelaymax);
+
+
+            document.getElementById('input-container-onWhite-pathway').appendChild(div); 
+          }
+            
+          
           //set data to display in the modal window
+
           document.getElementById("show-information-appointment-title").innerHTML = title; //set the title of the event
+          $("#input-modal-earliestappointmentdate").val(appointment.earliestappointmenttime.substring(11, 19));
+          $("#input-modal-latestappointmentdate").val(appointment.latestappointmenttime.substring(11, 19));
+          
           $("#display-appointment-modal").modal("show"); //open the window
           document.getElementById('eventClicked').value=JSON.stringify(event);
-          console.log(event);
-        //DisplayModifyEventModal(event);
         }
       },
 
@@ -734,6 +700,7 @@ function createCalendar(typeResource,useCase) {
           //add the resources to the calendar
           id: temp["id"], //set the id
           title: temp["title"], //set the title
+          categories: [temp["categories"]], //set the type
           businessHours: businessHours, //get the business hours
           type:countAddResource,
         });
@@ -741,6 +708,7 @@ function createCalendar(typeResource,useCase) {
           id: "h-default",
           title: "Aucune ressource allouée",
           type:0,
+          categories:[["default"]]
         });
         }
         break;
@@ -753,6 +721,7 @@ function createCalendar(typeResource,useCase) {
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"],
+            categories: [temp["categories"]], //set the type
             title: temp["title"],
             type:countAddResource,
 
@@ -895,13 +864,29 @@ function clearArray(array){
 }
 
 /**
- * This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
+ * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
 function undoEvent(){ 
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
 }
+
+/**
+ * @brief This function is called when the user clicks a key
+ */
+document.addEventListener('keydown', function(event) {
+  if (event.ctrlKey && event.key === 'z') { //if user clicks ctrl + z
+    //we call the function undoEvent 
+    undoEvent();
+  }
+  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + alt + s
+    //we call the function undoEvent 
+    var id = document.getElementById("user-id").value;
+    updateDatabase('save', id);
+    document.getElementById("update-database-form").submit();
+  }
+});
 
 /**
  * This function stock in an array the history of all modifications on the Calendar, for performance reasons, we save only the last 10 modifications. 
@@ -937,7 +922,7 @@ function updateErrorMessages() {
     })
     if(unscheduledAppointment == true){ //if the appointment is not already on the planning
       //we set an error message
-      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours : " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
+      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
       listErrorMessages.messageUnscheduledAppointment.push(message);
     }
   })
@@ -961,6 +946,7 @@ function updateErrorMessages() {
                 scheduledActivityAlreadyExist = true;
 
                 //update the data
+                existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
                 existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
@@ -975,6 +961,7 @@ function updateErrorMessages() {
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
 
+                messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1003,6 +990,7 @@ function updateErrorMessages() {
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
 
+            messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1040,7 +1028,7 @@ function getMessageEarliestAppointmentTime(listScheduledActivities, appointmentI
       //we check if the start time is earlier than the earliest appointment time
       if(new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate){
         //if it's earlier, we set an error message
-        message.push(scheduledActivity._def.title + " commence avant : " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivée au plus tôt du patient. ");
+        message.push(scheduledActivity._def.title + " commence avant " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure d'arrivée au plus tôt du patient. ");
       }
     }
   })
@@ -1071,11 +1059,41 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
       //we check if the end time is later than the latest appointment time
       if(new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) > latestAppointmentDate){
         //if it's later, we set an error message
-        message.push(scheduledActivity._def.title + " finit après : " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ");
+        message.push(scheduledActivity._def.title + " finit après " + latestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + latestAppointmentDate.getMinutes().toString().padStart(2, "0") +" qui est l'heure de fin au plus tard du patient. ");
       }
     }
   })
 
+  return message;
+}
+
+/**
+ * 
+ * @param {*} scheduledActivity 
+ * @returns 
+ */
+function getMessageNotFullyScheduled(scheduledActivity){
+  var message = "";
+
+  var quantityRequired = 0;
+  scheduledActivity._def.extendedProps.categoryHumanResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+  scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+
+  quantityAllocated = 0;
+  scheduledActivity._def.resourceIds.forEach((resource) => {
+    if(resource != "h-default" && resource != "m-default"){
+      quantityAllocated = quantityAllocated + 1;
+    }
+  })
+
+  if(quantityRequired > quantityAllocated){
+    message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
+  }
+  
   return message;
 }
 
@@ -1099,12 +1117,29 @@ function getMessageDelay(listScheduledActivities, scheduledActivity){
           var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime())/(60*1000);
           if(duration < successor.delaymin){
             //if the delay is shorter, we set an error message
-            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est inférieur à : " + successor.delaymin + " minutes qui est le délai minimum.";
+            var message = "";
+            if(duration < 0){
+              duration = duration*(-1);
+              if(successor.delaymin == 0){
+                message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer après.";
+              }
+              else {
+                message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer au minimum " + successor.delaymin + " minutes après.";
+              }            
+            }
+            else{
+              if(duration == 0){
+                message = "Il n'y a pas de délai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " alors qu'il devrait être au minimum de " + successor.delaymin + " minutes.";
+              }
+              else {
+                message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est inférieur au délai minimum de " + successor.delaymin + " minutes.";
+              }
+            }
             messages.push(message);
           }
           if(duration > successor.delaymax){
             //if the delay is longer, we set an error message
-            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de : " + duration + " minutes ce qui est supèrieur à : " + successor.delaymax + " minutes qui est le délai maximum.";
+            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est supèrieur au délai maximum de " + successor.delaymax + " minutes.";
             messages.push(message);
           }
         }
@@ -1129,9 +1164,29 @@ function getListCategoryHumanResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
+      var listCategoryOfHumanResource = [];
+      var listWrongCategoriesOfHumanResource = [];
+      var countValidCategory = 0;
       listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
-        if(categoryOfHumanResource.idresource == humanResource){ //if we find the category of the human resource 
-          var categoryHumanResourceAlreadyExist = false;
+        if(categoryOfHumanResource.idresource == humanResource){ //if we find a category of the human resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human") == ""){
+            listCategoryOfHumanResource.push(categoryOfHumanResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfHumanResource.push(categoryOfHumanResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfHumanResource.forEach((categoryOfHumanResource) => {
+          listCategoryOfHumanResource.push(categoryOfHumanResource);
+        })
+      }
+
+      listCategoryOfHumanResource.forEach((categoryOfHumanResource) => {
+        var categoryHumanResourceAlreadyExist = false;
           if(listCategoryHumanResources != []){
             listCategoryHumanResources.forEach((categoryHumanResource) => {
               if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){ //if the category already exist in the list
@@ -1151,7 +1206,6 @@ function getListCategoryHumanResources(scheduledActivity){
               messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
             })
           }
-        }
       })
     }
   })
@@ -1212,9 +1266,29 @@ function getListCategoryMaterialResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
     if(materialResource.substring(0,8) == "material"){ //check only the material resources
+      var listCategoryOfMaterialResource = [];
+      var listWrongCategoriesOfMaterialResource = [];
+      var countValidCategory = 0;
       listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
-        if(categoryOfMaterialResource.idresource == materialResource){ //if we find the category of the human resource 
-          var categoryMaterialResourceAlreadyExist = false;
+        if(categoryOfMaterialResource.idresource == materialResource){ //if we find a category of the material resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material") == ""){
+            listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfMaterialResource.push(categoryOfMaterialResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfMaterialResource.forEach((categoryOfMaterialResource) => {
+          listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+        })
+      }
+
+      listCategoryOfMaterialResource.forEach((categoryOfMaterialResource) => {
+        var categoryMaterialResourceAlreadyExist = false;
           if(listCategoryMaterialResources != []){
             listCategoryMaterialResources.forEach((categoryMaterialResource) => {
               if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){ //if the category already exist in the list
@@ -1231,10 +1305,9 @@ function getListCategoryMaterialResources(scheduledActivity){
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
-              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material")
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
             })
           }
-        }
       })
     }
   })
@@ -1427,7 +1500,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
  * @returns the error message
  */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((unavailability) => { //browse all events
     if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
@@ -1447,7 +1520,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
                 listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
                     //set an error message with the resource name
-                    message.push(resource.title + " est indisponible sur ce créneau. ");
+                    messages.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
               }
@@ -1457,7 +1530,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
       }
     }
   })
-  return message;
+  return messages;
 }
 
 /**
@@ -1467,7 +1540,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
     if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
@@ -1480,13 +1553,13 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
                 compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
                   if(humanResource.id == compareResourceId){ //if the resource is a human resource
                     //set an error message
-                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+                    messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
                   }
                 })
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
                   if(materialResource.id == compareResourceId){ //if the resource is a material resource
                     //set an error message
-                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
+                    messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
               }
@@ -1497,7 +1570,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
     }
   })
 
-  return message;
+  return messages;
 }
 
 /**
@@ -1566,6 +1639,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var divRow=document.createElement('divRow'); 
         divRow.setAttribute('style','display: flex; flex-direction : row;'); 
         div.append(divRow);
+        var img = document.createElement("img");
+          img.src="/img/exclamation-triangle-fill.svg"; 
+          var text=document.createElement('h3'); 
+          text.innerHTML='Rendez-vous non plannifiés'; 
+          divRow.append(img,text);
+        
         listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
           var divColumn=document.createElement('divColumn');
           div.append(divColumn); 
@@ -1635,6 +1714,15 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
                   divColumn.append(messageDelay);
                 })
+              }
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                  divColumn.append(messageNotFullyScheduled);
+                }
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
@@ -1746,7 +1834,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
@@ -1795,6 +1882,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           //messageDelay
           if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+            errorInappointment=true;
+            errorInScheduledActivity=true; 
+          }
+
+          if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }
