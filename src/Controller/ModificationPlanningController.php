@@ -275,14 +275,14 @@ class ModificationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    //Récupération d'un parcour dans la base dee donnée
+    //Récupération d'un parcours dans la base de donnée
     public function getPathway(ManagerRegistry $doctrine, $id)
     {
         //recuperation du pathway depuis la base de données
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
         $pathwayArray = array();
         $idpath = $pathway->getId();
-        $idpath = "pathway_" . $idpath; //formatage pour fullcalendar
+        $idpath = "pathway-" . $idpath; //formatage pour fullcalendar
         //ajout des données du pathway dans un tableau
         $pathwayArray[] = array(
             'id' => $idpath,

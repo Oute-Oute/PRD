@@ -82,6 +82,11 @@ function modifyEvent() {
   $("#modify-planning-modal").modal("toggle");
 }
 
+/**
+ * @brief This function get a date and return it in string format
+ * @param {*} date 
+ * @returns a date in string format
+ */
 function formatDate(date) {
   return ([
       date.getFullYear(),
@@ -95,8 +100,12 @@ function formatDate(date) {
   );
 }
 
+/**
+ * @brief This function set four input in the database update form for give the necessary informations 
+ * @param {*} id user identifier
+ */
 function updateDatabase(id) {
-  var listCurrentEvents = calendar.getEvents();
+  var listCurrentEvents = calendar.getEvents(); //get all scheduled activities
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
     var listResourceCurrentEvent = [];
@@ -105,10 +114,10 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("user-id").value = JSON.stringify(id);
-  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
-  document.getElementById("list-resource").value = JSON.stringify(listResources);
-  document.getElementById("validation-date").value = $_GET("date");
+  document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
+  document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
+  document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
 }
 
 function zoomChange() {
@@ -197,7 +206,7 @@ function AddEventValider() {
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivities.length; i++) {
     if (
-      "pathway_" + listeActivities[i]["idPathway"] ==
+      "pathway-" + listeActivities[i]["idPathway"] ==
       appointment["idPathway"][0].id
     ) {
       activitiesInPathwayAppointment.push(listeActivities[i]); 
@@ -280,7 +289,7 @@ function AddEventValider() {
 
         //Add one event in the Calendar
         var event = calendar.addEvent({
-          id: "new",
+          id: "new" + countAddEvent,
           description: "",
           resourceIds: activityResourcesArray,
           title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
@@ -429,8 +438,8 @@ function updateEventsAppointment(modifyEvent) {
 }
 
 function DisplayModifyEventModal(eventClicked){
+  $("#display-appointment-modal").modal('hide');
   eventClicked=JSON.parse(eventClicked);
-  console.log(eventClicked);
       var id = eventClicked.el.fcSeg.eventRange.def.publicId; //get the id of the event
       var activity = calendar.getEventById(id); //get the event with the id
       var start = activity.start; //get the start date of the event
@@ -557,6 +566,10 @@ function createCalendar(typeResource,useCase) {
       eventClick: function (event) {
         if (event.event.display != "background"){
           var listAppointment=JSON.parse(document.getElementById('listeAppointments').value.replaceAll("3aZt3r", " ")); 
+          var listMaterialResources=JSON.parse(document.getElementById('material').value.replaceAll("3aZt3r", " ")); 
+          var listHumanResources=JSON.parse(document.getElementById('human').value.replaceAll("3aZt3r", " "));
+          var listActivitiesHumanResource=JSON.parse(document.getElementById('listeActivityHumanResource').value.replaceAll("3aZt3r", " ")); 
+          var listActivitiesMaterialResource=JSON.parse(document.getElementById('listeActivityMaterialResource').value.replaceAll("3aZt3r", " ")); 
           var listActivities=JSON.parse(document.getElementById('listeActivities').value.replaceAll("3aZt3r", " ")); 
           var listSuccessors=JSON.parse(document.getElementById('listeSuccessors').value);
           var listActivitiesPathway=[]; 
@@ -574,7 +587,7 @@ function createCalendar(typeResource,useCase) {
           }
  
           for(let i=0; i<listActivities.length; i++){
-            if(appointment.idPathway[0].id.replaceAll('pathway_','')==listActivities[i].idPathway){
+            if(appointment.idPathway[0].id.replaceAll('pathway-','')==listActivities[i].idPathway){
               listActivitiesPathway.push(listActivities[i]); 
             }
           }
@@ -591,13 +604,12 @@ function createCalendar(typeResource,useCase) {
           var listSuccessorsActivitiesPathway=[]; 
           for(let i=0; i<listSuccessorsPathway.length; i++){
             var nameActivitya; 
-            var duration; 
             var nameActivityb; 
+            var activityId; 
             for(let j=0; j<listActivitiesPathway.length; j++){
               if(listActivitiesPathway[j].id==listSuccessorsPathway[i].idactivitya){
-                console.log('a');
                 nameActivitya=listActivitiesPathway[j].name;
-                duration=listActivitiesPathway[j].duration;
+                activityId=listActivitiesPathway[j].id;
               }
             }
             for(let j=0; j<listActivitiesPathway.length; j++){
@@ -605,7 +617,7 @@ function createCalendar(typeResource,useCase) {
                 nameActivityb=listActivitiesPathway[j].name;
               }
             }
-            listSuccessorsActivitiesPathway.push({nameactivitya:nameActivitya, nameactivityb:nameActivityb,duration:duration,delaymin:listSuccessorsPathway[i].delaymin, delaymax:listSuccessorsPathway[i].delaymax});
+            listSuccessorsActivitiesPathway.push({nameactivitya:nameActivitya, nameactivityb:nameActivityb,delaymin:listSuccessorsPathway[i].delaymin, delaymax:listSuccessorsPathway[i].delaymax, activityId:activityId});
           }
           
           //removing before display
@@ -617,30 +629,33 @@ function createCalendar(typeResource,useCase) {
             var div = document.createElement('div'); 
             div.setAttribute('class','alert alert-dark')                    
             div.setAttribute('role','alert');
-            div.setAttribute('style','display: flex; flex-direction : column;'); 
-            div.innerHTML=listSuccessorsActivitiesPathway[i].nameactivitya + ' -----> '+listSuccessorsActivitiesPathway[i].nameactivityb;
+            div.setAttribute('style','display: flex; flex-direction : column;font-weight:bold'); 
+            div.innerHTML=listSuccessorsActivitiesPathway[i].nameactivitya; 
            
             //Div to put input in row 
             var divRow= document.createElement('div');
             divRow.setAttribute('style','display: flex; flex-direction : column;'); 
             div.appendChild(divRow); 
 
+            var successor=document.createElement('label'); 
+            successor.setAttribute('class','label-event-solid');
+            successor.innerHTML='Successeur : '+  listSuccessorsActivitiesPathway[i].nameactivityb;
+            divRow.appendChild(successor);
+
             var inputDelaymin=document.createElement('label'); 
             inputDelaymin.setAttribute('class','label-event-solid');
             inputDelaymin.innerHTML='Délai minimum : '+listSuccessorsActivitiesPathway[i].delaymin +' min'; 
+            divRow.appendChild(inputDelaymin); 
 
             var inputDelaymax=document.createElement('label'); 
             inputDelaymax.setAttribute('class','label-event-solid');
-            inputDelaymax.setAttribute('value',listSuccessorsActivitiesPathway[i].delaymin); 
             inputDelaymax.innerHTML='Délai maximum : '+listSuccessorsActivitiesPathway[i].delaymax + ' min'; 
-            divRow.appendChild(inputDelaymin); 
             divRow.appendChild(inputDelaymax);
+
 
             document.getElementById('input-container-onWhite-pathway').appendChild(div); 
           }
             
-            console.log(appointment.earliestappointmenttime)
-            console.log(appointment.latestappointmenttime)
           
           //set data to display in the modal window
 
@@ -860,7 +875,7 @@ document.addEventListener('keydown', function(event) {
     //we call the function undoEvent 
     undoEvent();
   }
-  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + s
+  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + alt + s
     //we call the function undoEvent 
     var id = document.getElementById("user-id").value;
     updateDatabase('save', id);
@@ -926,6 +941,7 @@ function updateErrorMessages() {
                 scheduledActivityAlreadyExist = true;
 
                 //update the data
+                existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
                 existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
@@ -940,6 +956,7 @@ function updateErrorMessages() {
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
 
+                messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -968,6 +985,7 @@ function updateErrorMessages() {
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
 
+            messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -978,6 +996,7 @@ function updateErrorMessages() {
       }
     }
   })
+  console.log(listErrorMessages)
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1040,6 +1059,36 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
     }
   })
 
+  return message;
+}
+
+/**
+ * 
+ * @param {*} scheduledActivity 
+ * @returns 
+ */
+function getMessageNotFullyScheduled(scheduledActivity){
+  var message = "";
+
+  var quantityRequired = 0;
+  scheduledActivity._def.extendedProps.categoryHumanResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+  scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+
+  quantityAllocated = 0;
+  scheduledActivity._def.resourceIds.forEach((resource) => {
+    if(resource != "h-default" && resource != "m-default"){
+      quantityAllocated = quantityAllocated + 1;
+    }
+  })
+
+  if(quantityRequired > quantityAllocated){
+    message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
+  }
+  
   return message;
 }
 
@@ -1408,7 +1457,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
  * @returns the error message
  */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((unavailability) => { //browse all events
     if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
@@ -1428,7 +1477,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
                 listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
                     //set an error message with the resource name
-                    message.push(resource.title + " est indisponible sur ce créneau. ");
+                    messages.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
               }
@@ -1438,7 +1487,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
       }
     }
   })
-  return message;
+  return messages;
 }
 
 /**
@@ -1448,7 +1497,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
     if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
@@ -1461,13 +1510,13 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
                 compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
                   if(humanResource.id == compareResourceId){ //if the resource is a human resource
                     //set an error message
-                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+                    messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
                   }
                 })
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
                   if(materialResource.id == compareResourceId){ //if the resource is a material resource
                     //set an error message
-                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
+                    messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
               }
@@ -1478,7 +1527,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
     }
   })
 
-  return message;
+  return messages;
 }
 
 /**
@@ -1547,6 +1596,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var divRow=document.createElement('divRow'); 
         divRow.setAttribute('style','display: flex; flex-direction : row;'); 
         div.append(divRow);
+        var img = document.createElement("img");
+          img.src="/img/exclamation-triangle-fill.svg"; 
+          var text=document.createElement('h3'); 
+          text.innerHTML='Rendez-vous non plannifiés'; 
+          divRow.append(img,text);
+        
         listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
           var divColumn=document.createElement('divColumn');
           div.append(divColumn); 
@@ -1616,6 +1671,15 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
                   divColumn.append(messageDelay);
                 })
+              }
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                  divColumn.append(messageNotFullyScheduled);
+                }
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
@@ -1727,7 +1791,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
@@ -1776,6 +1839,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           //messageDelay
           if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+            errorInappointment=true;
+            errorInScheduledActivity=true; 
+          }
+
+          if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }
