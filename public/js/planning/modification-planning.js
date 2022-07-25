@@ -260,24 +260,20 @@ function AddEventValider() {
           }
         }
 
-        
-
-        
         var categoryMaterialResources=[]; 
         
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
-              
-              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
+              if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
                 materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
                 categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
               }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
-          }
+          } 
         }
-
+        console.log(categoryMaterialResources); 
         //Put the number of human resouorces in the ResourcesArray of the event
 
         for (let j = 0; j< quantityHumanResources; j++) {
@@ -1001,7 +997,6 @@ function updateErrorMessages() {
       }
     }
   })
-  console.log(listErrorMessages)
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1074,25 +1069,12 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
  */
 function getMessageNotFullyScheduled(scheduledActivity){
   var message = "";
-
-  var quantityRequired = 0;
-  scheduledActivity._def.extendedProps.categoryHumanResource.forEach((category) => {
-    quantityRequired = quantityRequired + category.quantity;
-  })
-  scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((category) => {
-    quantityRequired = quantityRequired + category.quantity;
-  })
-
-  quantityAllocated = 0;
   scheduledActivity._def.resourceIds.forEach((resource) => {
-    if(resource != "h-default" && resource != "m-default"){
-      quantityAllocated = quantityAllocated + 1;
+    if(resource == "h-default" || resource == "m-default"){
+      message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
     }
   })
 
-  if(quantityRequired > quantityAllocated){
-    message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
-  }
   
   return message;
 }
