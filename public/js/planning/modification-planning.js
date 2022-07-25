@@ -1757,7 +1757,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
