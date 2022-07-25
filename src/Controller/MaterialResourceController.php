@@ -41,6 +41,7 @@ class MaterialResourceController extends AbstractController
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
         $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON($doctrine);
+        $unavailabilities = $this->listUnavailabilitiesMaterialJSON($doctrine);
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
@@ -77,8 +78,64 @@ class MaterialResourceController extends AbstractController
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $materialResourceRepository->findAll(),
             'material_resources_categories' => $materialResourceCategories,
-            'categoriesByMaterialResources' => $categoriesByMaterialResources
+            'categoriesByMaterialResources' => $categoriesByMaterialResources,
+            'unavailabilities' => $unavailabilities
         ]); 
+    }
+
+
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listUnavailabilitiesMaterialJSON(ManagerRegistry $doctrine)
+    {
+        $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+        $unavailabilities = $unavailabilitiesRepository->findAll();
+        $unavailabilitiesArray = array();
+
+        if ($unavailabilities != null) {
+            foreach ($unavailabilities as $unavailability) {
+                $unavailabilitiesArray[] = array('id' => strval($unavailability->getId()),
+                    'startdatetime' => $unavailability->getStartdatetime(),
+                    'enddatetime' => $unavailability->getEnddatetime(),
+                );
+            }
+        }
+
+        $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
+        $unavailabilitiesMaterial = $unavailabilitiesMaterialRepository->findAll();
+        $unavailabilitiesMaterialArray = array();
+
+        if ($unavailabilitiesMaterial != null) {
+            foreach ($unavailabilitiesMaterial as $unavailabilityMaterial) {
+                $unavailabilitiesMaterialArray[] = array('id' => strval($unavailabilityMaterial->getId()),
+                    'materialresource_id' => $unavailabilityMaterial->getMaterialResource()->getId(),
+                    'unavailability_id' => $unavailabilityMaterial->getUnavailability()->getId()
+                );
+            }
+        }
+        $unavailabilitiesFiltered = array();
+        foreach ($unavailabilitiesArray as $unavailability) {
+            foreach($unavailabilitiesMaterial as $unavailabilityMaterial) {
+                if($unavailability['id'] == $unavailabilityMaterial->getUnavailability()->getId()) {
+                    $unavailabilitiesFiltered[] = array('id_unavailability' => $unavailability['id'],
+                        'id_unavailability_material' =>strval($unavailabilityMaterial->getId()),
+                        'id_human_resource' =>strval($unavailabilityMaterial->getMaterialresource()->getId()),
+                        'startdatetime' => $unavailability['startdatetime'],
+                        'enddatetime' => $unavailability['enddatetime'] 
+                    );
+                }
+
+            }
+        }
+    
+
+
+
+
+        //Conversion des données ressources en json
+        $unavailabilitiesFilteredJson = new JsonResponse($unavailabilitiesFiltered);
+        return $unavailabilitiesFilteredJson;    
     }
 
     /**
@@ -165,6 +222,9 @@ public function unavailability(Request $request) {
         $categoriesByMaterialResourcesArrayJson = new JsonResponse($categoriesByMaterialResourcesArray);
         return $categoriesByMaterialResourcesArrayJson;    
     }
+
+
+
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
