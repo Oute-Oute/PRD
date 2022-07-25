@@ -333,13 +333,6 @@ function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')
     divActivitiesList.innerHTML = ''
-    /*
-    divActivitiesList.innerHTML = ''
-    let label = document.createElement('label')
-    label.setAttribute('class', 'label')
-    label.innerHTML = 'Listes des activités'
-    divActivitiesList.appendChild(label)
-    */
 
     let indexActivityAvailable = 0
 
@@ -357,7 +350,7 @@ function fillActivityList() {
             let imgDelete = new Image();
             imgDelete.src = '../img/delete.svg'
             imgDelete.setAttribute('id', 'imgd-' + indexActivity)
-            imgDelete.setAttribute('onclick', 'deleteSelect(this.id)')
+            imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
@@ -374,10 +367,6 @@ function fillActivityList() {
             let div = document.createElement('div')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
-
-            /*pindex = document.createElement('p')
-            pindex.innerText = indexActivity
-            activity.appendChild(pindex)*/
 
             activity.appendChild(p)
             activity.appendChild(div)
@@ -398,13 +387,13 @@ function fillActivityList() {
 }
 
 /**
- * Permet de supprimer un select dans la liste déroulante 
+ * Allow to remove an Activity
  * @param {*} id : img-0, img-1
  */
-function deleteSelect(id) {
+function deleteActivity(id) {
 
     // On récupère le numero de la div a supprimer  
-    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
+    // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
     // On peut donc recuperer la div
@@ -418,7 +407,6 @@ function deleteSelect(id) {
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
-    //SELECT_ID = SELECT_ID - 1;
     fillActivityList()
 }
 
