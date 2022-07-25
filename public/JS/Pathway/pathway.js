@@ -140,7 +140,6 @@ function drawActivities(data){
         arrayActivityByLevel[data[i]['level']-1][0]++;
         arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i);
     }
-    console.log(arrayActivityByLevel);
     const style = document.createElement('style');
     style.innerHTML = `
         .block {
@@ -186,7 +185,7 @@ function drawActivities(data){
                             height = 50/nbActivity;
                         }
                     }
-                    createActivities(height, i+1, arrayActivityByLevel[i][j+1], arrayActivityByLevel[i][j*2+2]);
+                    createActivities(height, i+1, arrayActivityByLevel[i][j*2+1], arrayActivityByLevel[i][j*2+2]);
                 }
             break;
         }
