@@ -243,20 +243,22 @@ function AddEventValider() {
         var quantityHumanResources = 0;
         var quantityMaterialResources = 0; 
         var activityResourcesArray=[]; 
-        
+        var humanAlreadyScheduled=[];
+        var materialAlreadyScheduled=[]; 
         //Find for all Activities of the pathway, the number of Humanresources to define. 
         var categoryHumanResources=[]; 
         
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfHumanResourceArray.length; k++){
-              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory)
-              categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
+                humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
+                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+              }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
           }
         }
-      
 
         
 
@@ -266,8 +268,11 @@ function AddEventValider() {
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
             for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
-              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory)
-              categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              
+              if(listeActivityMaterialResource[j].MaterialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
+                materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+              }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           }
@@ -1159,9 +1164,29 @@ function getListCategoryHumanResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
+      var listCategoryOfHumanResource = [];
+      var listWrongCategoriesOfHumanResource = [];
+      var countValidCategory = 0;
       listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
-        if(categoryOfHumanResource.idresource == humanResource){ //if we find the category of the human resource 
-          var categoryHumanResourceAlreadyExist = false;
+        if(categoryOfHumanResource.idresource == humanResource){ //if we find a category of the human resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human") == ""){
+            listCategoryOfHumanResource.push(categoryOfHumanResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfHumanResource.push(categoryOfHumanResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfHumanResource.forEach((categoryOfHumanResource) => {
+          listCategoryOfHumanResource.push(categoryOfHumanResource);
+        })
+      }
+
+      listCategoryOfHumanResource.forEach((categoryOfHumanResource) => {
+        var categoryHumanResourceAlreadyExist = false;
           if(listCategoryHumanResources != []){
             listCategoryHumanResources.forEach((categoryHumanResource) => {
               if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){ //if the category already exist in the list
@@ -1181,7 +1206,6 @@ function getListCategoryHumanResources(scheduledActivity){
               messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
             })
           }
-        }
       })
     }
   })
@@ -1242,9 +1266,29 @@ function getListCategoryMaterialResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
     if(materialResource.substring(0,8) == "material"){ //check only the material resources
+      var listCategoryOfMaterialResource = [];
+      var listWrongCategoriesOfMaterialResource = [];
+      var countValidCategory = 0;
       listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
-        if(categoryOfMaterialResource.idresource == materialResource){ //if we find the category of the human resource 
-          var categoryMaterialResourceAlreadyExist = false;
+        if(categoryOfMaterialResource.idresource == materialResource){ //if we find a category of the material resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material") == ""){
+            listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfMaterialResource.push(categoryOfMaterialResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfMaterialResource.forEach((categoryOfMaterialResource) => {
+          listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+        })
+      }
+
+      listCategoryOfMaterialResource.forEach((categoryOfMaterialResource) => {
+        var categoryMaterialResourceAlreadyExist = false;
           if(listCategoryMaterialResources != []){
             listCategoryMaterialResources.forEach((categoryMaterialResource) => {
               if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){ //if the category already exist in the list
@@ -1261,10 +1305,9 @@ function getListCategoryMaterialResources(scheduledActivity){
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
-              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material")
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
             })
           }
-        }
       })
     }
   })
