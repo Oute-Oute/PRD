@@ -175,10 +175,10 @@ function AddEventValider() {
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
-  var categoryOfMaterialResourceArray=JSON.parse(document.getElementById('categoryOfMaterialResourceJSON').value.replaceAll('3aZt3r',' ')); 
+  var categoryMaterialResourceJSON=JSON.parse(document.getElementById('categoryMaterialResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
   var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
-  var categoryOfHumanResourceArray=JSON.parse(document.getElementById('categoryOfHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
+  var categoryHumanResourceJSON=JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r',' ')); 
   var appointmentid = document.getElementById("select-appointment").value;
   
   
@@ -250,10 +250,10 @@ function AddEventValider() {
         
         for (let j = 0; j < listeActivitHumanResource.length; j++) {
           if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
-            for(let k=0; k<categoryOfHumanResourceArray.length; k++){
-              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryOfHumanResourceArray[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
+            for(let k=0; k<categoryHumanResourceJSON.length; k++){
+              if(listeActivitHumanResource[j].humanResourceCategoryId==categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
                 humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
-                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryOfHumanResourceArray[k].categoryname})
+                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryHumanResourceJSON[k].categoryname})
               }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
@@ -264,10 +264,10 @@ function AddEventValider() {
         
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-            for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
-              if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
+            for(let k=0; k<categoryMaterialResourceJSON.length; k++){
+              if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
                 materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
-                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryOfMaterialResourceArray[k].categoryname})
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryMaterialResourceJSON[k].categoryname})
               }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
@@ -545,6 +545,14 @@ function createCalendar(typeResource,useCase) {
       nowIndicator: true,
       selectConstraint: "businessHours", //set the select constraint to be business hours
       eventMinWidth: 1, //set the minimum width of the event
+      resourceAreaColumns:[{
+        headerContent: "Nom", //set the label of the column
+        field: "title", //set the field of the column
+      },
+      {
+        headerContent: "Catégories", //set the label of the column
+        field: "categories", //set the field of the column
+      }],
 
       //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
       headerToolbar: {
@@ -560,7 +568,7 @@ function createCalendar(typeResource,useCase) {
         meridiem: false,
         hour12: false,
       },
-      resourceAreaWidth: "20%",
+      resourceAreaWidth: "25%",
       resourceAreaHeaderContent: headerResources,
 
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
@@ -692,11 +700,17 @@ function createCalendar(typeResource,useCase) {
           businessHours.push(businesstemp); //add the business hour to the array
         }
         countAddResource++; 
+        var categoriesStr = ""; //create a string with the human resources names
+        categories=temp["categories"];
+        for(let k=0; k<categories.length-1; k++){
+                categoriesStr+=categories[k]["name"]+", ";
+        }
+        categoriesStr+=categories[categories.length-1]["name"];
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"], //set the id
           title: temp["title"], //set the title
-          categories: [temp["categories"]], //set the type
+          categories: categoriesStr, //set the type
           businessHours: businessHours, //get the business hours
           type:countAddResource,
         });
@@ -714,10 +728,19 @@ function createCalendar(typeResource,useCase) {
         ); //get the data of the resources
         for (var i = 0; i < resourcesArray.length; i++) {
           var temp = resourcesArray[i]; //get the resources data
+          var categoriesStr = ""; //create a string with the human resources names
+          categories=temp["categories"];
+          if (categories.length > 0) {
+            for (var j = 0; j < categories.length - 1; j++) {
+              //for each human resource except the last one
+              categoriesStr += categories[j]["name"] + ", "; //add the human resource name to the string with a ; and a space
+            }
+            categoriesStr += categories[categories.length-1]["name"]; //add the last human resource name to the string
+          } else categoriesStr = "Défaut";
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"],
-            categories: [temp["categories"]], //set the type
+            categories: categoriesStr, //set the type
             title: temp["title"],
             type:countAddResource,
 
@@ -727,6 +750,7 @@ function createCalendar(typeResource,useCase) {
             title: "Aucune ressource allouée",
             type:0,
           });
+          categoriesStr = "";
         }
         break;
     }
