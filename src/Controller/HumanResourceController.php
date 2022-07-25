@@ -38,12 +38,14 @@ class HumanResourceController extends AbstractController
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
         $workingHours = $this->listWorkingHoursJSON($doctrine);
+        $unavailabilities = $this->listUnavailabilitiesHumanJSON($doctrine);
         $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON($doctrine);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResourceRepository->findAll(),
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
-            'categoriesByHumanResources' => $categoriesByHumanResources
+            'categoriesByHumanResources' => $categoriesByHumanResources,
+            'unavailabilities' => $unavailabilities
         ]); 
     }
 
@@ -69,6 +71,60 @@ class HumanResourceController extends AbstractController
         //Conversion des données ressources en json
         $workingHoursArrayJson = new JsonResponse($workingHoursArray);
         return $workingHoursArrayJson;    
+    }
+
+    /**
+     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     */
+    public function listUnavailabilitiesHumanJSON(ManagerRegistry $doctrine)
+    {
+        $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+        $unavailabilities = $unavailabilitiesRepository->findAll();
+        $unavailabilitiesArray = array();
+
+        if ($unavailabilities != null) {
+            foreach ($unavailabilities as $unavailability) {
+                $unavailabilitiesArray[] = array('id' => strval($unavailability->getId()),
+                    'startdatetime' => $unavailability->getStartdatetime(),
+                    'enddatetime' => $unavailability->getEnddatetime(),
+                );
+            }
+        }
+
+        $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($doctrine);
+        $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findAll();
+        $unavailabilitiesHumanArray = array();
+
+        if ($unavailabilitiesHuman != null) {
+            foreach ($unavailabilitiesHuman as $unavailabilityHuman) {
+                $unavailabilitiesHumanArray[] = array('id' => strval($unavailabilityHuman->getId()),
+                    'humanresource_id' => $unavailabilityHuman->getHumanResource()->getId(),
+                    'unavailability_id' => $unavailabilityHuman->getUnavailability()->getId()
+                );
+            }
+        }
+        $unavailabilitiesFiltered = array();
+        foreach ($unavailabilitiesArray as $unavailability) {
+            foreach($unavailabilitiesHuman as $unavailabilityHuman) {
+                if($unavailability['id'] == $unavailabilityHuman->getUnavailability()->getId()) {
+                    $unavailabilitiesFiltered[] = array('id_unavailability' => $unavailability['id'],
+                        'id_unavailability_human' =>strval($unavailabilityHuman->getId()),
+                        'id_human_resource' =>strval($unavailabilityHuman->getHumanresource()->getId()),
+                        'startdatetime' => $unavailability['startdatetime'],
+                        'enddatetime' => $unavailability['enddatetime'] 
+                    );
+                }
+
+            }
+        }
+    
+
+
+
+
+        //Conversion des données ressources en json
+        $unavailabilitiesFilteredJson = new JsonResponse($unavailabilitiesFiltered);
+        return $unavailabilitiesFilteredJson;    
     }
 
 

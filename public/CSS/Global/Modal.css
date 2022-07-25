@@ -230,6 +230,7 @@ ul.ui-autocomplete {
   .leader-line {
     z-index: 10000;
   }
+  
   #empty-planning{
     position: absolute;
     display : block;
@@ -242,5 +243,19 @@ ul.ui-autocomplete {
     font-size: 30px;
     color: #91989c;
     font-weight: bold;
-  }  
+  }
+
+  .pathway-div-activity{
+    max-width: 50%;
+    width: fit-content;
+    position: relative;
+    padding: 5px 5px 5px 5px;
+    border: solid;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+  }
+
+  .pathway-div-activity-header{
+    font-size: 80%;
+    font-weight: bold;
+}
   

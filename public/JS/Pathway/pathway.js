@@ -171,7 +171,6 @@ function drawActivities(data){
         
         divContent.appendChild(div);
     }
-    console.log(arrayActivityByLevel);
     for(i=0; i < arrayActivityByLevel.length; i++){
         nbActivity = arrayActivityByLevel[i][0];
         switch(nbActivity){
@@ -213,23 +212,19 @@ function createActivities(height, level, name, idActivity, duration){
     var divLevel = document.getElementById('content' + level);
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
-    
-    div.style.maxWidth = '50%';
-    div.style.width = 'fit-content';
-    div.style.position = "relative";
+    div.classList.add("pathway-div-activity");
+
     div.style.transform = 'translate(0%, -' + height + '%)';
-    div.style.padding= '5px 5px 5px 5px';
-    div.style.borderStyle = 'solid';
 
-    var p1 = document.createElement('p');
-    p1.style.fontSize = '80%';
-    p1.innerHTML = name;
+    var divHeader = document.createElement('div');
+    divHeader.classList.add("pathway-div-activity-header");
+    divHeader.innerHTML = name;
 
-    var p2 = document.createElement('p');
-    p2.style.fontSize = '80%';
-    p2.innerHTML = "durée : " + duration + "min"; 
+    var p = document.createElement('p');
+    p.style.fontSize = '80%';
+    p.innerHTML = "durée : " + duration + "min"; 
 
-    div.appendChild(p1); div.appendChild(p2);
+    div.appendChild(divHeader); div.appendChild(p);
 
     divLevel.appendChild(div);
 
@@ -332,15 +327,45 @@ function addActivity() {
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].available = ACTIVITY_IN_PROGRESS.available
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].btnHM = 'human'
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].id = ACTIVITY_IN_PROGRESS.id
+        
+            //ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories = new Array()
+            for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
+                let res = new Object()
+                res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id
+                res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
+                res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
+                res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
+                res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
+        
+                RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
+            }
+
+            len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories = new Array()
+            for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
+                let res = new Object()
+                res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id
+                res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
+                res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
+                res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
+                res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
+        
+                RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
+            }
             fillActivityList()
 
         } else {
-            // ajout de l'activité au tableau
+            // add activity to the array
             addArray()
             NB_ACTIVITY = NB_ACTIVITY + 1;
             document.getElementById('nbactivity').value = NB_ACTIVITY
 
-            // on reinitialise les champs 
+            // reset the fields 
             ACTIVITY_IN_PROGRESS = new Object()
             ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
             ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
@@ -354,7 +379,7 @@ function addActivity() {
         return 1
 
     } else {
-        // message d'erreur
+        // error message
         return 0
     }
 }
@@ -455,7 +480,39 @@ function editActivity(id) {
     id = getId(id)
     ID_EDITED_ACTIVITY = id
 
-    ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
+    //ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
+
+    ACTIVITY_IN_PROGRESS.activityname = RESOURCES_BY_ACTIVITIES[id].activityname
+    ACTIVITY_IN_PROGRESS.activityduration = RESOURCES_BY_ACTIVITIES[id].activityduration
+    ACTIVITY_IN_PROGRESS.available = RESOURCES_BY_ACTIVITIES[id].available
+    ACTIVITY_IN_PROGRESS.btnHM = 'human'
+    ACTIVITY_IN_PROGRESS.id = RESOURCES_BY_ACTIVITIES[id].id
+
+    ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+    let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
+    for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
+        let res = new Object()
+        res.id = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].id
+        res.name = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].name
+        res.nb = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].nb
+        res.available = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].available
+        res.already = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].already
+
+        ACTIVITY_IN_PROGRESS.humanResourceCategories.push(res)
+    }
+
+    ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array() 
+    len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
+    for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
+        let res = new Object()
+        res.id = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].id
+        res.name = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].name
+        res.nb = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].nb
+        res.available = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].available
+        res.already = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].already
+
+        ACTIVITY_IN_PROGRESS.materialResourceCategories.push(res)
+    }
 
     handleHumanButton()
     document.getElementById('input-name').value = ACTIVITY_IN_PROGRESS.activityname

@@ -194,15 +194,46 @@ function addActivity() {
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].available = ACTIVITY_IN_PROGRESS.available
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].btnHM = 'human'
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].id = ACTIVITY_IN_PROGRESS.id
+        
+            //ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories = new Array()
+            for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
+                let res = new Object()
+                res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id
+                res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
+                res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
+                res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
+                res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
+        
+                RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
+            }
+
+            len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+            RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories = new Array()
+            for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
+                let res = new Object()
+                res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id
+                res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
+                res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
+                res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
+                res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
+        
+                RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
+            }
+
             fillActivityList()
 
         } else {
-            // ajout de l'activité au tableau
+            // add activity to the array
             addArray()
             NB_ACTIVITY = NB_ACTIVITY + 1;
             document.getElementById('nbactivity').value = NB_ACTIVITY
 
-            // on reinitialise les champs 
+            // reset the fields 
             ACTIVITY_IN_PROGRESS = new Object()
             ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
             ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
@@ -217,7 +248,7 @@ function addActivity() {
         return 1
 
     } else {
-        // message d'erreur
+        // error message
         return 0
     }
 }
@@ -346,7 +377,6 @@ function editActivity(id) {
         res.already = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].already
 
         ACTIVITY_IN_PROGRESS.humanResourceCategories.push(res)
-        console.log('oui')
     }
 
     ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array() 
@@ -361,9 +391,6 @@ function editActivity(id) {
 
         ACTIVITY_IN_PROGRESS.materialResourceCategories.push(res)
     }
-
-    console.log(ACTIVITY_IN_PROGRESS)
-    console.log(RESOURCES_BY_ACTIVITIES[id])
 
     handleHumanButton()
     document.getElementById('input-name').value = ACTIVITY_IN_PROGRESS.activityname
@@ -806,7 +833,6 @@ function submitPathway() {
 
     if (verif) {
         document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        console.log(RESOURCES_BY_ACTIVITIES)
-        //btnSubmit.click()
+        btnSubmit.click()
     }
 }
