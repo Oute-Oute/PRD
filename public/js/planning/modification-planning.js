@@ -82,6 +82,11 @@ function modifyEvent() {
   $("#modify-planning-modal").modal("toggle");
 }
 
+/**
+ * @brief This function get a date and return it in string format
+ * @param {*} date 
+ * @returns a date in string format
+ */
 function formatDate(date) {
   return ([
       date.getFullYear(),
@@ -95,8 +100,12 @@ function formatDate(date) {
   );
 }
 
+/**
+ * @brief This function set four input in the database update form for give the necessary informations 
+ * @param {*} id user identifier
+ */
 function updateDatabase(id) {
-  var listCurrentEvents = calendar.getEvents();
+  var listCurrentEvents = calendar.getEvents(); //get all scheduled activities
   let listResources = [];
   listCurrentEvents.forEach((currentEvent) => {
     var listResourceCurrentEvent = [];
@@ -105,10 +114,10 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  document.getElementById("user-id").value = JSON.stringify(id);
-  document.getElementById("events").value = JSON.stringify(calendar.getEvents());
-  document.getElementById("list-resource").value = JSON.stringify(listResources);
-  document.getElementById("validation-date").value = $_GET("date");
+  document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
+  document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
+  document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
+  document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
 }
 
 function zoomChange() {
@@ -280,7 +289,7 @@ function AddEventValider() {
 
         //Add one event in the Calendar
         var event = calendar.addEvent({
-          id: "new",
+          id: "new" + countAddEvent,
           description: "",
           resourceIds: activityResourcesArray,
           title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
@@ -968,7 +977,7 @@ document.addEventListener('keydown', function(event) {
     //we call the function undoEvent 
     undoEvent();
   }
-  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + s
+  if (event.ctrlKey && event.altKey && event.key === 's') { //if user clicks ctrl + alt + s
     //we call the function undoEvent 
     var id = document.getElementById("user-id").value;
     updateDatabase('save', id);
