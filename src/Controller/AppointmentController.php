@@ -185,7 +185,12 @@ class AppointmentController extends AbstractController
         }
         $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
         $targets = $this->getTargetByPathwayJSON($doctrine, $pathway, $AR, $date);
-        return new JsonResponse($targets);
+        $data[]=
+        [
+            "pathway" => $pathway,
+            "targets" => $targets
+        ];
+        return new JsonResponse($data);
     }
 
     public function getPathwayByName($name, ManagerRegistry $doctrine)
@@ -235,13 +240,16 @@ class AppointmentController extends AbstractController
             $dayWeek = date('w', $dateToGet->getTimestamp());
             $dateToGet=$dateToGet->format('Y-m-d');
             $nbrOfAppt=$AR->getNumberOfAppointmentByPathwayByDate($pathway, $dateToGet);
-            if($nbrOfAppt>0){
+            if($nbrOfAppt>0){//if there is at least one appointment on this day
                 if(array_key_exists($dayWeek, $targetsByDay)){
-                    if($targetsByDay[$dayWeek]>=$nbrOfAppt){
+                    if($targetsByDay[$dayWeek]<=$nbrOfAppt){ // if more or equal appointment than target 
                     $color="#ff0000";
                     }
-                    else{
+                    else if($targetsByDay[$dayWeek]-2<=$nbrOfAppt && $targetsByDay[$dayWeek]-2>=0){ // if more than target - 2 appointment but less than target
                         $color="#ffff00";
+                    }
+                    else{
+                        $color="#00ff00";//default
                     }
                     $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
                     $targetsJSON[] = [
@@ -262,7 +270,7 @@ class AppointmentController extends AbstractController
                 }
             }
             else{
-                if(array_key_exists($dayWeek, $targetsByDay)){
+                if(array_key_exists($dayWeek, $targetsByDay)){ //if target exist but no appointment
                     $ratioTarget=$nbrOfAppt."/".$targetsByDay[$dayWeek];
                     $targetsJSON[] = [
                         'color' => '#00FF00',
@@ -272,7 +280,7 @@ class AppointmentController extends AbstractController
                     ];
                 }
                 else{
-                    $ratioTarget=$nbrOfAppt."/--";
+                    $ratioTarget=$nbrOfAppt."/--";//if no target and no appointment
                     $targetsJSON[] = [
                         'color' => '#0000FF',
                         'description' => $ratioTarget,
