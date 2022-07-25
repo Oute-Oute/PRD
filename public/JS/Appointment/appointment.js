@@ -97,7 +97,8 @@ function editAppointment(
   split2 = split1[0].split(' ')
   newDateFormat = split1[2] + '/' + split1[1] + '/20' + split2[1]
   document.getElementById("dayAppointment").value = newDateFormat
-
+  console.log((earliestappointmenttime))
+  
   //document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
