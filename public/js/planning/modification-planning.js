@@ -253,7 +253,7 @@ function AddEventValider() {
             for(let k=0; k<categoryHumanResourceJSON.length; k++){
               if(listeActivitHumanResource[j].humanResourceCategoryId==categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
                 humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
-                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryHumanResourceJSON[k].categoryname})
+                categoryHumanResources.push({id:listeActivitHumanResource[j].humanResourceCategoryId,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryHumanResourceJSON[k].categoryname})
               }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
@@ -267,13 +267,13 @@ function AddEventValider() {
             for(let k=0; k<categoryMaterialResourceJSON.length; k++){
               if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
                 materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
-                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryMaterialResourceJSON[k].categoryname})
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].materialResourceCategoryId,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryMaterialResourceJSON[k].categoryname})
               }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           } 
         }
-        console.log(categoryMaterialResources); 
+
         //Put the number of human resouorces in the ResourcesArray of the event
 
         for (let j = 0; j< quantityHumanResources; j++) {
@@ -1167,6 +1167,7 @@ function getListCategoryHumanResources(scheduledActivity){
 
   //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+  console.log(listCategoryOfHumanResources)
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
@@ -1458,6 +1459,8 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
   var categoryName = "";
   if(typeResources == "human"){ //if the resource is human
     scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
+      console.log(scheduledActivity, categoryHumanResource,categoryResourceId ); 
+      
       if(categoryHumanResource.id == categoryResourceId){ //if the category exist
         //we don't set a message
         categoryExist = true;
@@ -1473,6 +1476,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
       })
     }
   }
+  
   else { //if the resource is material
     scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all material resources categories
       if(categoryMaterialResource.id == categoryResourceId){ //if the category exist
@@ -1495,7 +1499,6 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
     //we set the error message
     message = scheduledActivity.title + " n'a pas besoin de " + categoryName + ".";
   }
-
   return message;
 }
 
@@ -1711,6 +1714,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
               div.append(divColumn); 
               var nameSA=listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';        //Display Activity Name 
               divColumn.append(nameSA); 
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                var divColumn=document.createElement('divColumn');
+                div.append(divColumn); 
+                var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                divColumn.append(messageNotFullyScheduled);
+              }
               
               //messageDelay
               if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=[]){
@@ -1722,13 +1733,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 })
               }
 
-              //messageNotFullyScheduled
-              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
-                  var divColumn=document.createElement('divColumn');
-                  div.append(divColumn); 
-                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
-                  divColumn.append(messageNotFullyScheduled);
-                }
+              
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
