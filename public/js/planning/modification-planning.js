@@ -264,6 +264,8 @@ function AddEventValider() {
         
         for (let j = 0; j < listeActivityMaterialResource.length; j++) {
           if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+            console.log(listeActivityMaterialResource[j]); 
+            console.log(categoryOfMaterialResourceArray); 
             for(let k=0; k<categoryOfMaterialResourceArray.length; k++){
               if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryOfMaterialResourceArray[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
                 materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 

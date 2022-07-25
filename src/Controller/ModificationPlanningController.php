@@ -65,6 +65,8 @@ class ModificationPlanningController extends AbstractController
         $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
         $categoryOfMaterialResourceJSON = $this->getCategoryOfMaterialResource($doctrine);
         $categoryOfHumanResourceJSON = $this->getCategoryOfHumanResource($doctrine);
+        $categoryMaterialResourceJSON=$this->getCategoryMaterialResource($doctrine); 
+        $categoryHumanResourceJSON=$this->getCategoryHumanResource($doctrine); 
 
         if ($this->alertModif($dateModified, $idUser, $doctrine, $settingsRepository)) {
             $this->modificationAdd($dateModified, $idUser, $doctrine);
@@ -88,7 +90,10 @@ class ModificationPlanningController extends AbstractController
             'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
             'settingsRepository' => $settingsRepository,
             'categoryOfMaterialResourceJSON' => $categoryOfMaterialResourceJSON,
-            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON
+            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON,
+            'categoryMaterialResourceJSON'=> $categoryMaterialResourceJSON,
+            'categoryHumanResourceJSON' => $categoryHumanResourceJSON,
+
         ]);
     }
 
@@ -604,6 +609,34 @@ class ModificationPlanningController extends AbstractController
             );
         }
         return new JsonResponse($categoryOfMaterialResourceArray);
+    }
+
+    public function getCategoryMaterialResource(ManagerRegistry $doctrine)
+    {
+        $materialResourcesCategory = $doctrine->getRepository("App\Entity\MaterialResourceCategory")->findAll();
+        $materialResourcesCategoryArray = array();
+        foreach($materialResourcesCategory as $materialResourceCategory)
+        {
+            $materialResourcesCategoryArray[] = array(
+                'idcategory' => $materialResourceCategory->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $materialResourceCategory->getCategoryname()))
+            );
+        }
+        return new JsonResponse($materialResourcesCategoryArray);
+    }
+
+    public function getCategoryHumanResource(ManagerRegistry $doctrine)
+    {
+        $humanResourcesCategory = $doctrine->getRepository("App\Entity\HumanResourceCategory")->findAll();
+        $humanResourcesCategoryArray = array();
+        foreach($humanResourcesCategory as $humanResourceCategory)
+        {
+            $humanResourcesCategoryArray[] = array(
+                'idcategory' => $humanResourceCategory->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $humanResourceCategory->getCategoryname()))
+            );
+        }
+        return new JsonResponse($humanResourcesCategoryArray);
     }
 
     public function getCategoryOfHumanResource(ManagerRegistry $doctrine)
