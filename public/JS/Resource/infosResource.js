@@ -109,7 +109,7 @@ function getAjaxMaterialResources(idMaterialResource, date, tableBody) {
     data: { idMaterialResource: idMaterialResource, date: dateStr },
     dataType: "json",
     success: function (data) {
-      tableResource(tableBody, data["categories"], "humanresource");
+      tableResource(tableBody, data["categories"], "materialresource");
       addToCalendar(data);
     },
     error: function () {
