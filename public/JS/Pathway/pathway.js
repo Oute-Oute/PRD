@@ -171,7 +171,6 @@ function drawActivities(data){
         
         divContent.appendChild(div);
     }
-    console.log(arrayActivityByLevel);
     for(i=0; i < arrayActivityByLevel.length; i++){
         nbActivity = arrayActivityByLevel[i][0];
         switch(nbActivity){
@@ -213,23 +212,19 @@ function createActivities(height, level, name, idActivity, duration){
     var divLevel = document.getElementById('content' + level);
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
-    
-    div.style.maxWidth = '50%';
-    div.style.width = 'fit-content';
-    div.style.position = "relative";
+    div.classList.add("pathway-div-activity");
+
     div.style.transform = 'translate(0%, -' + height + '%)';
-    div.style.padding= '5px 5px 5px 5px';
-    div.style.borderStyle = 'solid';
 
-    var p1 = document.createElement('p');
-    p1.style.fontSize = '80%';
-    p1.innerHTML = name;
+    var divHeader = document.createElement('div');
+    divHeader.classList.add("pathway-div-activity-header");
+    divHeader.innerHTML = name;
 
-    var p2 = document.createElement('p');
-    p2.style.fontSize = '80%';
-    p2.innerHTML = "durée : " + duration + "min"; 
+    var p = document.createElement('p');
+    p.style.fontSize = '80%';
+    p.innerHTML = "durée : " + duration + "min"; 
 
-    div.appendChild(p1); div.appendChild(p2);
+    div.appendChild(divHeader); div.appendChild(p);
 
     divLevel.appendChild(div);
 
