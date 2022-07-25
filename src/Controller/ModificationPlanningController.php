@@ -275,7 +275,7 @@ class ModificationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    //Récupération d'un parcour dans la base dee donnée
+    //Récupération d'un parcours dans la base de donnée
     public function getPathway(ManagerRegistry $doctrine, $id)
     {
         //recuperation du pathway depuis la base de données

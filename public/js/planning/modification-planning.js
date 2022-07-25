@@ -941,6 +941,7 @@ function updateErrorMessages() {
                 scheduledActivityAlreadyExist = true;
 
                 //update the data
+                existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
                 existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
@@ -955,6 +956,7 @@ function updateErrorMessages() {
                 scheduledActivityId: scheduledActivity._def.publicId,
                 scheduledActivityName: scheduledActivity._def.title,
 
+                messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -983,6 +985,7 @@ function updateErrorMessages() {
             scheduledActivityId: scheduledActivity._def.publicId,
             scheduledActivityName: scheduledActivity._def.title,
 
+            messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -993,6 +996,7 @@ function updateErrorMessages() {
       }
     }
   })
+  console.log(listErrorMessages)
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1055,6 +1059,37 @@ function getMessageLatestAppointmentTime(listScheduledActivities, appointmentId)
     }
   })
 
+  return message;
+}
+
+/**
+ * 
+ * @param {*} scheduledActivity 
+ * @returns 
+ */
+function getMessageNotFullyScheduled(scheduledActivity){
+  var message = "";
+
+  var quantityRequired = 0;
+  scheduledActivity._def.extendedProps.categoryHumanResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+  scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((category) => {
+    quantityRequired = quantityRequired + category.quantity;
+  })
+
+  quantityAllocated = 0;
+  scheduledActivity._def.resourceIds.forEach((resource) => {
+    if(resource != "h-default" && resource != "m-default"){
+      quantityAllocated = quantityAllocated + 1;
+    }
+  })
+
+  if(quantityRequired > quantityAllocated){
+    message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
+  }
+  console.log(scheduledActivity)
+  console.log(quantityRequired, quantityAllocated, message)
   return message;
 }
 
@@ -1423,7 +1458,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
  * @returns the error message
  */
 function getMessageUnavailability(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((unavailability) => { //browse all events
     if(unavailability._def.extendedProps.type == "unavailability"){ //if events is an unavailability
@@ -1443,7 +1478,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
                 listResources.forEach((resource) => { //browse the list resources
                   if(resource.id == compareResourceId){
                     //set an error message with the resource name
-                    message.push(resource.title + " est indisponible sur ce créneau. ");
+                    messages.push(resource.title + " est indisponible sur ce créneau. ");
                   }
                 })
               }
@@ -1453,7 +1488,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
       }
     }
   })
-  return message;
+  return messages;
 }
 
 /**
@@ -1463,7 +1498,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
     if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
@@ -1476,13 +1511,13 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
                 compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
                   if(humanResource.id == compareResourceId){ //if the resource is a human resource
                     //set an error message
-                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+                    messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
                   }
                 })
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
                   if(materialResource.id == compareResourceId){ //if the resource is a material resource
                     //set an error message
-                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
+                    messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
               }
@@ -1493,7 +1528,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
     }
   })
 
-  return message;
+  return messages;
 }
 
 /**
@@ -1562,6 +1597,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var divRow=document.createElement('divRow'); 
         divRow.setAttribute('style','display: flex; flex-direction : row;'); 
         div.append(divRow);
+        var img = document.createElement("img");
+          img.src="/img/exclamation-triangle-fill.svg"; 
+          var text=document.createElement('h3'); 
+          text.innerHTML='Rendez-vous non plannifiés'; 
+          divRow.append(img,text);
+        
         listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
           var divColumn=document.createElement('divColumn');
           div.append(divColumn); 
@@ -1631,6 +1672,15 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
                   divColumn.append(messageDelay);
                 })
+              }
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                  divColumn.append(messageNotFullyScheduled);
+                }
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
@@ -1742,7 +1792,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
@@ -1791,6 +1840,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           //messageDelay
           if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+            errorInappointment=true;
+            errorInScheduledActivity=true; 
+          }
+
+          if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }
