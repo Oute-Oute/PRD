@@ -112,10 +112,12 @@ function change_tab(id) {
 
     switch (id) {
         case 'activities':
+            showArrows();
             activities.style.display = 'block';
             appointments.style.display = 'none';
             break;
         case 'appointments':
+            hideArrows();
             activities.style.display = 'none';
             appointments.style.display = 'block';
             break;
@@ -138,7 +140,20 @@ function drawActivities(data){
     
     for(i = 0; i < data.length; i++){
         arrayActivityByLevel[data[i]['level']-1][0]++;
-        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i);
+        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i, data[i]['activity']['duration']);
+    }
+
+    maxActivityByLevel = 0;
+    for(i = 0; i < arrayActivityByLevel.length; i++){
+        if(maxActivityByLevel < arrayActivityByLevel[i][0]){
+            maxActivityByLevel = arrayActivityByLevel[i][0];
+        }
+    }
+    var divBr= document.getElementById('modal-br');
+    divBr.innerHTML = "";
+    for(i = 0; i < maxActivityByLevel*3; i++){
+        var br = document.createElement("br");
+        divBr.appendChild(br);
     }
     const style = document.createElement('style');
     style.innerHTML = `
@@ -156,13 +171,12 @@ function drawActivities(data){
         
         divContent.appendChild(div);
     }
-
     for(i=0; i < arrayActivityByLevel.length; i++){
         nbActivity = arrayActivityByLevel[i][0];
         switch(nbActivity){
             case 1:
                 height = 100/(nbActivity*2);
-                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2]);
+                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2], arrayActivityByLevel[i][3]);
             break;
             default:
                 for(j = 0; j < nbActivity; j++){
@@ -185,7 +199,7 @@ function drawActivities(data){
                             height = 50/nbActivity;
                         }
                     }
-                    createActivities(height, i+1, arrayActivityByLevel[i][j*2+1], arrayActivityByLevel[i][j*2+2]);
+                    createActivities(height, i+1, arrayActivityByLevel[i][j*3+1], arrayActivityByLevel[i][j*3+2], arrayActivityByLevel[i][j*3+3]);
                 }
             break;
         }
@@ -194,22 +208,23 @@ function drawActivities(data){
     drawArrows(data);
 }
 
-function createActivities(height, level, name, idActivity){
+function createActivities(height, level, name, idActivity, duration){
     var divLevel = document.getElementById('content' + level);
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
-    
-    div.style.width = '50%';
-    div.style.position = "relative";
+    div.classList.add("pathway-div-activity");
+
     div.style.transform = 'translate(0%, -' + height + '%)';
-    div.style.padding= '5px 5px 5px 5px';
-    div.style.borderStyle = 'solid';
+
+    var divHeader = document.createElement('div');
+    divHeader.classList.add("pathway-div-activity-header");
+    divHeader.innerHTML = name;
 
     var p = document.createElement('p');
     p.style.fontSize = '80%';
-    p.innerHTML = name;
+    p.innerHTML = "durée : " + duration + "min"; 
 
-    div.appendChild(p);
+    div.appendChild(divHeader); div.appendChild(p);
 
     divLevel.appendChild(div);
 
@@ -221,7 +236,7 @@ function drawArrows(data){
         for(j = 0; j < data[i]['successorsIndex'].length; j++){
             start = document.getElementById('activity'+ i);
             end = document.getElementById('activity'+ data[i]['successorsIndex'][j]);
-            l = new LeaderLine(start, end);
+            l = new LeaderLine(start, end, {color: '#0dac2d'});
             lines.push(l);
         }
     }
@@ -232,6 +247,18 @@ function deleteArrows(){
         l.remove();
     }
     lines = new Array();
+}
+
+function hideArrows(){
+    for (var l of lines) {
+        l.hide('none');
+    }
+}
+
+function showArrows(){
+    for (var l of lines) {
+        l.show();
+    }
 }
 
 function initActivity() {
