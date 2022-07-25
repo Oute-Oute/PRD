@@ -1088,8 +1088,7 @@ function getMessageNotFullyScheduled(scheduledActivity){
   if(quantityRequired > quantityAllocated){
     message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
   }
-  console.log(scheduledActivity)
-  console.log(quantityRequired, quantityAllocated, message)
+  
   return message;
 }
 
