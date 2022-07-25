@@ -270,7 +270,23 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
 
 }
 
-
 #lgd-working-hours{
     margin-left : 100px;
 }
+
+#unavailabilities-human-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#unavailabilities-human-container div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+}
+
+#unavailabilities-human-container div input{
+    margin: 15px;
+}
+

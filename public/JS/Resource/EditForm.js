@@ -6,6 +6,7 @@ var NB_CATEGORY_EDIT = 0
 var WORKING_HOURS;
 var CATEGORIES_BY_HUMAN_RESOURCES;
 var CATEGORIES_BY_MATERIAL_RESOURCES;
+var UNAVAILABILITIES_HUMAN;
 var sPath = window.location.pathname;
 var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 
@@ -14,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
         CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
-        console.log(CATEGORIES_BY_HUMAN_RESOURCES)
+        UNAVAILABILITIES_HUMAN = JSON.parse(document.getElementById('unavailabilities-human-resource').value)
+        console.log(UNAVAILABILITIES_HUMAN)
     }
 
     if(sPage == 'material-resources') {
@@ -228,6 +230,44 @@ function showUnavailabilityHuman(id, name){
    $('#edit--unavailability-human-resource-modal').modal("show");
    document.getElementById('human-resource-id-unavailability').value = id;
    document.getElementById('human-resource-name-unavailability').innerHTML = name;
+   tbody = document.getElementById('tbody-unavailabilities-human')
+
+   for (let i = 0; i < UNAVAILABILITIES_HUMAN.length; i++){
+    if(UNAVAILABILITIES_HUMAN[i]['id_human_resource'] == id) {
+        var dayBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(8,10);
+        var monthBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(5,7);
+        var yearBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(0,4);
+        var hoursBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(11,19);
+        var dayEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(8,10);
+        var monthEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(5,7);
+        var yearEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(0,4);
+        var hoursEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(11,19);
+
+        var tr = document.createElement("tr");
+        tbody.appendChild(tr)
+        var tdBegin = document.createElement("td")
+        var tdEnd = document.createElement("td")
+        var tdBtn = document.createElement("td")
+        var btnDelete = document.createElement("button")
+        btnDelete.innerHTML = 'Supprimer'
+        btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
+
+        tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
+        tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
+        
+
+        
+        tr.appendChild(tdBegin)
+        tr.appendChild(tdEnd)
+        tdBtn.appendChild(btnDelete)
+        tr.appendChild(tdBtn)
+
+
+        
+    }
+   }
+   //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
+
 
 
 }
