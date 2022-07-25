@@ -1159,9 +1159,29 @@ function getListCategoryHumanResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
+      var listCategoryOfHumanResource = [];
+      var listWrongCategoriesOfHumanResource = [];
+      var countValidCategory = 0;
       listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
-        if(categoryOfHumanResource.idresource == humanResource){ //if we find the category of the human resource 
-          var categoryHumanResourceAlreadyExist = false;
+        if(categoryOfHumanResource.idresource == humanResource){ //if we find a category of the human resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human") == ""){
+            listCategoryOfHumanResource.push(categoryOfHumanResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfHumanResource.push(categoryOfHumanResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfHumanResource.forEach((categoryOfHumanResource) => {
+          listCategoryOfHumanResource.push(categoryOfHumanResource);
+        })
+      }
+
+      listCategoryOfHumanResource.forEach((categoryOfHumanResource) => {
+        var categoryHumanResourceAlreadyExist = false;
           if(listCategoryHumanResources != []){
             listCategoryHumanResources.forEach((categoryHumanResource) => {
               if(categoryHumanResource.categoryHumanResourceId == categoryOfHumanResource.idcategory){ //if the category already exist in the list
@@ -1181,7 +1201,6 @@ function getListCategoryHumanResources(scheduledActivity){
               messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human"),
             })
           }
-        }
       })
     }
   })
@@ -1242,9 +1261,29 @@ function getListCategoryMaterialResources(scheduledActivity){
 
   scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
     if(materialResource.substring(0,8) == "material"){ //check only the material resources
+      var listCategoryOfMaterialResource = [];
+      var listWrongCategoriesOfMaterialResource = [];
+      var countValidCategory = 0;
       listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
-        if(categoryOfMaterialResource.idresource == materialResource){ //if we find the category of the human resource 
-          var categoryMaterialResourceAlreadyExist = false;
+        if(categoryOfMaterialResource.idresource == materialResource){ //if we find a category of the material resource 
+          if(getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material") == ""){
+            listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+            countValidCategory++;
+          }
+          else {
+            listWrongCategoriesOfMaterialResource.push(categoryOfMaterialResource);
+          }
+        }
+      })
+
+      if(countValidCategory == 0){
+        listWrongCategoriesOfMaterialResource.forEach((categoryOfMaterialResource) => {
+          listCategoryOfMaterialResource.push(categoryOfMaterialResource);
+        })
+      }
+
+      listCategoryOfMaterialResource.forEach((categoryOfMaterialResource) => {
+        var categoryMaterialResourceAlreadyExist = false;
           if(listCategoryMaterialResources != []){
             listCategoryMaterialResources.forEach((categoryMaterialResource) => {
               if(categoryMaterialResource.categoryMaterialResourceId == categoryOfMaterialResource.idcategory){ //if the category already exist in the list
@@ -1261,10 +1300,9 @@ function getListCategoryMaterialResources(scheduledActivity){
             listCategoryMaterialResources.push({
               categoryMaterialResourceId: categoryOfMaterialResource.idcategory,
               messageCategoryQuantity: getMessageCategoryQuantity(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
-              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material")
+              messageWrongCategory: getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material"),
             })
           }
-        }
       })
     }
   })
