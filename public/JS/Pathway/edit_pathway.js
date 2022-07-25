@@ -207,6 +207,7 @@ function addActivity() {
             ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
             ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
             ACTIVITY_IN_PROGRESS.available = true
+            ACTIVITY_IN_PROGRESS.already = true
             ACTIVITY_IN_PROGRESS.btnHM = 'human'
             document.getElementById('input-name').value = ''
             document.getElementById('input-duration').value = ''
@@ -325,8 +326,45 @@ function editActivity(id) {
     
     id = getId(id)
     ID_EDITED_ACTIVITY = id
-    
-    ACTIVITY_IN_PROGRESS = RESOURCES_BY_ACTIVITIES[id]
+
+
+    // copy of the activity :
+    ACTIVITY_IN_PROGRESS.activityname = RESOURCES_BY_ACTIVITIES[id].activityname
+    ACTIVITY_IN_PROGRESS.activityduration = RESOURCES_BY_ACTIVITIES[id].activityduration
+    ACTIVITY_IN_PROGRESS.available = RESOURCES_BY_ACTIVITIES[id].available
+    ACTIVITY_IN_PROGRESS.btnHM = 'human'
+    ACTIVITY_IN_PROGRESS.id = RESOURCES_BY_ACTIVITIES[id].id
+
+    ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
+    let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
+    for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
+        let res = new Object()
+        res.id = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].id
+        res.name = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].name
+        res.nb = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].nb
+        res.available = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].available
+        res.already = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].already
+
+        ACTIVITY_IN_PROGRESS.humanResourceCategories.push(res)
+        console.log('oui')
+    }
+
+    ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array() 
+    len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
+    for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
+        let res = new Object()
+        res.id = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].id
+        res.name = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].name
+        res.nb = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].nb
+        res.available = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].available
+        res.already = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].already
+
+        ACTIVITY_IN_PROGRESS.materialResourceCategories.push(res)
+    }
+
+    console.log(ACTIVITY_IN_PROGRESS)
+    console.log(RESOURCES_BY_ACTIVITIES[id])
+
     handleHumanButton()
     document.getElementById('input-name').value = ACTIVITY_IN_PROGRESS.activityname
     document.getElementById('input-duration').value = ACTIVITY_IN_PROGRESS.activityduration
@@ -385,6 +423,11 @@ function getId(str) {
     return id[id.length - 1]
 }
 
+
+
+/**
+ *  Action performed when the '+' button is pressed to add a resource to an activity 
+ */
 function addResources() {
 
     // On verifie que le champs quantité est bien rempli 
@@ -398,6 +441,7 @@ function addResources() {
         alert("La quantité de la ressource ne peut pas être inférieure à 1")
     }
 
+    
 
     if (verif) {
         // ! Si le bouton human est activé !
@@ -405,21 +449,49 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value 
 
-            let resourceName ='';
-            for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-                if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                    resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+            index = verifyResourcesDuplicates(resourceId, false)
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                    if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                        resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                        }
+                    }
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                    
                 }
             }
 
-            ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].id = resourceId
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].name = resourceName
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].already = false
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len-1].available = true
-
+           
             fillHRCList()
         } else {
             // ! Si le bouton material est activé !
@@ -427,26 +499,87 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value 
 
-            let resourceName ='';
-            for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
-                if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
-                    resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+            // We verify if the resource already exist in the list
+            index = verifyResourcesDuplicates(resourceId, true)
+
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                    if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                        resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                        if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                            resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                        }
+                    }
+    
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
                 }
             }
-
-            ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].id = resourceId
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].name = resourceName
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].already = false
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len-1].available = true
+ 
 
             fillMRCList()
         }
     }
 
 }
+
+/**
+ * Takes an id in parameter and verify if the resource id already in the list of the activity.
+ * Returns the index of the resource in the list if it exists
+ * @param {*} id 
+ * @param {*} material 
+ */
+function verifyResourcesDuplicates(id, material) {
+    
+    // Si material est true
+    if (material) {
+
+        for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
+            if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
+                return indexMaterial
+            }
+        }
+
+    } else {
+
+        for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
+                return indexHuman
+            }
+        }
+
+    }
+    
+    return -1
+}
+
 
 /**
  * Remplit la liste des ressources humaines 
@@ -673,6 +806,7 @@ function submitPathway() {
 
     if (verif) {
         document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        btnSubmit.click()
+        console.log(RESOURCES_BY_ACTIVITIES)
+        //btnSubmit.click()
     }
 }
