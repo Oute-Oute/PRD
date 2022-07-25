@@ -1463,7 +1463,7 @@ function getMessageUnavailability(scheduledActivity, resourceId){
  * @returns the error message
  */
 function getMessageAlreadyExist(scheduledActivity, resourceId){
-  var message = [];
+  var messages = [];
 
   calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
     if(compareScheduledActivity._def.extendedProps.type != "unavailability"){ //if event is not an unavailability
@@ -1476,13 +1476,13 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
                 compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
                   if(humanResource.id == compareResourceId){ //if the resource is a human resource
                     //set an error message
-                    message = message + humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ";
+                    messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
                   }
                 })
                 compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
                   if(materialResource.id == compareResourceId){ //if the resource is a material resource
                     //set an error message
-                    message.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
+                    messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
                   }
                 })
               }
@@ -1493,7 +1493,7 @@ function getMessageAlreadyExist(scheduledActivity, resourceId){
     }
   })
 
-  return message;
+  return messages;
 }
 
 /**
