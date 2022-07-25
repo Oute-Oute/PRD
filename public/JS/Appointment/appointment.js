@@ -41,17 +41,17 @@ function addAppointment() {
     tagsPathways.push(pathName);
   }
 }
-function getTargetsbyMonth(date) {
+function getTargetsbyMonth(date,pathwayName) {
   console.log(date);
   dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-  var pathwayName = $('#autocompletePathwayAdd').val();
   $.ajax({
     type: 'POST',
     url: '/ajaxAppointment',
     data: { pathway: pathwayName, date: dateStr },
     dataType: "json",
     success: function (data) {
-      addTargetsToCalendar(data);
+      console.log(data);
+      addTargetsToCalendar(data[0]["targets"]);
     },
     error: function (data) {
       console.log("error");
@@ -62,14 +62,23 @@ function getTargetsbyMonth(date) {
 //function permettant d'ouvrir la modale d'ajout d'un rendez-vous
 function openDayModale(type) {
   var dateToGet = new Date();
-  getTargetsbyMonth(dateToGet);
+  console.log(type)
+  if (type == "new") {
+  var pathwayName= $('#autocompletePathwayAdd').val();
+  }
+  if (type == "edit") {
+    console.log($('#autocompletePathwayEdit').val())
+    var pathwayName = $('#autocompletePathwayEdit').val();
+  }
+
+  getTargetsbyMonth(dateToGet, pathwayName);
   document.getElementById("buttonSelect").onclick = function () { validate(type); }
   document.getElementById("buttonCancel").onclick = function () { hideDayModale(type); }
   document.getElementById('load').style.visibility = "";
   $("#add-appointment-modal").modal("hide");
   $("#select-day-modal").modal("show");
   createCalendar(type);
-
+  document.getElementById("pathwayHidden").value = pathwayName;
 }
 
 //function permettant d'ouvrir la modale d'édition d'un rendez-vous
@@ -199,6 +208,7 @@ function createCalendar(type) {
 }
 
 function addTargetsToCalendar(targets) {
+  console.log(targets);
   targets.forEach(element => {
     calendar.addEvent({
       allDay: true,
@@ -234,7 +244,7 @@ function PreviousMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(newDate)
+  getTargetsbyMonth(newDate,document.getElementById("pathwayHidden").value)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -260,7 +270,7 @@ function NextMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(newDate)
+  getTargetsbyMonth(newDate,document.getElementById("pathwayHidden").value)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -281,7 +291,7 @@ function Today() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(today)
+  getTargetsbyMonth(today,document.getElementById("pathwayHidden").value)
   calendar.gotoDate(today)
   document.getElementById('load').style.visibility = "visible";
 }

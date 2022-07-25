@@ -112,10 +112,12 @@ function change_tab(id) {
 
     switch (id) {
         case 'activities':
+            showArrows();
             activities.style.display = 'block';
             appointments.style.display = 'none';
             break;
         case 'appointments':
+            hideArrows();
             activities.style.display = 'none';
             appointments.style.display = 'block';
             break;
@@ -138,7 +140,20 @@ function drawActivities(data){
     
     for(i = 0; i < data.length; i++){
         arrayActivityByLevel[data[i]['level']-1][0]++;
-        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i);
+        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i, data[i]['activity']['duration']);
+    }
+
+    maxActivityByLevel = 0;
+    for(i = 0; i < arrayActivityByLevel.length; i++){
+        if(maxActivityByLevel < arrayActivityByLevel[i][0]){
+            maxActivityByLevel = arrayActivityByLevel[i][0];
+        }
+    }
+    var divBr= document.getElementById('modal-br');
+    divBr.innerHTML = "";
+    for(i = 0; i < maxActivityByLevel*3; i++){
+        var br = document.createElement("br");
+        divBr.appendChild(br);
     }
     const style = document.createElement('style');
     style.innerHTML = `
@@ -156,13 +171,13 @@ function drawActivities(data){
         
         divContent.appendChild(div);
     }
-
+    console.log(arrayActivityByLevel);
     for(i=0; i < arrayActivityByLevel.length; i++){
         nbActivity = arrayActivityByLevel[i][0];
         switch(nbActivity){
             case 1:
                 height = 100/(nbActivity*2);
-                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2]);
+                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2], arrayActivityByLevel[i][3]);
             break;
             default:
                 for(j = 0; j < nbActivity; j++){
@@ -185,7 +200,7 @@ function drawActivities(data){
                             height = 50/nbActivity;
                         }
                     }
-                    createActivities(height, i+1, arrayActivityByLevel[i][j*2+1], arrayActivityByLevel[i][j*2+2]);
+                    createActivities(height, i+1, arrayActivityByLevel[i][j*3+1], arrayActivityByLevel[i][j*3+2], arrayActivityByLevel[i][j*3+3]);
                 }
             break;
         }
@@ -194,22 +209,27 @@ function drawActivities(data){
     drawArrows(data);
 }
 
-function createActivities(height, level, name, idActivity){
+function createActivities(height, level, name, idActivity, duration){
     var divLevel = document.getElementById('content' + level);
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
     
-    div.style.width = '50%';
+    div.style.maxWidth = '50%';
+    div.style.width = 'fit-content';
     div.style.position = "relative";
     div.style.transform = 'translate(0%, -' + height + '%)';
     div.style.padding= '5px 5px 5px 5px';
     div.style.borderStyle = 'solid';
 
-    var p = document.createElement('p');
-    p.style.fontSize = '80%';
-    p.innerHTML = name;
+    var p1 = document.createElement('p');
+    p1.style.fontSize = '80%';
+    p1.innerHTML = name;
 
-    div.appendChild(p);
+    var p2 = document.createElement('p');
+    p2.style.fontSize = '80%';
+    p2.innerHTML = "durée : " + duration + "min"; 
+
+    div.appendChild(p1); div.appendChild(p2);
 
     divLevel.appendChild(div);
 
@@ -221,7 +241,7 @@ function drawArrows(data){
         for(j = 0; j < data[i]['successorsIndex'].length; j++){
             start = document.getElementById('activity'+ i);
             end = document.getElementById('activity'+ data[i]['successorsIndex'][j]);
-            l = new LeaderLine(start, end);
+            l = new LeaderLine(start, end, {color: '#0dac2d'});
             lines.push(l);
         }
     }
@@ -232,6 +252,18 @@ function deleteArrows(){
         l.remove();
     }
     lines = new Array();
+}
+
+function hideArrows(){
+    for (var l of lines) {
+        l.hide('none');
+    }
+}
+
+function showArrows(){
+    for (var l of lines) {
+        l.show();
+    }
 }
 
 function initActivity() {
@@ -480,8 +512,11 @@ function getId(str) {
     return id[id.length - 1]
 }
 
+/**
+ *  Action performed when the '+' button is pressed to add a resource to an activity 
+ */
 function addResources() {
-
+    
     // On verifie que le champs quantité est bien rempli 
     let verif = true
     if (document.getElementById('resource-nb').value == '') {
@@ -501,19 +536,48 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value
 
-            let resourceName = '';
-            for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-                if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                    resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+            index = verifyResourcesDuplicates(resourceId, false)
+            console.log(index)
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                    if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                        resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
+                        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
+                            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
+                        }
+                    }
+
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                    
                 }
             }
-
-            ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
 
             fillHRCList()
         } else {
@@ -522,24 +586,85 @@ function addResources() {
             let resourceNb = document.getElementById('resource-nb').value
             let resourceId = document.getElementById('select-resources').value
 
-            let resourceName = '';
-            for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
-                if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
-                    resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+            // We verify if the resource already exist in the list
+            index = verifyResourcesDuplicates(resourceId, true)
+
+
+            if (index == -1) {
+
+                let resourceName = '';
+                for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                    if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                        resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                    }
+                }
+    
+                ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
+            } else {
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
+
+                } else {
+
+                    let resourceName = '';
+                    for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
+                        if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
+                            resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
+                        }
+                    }
+
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
+                    let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+
                 }
             }
 
-            ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
-            let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
-            ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true
-
             fillMRCList()
+
         }
 
     }
+}
+
+/**
+ * Takes an id in parameter and verify if the resource id already in the list of the activity.
+ * Returns the index of the resource in the list if it exists
+ * @param {*} id 
+ * @param {*} material 
+ */
+function verifyResourcesDuplicates(id, material) {
+    
+    // Si material est true
+    if (material) {
+
+        for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
+            if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
+                return indexMaterial
+            }
+        }
+
+    } else {
+
+        for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
+            if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
+                return indexHuman
+            }
+        }
+
+    }
+    
+    return -1
 }
 
 /**
