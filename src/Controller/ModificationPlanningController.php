@@ -282,7 +282,7 @@ class ModificationPlanningController extends AbstractController
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
         $pathwayArray = array();
         $idpath = $pathway->getId();
-        $idpath = "pathway_" . $idpath; //formatage pour fullcalendar
+        $idpath = "Parcour" . $idpath; //formatage pour fullcalendar
         //ajout des données du pathway dans un tableau
         $pathwayArray[] = array(
             'id' => $idpath,
