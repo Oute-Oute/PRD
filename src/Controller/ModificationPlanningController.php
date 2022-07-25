@@ -357,17 +357,16 @@ class ModificationPlanningController extends AbstractController
     {
         $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
         $materialResourcesArray = array();
-        $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResources));
-        $categoriesArray=array();
-        foreach ($categories as $category) {
-            $categoriesArray[]=array(
-                'id' => $category->getId(),
-                'name' => $category->getMaterialResourceCategory()->getCategoryname()
-            );
-        }
-
         if ($materialResources != null) {
             foreach ($materialResources as $materialResource) {
+                $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResource));
+                $categoriesArray=array();
+                foreach ($categories as $category) {
+                    $categoriesArray[]=array(
+                        'id' => $category->getId(),
+                        'name' => $category->getMaterialResourceCategory()->getCategoryname()
+                    );
+                }
                 $materialResourcesArray[] = array(
                     'id' => ("material-" . str_replace(" ", "3aZt3r", $materialResource->getId())),
                     'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
@@ -375,7 +374,7 @@ class ModificationPlanningController extends AbstractController
                 );
             }
         }
-
+        unset($categoriesArray);
         //Conversion des données ressources en json
         $materialResourcesArrayJson = new JsonResponse($materialResourcesArray);
         return $materialResourcesArrayJson;

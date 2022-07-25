@@ -86,6 +86,26 @@ function createCalendar(resources) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
   }
+  if(resources=="Patients"){
+    resourcesColumn=[{
+      headerContent: "Nom", //set the label of the column
+      field: "lastname", //set the field of the column
+    },
+    {
+      headerContent: "Prénom", //set the label of the column
+      field: "firstname", //set the field of the column
+    }]
+  }
+  else{
+    resourcesColumn=[{
+      headerContent: "Nom", //set the label of the column
+      field: "title", //set the field of the column
+    },
+    {
+      headerContent: "Catégories", //set the label of the column
+      field: "categories", //set the field of the column
+    }]
+  }
   date = new Date(dateStr); //create a new date with the date in the hidden input
   var calendarEl = document.getElementById("calendar"); //create the calendar variable
 
@@ -110,7 +130,7 @@ function createCalendar(resources) {
       center: null,
       end: null,
     },
-
+    resourceAreaColumns: resourcesColumn,
     slotLabelFormat: {
       //set the format of the time
       hour: "2-digit", //2-digit, numeric
@@ -119,7 +139,7 @@ function createCalendar(resources) {
       hour12: false, //set to 24h format
     },
     resourceOrder: "title", //display the resources in the alphabetical order of their names
-    resourceAreaWidth: "20%", //set the width of the resources area
+    resourceAreaWidth: "25%", //set the width of the resources area
     resourceAreaHeaderContent: headerResources, //set the title of the resources area
     events: events, //set the events
     filterResourcesWithEvents: true,
@@ -148,7 +168,7 @@ function createCalendar(resources) {
           //for each human resource except the last one
           if (humanResources[i][1] != undefined) {
             //if the human resource exist
-            humanResourcesNames += humanResources[i] + "; "; //add the human resource name to the string with a ; and a space
+            humanResourcesNames += humanResources[i] + ", "; //add the human resource name to the string with a ; and a space
           }
         }
         humanResourcesNames += humanResources[i]; //add the last human resource name to the string
@@ -161,7 +181,7 @@ function createCalendar(resources) {
           //for each material resource except the last one
           if (materialResources[i] != undefined) {
             //if the material resource exist
-            materialResourcesNames += materialResources[i] + "; "; //add the material resource name to the string with a ; and a space
+            materialResourcesNames += materialResources[i] + ", "; //add the material resource name to the string with a ; and a space
           }
         }
 
@@ -195,6 +215,8 @@ function createCalendar(resources) {
             //add the resources to the calendar
             id: patient[0]["id"], //set the id of the resource
             title: patient[0]["title"], //set the title of the resource
+            lastname: patient[0]["lastname"], //set the lastname of the resource
+            firstname: patient[0]["firstname"], //set the firstname of the resource
             businessHours: {
               //set the business hours of the resource
               startTime: patient[0]["businessHours"]["startTime"], //set the start time of the business hours
@@ -222,11 +244,21 @@ function createCalendar(resources) {
             };
             businessHours.push(businesstemp); //add the business hour to the array
           }
+          console.log(temp["categories"])
+          categories=temp["categories"];
+          var categoriesStr = ""; //create a string with the human resources names
+          if (categories.length > 0) {
+            for (var i = 0; i < categories.length - 1; i++) {
+              //for each human resource except the last one
+              categoriesStr += categories[i]["name"] + ", "; //add the human resource name to the string with a ; and a space
+            }
+            categoriesStr += categories[i]["name"]; //add the last human resource name to the string
+          } else categoriesStr = "Défaut";
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"], //set the id
             title: temp["title"], //set the title            
-            categories: [temp["categories"]], //set the type
+            categories: categoriesStr, //set the type
             businessHours: businessHours, //get the business hours
           });
         }
@@ -241,11 +273,20 @@ function createCalendar(resources) {
         if (temp != undefined) {
           if (calendar.getResourceById(temp["id"]) == null) {
             //if the resource is not already in the calendar
+            categories=temp["categories"];
+          var categoriesStr = ""; //create a string with the human resources names
+          if (categories.length > 0) {
+            for (var i = 0; i < categories.length - 1; i++) {
+              //for each human resource except the last one
+              categoriesStr += categories[i]["name"] + ", "; //add the human resource name to the string with a ; and a space
+            }
+            categoriesStr += categories[i]["name"]; //add the last human resource name to the string
+          } else categoriesStr = "Défaut";
             calendar.addResource({
               //add the resources to the calendar
               id: temp["id"], //set the id
               title: temp["title"], //set the title
-              categories: [temp["categories"]], //set the type
+              categories: categoriesStr, //set the type
             });
           }
         }
@@ -258,10 +299,7 @@ function createCalendar(resources) {
 }
 
 
-function zoomChange() {
-  newZoom = document.getElementById('zoom').value;
-  calendar.setOption('slotDuration', newZoom)
-}
+
 
 
 
