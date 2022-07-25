@@ -13,7 +13,7 @@ function editUser(idEdit, usernameEdit) {
 
 //Fonction empechant la suppresion ou l'edition de son propre compte administrateur
 document.addEventListener("DOMContentLoaded", () => {
-  actualUser = document.getElementById("OwnUsername").innerHTML;
+  actualUser = document.getElementById("OwnUsername").value;
   actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
   document.getElementById("buttonEdit" + actualUser).disabled = true;
   document.getElementById("buttonErase" + actualUser).disabled = true;
@@ -94,9 +94,9 @@ function filterUser(idInput, selected = null) {
   }
 }
 
-function filterShow() {
+function filterShowUser(button = null) {
   let filter = document.getElementById("filterId");
-  if (filter.style.display != "none") {
+  if (filter.style.display != "none" || button == null) {
     //if the filter is already displayed
     filter.style.display = "none"; //hide the filter
   }
@@ -120,4 +120,6 @@ function filterRole() {
     }
   }
 }
+
+
 
