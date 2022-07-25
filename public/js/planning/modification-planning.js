@@ -1597,6 +1597,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var divRow=document.createElement('divRow'); 
         divRow.setAttribute('style','display: flex; flex-direction : row;'); 
         div.append(divRow);
+        var img = document.createElement("img");
+          img.src="/img/exclamation-triangle-fill.svg"; 
+          var text=document.createElement('h3'); 
+          text.innerHTML='Rendez-vous non plannifiés'; 
+          divRow.append(img,text);
+        
         listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
           var divColumn=document.createElement('divColumn');
           div.append(divColumn); 
@@ -1666,6 +1672,15 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                   var messageDelay= document.createElement('messageDelay').innerHTML='-'+oneMessageDelay;  
                   divColumn.append(messageDelay);
                 })
+              }
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                  var divColumn=document.createElement('divColumn');
+                  div.append(divColumn); 
+                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                  divColumn.append(messageNotFullyScheduled);
+                }
               }
 
               //foreach CategoryHumanResources in ScheduledActivity
@@ -1777,7 +1792,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
         }
       }
-    }
     else{     //No errors
        var div = document.createElement('div');
        div.setAttribute('class', 'alert alert-success');
@@ -1826,6 +1840,11 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           //messageDelay
           if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=''){
+            errorInappointment=true;
+            errorInScheduledActivity=true; 
+          }
+
+          if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
             errorInappointment=true;
             errorInScheduledActivity=true; 
           }

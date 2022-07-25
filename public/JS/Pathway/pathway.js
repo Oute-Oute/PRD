@@ -69,7 +69,6 @@ function showInfosPathway(idPathway, name) {
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
-            console.log(data);
             drawActivities(data);
         },
         error: function() {
@@ -127,12 +126,20 @@ function drawActivities(data){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = "";
     maxLevel = 0;
+    arrayActivityByLevel = Array();
     for(i = 0; i < data.length; i++){
         if(maxLevel < data[i]['level']){
             maxLevel = data[i]['level'];
         }
     }
-
+    for(i = 0; i < maxLevel; i++){
+        arrayActivityByLevel[i] = [0];
+    }
+    
+    for(i = 0; i < data.length; i++){
+        arrayActivityByLevel[data[i]['level']-1][0]++;
+        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i);
+    }
     const style = document.createElement('style');
     style.innerHTML = `
         .block {
@@ -143,32 +150,69 @@ function drawActivities(data){
 
     for(i = 0; i < maxLevel; i++){
         var div = document.createElement('DIV');
-        div.classList.add("block");
+        div.classList.add("block", "wrapper");
+        div.style.flexDirection = "column";
         div.setAttribute('id', 'content'+ (i+1));
         
         divContent.appendChild(div);
     }
 
-    for(i = 0; i < data.length; i++){
-        var div = document.createElement('DIV');
-        div.setAttribute('id', 'activity'+ i);
-        div.style.height = 'auto';
-        div.style.width = '50%';
-        div.style.margin = '5px 5px 20px 5px';
-        div.style.padding= '5px 5px 5px 5px';
-        div.style.borderStyle = 'solid';
-
-        var p = document.createElement('p');
-        p.style.fontSize = '80%';
-        p.innerHTML = data[i]['activity']['name'];
-        div.appendChild(p);
-        
-        var divLevel = document.getElementById('content' + data[i]['level']);
-        divLevel.appendChild(div);
-
-        
+    for(i=0; i < arrayActivityByLevel.length; i++){
+        nbActivity = arrayActivityByLevel[i][0];
+        switch(nbActivity){
+            case 1:
+                height = 100/(nbActivity*2);
+                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2]);
+            break;
+            default:
+                for(j = 0; j < nbActivity; j++){
+                    if(nbActivity%2 == 0){
+                        if(j < nbActivity/2){
+                            height = 100 + 50/nbActivity;
+                        }
+                        else{
+                            height = 25;
+                        }
+                    }
+                    else{
+                        if(j < nbActivity/2){
+                            height = 100 + 50/nbActivity;
+                        }
+                        if(j == nbActivity/2){
+                            height = 50;
+                        }
+                        if(j > nbActivity/2){
+                            height = 50/nbActivity;
+                        }
+                    }
+                    createActivities(height, i+1, arrayActivityByLevel[i][j*2+1], arrayActivityByLevel[i][j*2+2]);
+                }
+            break;
+        }
     }
+
     drawArrows(data);
+}
+
+function createActivities(height, level, name, idActivity){
+    var divLevel = document.getElementById('content' + level);
+    var div = document.createElement('DIV');
+    div.setAttribute('id', 'activity'+ idActivity);
+    
+    div.style.width = '50%';
+    div.style.position = "relative";
+    div.style.transform = 'translate(0%, -' + height + '%)';
+    div.style.padding= '5px 5px 5px 5px';
+    div.style.borderStyle = 'solid';
+
+    var p = document.createElement('p');
+    p.style.fontSize = '80%';
+    p.innerHTML = name;
+
+    div.appendChild(p);
+
+    divLevel.appendChild(div);
+
 }
 
 function drawArrows(data){
