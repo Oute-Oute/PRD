@@ -337,7 +337,7 @@ class ConsultationPlanningController extends AbstractController
                     $materialCategoryArray = array();
                     foreach ($materialCategories as $materialCategory) {
                         $materialCategoryArray[] = array(
-                            'category' => ($materialCategory),
+                            'name' => ($materialCategory),
                         );
                     }
                     $id = $MaterialResourceScheduled->getMaterialresource()->getId();
@@ -345,9 +345,8 @@ class ConsultationPlanningController extends AbstractController
                     $MaterialResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
-                        'extendedProps' => array(
-                            'Categories' => ($materialCategoryArray)
-                        ),
+                        'categories' => ($materialCategoryArray)
+
 
                     );
                     unset($materialCategoryArray);
@@ -398,11 +397,12 @@ class ConsultationPlanningController extends AbstractController
                     ->findBy(array("scheduledactivity" => $displayedActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($HumanResourceScheduleds as $HumanResourceScheduled) {
-                    $humanCategories = $this->getHumanCategory($doctrine, $HumanResourceScheduled->getHumanresource());
-                    $HumanResourceArray = array();
-                    foreach ($humanCategories as $humanCategory) {
-                        $HumanResourceArray[] = array(
-                            'category' => ($humanCategory),
+                    $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $HumanResourceScheduled->getHumanresource()));
+                    $categoriesArray=array();
+                    foreach ($categories as $category) {
+                        $categoriesArray[]=array(
+                            'id' => $category->getId(),
+                            'name' => $category->getHumanResourceCategory()->getCategoryname()
                         );
                     }
                     $id = $HumanResourceScheduled->getHumanresource()->getId();
@@ -410,11 +410,10 @@ class ConsultationPlanningController extends AbstractController
                     $HumanResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
-                        'categories' => ($HumanResourceArray),
+                        'categories' => ($categoriesArray),
                         'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
 
                     );
-
                     unset($HumanResourceArray);
                 }
             }
