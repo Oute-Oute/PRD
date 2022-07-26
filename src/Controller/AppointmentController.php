@@ -293,4 +293,29 @@ class AppointmentController extends AbstractController
         
         return $targetsJSON;
     }
+
+    public function getInfosAppointmentById(ManagerRegistry $doctrine){
+        $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(array("id"=>$_POST["id"]));
+        $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findBy(array("appointment"=>$appointment));
+        $activitiesArray=[];
+        foreach($scheduledActivities as $scheduledActivity){
+            $activitiesArray[]=[
+            "startTime"=>$scheduledActivity->getStartTime()->format("H:i:s"),
+            "endTime"=>$scheduledActivity->getEndTime()->format("H:i:s"),
+            "activity"=>$scheduledActivity->getActivity()->getActivityname(),
+            ];
+        }
+
+        $data[]=
+        [
+            "dayAppointment" => $appointment->getDayappointment()->format("Y-m-d"),
+            "earliestAppointmentTime" => $appointment->getEarliestappointmenttime()->format("H:i:s"),
+            "latestAppointmentTime" => $appointment->getLatestappointmenttime()->format("H:i:s"),
+            "patientLastname" => $appointment->getPatient()->getLastname(),
+            "patientFirstname" => $appointment->getPatient()->getFirstname(),
+            "pathwayName" => $appointment->getPathway()->getPathwayname(),
+            "activities" => $activitiesArray
+        ];
+        return new JsonResponse($data);
+    }
 }
