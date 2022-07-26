@@ -13,7 +13,14 @@ var listErrorMessages = {
   messageUnscheduledAppointment: messageUnscheduledAppointment,
   listScheduledAppointment: listScheduledAppointment
 };
-
+var resourcesColumns=[{
+  headerContent: "Nom", //set the label of the column
+  field: "title", //set the field of the column
+},
+{
+  headerContent: "Catégories", //set the label of the column
+  field: "categories", //set the field of the column
+}]
 var listEvents;
 var historyEvents=[]; 
 
@@ -461,7 +468,6 @@ function DisplayAppointmentInformation(eventClicked){
           var listActivitiesPathway=[]; 
           var listSuccessorsPathway=[];
           var activitiesInlistSuccessorsPathway=[]; 
-        console.log(eventClicked);
           var id =  eventClicked.el.fcSeg.eventRange.def.publicId; //get the id of the event
           var activity = calendar.getEventById(id); //get the event with the id
           var appointment; 
@@ -614,14 +620,7 @@ function createCalendar(typeResource,useCase) {
       nowIndicator: true,
       selectConstraint: "businessHours", //set the select constraint to be business hours
       eventMinWidth: 1, //set the minimum width of the event
-      resourceAreaColumns:[{
-        headerContent: "Nom", //set the label of the column
-        field: "title", //set the field of the column
-      },
-      {
-        headerContent: "Catégories", //set the label of the column
-        field: "categories", //set the field of the column
-      }],
+      resourceAreaColumns:resourcesColumns, //set the type of columns for the resources
 
       //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
       headerToolbar: {
@@ -643,83 +642,83 @@ function createCalendar(typeResource,useCase) {
       //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
       eventClick: function (event) {
       if (event.event.display != "background"){
-      var id = event.event._def.publicId; //get the id of the event
-      var activity = calendar.getEventById(id); //get the event with the id
-      var start = activity.start; //get the start date of the event
-      var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-      var humanResourcesNames = ""; //create a string with the human resources names
-      if (humanResources != undefined) {
-        for (var i = 0; i < humanResources.length; i++) {
-          //for each human resource except the last one
+        var id = event.event._def.publicId; //get the id of the event
+        var activity = calendar.getEventById(id); //get the event with the id
+        var start = activity.start; //get the start date of the event
+        var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+        var humanResourcesNames = ""; //create a string with the human resources names
+        if (humanResources != undefined) {
+          for (var i = 0; i < humanResources.length; i++) {
+            //for each human resource except the last one
 
-          if (humanResources[i].title != undefined) {
-            //if the human resource exist
-            humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+            if (humanResources[i].title != undefined) {
+              //if the human resource exist
+              humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
+            }
+            
           }
-          
         }
-      }
-      else{
-            humanResourcesNames="Aucune ressource humaine allouée";
+        else{
+              humanResourcesNames="Aucune ressource humaine allouée";
+            }
+
+        var categoryHumanResources=""; 
+        if(event.event._def.extendedProps.categoryHumanResource.length!=0){
+          for(let i=0; i<event.event._def.extendedProps.categoryHumanResource.length; i++){
+            categoryHumanResources=categoryHumanResources + event.event._def.extendedProps.categoryHumanResource[i].quantity + ' ' + event.event._def.extendedProps.categoryHumanResource[i].categoryname + ';'
           }
-
-      var categoryHumanResources=""; 
-      if(event.event._def.extendedProps.categoryHumanResource.length!=0){
-        for(let i=0; i<event.event._def.extendedProps.categoryHumanResource.length; i++){
-          categoryHumanResources=categoryHumanResources + event.event._def.extendedProps.categoryHumanResource[i].quantity + ' ' + event.event._def.extendedProps.categoryHumanResource[i].categoryname + ';'
         }
-       }
-       else{
-        categoryHumanResources="L'activité ne nécéssite aucune ressource humaine";
-       } 
-      
+        else{
+          categoryHumanResources="L'activité ne nécéssite aucune ressource humaine";
+        } 
+        
 
-      var categoryMaterialResources=""; 
-      if(event.event._def.extendedProps.categoryMaterialResource.length!=0){
-        for(let i=0; i<event.event._def.extendedProps.categoryMaterialResource.length; i++){
-          categoryMaterialResources=categoryMaterialResources + event.event._def.extendedProps.categoryMaterialResource[i].quantity + ' ' + event.event._def.extendedProps.categoryMaterialResource[i].categoryname + ';'
-        }
-      }
-      else{
-        categoryMaterialResources="L'activité ne nécéssite aucune ressource materielle";
-      }
-
-      var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
-      
-      var materialResourcesNames = ""; //create a string with the material resources names
-      if (materialResources != undefined) {
-        for (var i = 0; i < materialResources.length; i++) {
-          //for each material resource except the last one
-          if (materialResources[i].title != undefined) {
-            //if the material resource exist
-            materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
+        var categoryMaterialResources=""; 
+        if(event.event._def.extendedProps.categoryMaterialResource.length!=0){
+          for(let i=0; i<event.event._def.extendedProps.categoryMaterialResource.length; i++){
+            categoryMaterialResources=categoryMaterialResources + event.event._def.extendedProps.categoryMaterialResource[i].quantity + ' ' + event.event._def.extendedProps.categoryMaterialResource[i].categoryname + ';'
           }
-          
         }
-      }
-      else{
-            materialResourcesNames="Aucune ressource matérielle allouée";
-          }
+        else{
+          categoryMaterialResources="L'activité ne nécéssite aucune ressource materielle";
+        }
 
-      //set data to display in the modal window
-      $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
-      document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
-      $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
-      $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
-      $("#category-human-resource-modified-event").val(categoryHumanResources); //set the human resources of the event
-      $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
-      $("#category-material-resource-modified-event").val(categoryMaterialResources); //set the material resources of the event
-      $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
-      $("#id-modified-event").val(id);
-      $("#modify-planning-modal").modal("show"); //open the window
-      document.getElementById('eventClicked').value=JSON.stringify(event);
-      updateEventsAppointment(event)
-      calendar.getEvents().forEach((currentEvent) => {
-        currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-        currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-        currentEvent.setEnd(currentEvent.end); 
-      })
-      isUpdated = false;
+        var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+        
+        var materialResourcesNames = ""; //create a string with the material resources names
+        if (materialResources != undefined) {
+          for (var i = 0; i < materialResources.length; i++) {
+            //for each material resource except the last one
+            if (materialResources[i].title != undefined) {
+              //if the material resource exist
+              materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
+            }
+            
+          }
+        }
+        else{
+              materialResourcesNames="Aucune ressource matérielle allouée";
+            }
+
+        //set data to display in the modal window
+        $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
+        document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
+        $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
+        $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
+        $("#category-human-resource-modified-event").val(categoryHumanResources); //set the human resources of the event
+        $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
+        $("#category-material-resource-modified-event").val(categoryMaterialResources); //set the material resources of the event
+        $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
+        $("#id-modified-event").val(id);
+        $("#modify-planning-modal").modal("show"); //open the window
+        document.getElementById('eventClicked').value=JSON.stringify(event);
+        updateEventsAppointment(event)
+        calendar.getEvents().forEach((currentEvent) => {
+          currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+          currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+          currentEvent.setEnd(currentEvent.end); 
+        })
+        isUpdated = false;
       }
     },
 
@@ -1249,7 +1248,6 @@ function getListCategoryHumanResources(scheduledActivity){
 
   //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
-  console.log(listCategoryOfHumanResources)
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
@@ -1541,7 +1539,6 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
   var categoryName = "";
   if(typeResources == "human"){ //if the resource is human
     scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
-      console.log(scheduledActivity, categoryHumanResource,categoryResourceId ); 
       
       if(categoryHumanResource.id == categoryResourceId){ //if the category exist
         //we don't set a message
@@ -1699,7 +1696,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
     if(lateralPannelInput==true){                   //Test the value of the checkbox
       lateralPannelBloc[0].style.display='block';  //display the panel
-      lateralPannel[0].style.width='40em';
+      lateralPannel[0].style.width='30em';
     }
     else{
       lateralPannelBloc[0].style.display=''; //hide the pannel
@@ -1717,7 +1714,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
     var repertoryErrors =repertoryListErrors();                   //Get the repertory of errors 
-    console.log(repertoryErrors);
     if(repertoryErrors.count!=0){
       updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
       //add div for unscheduled appointment
@@ -2089,3 +2085,32 @@ function updateColorErrorButton(state) {
     
 }
 
+function categoryShow(){
+  var displayButtonStyle=document.getElementById('displayCategory').style; 
+  var labelDisplayButtonStyle=document.getElementById('labelDisplayCategory');
+  console.log(labelDisplayButtonStyle.textContent);
+  
+
+  if(resourcesColumns.length==1){
+  displayButtonStyle.opacity=0.7; 
+  labelDisplayButtonStyle.textContent="Cacher Catégories";
+  resourcesColumns=[{
+    headerContent: "Nom", //set the label of the column
+    field: "title", //set the field of the column
+  },
+  {
+    headerContent: "Catégories", //set the label of the column
+    field: "categories", //set the field of the column
+  }]
+
+}
+else{
+  displayButtonStyle.opacity=1; 
+  labelDisplayButtonStyle.textContent="Afficher Catégories";
+  resourcesColumns=[{
+    headerContent: "Nom", //set the label of the column
+    field: "title", //set the field of the column
+  }]
+}
+createCalendar(headerResources);
+}
