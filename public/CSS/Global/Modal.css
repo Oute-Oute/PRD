@@ -151,7 +151,7 @@ ul.ui-autocomplete {
     pointer-events:none;
 }
 
-#load,#load-large{
+#load,#load-large,#load-path,#load-info-appt{
     position: absolute;
     display : block;
     justify-content: center;

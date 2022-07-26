@@ -37,3 +37,20 @@
     border : 1px solid #002242;
   }
 
+.legend-tr{
+  margin : 10px;
+  height : 50px;
+   
+}
+.legend-td{
+  border-radius: 15px;
+  padding : 10px;
+  width : 150px;
+
+}
+.legend-table{
+  margin : 10px;
+}
+.legend-text{
+  text-align: center;
+}

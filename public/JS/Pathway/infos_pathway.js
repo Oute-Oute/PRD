@@ -38,6 +38,7 @@ var lines= new Array();
 
     change_tab('activities');
     $('#infos-pathway-modal').modal("show");
+  document.getElementById('load-path').style.visibility = "visible";
 }
 
 function tableAppointment(tableBody, data) {
@@ -180,6 +181,7 @@ function drawActivities(data){
         }
     }
     drawArrows(data);
+  document.getElementById('load-path').style.visibility = "hidden";
 }
 
 function createActivities(height, level, name, idActivity, duration){
