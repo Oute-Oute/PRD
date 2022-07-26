@@ -270,6 +270,7 @@ function showUnavailabilityHuman(id, name){
     document.getElementById('human-resource-id-unavailability').value = id;
     document.getElementById('human-resource-name-unavailability').innerHTML = name;
     tbody = document.getElementById('tbody-unavailabilities-human')
+    tbody.innerHTML = ''
  
     for (let i = 0; i < UNAVAILABILITIES_HUMAN.length; i++){
      if(UNAVAILABILITIES_HUMAN[i]['id_human_resource'] == id) {
@@ -315,10 +316,9 @@ function showUnavailabilityMaterial(id, name) {
     document.getElementById('material-resource-id-unavailability').value = id;
     document.getElementById('material-resource-name-unavailability').innerHTML = name;
     tbody = document.getElementById('tbody-unavailabilities-material')
-
+    tbody.innerHTML = ''
 
     tbody = document.getElementById('tbody-unavailabilities-material')
-    console.log(UNAVAILABILITIES_MATERIAL)
    for (let i = 0; i < UNAVAILABILITIES_MATERIAL.length; i++){
     if(UNAVAILABILITIES_MATERIAL[i]['id_human_resource'] == id) {
         var dayBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(8,10);
