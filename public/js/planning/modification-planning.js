@@ -468,7 +468,6 @@ function DisplayAppointmentInformation(eventClicked){
           var listActivitiesPathway=[]; 
           var listSuccessorsPathway=[];
           var activitiesInlistSuccessorsPathway=[]; 
-        console.log(eventClicked);
           var id =  eventClicked.el.fcSeg.eventRange.def.publicId; //get the id of the event
           var activity = calendar.getEventById(id); //get the event with the id
           var appointment; 
@@ -1249,7 +1248,6 @@ function getListCategoryHumanResources(scheduledActivity){
 
   //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
-  console.log(listCategoryOfHumanResources)
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
@@ -1541,7 +1539,6 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
   var categoryName = "";
   if(typeResources == "human"){ //if the resource is human
     scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
-      console.log(scheduledActivity, categoryHumanResource,categoryResourceId ); 
       
       if(categoryHumanResource.id == categoryResourceId){ //if the category exist
         //we don't set a message
@@ -1717,7 +1714,6 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length-1]);  //Removing div 
     }
     var repertoryErrors =repertoryListErrors();                   //Get the repertory of errors 
-    console.log(repertoryErrors);
     if(repertoryErrors.count!=0){
       updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
       //add div for unscheduled appointment
@@ -2090,7 +2086,14 @@ function updateColorErrorButton(state) {
 }
 
 function categoryShow(){
+  var displayButtonStyle=document.getElementById('displayCategory').style; 
+  var labelDisplayButtonStyle=document.getElementById('labelDisplayCategory');
+  console.log(labelDisplayButtonStyle.textContent);
+  
+
   if(resourcesColumns.length==1){
+  displayButtonStyle.opacity=0.7; 
+  labelDisplayButtonStyle.textContent="Cacher Catégories";
   resourcesColumns=[{
     headerContent: "Nom", //set the label of the column
     field: "title", //set the field of the column
@@ -2099,8 +2102,11 @@ function categoryShow(){
     headerContent: "Catégories", //set the label of the column
     field: "categories", //set the field of the column
   }]
+
 }
 else{
+  displayButtonStyle.opacity=1; 
+  labelDisplayButtonStyle.textContent="Afficher Catégories";
   resourcesColumns=[{
     headerContent: "Nom", //set the label of the column
     field: "title", //set the field of the column
