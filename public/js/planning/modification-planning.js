@@ -19,7 +19,7 @@ var resourcesColumns=[{
 },
 {
   headerContent: "Catégories", //set the label of the column
-  field: "categories", //set the field of the column
+  field: "categoriesString", //set the field of the column
 }]
 var listEvents;
 var historyEvents=[]; 
@@ -754,23 +754,28 @@ function createCalendar(typeResource,useCase) {
         countAddResource++; 
         var categoriesStr = ""; //create a string with the human resources names
         categories=temp["categories"];
+        var categoriesArray= [];
         for(let k=0; k<categories.length-1; k++){
                 categoriesStr+=categories[k]["name"]+", ";
+                categoriesArray.push(categories[k]["name"]);
         }
         categoriesStr+=categories[categories.length-1]["name"];
+        categoriesArray.push(categories[categories.length-1]["name"]);
         calendar.addResource({
           //add the resources to the calendar
           id: temp["id"], //set the id
           title: temp["title"], //set the title
-          categories: categoriesStr, //set the type
+          categoriesString: categoriesStr, //set the type
           businessHours: businessHours, //get the business hours
           type:countAddResource,
+          categories:categoriesArray,
         });
         calendar.addResource({
           id: "h-default",
           title: "Aucune ressource allouée",
           type:0,
-          categories:[["default"]]
+          categoriesString:[["Aucune Catégorie"]],
+          categories:["default"],
         });
         }
         break;
@@ -782,25 +787,31 @@ function createCalendar(typeResource,useCase) {
           var temp = resourcesArray[i]; //get the resources data
           var categoriesStr = ""; //create a string with the human resources names
           categories=temp["categories"];
+          var categoriesArray= [];
           if (categories.length > 0) {
             for (var j = 0; j < categories.length - 1; j++) {
               //for each human resource except the last one
-              categoriesStr += categories[j]["name"] + ", "; //add the human resource name to the string with a ; and a space
+              categoriesStr += categories[j]["name"] + ", "; //add the material resource name to the string with a ; and a space
+              categoriesArray.push(categories[j]["name"]);
             }
-            categoriesStr += categories[categories.length-1]["name"]; //add the last human resource name to the string
-          } else categoriesStr = "Défaut";
+            categoriesStr += categories[categories.length-1]["name"]; //add the last material resource name to the string
+            categoriesArray.push(categories[categories.length-1]["name"]);
+          } else categoriesStr = "Pas de Catégorie";
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"],
-            categories: categoriesStr, //set the type
+            categoriesString: categoriesStr, //set the type
             title: temp["title"],
             type:countAddResource,
+            categories:categoriesArray,
 
           });
           calendar.addResource({
             id: "m-default",
             title: "Aucune ressource allouée",
             type:0,
+            categoriesString:[["Aucune Catégorie"]],
+            categories:["default"],
           });
           categoriesStr = "";
         }
@@ -2097,7 +2108,7 @@ function categoryShow(){
   },
   {
     headerContent: "Catégories", //set the label of the column
-    field: "categories", //set the field of the column
+    field: "categoriesString", //set the field of the column
   }]
 }
 else{
