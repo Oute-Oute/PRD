@@ -67,11 +67,11 @@
 					</div>
 					<div class="modal-footer">
 						<!-- bouton de suppression à revoir, permet pour le moment d'être redirigé vers la gestion des rendez-vous pour en supprimer un -->
-						<form method="get" action="{{ path('Appointment') }}">
-							<button class="btn-delete btn-secondary" onclick="return confirm('Voulez-vous être redirigé vers la gestion des rendez-vous ? Vos modifications vont être perdues');">Supprimer le rendez-vous</button>
-						</form>
+					
 
 						<!-- bouton permettant de fermer la modal ou de valider les modification -->
+						<input type="hidden" id="eventClicked"/> 
+						<button type="button" class="btn-consult btn-secondary" onclick="DisplayAppointmentInformation(eventClicked.value)">Informations sur le parcours</button>
 						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
 						<button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
 					</div>
@@ -103,12 +103,9 @@
 							<label style='font-weight:bold;' class="label-event">Parcours</label>
 							</br>
 						</div>
-						<div class="modal-footer">
-
-							<!-- bouton permettant de fermer la modal ou de valider les modification -->
-							<input type="hidden" id="eventClicked"/> 
-							<button type="button" class="btn-valide btn-secondary" onclick="DisplayModifyEventModal(eventClicked.value)">Informations sur l'activité</button>
-							<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+						<div class="modal-footer" id='appointment-modal-footer'>
+							<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Quitter</button>
 						</div>
 					</div>
 				</div>
@@ -217,7 +214,7 @@
 		<div id='container-top-right'>
 			<div id='top-right-buttons'>
 				<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
-				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Quitter</button>
+				<button type="button" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
 					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>
