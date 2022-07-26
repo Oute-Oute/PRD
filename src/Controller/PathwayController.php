@@ -776,7 +776,6 @@ class PathwayController extends AbstractController
         foreach ($activities as $activity) {
             $activityArray[] = $this->activityToArray($doctrine, $activity);
         }
-        'materialResourceCategories' =>$mrArray
         $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findAll();
         $arraySuccessor = [];
         foreach($successors as $successor){
