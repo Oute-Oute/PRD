@@ -17,6 +17,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "anim-event": "^1.0.17",
         "leader-line": "^1.0.7"
     }
 }
