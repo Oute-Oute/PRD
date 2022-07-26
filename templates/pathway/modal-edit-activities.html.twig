@@ -3,11 +3,22 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 id='title-pathway-activities'></h1>
-                <br>
+                Pour créer un lien, double-cliquez sur une activité puis sur une autre
             </div>
-            <div class="modal-body">
-                <div id='divContent' class="wrapper">
+            <div class="modal-body" id="modal-body-graph">
+                <div id='divContent' class="wrapper-graph">
                 </div>
+                <div id="activities-list-graph" style="width: 25%; box-shadow: 0px 0px 10px lightgrey; border-radius: 10px;">
+                    <div style="display:flex">
+                        <h5 class="title"><label id="name" class="label" for='name'> Liste des liens </label></h5> 
+                    </div>
+                    <div id="list-graph"></div>
+                    <button type="button" id="btn-delete-successors" class="btn-delete btn-secondary" onclick="deleteSuccessors()">Tout supprimer</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-delete btn-secondary" onclick="hideActivitiesPathway()">Annuler</button>
+                <button id='activities-submit' type="submit" class="btn-valide btn-secondary">Valider</button>
             </div>
         </div>
     </div>
