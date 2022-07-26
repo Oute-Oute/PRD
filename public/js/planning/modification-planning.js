@@ -1,4 +1,5 @@
 var calendar;
+var isUpdated = true;
 var countAddEvent = 0;
 var countAddResource=0; 
 var headerResources = "Ressources Humaines";
@@ -118,6 +119,16 @@ function updateDatabase(id) {
   document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
   document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
   document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
+  isUpdated = true;
+}
+
+function backToConsultation(){
+  if(isUpdated){
+    window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
+  }
+  else if(confirm("Les modifications n'ont pas été enregistrées et vont être perdues. Voulez-vous malgré tout quitter les modifications ?")){
+    window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
+  }
 }
 
 function zoomChange() {
@@ -381,10 +392,11 @@ function AddEventValider() {
     updateErrorMessages();
 
     calendar.getEvents().forEach((currentEvent) => {
-      currentEvent._def.ui.backgroundColor = RessourcesAllocated(event);
-      currentEvent._def.ui.borderColor = RessourcesAllocated(event);
-      currentEvent.setEnd(event.end); 
+      currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+      currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+      currentEvent.setEnd(currentEvent.end); 
     })
+    isUpdated = false;
   }
 
 function showSelectDate() {
@@ -709,18 +721,24 @@ function createCalendar(typeResource,useCase) {
           $("#display-appointment-modal").modal("show"); //open the window
           document.getElementById('eventClicked').value=JSON.stringify(event);
           updateEventsAppointment(event)
-          event._def.ui.backgroundColor = RessourcesAllocated(event);
-          event._def.ui.borderColor = RessourcesAllocated(event);
-          event.setEnd(event.end);
+          calendar.getEvents().forEach((currentEvent) => {
+            currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+            currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+            currentEvent.setEnd(currentEvent.end); 
+          })
+          isUpdated = false;
         }
       },
 
     eventDrop: function (event) {
       var modifyEvent = event.event;
       updateEventsAppointment(modifyEvent)
-      event.event._def.ui.backgroundColor = RessourcesAllocated(event.event);
-      event.event._def.ui.borderColor = RessourcesAllocated(event.event);
-      event.event.setEnd(event.event.end); 
+      calendar.getEvents().forEach((currentEvent) => {
+        currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+        currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+        currentEvent.setEnd(currentEvent.end); 
+      })
+      isUpdated = false;
     },
   });
   switch (typeResource) {
@@ -866,6 +884,7 @@ function createCalendar(typeResource,useCase) {
       currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
       currentEvent.setEnd(currentEvent.end);
     });
+    isUpdated = true;
   }
 
 function showPopup() {
@@ -920,14 +939,15 @@ function RessourcesAllocated(event) {
 /**
  * @brief This function check if the scheduled activity is fully scheduled or not
  * @param {*} event 
- * @returns true if the scheduled activity is good, false if not.
+ * @returns true if the scheduled activity have error, false if not.
  */
 function isFullyScheduled(event) {
   var isFullyScheduled = true;
 
   repertoryListErrors().repertoryAppointmentSAError.forEach((appointmentError) => {
-    appointmentError.repertorySAErrorId.forEach((scheduledActivityId) => {
-      if(scheduledActivityId == event._def.publicId){
+    appointmentError.repertorySAErrorId.forEach((scheduledActivityId) => { //check all scheduled activities with errors
+      if(scheduledActivityId == event._def.publicId){ //if the scheduled activity check is on the list
+        //return false
         isFullyScheduled = false;
       }
     })
@@ -953,6 +973,12 @@ function undoEvent(){
   if(historyEvents.length!=1){
     createCalendar(headerResources,'recreate');
   }
+  calendar.getEvents().forEach((currentEvent) => {
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+    currentEvent.setEnd(currentEvent.end); 
+  })
+  isUpdated = false;
 }
 
 /**
