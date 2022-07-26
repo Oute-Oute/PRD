@@ -170,6 +170,11 @@ DeleteHumanUnavailability:
   controller: App\Controller\HumanResourceController:deleteUnavailability
   methods: [POST]
 
+DeleteMaterialUnavailability:
+  path: /deleteMaterialUnavailability
+  controller: App\Controller\MaterialResourceController:deleteUnavailability
+  methods: [POST]
+
 MaterialResourceEdit:
   path: /material-resource/edit
   controller: App\Controller\MaterialResourceController::edit
