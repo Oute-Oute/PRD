@@ -257,5 +257,13 @@ ul.ui-autocomplete {
   .pathway-div-activity-header{
     font-size: 80%;
     font-weight: bold;
-}
+  }
+
+  .pathway-div-activity-graph{
+    float: left;
+    padding: 5px 5px 5px 5px;
+    margin: 10px;
+    border: solid;
+    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+  }
   
