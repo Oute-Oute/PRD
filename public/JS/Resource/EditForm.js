@@ -7,6 +7,7 @@ var WORKING_HOURS;
 var CATEGORIES_BY_HUMAN_RESOURCES;
 var CATEGORIES_BY_MATERIAL_RESOURCES;
 var UNAVAILABILITIES_HUMAN;
+var UNAVAILABILITIES_MATERIAL;
 var sPath = window.location.pathname;
 var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 
@@ -16,12 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
         WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
         CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
         UNAVAILABILITIES_HUMAN = JSON.parse(document.getElementById('unavailabilities-human-resource').value)
-        console.log(UNAVAILABILITIES_HUMAN)
+
     }
 
     if(sPage == 'material-resources') {
 
         CATEGORIES_BY_MATERIAL_RESOURCES = JSON.parse(document.getElementById('categories-by-material-resource').value)
+        UNAVAILABILITIES_MATERIAL = JSON.parse(document.getElementById('unavailabilities-material-resource').value)
+
     }    
 
    
@@ -251,19 +254,18 @@ function showUnavailabilityHuman(id, name){
         var btnDelete = document.createElement("button")
         btnDelete.innerHTML = 'Supprimer'
         btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
+        btnDelete.setAttribute('value', UNAVAILABILITIES_HUMAN[i]['id_unavailability'])
+        btnDelete.setAttribute('id', UNAVAILABILITIES_HUMAN[i]['id_unavailability_human'])
+        btnDelete.setAttribute('type', 'button')
+        btnDelete.setAttribute('onclick', 'deleteHumanUnavailability(this)')
 
         tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
         tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
-        
 
-        
         tr.appendChild(tdBegin)
         tr.appendChild(tdEnd)
         tdBtn.appendChild(btnDelete)
         tr.appendChild(tdBtn)
-
-
-        
     }
    }
    //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
@@ -272,10 +274,63 @@ function showUnavailabilityHuman(id, name){
 
 }
 
+function deleteHumanUnavailability(button) {
+    $.ajax({
+        type : 'POST',
+        url : '/deleteHumanUnavailability',
+        data : {idUnavailability : button.value, idHumanAvailability : button.getAttribute('id')},
+        dataType : "json",
+        success : function(data) {
+            console.log(data)
+            console.log('ok')
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr)
+            console.log(ajaxOptions)
+        }
+
+        
+    })
+}
+
 function showUnavailabilityMaterial(id, name) {
     $('#edit--unavailability-material-resource-modal').modal("show");
     document.getElementById('material-resource-id-unavailability').value = id;
     document.getElementById('material-resource-name-unavailability').innerHTML = name;
+
+    tbody = document.getElementById('tbody-unavailabilities-material')
+    console.log(UNAVAILABILITIES_MATERIAL)
+   for (let i = 0; i < UNAVAILABILITIES_MATERIAL.length; i++){
+    if(UNAVAILABILITIES_MATERIAL[i]['id_human_resource'] == id) {
+        var dayBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(8,10);
+        var monthBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(5,7);
+        var yearBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(0,4);
+        var hoursBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(11,19);
+        var dayEnd = UNAVAILABILITIES_MATERIAL[i]['enddatetime'].date.substring(8,10);
+        var monthEnd = UNAVAILABILITIES_MATERIAL[i]['enddatetime'].date.substring(5,7);
+        var yearEnd = UNAVAILABILITIES_MATERIAL[i]['enddatetime'].date.substring(0,4);
+        var hoursEnd = UNAVAILABILITIES_MATERIAL[i]['enddatetime'].date.substring(11,19);
+
+        var tr = document.createElement("tr");
+        tr.setAttribute('value', UNAVAILABILITIES_MATERIAL[i]['id_unavailability'])
+        tbody.appendChild(tr)
+        var tdBegin = document.createElement("td")
+        var tdEnd = document.createElement("td")
+        var tdBtn = document.createElement("td")
+        var btnDelete = document.createElement("button")
+        btnDelete.innerHTML = 'Supprimer'
+        btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
+        btnDelete.setAttribute('value', UNAVAILABILITIES_MATERIAL[i]['id_unavailability'])
+
+        tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
+        tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
+
+        tr.appendChild(tdBegin)
+        tr.appendChild(tdEnd)
+        tdBtn.appendChild(btnDelete)
+        tr.appendChild(tdBtn)
+    }
+   }
 }
 /**
  * Gestion d'ajout d'activité dans un parcours pour le formulaire d'édition
@@ -343,12 +398,12 @@ function edit__handleAddUnavailability() {
     var nbCateg = 0;
     let beginTime = document.getElementById('datetime-begin-unavailability').value
     let endTime = document.getElementById('datetime-end-unavailability').value
-    if(beginTime < endTime) {
-    btnAdd.click();
-    }
-    else {
-        alert('Veuillez saisir une date de début antérieure à celle de fin !')
-    }
+    if(beginTime < endTime && beginTime != '' && endTime != '') {
+        btnAdd.click();
+        }
+        else {
+            alert('Veuillez saisir les deux dates complètes, et la date de début doit être antérieure à celle de fin !')
+        }
 
 }
 
@@ -361,11 +416,11 @@ function edit__verifyUnavailabilityMaterial() {
     var nbCateg = 0;
     let beginTime = document.getElementById('datetime-begin-unavailability').value
     let endTime = document.getElementById('datetime-end-unavailability').value
-    if(beginTime < endTime) {
+    if(beginTime < endTime && beginTime != '' && endTime != '') {
     btnAdd.click();
     }
     else {
-        alert('Veuillez saisir une date de début antérieure à celle de fin !')
+        alert('Veuillez saisir les deux dates complètes, et la date de début doit être antérieure à celle de fin !')
     }
 
 }

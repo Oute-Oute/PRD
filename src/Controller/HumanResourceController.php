@@ -673,7 +673,9 @@ class HumanResourceController extends AbstractController
         $em->flush();
         $humanResourceRepository->remove($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+
     }
+    
 
     public function getDataHumanResource(ManagerRegistry $doctrine)
     {
@@ -748,6 +750,31 @@ class HumanResourceController extends AbstractController
         $unavailabilityHumanResource->setUnavailability($unavailability);
         $unavailabilitiesHumanRepository->add($unavailabilityHumanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+    }
+
+
+    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine) : JsonResponse
+    {
+        if (isset($_POST['idHumanAvailability'])) {
+            $idHumanAvailability = $_POST['idHumanAvailability'];
+
+            if (isset($_POST['idUnavailability'])) {
+                $idUnavailability = $_POST['idUnavailability'];
+
+                $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
+                $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
+                $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $idUnavailability]);
+                $unavailabilityHumanToDelete = $unavailabilitiesHumanRepository->findBy(['id' => $idHumanAvailability]);
+        
+                $em=$doctrine->getManager();
+                $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);
+                $unavailabilitiesHumanRepository->remove($unavailabilityHumanToDelete[0], true);
+                $em->flush();
+
+                return new JsonResponse(array("message" => "success"));  
+            }
+        }
+        
     }
 
 
