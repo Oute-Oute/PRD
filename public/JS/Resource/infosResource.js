@@ -361,7 +361,7 @@ function addToCalendar(data) {
   workinghours = data["workingHours"];
   console.log(workinghours);
   for (let i = 0; i < events.length; i++) {
-    startDateTime = events[i];
+    events[i].starttime
     calendar.addEvent({
       title: events[i].activity,
       start: events[i].dayappointment + "T" + events[i].starttime,

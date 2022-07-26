@@ -120,8 +120,17 @@ class AppointmentController extends AbstractController
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
         $dayappointment = \DateTime::createFromFormat('d-m-Y H:i:s', str_replace("/","-",$param['dayappointment'].' '."00:00:00"));
-        $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
-        $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
+        if($param["earliestappointmenttime"]!=""){
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
+        }
+        else{
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', "00:00");
+        }
+        if($param["latestappointmenttime"]!=""){
+            
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']); 
+
+        }
         //on modifie les données du rendez-vous
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);
@@ -292,5 +301,30 @@ class AppointmentController extends AbstractController
         }
         
         return $targetsJSON;
+    }
+
+    public function getInfosAppointmentById(ManagerRegistry $doctrine){
+        $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(array("id"=>$_POST["id"]));
+        $scheduledActivities = $doctrine->getRepository("App\Entity\ScheduledActivity")->findBy(array("appointment"=>$appointment));
+        $activitiesArray=[];
+        foreach($scheduledActivities as $scheduledActivity){
+            $activitiesArray[]=[
+            "startTime"=>$scheduledActivity->getStartTime()->format("H:i:s"),
+            "endTime"=>$scheduledActivity->getEndTime()->format("H:i:s"),
+            "activity"=>$scheduledActivity->getActivity()->getActivityname(),
+            ];
+        }
+
+        $data[]=
+        [
+            "dayAppointment" => $appointment->getDayappointment()->format("Y-m-d"),
+            "earliestAppointmentTime" => $appointment->getEarliestappointmenttime()->format("H:i:s"),
+            "latestAppointmentTime" => $appointment->getLatestappointmenttime()->format("H:i:s"),
+            "patientLastname" => $appointment->getPatient()->getLastname(),
+            "patientFirstname" => $appointment->getPatient()->getFirstname(),
+            "pathwayName" => $appointment->getPathway()->getPathwayname(),
+            "activities" => $activitiesArray
+        ];
+        return new JsonResponse($data);
     }
 }
