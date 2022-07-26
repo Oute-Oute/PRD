@@ -454,9 +454,36 @@ function DisplayModifyEventModal(eventClicked){
             //if the human resource exist
             humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
           }
+          
         }
       }
-      //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
+      else{
+            humanResourcesNames="Aucune ressource humaine allouée";
+          }
+
+      var categoryHumanResources=""; 
+      if(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource.length!=0){
+        for(let i=0; i<eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource.length; i++){
+          categoryHumanResources=categoryHumanResources + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource[i].quantity + ' ' + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource[i].categoryname + ';'
+        }
+       }
+       else{
+        categoryHumanResources="L'activité ne nécéssite aucune ressource humaine";
+       } 
+      
+
+      var categoryMaterialResources=""; 
+      if(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource.length!=0){
+        for(let i=0; i<eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource.length; i++){
+          categoryMaterialResources=categoryMaterialResources + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource[i].quantity + ' ' + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource[i].categoryname + ';'
+        }
+      }
+      else{
+        categoryMaterialResources="L'activité ne nécéssite aucune ressource materielle";
+      }
+
+      console.log(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource, categoryMaterialResources)
+
 
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       
@@ -468,16 +495,21 @@ function DisplayModifyEventModal(eventClicked){
             //if the material resource exist
             materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
           }
+          
         }
       }
-      // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
+      else{
+            materialResourcesNames="Aucune ressource matérielle allouée";
+          }
 
       //set data to display in the modal window
       $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
       document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
       $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
       $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
+      $("#category-human-resource-modified-event").val(categoryHumanResources); //set the human resources of the event
       $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
+      $("#category-material-resource-modified-event").val(categoryMaterialResources); //set the material resources of the event
       $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
       $("#id-modified-event").val(id);
 
