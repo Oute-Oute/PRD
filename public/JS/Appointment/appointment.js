@@ -42,7 +42,6 @@ function addAppointment() {
   }
 }
 function getTargetsbyMonth(date,pathwayName) {
-  console.log(date);
   dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   $.ajax({
     type: 'POST',
@@ -208,7 +207,6 @@ function createCalendar(type) {
 }
 
 function addTargetsToCalendar(targets) {
-  console.log(targets);
   targets.forEach(element => {
     calendar.addEvent({
       allDay: true,
@@ -296,12 +294,80 @@ function Today() {
   document.getElementById('load').style.visibility = "visible";
 }
 
-function showAppointment(a, b, c, d) {
-  document.getElementById('val1').innerText = a
-  document.getElementById('val2').textContent = b
-  document.getElementById('val3').textContent = c
-  document.getElementById('val4').textContent = d
+function showAppointment(id) {
+  console.log(id);
+  document.getElementById('load-info-appt').style.visibility = "visible";
+  $.ajax({
+    type: 'POST',
+    url: '/ajaxInfosAppointment',
+    data: { id:id },
+    dataType: "json",
+    success: function (data) {
+      console.log(data)
+      var calendarEl = document.getElementById("calendar-infos-appointment"); //create the calendar variable
 
+      //create the calendar
+      calendar = new FullCalendar.Calendar(calendarEl, {
+      schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
+      initialView: "timeGridDay", //set the format of the calendar
+      locale: "frLocale", //set the language in french
+      timeZone: "Europe/Paris", //set the timezone for France
+      selectable: false, //set the calendar to be selectable
+      editable: false, //set the calendar not to be editable
+      allDaySlot: false,
+      nowIndicator: true,
+      contentHeight: "500px",
+      headerToolbar: {
+        start: null,
+        center: "title",
+        end: null,
+      },
+      eventDisplay: "block",
+      eventBackgroundColor: '#3788d8',
+      eventDidMount: function (info) {
+        $(info.el).tooltip({
+          title: info.event.extendedProps.description,
+          placement: "top",
+          trigger: "hover",
+          container: "body",
+        });
+      },
+      });
+      day=data[0]["dayAppointment"]
+      calendar.gotoDate(day+"T12:00:00");
+      activities=data[0]["activities"];
+      for(var i = 0; i < activities.length; i++){
+        calendar.addEvent({
+          start: day+"T"+activities[i]['startTime'],
+          end: day+"T"+activities[i]['endTime'],
+          title: activities[i]['activity'],
+          description: activities[i]['activity']
+          })
+        }
+        console.log(data[0])
+        calendar.addEvent({
+          start: day+"T00:00:00",
+          end: day+"T"+data[0]["earliestAppointmentTime"],
+          description: "Patient Absent",
+          display: 'background',
+          color: '#000000'
+        })
+
+        calendar.addEvent({
+          end: day+"T23:59:59",
+          start: day+"T"+data[0]["latestAppointmentTime"],
+          description: "Patient Absent",
+          display: 'background',
+          color: '#000000'})
+      calendar.render(); //render the calendar
+      console.log(calendar.getEvents())
+  document.getElementById('load-info-appt').style.visibility = "hidden";
+    },
+      error: function (data) {
+        console.log("error");
+      },
+    
+    });
 
   $('#infos-appointment-modal').modal("show");
 }
