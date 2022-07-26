@@ -12,7 +12,14 @@ var listErrorMessages = {
   messageUnscheduledAppointment: messageUnscheduledAppointment,
   listScheduledAppointment: listScheduledAppointment
 };
-
+var resourcesColumns=[{
+  headerContent: "Nom", //set the label of the column
+  field: "title", //set the field of the column
+},
+{
+  headerContent: "Catégories", //set the label of the column
+  field: "categories", //set the field of the column
+}]
 var listEvents;
 var historyEvents=[]; 
 
@@ -602,14 +609,7 @@ function createCalendar(typeResource,useCase) {
       nowIndicator: true,
       selectConstraint: "businessHours", //set the select constraint to be business hours
       eventMinWidth: 1, //set the minimum width of the event
-      resourceAreaColumns:[{
-        headerContent: "Nom", //set the label of the column
-        field: "title", //set the field of the column
-      },
-      {
-        headerContent: "Catégories", //set the label of the column
-        field: "categories", //set the field of the column
-      }],
+      resourceAreaColumns:resourcesColumns, //set the type of columns for the resources
 
       //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
       headerToolbar: {
@@ -2063,3 +2063,22 @@ function updateColorErrorButton(state) {
     
 }
 
+function categoryShow(){
+  if(resourcesColumns.length==1){
+  resourcesColumns=[{
+    headerContent: "Nom", //set the label of the column
+    field: "title", //set the field of the column
+  },
+  {
+    headerContent: "Catégories", //set the label of the column
+    field: "categories", //set the field of the column
+  }]
+}
+else{
+  resourcesColumns=[{
+    headerContent: "Nom", //set the label of the column
+    field: "title", //set the field of the column
+  }]
+}
+createCalendar(headerResources);
+}
