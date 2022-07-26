@@ -559,6 +559,10 @@ function DisplayAppointmentInformation(eventClicked){
           $("#display-appointment-modal").modal("show"); //open the window
 }
 
+function displayModalModifyEvent(){
+  $("#modify-planning-modal").modal("show"); //open the window
+}
+
 function createCalendar(typeResource,useCase) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
