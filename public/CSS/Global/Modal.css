@@ -257,6 +257,8 @@ ul.ui-autocomplete {
   .pathway-div-activity-header{
     font-size: 80%;
     font-weight: bold;
+    text-align: center;
+    padding-top: 5px;
   }
 
   .pathway-div-activity-graph{
@@ -265,5 +267,24 @@ ul.ui-autocomplete {
     margin: 10px;
     border: solid;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+    resize: both;
+  }
+
+  .wrapper-graph {
+    flex-wrap: wrap;
+    height: 100%;
+    width: 70%;
+    box-shadow: 0px 0px 10px lightgrey;
+    border-radius: 10px;
+  }
+
+  #modal-body-graph{
+    height:500px;
+    display:flex;
+    justify-content: space-between;
+    flex-direction: row;
   }
   

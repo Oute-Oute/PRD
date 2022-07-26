@@ -229,60 +229,15 @@ function showEditModalFormMaterial(id, name, index){
    
 }
 
-function showUnavailabilityHuman(id, name){
-   $('#edit--unavailability-human-resource-modal').modal("show");
-   document.getElementById('human-resource-id-unavailability').value = id;
-   document.getElementById('human-resource-name-unavailability').innerHTML = name;
-   tbody = document.getElementById('tbody-unavailabilities-human')
 
-   for (let i = 0; i < UNAVAILABILITIES_HUMAN.length; i++){
-    if(UNAVAILABILITIES_HUMAN[i]['id_human_resource'] == id) {
-        var dayBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(8,10);
-        var monthBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(5,7);
-        var yearBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(0,4);
-        var hoursBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(11,19);
-        var dayEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(8,10);
-        var monthEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(5,7);
-        var yearEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(0,4);
-        var hoursEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(11,19);
-
-        var tr = document.createElement("tr");
-        tbody.appendChild(tr)
-        var tdBegin = document.createElement("td")
-        var tdEnd = document.createElement("td")
-        var tdBtn = document.createElement("td")
-        var btnDelete = document.createElement("button")
-        btnDelete.innerHTML = 'Supprimer'
-        btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
-        btnDelete.setAttribute('value', UNAVAILABILITIES_HUMAN[i]['id_unavailability'])
-        btnDelete.setAttribute('id', UNAVAILABILITIES_HUMAN[i]['id_unavailability_human'])
-        btnDelete.setAttribute('type', 'button')
-        btnDelete.setAttribute('onclick', 'deleteHumanUnavailability(this)')
-
-        tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
-        tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
-
-        tr.appendChild(tdBegin)
-        tr.appendChild(tdEnd)
-        tdBtn.appendChild(btnDelete)
-        tr.appendChild(tdBtn)
-    }
-   }
-   //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
-
-
-
-}
 
 function deleteHumanUnavailability(button) {
     $.ajax({
         type : 'POST',
         url : '/deleteHumanUnavailability',
         data : {idUnavailability : button.value, idHumanAvailability : button.getAttribute('id')},
-        dataType : "json",
         success : function(data) {
-            console.log(data)
-            console.log('ok')
+            location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr)
@@ -293,13 +248,81 @@ function deleteHumanUnavailability(button) {
     })
 }
 
+function deleteMaterialUnavailability(button) {
+    $.ajax({
+        type : 'POST',
+        url : '/deleteMaterialUnavailability',
+        data : {idUnavailability : button.value, idMaterialAvailability : button.getAttribute('id')},
+        success : function(data) {
+            location.reload()
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr)
+            console.log(ajaxOptions)
+        }
+
+        
+    })
+}
+
+function showUnavailabilityHuman(id, name){
+    $('#edit--unavailability-human-resource-modal').modal("show");
+    document.getElementById('human-resource-id-unavailability').value = id;
+    document.getElementById('human-resource-name-unavailability').innerHTML = name;
+    tbody = document.getElementById('tbody-unavailabilities-human')
+    tbody.innerHTML = ''
+ 
+    for (let i = 0; i < UNAVAILABILITIES_HUMAN.length; i++){
+     if(UNAVAILABILITIES_HUMAN[i]['id_human_resource'] == id) {
+         var dayBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(8,10);
+         var monthBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(5,7);
+         var yearBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(0,4);
+         var hoursBegin = UNAVAILABILITIES_HUMAN[i]['startdatetime'].date.substring(11,19);
+         var dayEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(8,10);
+         var monthEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(5,7);
+         var yearEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(0,4);
+         var hoursEnd = UNAVAILABILITIES_HUMAN[i]['enddatetime'].date.substring(11,19);
+ 
+         var tr = document.createElement("tr");
+         tbody.appendChild(tr)
+         var tdBegin = document.createElement("td")
+         var tdEnd = document.createElement("td")
+         var tdBtn = document.createElement("td")
+         var btnDelete = document.createElement("button")
+         btnDelete.innerHTML = 'Supprimer'
+         btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
+         btnDelete.setAttribute('value', UNAVAILABILITIES_HUMAN[i]['id_unavailability'])
+         btnDelete.setAttribute('id', UNAVAILABILITIES_HUMAN[i]['id_unavailability_human'])
+         btnDelete.setAttribute('type', 'button')
+         btnDelete.setAttribute('onclick', 'deleteHumanUnavailability(this)')
+ 
+         tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
+         tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
+ 
+         tr.appendChild(tdBegin)
+         tr.appendChild(tdEnd)
+         tdBtn.appendChild(btnDelete)
+         tr.appendChild(tdBtn)
+     }
+    }
+    //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
+    if(tbody.children.length == 0) {
+        var zeroUnav = document.createElement("p")
+        zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+        tbody.appendChild(zeroUnav);
+       }
+ 
+ 
+ }
+
 function showUnavailabilityMaterial(id, name) {
     $('#edit--unavailability-material-resource-modal').modal("show");
     document.getElementById('material-resource-id-unavailability').value = id;
     document.getElementById('material-resource-name-unavailability').innerHTML = name;
+    tbody = document.getElementById('tbody-unavailabilities-material')
+    tbody.innerHTML = ''
 
     tbody = document.getElementById('tbody-unavailabilities-material')
-    console.log(UNAVAILABILITIES_MATERIAL)
    for (let i = 0; i < UNAVAILABILITIES_MATERIAL.length; i++){
     if(UNAVAILABILITIES_MATERIAL[i]['id_human_resource'] == id) {
         var dayBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(8,10);
@@ -317,10 +340,16 @@ function showUnavailabilityMaterial(id, name) {
         var tdBegin = document.createElement("td")
         var tdEnd = document.createElement("td")
         var tdBtn = document.createElement("td")
+
         var btnDelete = document.createElement("button")
+        btnDelete.setAttribute('type', 'button')
         btnDelete.innerHTML = 'Supprimer'
         btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
         btnDelete.setAttribute('value', UNAVAILABILITIES_MATERIAL[i]['id_unavailability'])
+        btnDelete.setAttribute('id', UNAVAILABILITIES_MATERIAL[i]['id_unavailability_material'])
+        btnDelete.setAttribute('onclick', 'deleteMaterialUnavailability(this)')
+
+
 
         tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
         tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
@@ -330,8 +359,15 @@ function showUnavailabilityMaterial(id, name) {
         tdBtn.appendChild(btnDelete)
         tr.appendChild(tdBtn)
     }
+
+   } 
+   if(tbody.children.length == 0) {
+    var zeroUnav = document.createElement("p")
+    zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+    tbody.appendChild(zeroUnav);
    }
 }
+
 /**
  * Gestion d'ajout d'activité dans un parcours pour le formulaire d'édition
  */

@@ -78,6 +78,10 @@ function initActivitiesList() {
 
 }
 
+function showTargets() {
+    $('#edit-pathway-modal-targets').modal("show");
+}
+
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
