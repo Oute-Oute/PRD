@@ -215,7 +215,7 @@
 		<div id='container-top-right'>
 			<div id='top-right-buttons'>
 				<button type="button" class="btn-calendar-edit" onclick="undoEvent()">Retour en Arrière</button>
-				<button type="button" class="btn-delete btn-secondary" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'))">Quitter</button>
+				<button type="button" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
 					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>

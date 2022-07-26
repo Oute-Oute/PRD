@@ -758,3 +758,49 @@ function filterPathway(idInput,selected=null) {
         }
     }
 }
+
+function showActivitiesPathway() {
+    document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
+    drawActivitiesGraph();
+    $('#edit-pathway-modal-activities').modal("show");
+}
+
+function drawActivitiesGraph(){
+    var divContent = document.getElementById('divContent');
+    divContent.innerHTML = ""; // reset the content
+
+    for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
+        rba = RESOURCES_BY_ACTIVITIES[i];
+        createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+    }
+}
+
+function createActivitiesGraph(name, idActivity, duration){
+    var divContent = document.getElementById('divContent');
+
+    var div = document.createElement('DIV');
+    div.setAttribute('id', 'activity'+ idActivity);
+    div.classList.add("pathway-div-activity-graph");
+
+    var divHeader = document.createElement('div');
+    divHeader.classList.add("pathway-div-activity-header");
+    divHeader.innerHTML = name;
+
+    var p = document.createElement('p');
+    p.style.fontSize = '80%';
+    p.innerHTML = "durée : " + duration + "min"; 
+
+    div.appendChild(divHeader); div.appendChild(p);
+    divContent.appendChild(div);
+    
+    $(".pathway-div-activity-graph").draggable({
+        containment: "#divContent",
+      });
+}
+/*
+RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
+RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
+RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].available = ACTIVITY_IN_PROGRESS.available
+RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].btnHM = 'human'
+RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].id = ACTIVITY_IN_PROGRESS.id
+*/
