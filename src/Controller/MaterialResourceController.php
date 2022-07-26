@@ -292,7 +292,7 @@ public function unavailability(Request $request) {
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine) : Response
+    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
     {
         if (isset($_POST['idMaterialAvailability'])) {
             $idMaterialAvailability = $_POST['idMaterialAvailability'];
@@ -310,10 +310,10 @@ public function unavailability(Request $request) {
                 $unavailabilitiesMaterialRepository->remove($unavailabilityMaterialToDelete[0], true);
                 $em->flush();
 
-                return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
             }
         }
-        
+        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+
     }
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})

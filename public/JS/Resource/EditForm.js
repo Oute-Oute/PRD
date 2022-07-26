@@ -236,8 +236,8 @@ function deleteHumanUnavailability(button) {
         type : 'POST',
         url : '/deleteHumanUnavailability',
         data : {idUnavailability : button.value, idHumanAvailability : button.getAttribute('id')},
-        dataType : "json",
         success : function(data) {
+            location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr)
@@ -253,8 +253,8 @@ function deleteMaterialUnavailability(button) {
         type : 'POST',
         url : '/deleteMaterialUnavailability',
         data : {idUnavailability : button.value, idMaterialAvailability : button.getAttribute('id')},
-        dataType : "json",
         success : function(data) {
+            location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr)
