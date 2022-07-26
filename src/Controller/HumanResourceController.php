@@ -753,7 +753,7 @@ class HumanResourceController extends AbstractController
     }
 
 
-    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine) : JsonResponse
+    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine) : Response
     {
         if (isset($_POST['idHumanAvailability'])) {
             $idHumanAvailability = $_POST['idHumanAvailability'];
@@ -771,7 +771,7 @@ class HumanResourceController extends AbstractController
                 $unavailabilitiesHumanRepository->remove($unavailabilityHumanToDelete[0], true);
                 $em->flush();
 
-                return new JsonResponse(array("message" => "success"));  
+                return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
             }
         }
         

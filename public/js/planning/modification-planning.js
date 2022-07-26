@@ -1699,7 +1699,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
     var lateralPannelInput=document.getElementById('lateral-panel-input').checked;
     if(lateralPannelInput==true){                   //Test the value of the checkbox
       lateralPannelBloc[0].style.display='block';  //display the panel
-      lateralPannel[0].style.width='40em';
+      lateralPannel[0].style.width='30em';
     }
     else{
       lateralPannelBloc[0].style.display=''; //hide the pannel
