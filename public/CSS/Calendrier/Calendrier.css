@@ -164,6 +164,9 @@ a:hover{
   margin-bottom: 5px;
 }
 
+#appointment-modal-footer{
+  left:0%;
+}
 #lateral-panel {
   position:absolute;
   z-index: 9999;                  /* pour être au dessus des autres éléments */                /* ne suit pas le scroll de la page et sert de réfèrent */
