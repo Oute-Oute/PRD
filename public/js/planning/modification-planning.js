@@ -306,10 +306,6 @@ function AddEventValider() {
           categoryMaterialResource: categoryMaterialResources, 
           categoryHumanResource: categoryHumanResources, 
         });
-
-        event._def.ui.backgroundColor = RessourcesAllocated(event);
-        event._def.ui.borderColor = RessourcesAllocated(event);
-        event.setEnd(event.end); 
       }
       
       var successorsActivitiesA=[]; 
@@ -383,6 +379,12 @@ function AddEventValider() {
 
     $("#add-planning-modal").modal("toggle");
     updateErrorMessages();
+
+    calendar.getEvents().forEach((currentEvent) => {
+      currentEvent._def.ui.backgroundColor = RessourcesAllocated(event);
+      currentEvent._def.ui.borderColor = RessourcesAllocated(event);
+      currentEvent.setEnd(event.end); 
+    })
   }
 
 function showSelectDate() {
@@ -706,12 +708,19 @@ function createCalendar(typeResource,useCase) {
           
           $("#display-appointment-modal").modal("show"); //open the window
           document.getElementById('eventClicked').value=JSON.stringify(event);
+          updateEventsAppointment(event)
+          event._def.ui.backgroundColor = RessourcesAllocated(event);
+          event._def.ui.borderColor = RessourcesAllocated(event);
+          event.setEnd(event.end);
         }
       },
 
     eventDrop: function (event) {
       var modifyEvent = event.event;
       updateEventsAppointment(modifyEvent)
+      event.event._def.ui.backgroundColor = RessourcesAllocated(event.event);
+      event.event._def.ui.borderColor = RessourcesAllocated(event.event);
+      event.event.setEnd(event.event.end); 
     },
   });
   switch (typeResource) {
@@ -841,11 +850,7 @@ function createCalendar(typeResource,useCase) {
     for (var i = 0; i < listEvents.length; i++) {
       calendar.addEvent(listEvents[i]);
     }
-    let listCurrentEvent = calendar.getEvents();
-    listCurrentEvent.forEach((currentEvent) => {
-      currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-      currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    });
+    
     if(historyEvents.length==0){
       verifyHistoryPush(historyEvents,-1); 
     }
@@ -854,6 +859,13 @@ function createCalendar(typeResource,useCase) {
 
     calendar.render();
     updateErrorMessages();
+
+    let listCurrentEvent = calendar.getEvents();
+    listCurrentEvent.forEach((currentEvent) => {
+      currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+      currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+      currentEvent.setEnd(currentEvent.end);
+    });
   }
 
 function showPopup() {
@@ -886,7 +898,7 @@ function deleteModifInDB() {
 }
 
 /**
- * This function gives the color to apply to an event on the planning. 
+ * @brief This function gives the color to apply to an event on the planning. 
  * red if the Activity is not associated to the riht resources (material and human)
  * green if the Activity have all resources that it need. 
  * unavailabilities are red in any case.  
@@ -894,15 +906,34 @@ function deleteModifInDB() {
  * @returns color of the event
  */
 function RessourcesAllocated(event) {
-  if (event._def.resourceIds.includes("m-default")) { //if a material resource is not allocated
-    return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.resourceIds.includes("h-default")) { //if a human resource is not allocated
-    return "rgba(173, 11, 11, 0.753)";
-  } else if (event._def.ui.display == "background") {  //for unavailabilities 
+  if(event._def.ui.display == "background"){
     return "#ff0000";
-  } else {
-    return "#20c997"; //if all is allocated, return green color
   }
+  if(isFullyScheduled(event)){
+    return "#20c997";
+  }
+  else {
+    return "rgba(173, 11, 11, 0.753)";
+  }
+}
+
+/**
+ * @brief This function check if the scheduled activity is fully scheduled or not
+ * @param {*} event 
+ * @returns true if the scheduled activity is good, false if not.
+ */
+function isFullyScheduled(event) {
+  var isFullyScheduled = true;
+
+  repertoryListErrors().repertoryAppointmentSAError.forEach((appointmentError) => {
+    appointmentError.repertorySAErrorId.forEach((scheduledActivityId) => {
+      if(scheduledActivityId == event._def.publicId){
+        isFullyScheduled = false;
+      }
+    })
+  })
+
+  return isFullyScheduled;
 }
 
 /**
@@ -1920,6 +1951,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
       
       //foreach ScheduledActivity in appointment
       var repertorySAError=[]; 
+      var repertorySAErrorId=[]; 
       for(let listeSAiterator=0; listeSAiterator<listErrorMessages.listScheduledAppointment[i].listScheduledActivity.length; listeSAiterator++){
           var errorInScheduledActivity=false; 
 
@@ -2004,12 +2036,18 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
 
           if(errorInScheduledActivity==true){         //if true there is an error in the ScheduledActivity
             repertorySAError.push(listeSAiterator); 
+            repertorySAErrorId.push(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityId)
           }
         }
         if(errorInappointment==true){               //if true there is an error in the appointment
           countAppointmentError++; 
           repertoryAppointmentError.push(i);
-          repertoryAppointmentSAError.push({appointment:i,repertorySA:repertorySAError});
+          repertoryAppointmentSAError.push({
+            appointment: i,
+            appointmentId: listErrorMessages.listScheduledAppointment[i].appointmentId,
+            repertorySA: repertorySAError,
+            repertorySAErrorId: repertorySAErrorId
+          });
 
         }
     }
