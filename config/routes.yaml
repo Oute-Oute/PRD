@@ -165,6 +165,11 @@ MaterialResourceUnavailability:
   controller: App\Controller\MaterialResourceController::unavailability
   methods: [POST]
 
+DeleteHumanUnavailability:
+  path: /deleteHumanUnavailability
+  controller: App\Controller\HumanResourceController:deleteUnavailability
+  methods: [POST]
+
 MaterialResourceEdit:
   path: /material-resource/edit
   controller: App\Controller\MaterialResourceController::edit
@@ -210,6 +215,11 @@ SettingsAddDefault:
 AjaxAppointment:
   path: /ajaxAppointment
   controller: App\Controller\AppointmentController::getTargets
+  methods: [POST]
+
+AjaxInfosAppointment:
+  path: /ajaxInfosAppointment
+  controller: App\Controller\AppointmentController::getInfosAppointmentById
   methods: [POST]
 
 AjaxPatient:
