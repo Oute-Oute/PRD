@@ -253,7 +253,7 @@ function AddEventValider() {
             for(let k=0; k<categoryHumanResourceJSON.length; k++){
               if(listeActivitHumanResource[j].humanResourceCategoryId==categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j])==false){
                 humanAlreadyScheduled.push(listeActivitHumanResource[j]); 
-                categoryHumanResources.push({id:listeActivitHumanResource[j].id,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryHumanResourceJSON[k].categoryname})
+                categoryHumanResources.push({id:listeActivitHumanResource[j].humanResourceCategoryId,quantity:listeActivitHumanResource[j].quantity,categoryname:categoryHumanResourceJSON[k].categoryname})
               }
             }
             quantityHumanResources += listeActivitHumanResource[j].quantity;
@@ -267,13 +267,13 @@ function AddEventValider() {
             for(let k=0; k<categoryMaterialResourceJSON.length; k++){
               if(listeActivityMaterialResource[j].materialResourceCategoryId==categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j])==false){
                 materialAlreadyScheduled.push(listeActivityMaterialResource[j]); 
-                categoryMaterialResources.push({id:listeActivityMaterialResource[j].id,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryMaterialResourceJSON[k].categoryname})
+                categoryMaterialResources.push({id:listeActivityMaterialResource[j].materialResourceCategoryId,quantity:listeActivityMaterialResource[j].quantity,categoryname:categoryMaterialResourceJSON[k].categoryname})
               }
             }
             quantityMaterialResources += listeActivityMaterialResource[j].quantity;
           } 
         }
-        console.log(categoryMaterialResources); 
+
         //Put the number of human resouorces in the ResourcesArray of the event
 
         for (let j = 0; j< quantityHumanResources; j++) {
@@ -456,9 +456,36 @@ function DisplayModifyEventModal(eventClicked){
             //if the human resource exist
             humanResourcesNames += humanResources[i].title + "; "; //add the human resource name to the string with a ; and a space
           }
+          
         }
       }
-      //humanResourcesNames += humanResources[i].resourceName; //add the last human resource name to the string
+      else{
+            humanResourcesNames="Aucune ressource humaine allouée";
+          }
+
+      var categoryHumanResources=""; 
+      if(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource.length!=0){
+        for(let i=0; i<eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource.length; i++){
+          categoryHumanResources=categoryHumanResources + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource[i].quantity + ' ' + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryHumanResource[i].categoryname + ';'
+        }
+       }
+       else{
+        categoryHumanResources="L'activité ne nécéssite aucune ressource humaine";
+       } 
+      
+
+      var categoryMaterialResources=""; 
+      if(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource.length!=0){
+        for(let i=0; i<eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource.length; i++){
+          categoryMaterialResources=categoryMaterialResources + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource[i].quantity + ' ' + eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource[i].categoryname + ';'
+        }
+      }
+      else{
+        categoryMaterialResources="L'activité ne nécéssite aucune ressource materielle";
+      }
+
+      console.log(eventClicked.el.fcSeg.eventRange.def.extendedProps.categoryMaterialResource, categoryMaterialResources)
+
 
       var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
       
@@ -470,16 +497,21 @@ function DisplayModifyEventModal(eventClicked){
             //if the material resource exist
             materialResourcesNames += materialResources[i].title + "; "; //add the material resource name to the string with a ; and a space
           }
+          
         }
       }
-      // materialResourcesNames += materialResources[i].resourceName; //add the last material resource name to the string
+      else{
+            materialResourcesNames="Aucune ressource matérielle allouée";
+          }
 
       //set data to display in the modal window
       $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
       document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
       $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
       $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
+      $("#category-human-resource-modified-event").val(categoryHumanResources); //set the human resources of the event
       $("#human-resource-modified-event").val(humanResourcesNames); //set the human resources of the event
+      $("#category-material-resource-modified-event").val(categoryMaterialResources); //set the material resources of the event
       $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
       $("#id-modified-event").val(id);
 
@@ -1198,6 +1230,7 @@ function getListCategoryHumanResources(scheduledActivity){
 
   //recover all relation between categories and human resources
   var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+  console.log(listCategoryOfHumanResources)
 
   scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
     if(humanResource.substring(0,5) == "human"){ //check only the human resources
@@ -1489,6 +1522,8 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
   var categoryName = "";
   if(typeResources == "human"){ //if the resource is human
     scheduledActivity._def.extendedProps.categoryHumanResource.forEach((categoryHumanResource) => { //browse all human resources categories
+      console.log(scheduledActivity, categoryHumanResource,categoryResourceId ); 
+      
       if(categoryHumanResource.id == categoryResourceId){ //if the category exist
         //we don't set a message
         categoryExist = true;
@@ -1504,6 +1539,7 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
       })
     }
   }
+  
   else { //if the resource is material
     scheduledActivity._def.extendedProps.categoryMaterialResource.forEach((categoryMaterialResource) => { //browse all material resources categories
       if(categoryMaterialResource.id == categoryResourceId){ //if the category exist
@@ -1526,7 +1562,6 @@ function getMessageWrongCategory(scheduledActivity, categoryResourceId, typeReso
     //we set the error message
     message = scheduledActivity.title + " n'a pas besoin de " + categoryName + ".";
   }
-
   return message;
 }
 
@@ -1742,6 +1777,14 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
               div.append(divColumn); 
               var nameSA=listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityName+' : ';        //Display Activity Name 
               divColumn.append(nameSA); 
+
+              //messageNotFullyScheduled
+              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
+                var divColumn=document.createElement('divColumn');
+                div.append(divColumn); 
+                var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
+                divColumn.append(messageNotFullyScheduled);
+              }
               
               //messageDelay
               if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay!=[]){
@@ -1753,13 +1796,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
                 })
               }
 
-              //messageNotFullyScheduled
-              if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled!=''){
-                  var divColumn=document.createElement('divColumn');
-                  div.append(divColumn); 
-                  var messageNotFullyScheduled= document.createElement('messageNotFullyScheduled').innerHTML='-'+listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;  
-                  divColumn.append(messageNotFullyScheduled);
-                }
+              
               }
 
               //foreach CategoryHumanResources in ScheduledActivity

@@ -1,19 +1,26 @@
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
-{% endblock %}
+
 <div class="modal" id="edit--unavailability-material-resource-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Gestion des Indisponibilités de<p id = 'material-resource-name-unavailability'> </p></h2>
             </div>
+                    
                <form id = "edit-form-resource" action="{{ path('MaterialResourceUnavailability') }}" method="post">
                 <input name = "id-material-resource-unavailability" id = "material-resource-id-unavailability" style = "display : none">
                 <div class="modal-body">
-                Début de lanouvelle indisponibilité : <br>
-                <input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
-                Fin de la nouvelle indisponibilité : <br>
-                <input type="datetime-local" name="datetime-end-unavailability" id="datetime-end-unavailability"><br>
+                <table class="table table-striped table-index-users" id = 'unavailabilities-material-container'>
+                    <thead>
+                        <h3 class="modal-title">Liste des indisponibilités existantes</h3>
+                    </thead>
+                    <tbody id = 'tbody-unavailabilities-material'>
+                    </tbody>
+                </table>
+                <h3 class="modal-title">Créer une nouvelle disponibilité</h3>
+                    Début de la nouvelle indisponibilité : <br>
+                    <input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
+                    Fin de la nouvelle indisponibilité : <br>
+                    <input type="datetime-local" name="datetime-end-unavailability" id="datetime-end-unavailability"><br>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Annuler</button>

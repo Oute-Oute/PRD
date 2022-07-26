@@ -224,7 +224,7 @@ function hideEditModalForm() {
 
     $('#edit-human-resource-category-modal').modal("hide");
     $('#edit--human-resource-modal').modal("hide");
-    $('#edit--material-resource-category-modal').modal("hide");
+    $('#edit-material-resource-category-modal').modal("hide");
     $('#edit--material-resource-modal').modal("hide");
     $('#edit--unavailability-material-resource-modal').modal("hide");
     $('#edit--unavailability-human-resource-modal').modal("hide");
