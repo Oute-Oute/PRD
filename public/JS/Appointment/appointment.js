@@ -296,7 +296,7 @@ function Today() {
 
 function showAppointment(id) {
   console.log(id);
-  document.getElementById('load').style.visibility = "visible";
+  document.getElementById('load-info-appt').style.visibility = "visible";
   $.ajax({
     type: 'POST',
     url: '/ajaxInfosAppointment',
@@ -361,7 +361,7 @@ function showAppointment(id) {
           color: '#000000'})
       calendar.render(); //render the calendar
       console.log(calendar.getEvents())
-  document.getElementById('load').style.visibility = "hidden";
+  document.getElementById('load-info-appt').style.visibility = "hidden";
     },
       error: function (data) {
         console.log("error");
