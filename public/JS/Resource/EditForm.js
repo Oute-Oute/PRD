@@ -306,7 +306,11 @@ function showUnavailabilityHuman(id, name){
      }
     }
     //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
- 
+    if(tbody.children.length == 0) {
+        var zeroUnav = document.createElement("p")
+        zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+        tbody.appendChild(zeroUnav);
+       }
  
  
  }
@@ -355,7 +359,13 @@ function showUnavailabilityMaterial(id, name) {
         tdBtn.appendChild(btnDelete)
         tr.appendChild(tdBtn)
     }
+
    } 
+   if(tbody.children.length == 0) {
+    var zeroUnav = document.createElement("p")
+    zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+    tbody.appendChild(zeroUnav);
+   }
 }
 
 /**
