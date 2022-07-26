@@ -676,7 +676,6 @@ class HumanResourceController extends AbstractController
         }
 
         $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findBy(['humanresource' => $humanResource]);
-        $unavailabilities = $unavailabilitiesRepository->findAll();
         for ($indexUnavailabilityHuman = 0; $indexUnavailabilityHuman < count($unavailabilitiesHuman); $indexUnavailabilityHuman++){
             $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $unavailabilitiesHuman[$indexUnavailabilityHuman]->getUnavailability()->getId()]);
             $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);

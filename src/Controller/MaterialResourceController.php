@@ -321,6 +321,8 @@ public function unavailability(Request $request) {
     public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
+        $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
+        $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
 
         $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
@@ -343,16 +345,19 @@ public function unavailability(Request $request) {
                 $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
             }
 
-            $listUnavailabilityMaterialResource = $unavailabilityMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
+            
 
-            foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
+            $unavailabilitiesMaterial = $unavailabilitiesMaterialRepository->findBy(['materialresource' => $materialResource]);
+
+            for ($indexUnavailabilityMaterial = 0; $indexUnavailabilityMaterial < count($unavailabilitiesMaterial); $indexUnavailabilityMaterial++)
             {
-                $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                $unavailabilityMaterialResourceRepository->remove($unavailabilityMaterialResource, true);
+            $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $unavailabilitiesMaterial[$indexUnavailabilityMaterial]->getUnavailability()->getId()]);
+            $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);
+            $em->remove($unavailabilitiesMaterial[$indexUnavailabilityMaterial]);
 
-                $entityManager->persist($unavailability);
-                $entityManager->flush();
-            }
+            }        
+
+            $em->flush();
 
             $materialResourceRepository->remove($materialResource, true);
         }
