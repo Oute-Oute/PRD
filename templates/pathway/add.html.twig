@@ -41,10 +41,58 @@
 
         <div id="pathway-form">
             <div id="pathway-form-top">
-               <div class="flex-col"> 
-                    <label class="label" for='name'> Nom du parcours </label>        
-                    <input class="input" id='pathwayname' type='text' name='pathwayname' onchange='disableSubmit()' placeholder="Ex : Parcours 3">
+               <div class="pathway-field"> 
+                    <label class="label" style="width:100%;"  for="name"> Nom du parcours </label>
+                    <input class="input" style="width:100%;" id="pathwayname" type="text" name="pathwayname" onchange="disableSubmit()" placeholder="Ex : Parcours 3">
                 </div>
+                <div class="pathway-field"> 
+                    <button type="button" id="btn-show-targets" onclick="showTargets()"> Objectifs journaliers  </button>
+                </div>
+
+                <div class="modal" id="add-pathway-modal-targets">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h2 class="modal-title">Objectifs journaliers</h2>
+                            </div>
+
+                            <div class="modal-body">
+                                <div id="target" class="flex-col"> 
+                                    <label class="label" for='name'> Lundi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Mardi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Mercredi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Jeudi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Vendredi </label>
+                                    <input name="target-monday"type="number" min="0" class="input" >  
+                                                    
+                                    <label class="label" for='name'> Samedi </label>
+                                    <input name="target-monday" type="number" min="0" class="input"> 
+
+                                    <label class="label" for='name'> Dimanche </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+                                </div>
+                            
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn-delete btn-secondary" onclick="hideTargets()">Fermer</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
             </div>
 
             <div id="pathway-form-body">
@@ -52,7 +100,6 @@
                 <div id="create-activity-container">
                     <h4 class="title"> <label id="lbl-title-create" class="label">Création d'une activité</label> </h4>
 
-       
                     <div id="create-activity">
                         <div class="form-field">
                             {# Nom de l'activité #}

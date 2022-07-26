@@ -44,6 +44,11 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
+
+function showTargets() {
+    $('#add-pathway-modal-targets').modal("show");
+}
+
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
