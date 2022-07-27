@@ -34,11 +34,57 @@
 
         <div id="pathway-form">
             <div id="pathway-form-top">
-               <div class="flex-col"> 
-                    <label class="label" for='name'> Nom du parcours </label>        
-                    <input class="input" id='pathwayname' type='text' name='pathwayname'>
+                <div class="pathway-field"> 
+                   <label class="label" style="width:100%;" for='name'> Nom du parcours </label>        
+                    <input class="input" style="width:100%;" id='pathwayname' type='text' name='pathwayname'>
                     <input type="hidden" class="input" id='pathwayid' type='text' name='pathwayid' >
                 </div>
+                <div class="pathway-field"> 
+                    <button type="button" id="btn-show-targets" onclick="showTargets()"> Objectifs journaliers  </button>
+                </div>
+
+                <div class="modal" id="edit-pathway-modal-targets">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h2 class="modal-title">Objectifs journaliers</h2>
+                            </div>
+
+                            <div class="modal-body">
+                                <div id="target" class="flex-col"> 
+                                    <label class="label" for='name'> Lundi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Mardi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Mercredi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Jeudi </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+
+                                    <label class="label" for='name'> Vendredi </label>
+                                    <input name="target-monday"type="number" min="0" class="input" >  
+                                                    
+                                    <label class="label" for='name'> Samedi </label>
+                                    <input name="target-monday" type="number" min="0" class="input"> 
+
+                                    <label class="label" for='name'> Dimanche </label>
+                                    <input name="target-monday" type="number" min="0" class="input" > 
+                                </div>
+                            
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn-delete btn-secondary" onclick="hideTargets()">Fermer</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div id="pathway-form-body">
@@ -116,7 +162,8 @@
 
 
 {% block javascripts %}
-        <script src="{{ asset('./JS/jquery-3.6.0.js')}}"></script>
+        <script src="{{ asset('JS/jquery-ui/external/jquery/jquery.js') }}"></script>
+        <script src="{{ asset('JS/jquery-ui/jquery-ui.js') }}"></script>
         <script src="{{ asset('./JS/bootstrap/bootstrap.min.js') }}" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
         <script src="{{ asset('./JS/Pathway/edit_pathway.js') }}"> </script>
 {% endblock %}

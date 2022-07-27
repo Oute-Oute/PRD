@@ -8,6 +8,7 @@
     <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
   
     <!-- insertion des fichier js et css spécifique à modification planning -->
+	<link rel="stylesheet" href="{{ asset('CSS/Patient/patient.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
     <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
     <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
@@ -25,7 +26,7 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
-		<input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom ou prenom"></input>	
+		<div><input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom ou prenom"></input></div>	
 
 		<table class="table table-striped" id="tablePatient">
 			<thead>
@@ -73,6 +74,7 @@
 	);
 	</script>
 
-
-
+	<div id="paginator" class='paation'>
+	{{knp_pagination_render(patients)}}
+	</div>
 	{% endblock %}

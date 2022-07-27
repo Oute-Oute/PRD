@@ -6,9 +6,6 @@
  * @date 2022/07
  */
 
-
-
-
 var calendar; // var globale pour le calendrier
 var date = new Date(); //create a default date
 var dateStr = date.toDateString();
@@ -103,7 +100,7 @@ function createCalendar(resources) {
     },
     {
       headerContent: "Catégories", //set the label of the column
-      field: "categories", //set the field of the column
+      field: "categoriesString", //set the field of the column
     }]
   }
   date = new Date(dateStr); //create a new date with the date in the hidden input
@@ -118,7 +115,7 @@ function createCalendar(resources) {
     timeZone: "Europe/Paris", //set the timezone for France
     selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
-    contentHeight: (height * 12) / 16, //set the height of the calendar to fit with a standard display
+    height: $(window).height()*0.75, //set the height of the calendar to fit with a standard display
     handleWindowResize: true, //set the calendar to be resizable
     eventDurationEditable: false, //set the event duration not to be editable
     nowIndicator: true, //display the current time
@@ -247,10 +244,12 @@ function createCalendar(resources) {
           console.log(temp["categories"])
           categories=temp["categories"];
           var categoriesStr = ""; //create a string with the human resources names
+          var categoriesArray=[];
           if (categories.length > 0) {
             for (var i = 0; i < categories.length - 1; i++) {
               //for each human resource except the last one
               categoriesStr += categories[i]["name"] + ", "; //add the human resource name to the string with a ; and a space
+              categoriesArray.push(categories[i]["name"]);
             }
             categoriesStr += categories[i]["name"]; //add the last human resource name to the string
           } else categoriesStr = "Défaut";
@@ -258,8 +257,9 @@ function createCalendar(resources) {
             //add the resources to the calendar
             id: temp["id"], //set the id
             title: temp["title"], //set the title            
-            categories: categoriesStr, //set the type
+            categoriesString: categoriesStr, //set the type
             businessHours: businessHours, //get the business hours
+            categories:categoriesArray,
           });
         }
       }
@@ -275,10 +275,12 @@ function createCalendar(resources) {
             //if the resource is not already in the calendar
             categories=temp["categories"];
           var categoriesStr = ""; //create a string with the human resources names
+          var categoriesArray=[];
           if (categories.length > 0) {
             for (var i = 0; i < categories.length - 1; i++) {
               //for each human resource except the last one
               categoriesStr += categories[i]["name"] + ", "; //add the human resource name to the string with a ; and a space
+              categoriesArray.push(categories[i]["name"]);
             }
             categoriesStr += categories[i]["name"]; //add the last human resource name to the string
           } else categoriesStr = "Défaut";
@@ -286,7 +288,9 @@ function createCalendar(resources) {
               //add the resources to the calendar
               id: temp["id"], //set the id
               title: temp["title"], //set the title
-              categories: categoriesStr, //set the type
+              categoriesString: categoriesStr, //set the type
+              categories:categoriesArray,
+              
             });
           }
         }
@@ -298,7 +302,9 @@ function createCalendar(resources) {
   calendar.render(); //display the calendar
 }
 
-
+$(window).resize(function () {
+  calendar.setOption('height', $(window).height()*0.75);
+});
 
 
 
