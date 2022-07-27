@@ -75,15 +75,16 @@ function createEvents() {
 
 /**
  * @brief This function is called when we want to create or recreate the calendar
- * @param {*} resources the type of resources to display (Patients, Resources...)
+ * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
-function createCalendar(resources) {
+function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
+  console.log(resourcesToDisplay)
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
   }
-  if(resources=="Patients"){
+  if(typeResource=="Patients"){
     resourcesColumn=[{
       headerContent: "Nom", //set the label of the column
       field: "lastname", //set the field of the column
@@ -198,7 +199,7 @@ function createCalendar(resources) {
     },
   });
   //change the type of the calendar(Patients, Resources...)
-  switch (resources) {
+  switch (typeResource) {
     case "Patients": //if we want to display by the patients
       var tempArray = JSON.parse(
         document.getElementById("appointments").value.replaceAll("3aZt3r", " ")
@@ -224,9 +225,15 @@ function createCalendar(resources) {
       }
       break;
     case "Ressources Humaines": //if we want to display by the resources
-      var tempArray = JSON.parse(
-        document.getElementById("human").value.replaceAll("3aZt3r", " ")
-      ); //get the data of the resources
+    if(resourcesToDisplay!=undefined){
+      console.log(resourcesToDisplay);
+      var tempArray=resourcesToDisplay
+      console.log(tempArray)
+    }
+    else{
+      var tempArray = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //get the data of the resources
+    console.log(tempArray)
+    }
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (calendar.getResourceById(temp["id"]) == null) {
@@ -241,7 +248,6 @@ function createCalendar(resources) {
             };
             businessHours.push(businesstemp); //add the business hour to the array
           }
-          console.log(temp["categories"])
           categories=temp["categories"];
           var categoriesStr = ""; //create a string with the human resources names
           var categoriesArray=[];
@@ -265,9 +271,14 @@ function createCalendar(resources) {
       }
       break;
     case "Ressources Matérielles": //if we want to display by the resources
+    if(resourcesToDisplay!=undefined){
+      var tempArray=resourcesToDisplay
+    }
+    else{
       var tempArray = JSON.parse(
         document.getElementById("material").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
+    }
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
         if (temp != undefined) {
@@ -297,7 +308,7 @@ function createCalendar(resources) {
       }
       break;
   }
-  headerResources = resources;
+  headerResources = typeResource;
   calendar.gotoDate(date); //go to the date we want to display
   calendar.render(); //display the calendar
 }

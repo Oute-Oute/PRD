@@ -33,7 +33,6 @@
     
 
     <form action="{{ path('PathwayAdd') }}" method="post">
-
         <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
         <input style="display:none;" name="nbactivity" id="nbactivity">
@@ -167,5 +166,11 @@
 
 </div>
 {{ include ('pathway/modal-edit-activities.html.twig') }}
+
+<script>
+$('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
+    hideActivitiesPathway();
+});
+</script>
 
 {% endblock %}

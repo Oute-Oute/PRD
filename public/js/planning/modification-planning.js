@@ -50,6 +50,8 @@ function alertOnload(){
 document.addEventListener("DOMContentLoaded", function () {
   //Créer le calendar sous les conditions que l'on souhaite
   createCalendar(headerResources);
+  filterShow()
+  filterShow()
 });
 
 function unshowDiv(id) {
@@ -562,7 +564,7 @@ function displayModalModifyEvent(){
   $("#modify-planning-modal").modal("show"); //open the window
 }
 
-function createCalendar(typeResource,useCase) {
+function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -739,9 +741,14 @@ function createCalendar(typeResource,useCase) {
   });
   switch (typeResource) {
     case "Ressources Humaines": //if we want to display by the resources
+    if(resourcesToDisplay!=undefined){
+      var resourcesArray=resourcesToDisplay
+    }
+    else{
       var resourcesArray = JSON.parse(
         document.getElementById("human").value.replaceAll("3aZt3r", " ")
       ); //get the data of the resources
+    }
       for (var i = 0; i < resourcesArray.length; i++) {
         var temp = resourcesArray[i]; //get the resources data
         var businessHours = []; //create an array to store the working hours
@@ -782,9 +789,14 @@ function createCalendar(typeResource,useCase) {
         }
         break;
       case "Ressources Matérielles": //if we want to display by the resources
+      if(resourcesToDisplay!=undefined){
+        var resourcesArray=resourcesToDisplay
+      }
+      else{
         var resourcesArray = JSON.parse(
           document.getElementById("material").value.replaceAll("3aZt3r", " ")
         ); //get the data of the resources
+      }
         for (var i = 0; i < resourcesArray.length; i++) {
           var temp = resourcesArray[i]; //get the resources data
           var categoriesStr = ""; //create a string with the human resources names
@@ -2106,8 +2118,6 @@ function updateColorErrorButton(state) {
 function categoryShow(){
   var displayButtonStyle=document.getElementById('displayCategory').style; 
   var labelDisplayButtonStyle=document.getElementById('labelDisplayCategory');
-  console.log(labelDisplayButtonStyle.textContent);
-  
 
   if(resourcesColumns.length==1){
   displayButtonStyle.opacity=0.7; 

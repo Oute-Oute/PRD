@@ -21,7 +21,8 @@ function filterShow() {
       //while there is something in the filter
       filter.removeChild(filter.firstChild); //remove the old content
     }
-  } else {
+  } 
+  else {
     var allCategories = []; //create an array to store the resources to display
     switch (headerResources) {
       case "Ressources Humaines": //if we want to display by the patients
@@ -36,7 +37,6 @@ function filterShow() {
             }
           }
         }
-        console.log(humanCategoriesToDisplay);
         if(humanCategoriesToDisplay.length == 0) {
           humanCategoriesToDisplay = allCategories;
         }
@@ -121,77 +121,51 @@ function filterShow() {
  * @param {*} id the id of resource to filter
  */
 function changeFilter(id, allCategories,type) {
-  console.log(allCategories)
+  var resources=[];
+  var categoriesToDisplay=[];
+  var resourcesToDisplay=[];
   switch(type) {
     case "human":
       for(var i = 0; i < allCategories.length; i++) {
         if(document.getElementById(allCategories[i]).checked == true) {
-          console.log(document.getElementById(allCategories[i]).id)
-          console.log(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id))
           if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
-            console.log("check!")
-            console.log(document.getElementById(allCategories[i]).id)
             humanCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
-            console.log(humanCategoriesToDisplay)
           }
         }
         if(document.getElementById(allCategories[i]).checked == false) {
-          console.log("uncheck!")
           humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
-          console.log(humanCategoriesToDisplay)
         }
+        resources=JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+        categoriesToDisplay=humanCategoriesToDisplay;
+        headerResources="Ressources Humaines";
     }
       break;
     case "material":
       for(var i = 0; i < allCategories.length; i++) {
         if(document.getElementById(allCategories[i]).checked == true) {
-          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+          if(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
             materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
           }
         }
         else {
           materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
       }
+        resources=JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+        categoriesToDisplay=materialCategoriesToDisplay;
+        headerResources="Ressources Matérielles";
       }
       break;
+  }
+    for(var i = 0; i < resources.length; i++) {
+      for (var j = 0; j < resources[i]["categories"].length; j++) {
+        if(categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
+          resourcesToDisplay.push(resources[i]);
+          
+        }
+      }
     }
-  // console.log(categoriesToDisplay)
-  // if (document.getElementById(id).checked == true) {
-  //   //if the resource is checked
-  //   switch (headerResources) {
-  //     case "Ressources Humaines":
-  //       var businessHours = []; //create an array to store the working hours
-  //       idTemp = [document.getElementById(id).value];
-  //       console.log(allCategories);
-  //       for (var j = 0; j < allCategories[idTemp]["workingHours"].length; j++) {
-  //         businesstemp = {
-  //           //create a new business hour
-  //           startTime:
-  //             allCategories[idTemp]["workingHours"][j]["startTime"], //set the start time
-  //           endTime: allCategories[idTemp]["workingHours"][j]["endTime"], //set the end time
-  //           daysOfWeek: [allCategories[idTemp]["workingHours"][j]["day"]], //set the day
-  //         };
-  //         businessHours.push(businesstemp); //add the business hour to the array
-  //       }
-  //       calendar.addResource({
-  //         //add the resource to the calendar
-  //         id: id, //set the id of the resource
-  //         title: document.getElementById(id).name, //set the title of the resource
-  //         businessHours: businessHours, //set the business hours of the resource
-  //       });
-  //       break;
-  //     default:
-  //       calendar.addResource({
-  //         //add the resource to the calendar
-  //         id: id, //set the id of the resource
-  //         title: document.getElementById(id).name, //set the title of the resource
-  //       });
-  //       break;
-  //   }
-  // } else {
-  //   var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
-  //   resource.remove(); //remove the resource from the calendar
-  // }
+    createCalendar(headerResources,"",resourcesToDisplay);
+
 }
 
 /**
@@ -204,12 +178,8 @@ function changePlanning() {
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
-  let filter = document.getElementById("filterId"); //get the filter
-  filter.style.display = "none"; //hide the filter
-  while (filter.firstChild) {
-    //while there is something in the filter
-    filter.removeChild(filter.firstChild); //remove the old content
-  }
+  filterShow()
+  filterShow()
 }
 
 /**
