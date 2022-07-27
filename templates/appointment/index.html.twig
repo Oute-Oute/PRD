@@ -7,6 +7,7 @@
 	<script src="js/Appointment/appointment.js"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 	<!-- insertion des fichier js et css spécifique à modification planning -->
+	<link rel="stylesheet" href="{{ asset('CSS/Appointment/appointment.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
@@ -42,6 +43,7 @@
 			</thead>
 		</div>
 	</th>
+	
 
 </tr></thead><tbody>
 {% for appointment in currentappointments %}
@@ -65,14 +67,17 @@
 		<td colspan="5">Pas de rendez-vous créés !</td>
 	</tr>
 {% endfor %}
+
 </tbody>
 </table>
+	<div id="paginator">
+		{{knp_pagination_render(currentappointments,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
+	</div>
+</div>
 {{ include ('appointment/add_appointment.html.twig') }}
 {{ include ('appointment/edit_appointment.html.twig') }}
 {{ include ('appointment/show_appointment.html.twig') }}
 {{ include ('appointment/select_day.html.twig')}}
-
-
 
 {% endblock %}
 	
