@@ -18,8 +18,8 @@ knp_paginator:
         page_out_of_range: ignore      # if page number exceeds the last page. Options: 'fix'(return last page); 'throwException'
         default_limit: 10              # default number of items per page
     template:
-        pagination: @KnpPaginator/Pagination/sliding.html.twig     # sliding pagination controls template
-        sortable: @KnpPaginator/Pagination/sortable_link.html.twig # sort link template
+        pagination: @KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig    # sliding pagination controls template
+        sortable: @KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig # sort link template
 ```
 
 There are a few additional pagination templates, that could be used out of the box in `knp_paginator.template.pagination` key:

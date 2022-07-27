@@ -20,7 +20,7 @@ class PatientController extends AbstractController
         $patients=$paginator->paginate(
             $patients, 
             $request->query->getInt('page',1),
-            2
+            8
         ); 
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', ['patients' => $patients]);
