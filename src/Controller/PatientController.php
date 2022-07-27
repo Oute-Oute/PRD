@@ -20,7 +20,7 @@ class PatientController extends AbstractController
         $patients=$paginator->paginate(
             $patients, 
             $request->query->getInt('page',1),
-            2
+            8
         ); 
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', ['patients' => $patients]);
@@ -141,5 +141,26 @@ class PatientController extends AbstractController
         }
 
         return $appointmentArray;
+    }
+    public function autocompletePatient(Request $request, PatientRepository $patientRepository)
+    {
+        $term = strtolower($request->query->get('term'));
+        $patients = $patientRepository->findAll();
+        $results = array();
+        foreach ($patients as $patient) {
+            if (   strpos(strtolower($patient->getLastname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getLastname()." ".$patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()." ".$patient->getLastname()), $term) !== false) {
+                $results[] = [
+                    'id' => $patient->getId(),
+                    'value' => $patient->getLastname() . ' ' . $patient->getFirstname(),
+                    'firstname' => $patient->getFirstname(),
+                    'lastname' => $patient->getLastname(),
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
     }
 }

@@ -26,7 +26,7 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
-		<div><input type="text" id="autocompleteInputLastname" onkeyup="filterPatient('autocompleteInputLastname')" placeholder="Nom ou prenom"></input></div>	
+		<div><input type="text" id="autocompleteInputLastname" onkeyup="" placeholder="Rechercher"></input></div>	
 
 		<table class="table table-striped" id="tablePatient">
 			<thead>
@@ -66,7 +66,7 @@
 
 	<script>
 	$( "#autocompleteInputLastname" ).autocomplete({
-	source: autocompleteArray,
+	source: "/autocompletePatient",
 	select: function( event, ui ) {
 		filterPatient('autocompleteInputLastname', ui.item.value);
 	}
@@ -74,7 +74,7 @@
 	);
 	</script>
 
-	<div id="paginator" class='paation'>
-	{{knp_pagination_render(patients)}}
+	<div id="paginator">
+	{{knp_pagination_render(patients,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
 	</div>
 	{% endblock %}

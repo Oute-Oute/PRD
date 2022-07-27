@@ -31,6 +31,7 @@ class MaterialResourceController extends AbstractController
      */
     public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
+        $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $materialResourceCategories = $materialResourceCategoryRepository->findAll();
@@ -76,13 +77,38 @@ class MaterialResourceController extends AbstractController
         }
         //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
-            'material_resources' => $materialResourceRepository->findAll(),
+            'material_resources' => $listMaterialResources,
             'material_resources_categories' => $materialResourceCategories,
             'categoriesByMaterialResources' => $categoriesByMaterialResources,
             'unavailabilities' => $unavailabilities
         ]); 
     }
 
+    public function listMaterialResources(MaterialResourceRepository $materialResourceRepository, ManagerRegistry $doctrine){
+        $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
+        $categoryOfMaterialResources = $categoryOfMaterialResourceRepository->findAll();
+        
+        $materialResources = array();
+        foreach($materialResourceRepository->findAll() as $materialResource){
+            $categories = array();
+            foreach($categoryOfMaterialResources as $categoryOfMaterialResource){
+                if($categoryOfMaterialResource->getMaterialresource()->getId() == $materialResource->getId()){
+                    $categories[] = [
+                        'id' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
+                        'categoryname' => $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()
+                    ];
+                }
+            }
+
+            $materialResources[] = [
+                'id' => $materialResource->getId(),
+                'materialresourcename' => $materialResource->getMaterialresourcename(),
+                'categories' => $categories
+            ];
+        }
+        //dd($materialResources);
+        return $materialResources;
+    }
 
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
