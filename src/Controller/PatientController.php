@@ -142,4 +142,25 @@ class PatientController extends AbstractController
 
         return $appointmentArray;
     }
+    public function autocompletePatient(Request $request, PatientRepository $patientRepository)
+    {
+        $term = strtolower($request->query->get('term'));
+        $patients = $patientRepository->findAll();
+        $results = array();
+        foreach ($patients as $patient) {
+            if (   strpos(strtolower($patient->getLastname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getLastname()." ".$patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()." ".$patient->getLastname()), $term) !== false) {
+                $results[] = [
+                    'id' => $patient->getId(),
+                    'value' => $patient->getLastname() . ' ' . $patient->getFirstname(),
+                    'firstname' => $patient->getFirstname(),
+                    'lastname' => $patient->getLastname(),
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
+    }
 }
