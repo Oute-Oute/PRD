@@ -72,24 +72,7 @@
 {{ include ('appointment/show_appointment.html.twig') }}
 {{ include ('appointment/select_day.html.twig')}}
 
-<script>
-	$( "#autocompleteInputPatientNname" ).autocomplete({
-	source: PatientsArray,
-	select: function( event, ui ) {
-        console.log(ui.item.value);
-		filterPatient('autocompleteInputPatientNname', ui.item.value);
-	}
-	}
-	);
-	$( "#autocompleteInputPathwayNname" ).autocomplete({
-	source: PathwaysArray,
-	select: function( event, ui ) {
-        console.log(ui.item.value);
-		filterPathway('autocompleteInputPathwayNname', ui.item.value);
-	}
-	}
-	);
-	</script>
+
 
 {% endblock %}
 	
