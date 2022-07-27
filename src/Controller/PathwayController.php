@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Pathway;
 use App\Entity\Activity;
 use App\Entity\Successor;
+use App\Entity\Target;
 use App\Entity\ActivityHumanResource;
 use App\Entity\ActivityMaterialResource;
 use App\Repository\PathwayRepository;
@@ -16,6 +17,7 @@ use App\Repository\MaterialResourceCategoryRepository;
 use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
+use App\Repository\TargetRepository;
 use App\Form\PathwayType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
@@ -292,6 +294,9 @@ class PathwayController extends AbstractController
             $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
             $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
             $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $targetRepository = new TargetRepository($this->getDoctrine());
+            //$targetRepository = $doctrine->getManager()->getRepository("App\Entity\Target");
 
 
             // We get all the datas from the request
@@ -309,6 +314,15 @@ class PathwayController extends AbstractController
 
             // We add the pathway to the db
             $pathwayRepository->add($pathway, true);
+
+            // First we create the targets
+            for ($i = 0; $i < 7; $i++) {
+                $target = new Target();
+                $target->setTarget(intval($param['target-'.$i]));
+                $target->setDayWeek($i);
+                $target->setPathway($pathway);
+                $targetRepository->add($target, true);
+            }
 
             // We handle the link between pathway and activities 
 
