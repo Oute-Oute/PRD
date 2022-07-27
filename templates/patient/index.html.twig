@@ -74,7 +74,7 @@
 	);
 	</script>
 
-	<div id="paginator" class='paation'>
-	{{knp_pagination_render(patients)}}
+	<div id="paginator">
+	{{knp_pagination_render(patients,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
 	</div>
 	{% endblock %}
