@@ -60,31 +60,6 @@ function tableAppointment(tableBody, data){
     }
 }
 
-function filterPatient(idInput, selected=null){
-    var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
-    if(selected == null){
-    var filter = document.querySelector('#'+idInput).value; 
-    }
-    else{
-        var filter = selected;
-    }
-    for(let i=0; i<trs.length; i++){
-        var regex = new RegExp(filter, 'i'); 
-        var fullIdentitySurname=trs[i].cells[1].outerText +" "+trs[i].cells[2].outerText; 
-        if(autocompleteArray.indexOf(fullIdentitySurname) == -1){
-        autocompleteArray.push(fullIdentitySurname);
-        }
-        var fullIdentityName=trs[i].cells[2].outerText+" "+trs[i].cells[1].outerText;  
-        var name=trs[i].cells[2].outerText;
-        var surname=trs[i].cells[1].outerText;
-        if(regex.test(fullIdentityName)== false && regex.test(name)==false && regex.test(surname)==false && regex.test(fullIdentitySurname)==false){
-            trs[i].style.display='none';
-        }
-        else{
-            trs[i].style.display=''; 
-        }
-    }
-  }
  
 
 function hideNewModalForm() {
