@@ -1,6 +1,7 @@
 var autocompleteArray = [];
 
 function addUser() {
+  document.getElementById("usernameAdd").value = "";
   $("#add-user-modal").modal("show");
 }
 
