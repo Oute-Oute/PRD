@@ -10,20 +10,27 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Repository\UnavailabilityMaterialResourceRepository;
-use App\Repository\UnavailabilityHumanResourceRepository;
+use Knp\Component\Pager\PaginatorInterface;
 
 class PatientController extends AbstractController
 {
-    public function patientGet(PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
+    public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
+        $patients=$this->getAllPatient($patientRepository); 
+        $patients=$paginator->paginate(
+            $patients, 
+            $request->query->getInt('page',1),
+            8
+        ); 
         //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
-        return $this->render('patient/index.html.twig', [
-            'patients' => $patientRepository->findBy(array(),
-                                                     array('lastname' => 'ASC')),
-        ]);
+        return $this->render('patient/index.html.twig', ['patients' => $patients]);
     }
     
+    public function getAllPatient(PatientRepository $patientRepository){
+        $patient=$patientRepository->findBy(array(),array('lastname' => 'ASC')); 
+        return $patient; 
+
+    }
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
         // On recupere toutes les données de la requête
@@ -134,5 +141,26 @@ class PatientController extends AbstractController
         }
 
         return $appointmentArray;
+    }
+    public function autocompletePatient(Request $request, PatientRepository $patientRepository)
+    {
+        $term = strtolower($request->query->get('term'));
+        $patients = $patientRepository->findAll();
+        $results = array();
+        foreach ($patients as $patient) {
+            if (   strpos(strtolower($patient->getLastname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getLastname()." ".$patient->getFirstname()), $term) !== false 
+                || strpos(strtolower($patient->getFirstname()." ".$patient->getLastname()), $term) !== false) {
+                $results[] = [
+                    'id' => $patient->getId(),
+                    'value' => $patient->getLastname() . ' ' . $patient->getFirstname(),
+                    'firstname' => $patient->getFirstname(),
+                    'lastname' => $patient->getLastname(),
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
     }
 }

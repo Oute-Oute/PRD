@@ -36,6 +36,8 @@ class HumanResourceController extends AbstractController
      */
     public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
+        $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine);
+
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
@@ -43,12 +45,37 @@ class HumanResourceController extends AbstractController
         $unavailabilities = $this->listUnavailabilitiesHumanJSON($doctrine);
         $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON($doctrine);
         return $this->render('human_resource/index.html.twig', [
-            'human_resources' => $humanResourceRepository->findAll(),
+            'human_resources' => $humanResources,
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
             'categoriesByHumanResources' => $categoriesByHumanResources,
             'unavailabilities' => $unavailabilities
         ]); 
+    }
+
+    public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine){
+        $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
+        $categoryOfHumanResources = $categoryOfHumanResourceRepository->findAll();
+        
+        $humanResources = array();
+        foreach($humanResourceRepository->findAll() as $humanResource){
+            $categories = array();
+            foreach($categoryOfHumanResources as $categoryOfHumanResource){
+                if($categoryOfHumanResource->getHumanresource()->getId() == $humanResource->getId()){
+                    $categories[] = [
+                        'id' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
+                        'categoryname' => $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()
+                    ];
+                }
+            }
+
+            $humanResources[] = [
+                'id' => $humanResource->getId(),
+                'humanresourcename' => $humanResource->getHumanresourcename(),
+                'categories' => $categories
+            ];
+        }
+        return $humanResources;
     }
 
     /**

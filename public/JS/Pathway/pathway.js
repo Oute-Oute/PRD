@@ -12,6 +12,10 @@ var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
 var ID_ACTIVITY_PREDECESSOR = -1;
+var NAME_ACTIVITY_PREDECESSOR = '';
+var NB_SUCCESSOR= 0;
+var ACTIVITY_POSITION = new Array();
+var SUCCESSORS = new Array();
 var lines= new Array();
 
 /**
@@ -773,7 +777,14 @@ function filterPathway(idInput,selected=null) {
 function showActivitiesPathway() {
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
+    fillSuccessorList();
+    
     $('#edit-pathway-modal-activities').modal("show");
+}
+
+function hideActivitiesPathway(){
+    deleteSuccessors();
+    $('#edit-pathway-modal-activities').modal("hide");
 }
 
 function drawActivitiesGraph(){
@@ -819,26 +830,137 @@ function createActivitiesGraph(name, idActivity, duration){
                 l.position();
             }
           });
-        }), false);
+    }), false);
 
 
     div.addEventListener('dblclick', function (e) {
         if(ID_ACTIVITY_PREDECESSOR != -1){
-            //traitement
-            console.log(div.id);
-
+            errorLine = false;
+            if(ID_ACTIVITY_PREDECESSOR == div.id){
+                errorLine = true;
+                alert("Vous ne pouvez pas lier une activité à elle-même !");
+            }
             start = document.getElementById(ID_ACTIVITY_PREDECESSOR);
             end = document.getElementById(div.id);
-            l = new LeaderLine(start, end, {color: '#0dac2d'});
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                if(SUCCESSORS[i].idActivityA == start.id && SUCCESSORS[i].idActivityB == end.id){
+                    alert('Ce lien est déjà créé !')
+                    errorLine = true;
+                }
+                if(SUCCESSORS[i].idActivityA == end.id && SUCCESSORS[i].idActivityB == start.id){
+                    alert("Un lien existe déjà dans l'autre sens, veuillez le supprimer avant d'en ajouter un autre.")
+                    errorLine = true;
+                }
+            }
+            if(!errorLine){
+                l = new LeaderLine(start, end, {color: '#0dac2d'});
 
-            lines.push(l);
-            ID_ACTIVITY_PREDECESSOR = -1;
+                lines.push(l);
+                addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
+                ID_ACTIVITY_PREDECESSOR = -1;
+            }
+            else{
+                ID_ACTIVITY_PREDECESSOR = -1;
+                NAME_ACTIVITY_PREDECESSOR = '';
+            }
         }
         else{
             ID_ACTIVITY_PREDECESSOR = div.id;
-            console.log(ID_ACTIVITY_PREDECESSOR);
+            NAME_ACTIVITY_PREDECESSOR = name;
         }
     });
+}
+
+function addSuccessor(idA, idB, nameA, nameB) {
+    addArraySuccessor(idA, idB, nameA, nameB);
+    NB_SUCCESSOR++;
+    fillSuccessorList();
+}
+
+function addArraySuccessor(idA, idB, nameA, nameB) {
+    let len = SUCCESSORS.length
+
+    SUCCESSORS[len] = new Object()
+    SUCCESSORS[len].idActivityA = idA;
+    SUCCESSORS[len].idActivityB = idB;
+
+    SUCCESSORS[len].nameActivityA = nameA;
+    SUCCESSORS[len].nameActivityB = nameB;
+
+    SUCCESSORS[len].delayMin = 0;
+    SUCCESSORS[len].delayMax = 10;
+}
+
+/* remplit la liste des successeurs (sur la droite) */
+function fillSuccessorList() {
+
+    let divSuccessorsList = document.getElementById('list-graph')
+    divSuccessorsList.innerHTML = ''
+
+    for (let indexSuccessor = 0; indexSuccessor < SUCCESSORS.length; indexSuccessor++) {
+            let successor = document.createElement('div')
+            successor.setAttribute('class', 'div-activity')
+            successor.setAttribute('id', 'link-' + indexSuccessor);
+            let idA = document.createElement('input');
+            idA.setAttribute('type', 'hidden');
+            idA.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityA);
+            let idB = document.createElement('input');
+            idB.setAttribute('type', 'hidden');
+            idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
+            successor.appendChild(idA); successor.appendChild(idB);
+            let str = SUCCESSORS[indexSuccessor].nameActivityA;
+            str += ' -> ' + SUCCESSORS[indexSuccessor].nameActivityB;
+            let p = document.createElement('p')
+            p.innerHTML = str
+
+            let imgDelete = new Image();
+            imgDelete.src = '../img/delete.svg';
+            imgDelete.setAttribute('id', 'succ_imgd-' + indexSuccessor);
+            imgDelete.setAttribute('onclick', 'deleteSuccessor(this.id)');
+            imgDelete.setAttribute('title', 'Supprimer le lien');
+            imgDelete.style.width = '20px';
+            imgDelete.style.cursor = 'pointer';
+
+            let div = document.createElement('div');
+            div.appendChild(imgDelete);
+
+            successor.appendChild(p);
+            successor.appendChild(div);
+            divSuccessorsList.appendChild(successor);
+    }
+    if (SUCCESSORS.length == 0) {
+        let nosuccessor = document.createElement('p');
+        nosuccessor.innerHTML = "Aucun lien pour le moment !";
+        nosuccessor.style.marginLeft ="10px";
+        divSuccessorsList.appendChild(nosuccessor);
+    }
+}
+
+function deleteSuccessor(id) {
+    id = getId(id)
+
+    let divSuccessor = document.getElementById('link-' + id);
+    let inputs = divSuccessor.getElementsByTagName('input');
+
+    for(i = 0; i < lines.length; i++){
+        idA = inputs[0].value;
+        idB = inputs[1].value;
+        if (lines[i].start == document.getElementById(idA) && lines[i].end == document.getElementById(idB)){
+            lines[i].remove();
+            lines.splice(i, 1);
+        }
+    }
+
+    NB_SUCCESSOR--;
+    SUCCESSORS.splice(id, 1);
+    
+    fillSuccessorList();
+}
+
+function deleteSuccessors(){
+    SUCCESSORS = new Array()
+    deleteArrows();
+    fillSuccessorList();
 }
 
 function deleteArrows(){

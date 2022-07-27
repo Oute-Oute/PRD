@@ -232,6 +232,11 @@ AjaxPatient:
   controller: App\Controller\PatientController::getDataPatient
   methods: [POST]
 
+AutocompletePatient:
+  path: /autocompletePatient
+  controller: App\Controller\PatientController::autocompletePatient
+  methods: [GET]
+
 AjaxPathwayAppointments:
   path: /ajaxPathwayAppointments
   controller: App\Controller\PathwayController::getAppointmentsByPathwayId
