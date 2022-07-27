@@ -349,6 +349,8 @@ public function unavailability(Request $request) {
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
         $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+        $scheduledMaterialResourcesRepository = new MaterialResourceScheduledRepository($doctrine);
+
 
         $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
@@ -382,6 +384,11 @@ public function unavailability(Request $request) {
             $em->remove($unavailabilitiesMaterial[$indexUnavailabilityMaterial]);
 
             }        
+
+            $scheduledMaterialResources = $scheduledMaterialResourcesRepository->findBy(['materialresource' => $materialResource]);
+            for ($indexScheduledMaterialResource = 0; $indexScheduledMaterialResource < count($scheduledMaterialResources); $indexScheduledMaterialResource++){
+            $em->remove($scheduledMaterialResources[$indexScheduledMaterialResource]);
+            } 
 
             $em->flush();
 
