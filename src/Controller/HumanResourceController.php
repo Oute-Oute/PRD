@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
+use App\Entity\HumanResourceScheduled;
 use App\Entity\Unavailability;
 use App\Entity\WorkingHours;
 use App\Repository\HumanResourceCategoryRepository;
@@ -12,7 +13,8 @@ use App\Repository\CategoryOfHumanResourceRepository;
 use App\Repository\UnavailabilityHumanResourceRepository;
 
 use App\Entity\UnavailabilityHumanResource;
-
+use App\Repository\ActivityHumanResourceRepository;
+use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\UnavailabilityRepository;
 use App\Repository\WorkingHoursRepository;
 use DateTime;
@@ -689,6 +691,7 @@ class HumanResourceController extends AbstractController
         $workingHoursRepository = new WorkingHoursRepository($doctrine);
         $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($doctrine);
         $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+        $scheduledHumanResourcesRepository = new HumanResourceScheduledRepository($doctrine);
 
 
         $em=$doctrine->getManager();
@@ -707,7 +710,12 @@ class HumanResourceController extends AbstractController
             $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $unavailabilitiesHuman[$indexUnavailabilityHuman]->getUnavailability()->getId()]);
             $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);
             $em->remove($unavailabilitiesHuman[$indexUnavailabilityHuman]);
-        }        
+        }
+        
+        $scheduledHumanResources = $scheduledHumanResourcesRepository->findBy(['humanresource' => $humanResource]);
+        for ($indexScheduledHumanResource = 0; $indexScheduledHumanResource < count($scheduledHumanResources); $indexScheduledHumanResource++){
+            $em->remove($scheduledHumanResources[$indexScheduledHumanResource]);
+        }    
 
         $em->flush();
         $humanResourceRepository->remove($humanResource, true);

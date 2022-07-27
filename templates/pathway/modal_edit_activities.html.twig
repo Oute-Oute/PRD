@@ -1,3 +1,5 @@
+{% block body %}
+
 <div class="modal" id="edit-pathway-modal-activities">
     <div class="modal-dialog" style="max-height:800px; max-width:1000px;">
         <div class="modal-content">
@@ -8,7 +10,7 @@
             <div class="modal-body" id="modal-body-graph">
                 <div id='divContent' class="wrapper-graph">
                 </div>
-                <div id="activities-list-graph" style="width: 25%; box-shadow: 0px 0px 10px lightgrey; border-radius: 10px;">
+                <div id="activities-list-graph">
                     <div style="display:flex">
                         <h5 class="title"><label id="name" class="label" for='name'> Liste des liens </label></h5> 
                     </div>
@@ -23,3 +25,11 @@
         </div>
     </div>
 </div>
+
+<script>
+$('#edit-pathway-modal-delay').on('hidden.bs.modal', function () {
+    showActivitiesPathway();
+});
+</script>
+
+{% endblock %}
