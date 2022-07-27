@@ -63,7 +63,6 @@ function tableAppointment(tableBody, data,){
 
 function filterPatient(selected=null){
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
-console.log(selected)
     for(let i=0; i<trs.length; i++){
             trs[i].style.display='none';
     }
@@ -111,10 +110,11 @@ console.log(selected)
     console.log(input.value)
     if(input.value == ''){
     for(let i=0; i<trs.length; i++){
+        console.log(trs[i].className)
         if(trs[i].style.display == 'none'){
             trs[i].style.display='table-row';
         }
-        else{
+        else if(trs[i].className != 'original'){
             trs[i].remove()
         }
     }
