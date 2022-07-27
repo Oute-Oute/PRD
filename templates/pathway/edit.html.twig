@@ -48,31 +48,31 @@
                         <div class="modal-content">
 
                             <div class="modal-header">
-                                <h2 class="modal-title">Objectifs journaliers edit</h2>
+                                <h2 class="modal-title">Objectifs journaliers</h2>
                             </div>
 
                             <div class="modal-body">
                                 <div id="target" class="flex-col"> 
                                     <label class="label" for='name'> Lundi </label>
-                                    <input name="target-1" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-1" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Mardi </label>
-                                    <input name="target-2" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-2" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Mercredi </label>
-                                    <input name="target-3" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-3" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Jeudi </label>
-                                    <input name="target-4" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-4" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Vendredi </label>
-                                    <input name="target-5"type="number" min="0" class="input" >  
+                                    <input oninput="preventForTarget(this)" name="target-5"type="number" min="0" class="input target" >  
                                                     
                                     <label class="label" for='name'> Samedi </label>
-                                    <input name="target-6" type="number" min="0" class="input"> 
+                                    <input oninput="preventForTarget(this)" name="target-6" type="number" min="0" class="input target"> 
 
                                     <label class="label" for='name'> Dimanche </label>
-                                    <input name="target-0" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-0" type="number" min="0" class="input target" > 
                                 </div>
                             
                             </div>
@@ -137,7 +137,7 @@
 
                 <!-- partie droite - permet d'éditer une activité -->
                 <div id="activities-list">
-                    <h4 class="title"> <label id="name" class="label" for='name'> Liste des activités DSFHSDFHSKDHF </label> </h4>   
+                    <h4 class="title"> <label id="name" class="label" for='name'> Liste des activités </label> </h4>   
                     <div id="list">  </div>  
                 </div>
             </div>
