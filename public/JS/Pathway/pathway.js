@@ -19,6 +19,7 @@ var NB_SUCCESSOR= 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -777,6 +778,7 @@ function filterPathway(idInput,selected=null) {
 }
 
 function showActivitiesPathway() {
+    VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
@@ -1057,14 +1059,7 @@ function deleteArrows(){
     lines = new Array();
 }
 
-function hideArrows(){
-    for (var l of lines) {
-        l.hide('none');
-    }
-}
-
-function showArrows(){
-    for (var l of lines) {
-        l.show();
-    }
+function validateSuccessors(){
+    VALIDATE = 1;
+    $('#edit-pathway-modal-activities').modal("hide");
 }

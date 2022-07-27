@@ -169,7 +169,9 @@
 
 <script>
 $('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
-    hideActivitiesPathway();
+    if(!VALIDATE){
+        hideActivitiesPathway();
+    }
 });
 </script>
 

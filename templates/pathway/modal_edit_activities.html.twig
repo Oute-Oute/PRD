@@ -1,5 +1,3 @@
-{% block body %}
-
 <div class="modal" id="edit-pathway-modal-activities">
     <div class="modal-dialog" style="max-height:800px; max-width:1000px;">
         <div class="modal-content">
@@ -20,16 +18,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-delete btn-secondary" onclick="hideActivitiesPathway()">Annuler</button>
-                <button id='activities-submit' type="submit" class="btn-valide btn-secondary">Valider</button>
+                <button id='activities-submit' type="submit" class="btn-valide btn-secondary" onclick="validateSuccessors()">Valider</button>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-$('#edit-pathway-modal-delay').on('hidden.bs.modal', function () {
-    showActivitiesPathway();
-});
-</script>
-
-{% endblock %}
