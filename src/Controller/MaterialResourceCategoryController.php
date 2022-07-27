@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MaterialResourceCategory;
 use App\Form\MaterialResourceCategoryType;
+use App\Repository\ActivityMaterialResourceRepository;
 use App\Repository\MaterialResourceCategoryRepository;
 use App\Repository\CategoryOfMaterialResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -78,12 +79,19 @@ class MaterialResourceCategoryController extends AbstractController
     public function delete(Request $request, MaterialResourceCategory $materialResourceCategory, MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
     {
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
+        $activitiesMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
 
         $em=$this->getDoctrine()->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresourcecategory' => $materialResourceCategory]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
+
+        $activitiesMaterialResource = $activitiesMaterialResourceRepository->findBy(['materialresourcecategory' => $materialResourceCategory]);
+        for ($indexActivitiesMaterialResource = 0; $indexActivitiesMaterialResource < count($activitiesMaterialResource); $indexActivitiesMaterialResource++){
+        $em->remove($activitiesMaterialResource[$indexActivitiesMaterialResource]);
+        }
+
         $em->flush();
         if ($this->isCsrfTokenValid('delete'.$materialResourceCategory->getId(), $request->request->get('_token'))) {
             $materialResourceCategoryRepository->remove($materialResourceCategory, true);

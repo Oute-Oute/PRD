@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('CSS/Pathway/pathway.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
@@ -29,13 +30,14 @@
 
 		<h1>Liste des parcours</h1>
 		<button type="button" class="btn-add" onclick="location.href='pathway/add'">Ajouter un nouveau parcours</button>
+		<div><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Rechercher"></div>
 		<br>
 		<table class="table table-striped table-index-users" id="tablePathway">
 
 			<thead>
 				<tr class="headerPathway">
 					<th>Identifiant</th>
-					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
+					<th>Parcours</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -104,5 +106,9 @@ filterPathway('autocompleteInputPathwayNname', ui.item.value);
 }
 });
 	</script>
+
+<div id="paginator">
+{{knp_pagination_render(pathways,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
+</div>
 
 {% endblock %}

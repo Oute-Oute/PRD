@@ -165,11 +165,13 @@
     </div>
 
 </div>
-{{ include ('pathway/modal-edit-activities.html.twig') }}
+{{ include ('pathway/modal_edit_activities.html.twig') }}
 
 <script>
 $('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
-    hideActivitiesPathway();
+    if(!VALIDATE){
+        hideActivitiesPathway();
+    }
 });
 </script>
 

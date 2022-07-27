@@ -1,3 +1,5 @@
+//const { get } = require("core-js/core/dict");
+
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 var autocompleteArray = new Array()
@@ -17,6 +19,7 @@ var NB_SUCCESSOR= 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -816,6 +819,7 @@ function filterPathway(idInput,selected=null) {
 }
 
 function showActivitiesPathway() {
+    VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
@@ -873,6 +877,14 @@ function createActivitiesGraph(name, idActivity, duration){
           });
     }), false);
 
+    div.addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+    }), false);
+
 
     div.addEventListener('dblclick', function (e) {
         if(ID_ACTIVITY_PREDECESSOR != -1){
@@ -894,7 +906,7 @@ function createActivitiesGraph(name, idActivity, duration){
                 }
             }
             if(!errorLine){
-                l = new LeaderLine(start, end, {color: '#0dac2d'});
+                l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR+1)});
 
                 lines.push(l);
                 addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
@@ -949,8 +961,7 @@ function fillSuccessorList() {
             idB.setAttribute('type', 'hidden');
             idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
             successor.appendChild(idA); successor.appendChild(idB);
-            let str = SUCCESSORS[indexSuccessor].nameActivityA;
-            str += ' -> ' + SUCCESSORS[indexSuccessor].nameActivityB;
+            let str = "Lien n°" + (indexSuccessor+1);
             let p = document.createElement('p')
             p.innerHTML = str
 
@@ -962,18 +973,92 @@ function fillSuccessorList() {
             imgDelete.style.width = '20px';
             imgDelete.style.cursor = 'pointer';
 
-            let div = document.createElement('div');
-            div.appendChild(imgDelete);
+            let imgDownArrow = new Image();
+            imgDownArrow.src = '../img/down-arrow.svg';
+            imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
+            imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
+            imgDownArrow.setAttribute('title', 'Montrer les délais');
+            imgDownArrow.style.width = '20px';
+            imgDownArrow.style.cursor = 'pointer';
+
+            let divMin = document.createElement('div')
+            divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+
+            let labelMin = document.createElement('label');
+            labelMin.classList.add("label");
+            labelMin.innerHTML = "Délai min (minutes) : ";
+            labelMin.style.width = "70%";
+
+            let inputMin = document.createElement('input');
+            inputMin.setAttribute('id', 'delayMin');
+            inputMin.setAttribute('type', 'number');
+            inputMin.setAttribute('min', 0);
+            inputMin.setAttribute('step', 1);
+            inputMin.setAttribute('value', 0);
+            inputMin.style.width = "30%";
+
+            divMin.appendChild(labelMin);
+            divMin.appendChild(inputMin);
+            divMin.style.display = "none";
+
+            let divMax = document.createElement('div')
+            divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+
+            let labelMax = document.createElement('label');
+            labelMax.classList.add("label");
+            labelMax.innerHTML = "Délai max (minutes) : ";
+            labelMax.style.width = "70%"
+
+            let inputMax = document.createElement('input');
+            inputMax.setAttribute('id', 'delayMax');
+            inputMax.setAttribute('type', 'number');
+            inputMax.setAttribute('min', 0);
+            inputMax.setAttribute('step', 1);
+            inputMax.setAttribute('value', 10);
+            inputMax.style.width = "30%"
+
+            divMax.appendChild(labelMax);
+            divMax.appendChild(inputMax);
+            divMax.style.display = "none";
+
+            let divDel = document.createElement('div');
+            divDel.appendChild(imgDelete);
+
+            let divDown = document.createElement('div');
+            divDown.appendChild(imgDownArrow);
 
             successor.appendChild(p);
-            successor.appendChild(div);
-            divSuccessorsList.appendChild(successor);
+            successor.appendChild(divDel);
+            successor.appendChild(divDown);
+
+            let divSuccessor = document.createElement('div');
+            divSuccessor.classList.add("div-successor")
+
+            divSuccessor.appendChild(successor);
+            divSuccessor.appendChild(divMin);
+            divSuccessor.appendChild(divMax);
+
+            divSuccessorsList.appendChild(divSuccessor);
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
         nosuccessor.innerHTML = "Aucun lien pour le moment !";
         nosuccessor.style.marginLeft ="10px";
         divSuccessorsList.appendChild(nosuccessor);
+    }
+}
+
+function showDelay(id){
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    if(divMin.style.display == "none" || divMax.style.display == "none"){
+        divMin.style.display = "block";
+        divMax.style.display = "block";
+    }
+    else{
+        divMin.style.display = "none";
+        divMax.style.display = "none";
     }
 }
 
@@ -990,6 +1075,10 @@ function deleteSuccessor(id) {
             lines[i].remove();
             lines.splice(i, 1);
         }
+    }
+
+    for(i = 0; i < lines.length; i++){
+        lines[i].middleLabel="Lien n°" + (i+1);
     }
 
     NB_SUCCESSOR--;
@@ -1011,14 +1100,7 @@ function deleteArrows(){
     lines = new Array();
 }
 
-function hideArrows(){
-    for (var l of lines) {
-        l.hide('none');
-    }
-}
-
-function showArrows(){
-    for (var l of lines) {
-        l.show();
-    }
+function validateSuccessors(){
+    VALIDATE = 1;
+    $('#edit-pathway-modal-activities').modal("hide");
 }

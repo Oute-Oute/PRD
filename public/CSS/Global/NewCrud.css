@@ -45,6 +45,19 @@ div#activities-list #list{
     overflow-y:scroll; 
 }
 
+div#activities-list-graph {
+    width: 25%;
+    box-shadow: 0px 0px 10px lightgrey;
+    border-radius: 10px;
+}
+
+div#activities-list-graph #list-graph{
+    display: flex;
+    flex-direction: column;
+    overflow-y:scroll;
+    max-height: 250px;
+}
+
 .div-activity {
     margin: 5px 10px;
     border-radius: 10px;
@@ -59,6 +72,15 @@ div#activities-list #list{
 .div-activity p {
     margin: 0px;
     width: 80%;
+}
+
+.div-successor {
+    margin: 5px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid lightgray;
+    padding: 5px 15px;
+    font-size: 70%;
 }
 
 /* bouton pour ajouter des activités au parcours */
