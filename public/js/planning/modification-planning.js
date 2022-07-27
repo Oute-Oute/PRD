@@ -1,7 +1,6 @@
 var calendar;
 var isUpdated = true;
 var countAddEvent = 0;
-var countAddResource=0; 
 var headerResources = "Ressources Humaines";
 var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
@@ -604,19 +603,20 @@ function createCalendar(typeResource,useCase) {
     calendar = new FullCalendar.Calendar(calendarEl, {
       //clé de la license pour utiliser la librairie à des fin non commerciale
       schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
-      resourceOrder:'type',
+      resourceOrder:'type, title',
       //initialise la vue en colonne par ressource par jour en horaire française
       initialView: "resourceTimelineDay",
       slotDuration: "00:20:00",
       locale: "fr",
       timeZone: "Europe/Paris",
+      //stickyFooterScrollbar: true,
+      height: $(window).height()*0.75,
 
       //permet de modifier les events dans le calendar
       selectable: false,
       //eventConstraint:"businessHours",
       editable: true,
       eventDurationEditable: false,
-      contentHeight: (9 / 12) * height,
       handleWindowResize: true,
       nowIndicator: true,
       selectConstraint: "businessHours", //set the select constraint to be business hours
@@ -751,7 +751,6 @@ function createCalendar(typeResource,useCase) {
           };
           businessHours.push(businesstemp); //add the business hour to the array
         }
-        countAddResource++; 
         var categoriesStr = ""; //create a string with the human resources names
         categories=temp["categories"];
         for(let k=0; k<categories.length-1; k++){
@@ -764,13 +763,13 @@ function createCalendar(typeResource,useCase) {
           title: temp["title"], //set the title
           categories: categoriesStr, //set the type
           businessHours: businessHours, //get the business hours
-          type:countAddResource,
+          type:1,
         });
         calendar.addResource({
           id: "h-default",
           title: "Aucune ressource allouée",
           type:0,
-          categories:[["default"]]
+          categories:[["default"]],
         });
         }
         break;
@@ -794,7 +793,7 @@ function createCalendar(typeResource,useCase) {
             id: temp["id"],
             categories: categoriesStr, //set the type
             title: temp["title"],
-            type:countAddResource,
+            type:1,
 
           });
           calendar.addResource({
@@ -879,6 +878,10 @@ function createCalendar(typeResource,useCase) {
     });
     isUpdated = true;
   }
+
+$(window).resize(function () {
+  calendar.setOption('height', $(window).height()*0.75);
+});
 
 function showPopup() {
   $("#divPopup").show();

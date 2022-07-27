@@ -118,7 +118,7 @@ function createCalendar(resources) {
     timeZone: "Europe/Paris", //set the timezone for France
     selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
-    contentHeight: (height * 12) / 16, //set the height of the calendar to fit with a standard display
+    height: $(window).height()*0.75, //set the height of the calendar to fit with a standard display
     handleWindowResize: true, //set the calendar to be resizable
     eventDurationEditable: false, //set the event duration not to be editable
     nowIndicator: true, //display the current time
@@ -298,7 +298,9 @@ function createCalendar(resources) {
   calendar.render(); //display the calendar
 }
 
-
+$(window).resize(function () {
+  calendar.setOption('height', $(window).height()*0.75);
+});
 
 
 
