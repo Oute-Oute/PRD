@@ -466,6 +466,7 @@ class PathwayController extends AbstractController
             $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
             $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
             $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $targetRepository = new TargetRepository($this->getDoctrine());
 
             // We get all the data from the request
             $param = $request->request->all();
@@ -486,6 +487,22 @@ class PathwayController extends AbstractController
             // We add the pathway to the db
             $em->flush();
 
+            // We update the targets
+            $targets = $targetRepository->findBy(["pathway" => $pathway]);
+            for ($i = 0 ; $i < 7 ; $i++) {
+                if ( count($targetRepository->findBy(["pathway" => $pathway, "dayweek" => $i])) != 0) {
+                    $targetRepository->findBy(["pathway" => $pathway, "dayweek" => $i])[0]->setTarget(intval($param['target-'.$i]));
+                }
+                else 
+                {
+                    $target = new Target();
+                    $target->setTarget(intval($param['target-'.$i]));
+                    $target->setDayWeek($i);
+                    $target->setPathway($pathway);
+                    $targetRepository->add($target, true);
+                }
+            }
+            
             // We handle the links between pathway and ativities
 
             // We get all the activities

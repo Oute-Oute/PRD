@@ -29,13 +29,14 @@
 
 		<h1>Liste des parcours</h1>
 		<button type="button" class="btn-add" onclick="location.href='pathway/add'">Ajouter un nouveau parcours</button>
+		<div><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Rechercher"></div>
 		<br>
 		<table class="table table-striped table-index-users" id="tablePathway">
 
 			<thead>
 				<tr class="headerPathway">
 					<th>Identifiant</th>
-					<th><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Nom de parcours"></th>
+					<th>Parcours</th>
 					<th>Actions</th>
 				</tr>
 			</thead>

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\HumanResourceCategory;
 use App\Repository\CategoryOfHumanResourceRepository;
 use App\Form\HumanResourceCategoryType;
+use App\Repository\ActivityHumanResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\HumanResourceCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,12 +78,19 @@ class HumanResourceCategoryController extends AbstractController
     public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
     {
         $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
+        $activitiesHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
 
         $em=$this->getDoctrine()->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
+
+        $activitiesHumanResource = $activitiesHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
+        for ($indexActivitiesHumanResource = 0; $indexActivitiesHumanResource < count($activitiesHumanResource); $indexActivitiesHumanResource++){
+        $em->remove($activitiesHumanResource[$indexActivitiesHumanResource]);
+        }
+        
         $em->flush();
         if ($this->isCsrfTokenValid('delete'.$humanResourceCategory->getId(), $request->request->get('_token'))) {
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
