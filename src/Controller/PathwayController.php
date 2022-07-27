@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Component\Pager\PaginatorInterface;
+
 use Symfony\Component\Validator\Constraints\Length;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
@@ -165,7 +167,7 @@ class PathwayController extends AbstractController
      * Redirige vers la page qui liste les utilisateurs 
      * route : "/pathways"
      */
-    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): Response
     {
 
         $activityRepository = $doctrine->getManager()->getRepository("App\Entity\Activity");
@@ -179,6 +181,11 @@ class PathwayController extends AbstractController
         //$materialResources = $materialResourceRepo->findAll();
 
         $pathways = $pathwayRepository->findAll();
+        $pathways=$paginator->paginate(
+            $pathways, 
+            $request->query->getInt('page',1),
+            8
+        ); 
         $nbPathway = count($pathways);
 
         $activitiesByPathways = array();
