@@ -78,8 +78,18 @@ function initActivitiesList() {
 
 }
 
+/**
+ * Allow to show the modal for the target
+ */
 function showTargets() {
     $('#edit-pathway-modal-targets').modal("show");
+}
+
+/**
+ * Allow to hide the modal for the target
+ */
+function hideTargets() {
+    $('#edit-pathway-modal-targets').modal("hide");
 }
 
 /**
