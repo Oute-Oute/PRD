@@ -11,10 +11,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Date;
+use Knp\Component\Pager\PaginatorInterface;
 
 class AppointmentController extends AbstractController
 {
-    public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
+    public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
     {
 
         global $date;
@@ -25,12 +26,18 @@ class AppointmentController extends AbstractController
         }
 
         $currentDateTime = new \DateTime($date);
+        $currentAppointment=$appointmentRepository->findBy(["dayappointment" => $currentDateTime]); 
+        $currentAppointment=$paginator->paginate(
+            $currentAppointment, 
+            $request->query->getInt('page',1),
+            8
+        ); 
         $patientsJSON = $this->getPatientsJSON($doctrine);
         $pathwaysJSON = $this->getPathwaysJSON($doctrine);
         //dd($doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),$patients);
         //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
-            'currentappointments' => $appointmentRepository->findBy(["dayappointment" => $currentDateTime]),
+            'currentappointments' =>$currentAppointment ,
             'currentdate' => $date,
             'patientsJSON' => $patientsJSON,
             'pathwaysJSON' => $pathwaysJSON
