@@ -52,6 +52,9 @@ function showTargets() {
     $('#add-pathway-modal-targets').modal("show");
 }
 
+function hideTargets() {
+    $('#add-pathway-modal-targets').modal("hide");
+}
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
