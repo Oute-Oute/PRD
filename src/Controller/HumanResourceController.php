@@ -660,6 +660,10 @@ class HumanResourceController extends AbstractController
     {
         $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
         $workingHoursRepository = new WorkingHoursRepository($doctrine);
+        $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($doctrine);
+        $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+
+
         $em=$doctrine->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
@@ -670,6 +674,14 @@ class HumanResourceController extends AbstractController
         for($indexWorkingHour = 0; $indexWorkingHour < count($workingHours); $indexWorkingHour++) {
             $em->remove($workingHours[$indexWorkingHour]);
         }
+
+        $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findBy(['humanresource' => $humanResource]);
+        for ($indexUnavailabilityHuman = 0; $indexUnavailabilityHuman < count($unavailabilitiesHuman); $indexUnavailabilityHuman++){
+            $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $unavailabilitiesHuman[$indexUnavailabilityHuman]->getUnavailability()->getId()]);
+            $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);
+            $em->remove($unavailabilitiesHuman[$indexUnavailabilityHuman]);
+        }        
+
         $em->flush();
         $humanResourceRepository->remove($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
@@ -753,7 +765,7 @@ class HumanResourceController extends AbstractController
     }
 
 
-    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine) : Response
+    public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
     {
         if (isset($_POST['idHumanAvailability'])) {
             $idHumanAvailability = $_POST['idHumanAvailability'];
@@ -771,9 +783,10 @@ class HumanResourceController extends AbstractController
                 $unavailabilitiesHumanRepository->remove($unavailabilityHumanToDelete[0], true);
                 $em->flush();
 
-                return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
             }
         }
+        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+
         
     }
 

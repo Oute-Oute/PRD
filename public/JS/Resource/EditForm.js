@@ -236,8 +236,8 @@ function deleteHumanUnavailability(button) {
         type : 'POST',
         url : '/deleteHumanUnavailability',
         data : {idUnavailability : button.value, idHumanAvailability : button.getAttribute('id')},
-        dataType : "json",
         success : function(data) {
+            location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr)
@@ -253,8 +253,8 @@ function deleteMaterialUnavailability(button) {
         type : 'POST',
         url : '/deleteMaterialUnavailability',
         data : {idUnavailability : button.value, idMaterialAvailability : button.getAttribute('id')},
-        dataType : "json",
         success : function(data) {
+            location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr)
@@ -270,6 +270,7 @@ function showUnavailabilityHuman(id, name){
     document.getElementById('human-resource-id-unavailability').value = id;
     document.getElementById('human-resource-name-unavailability').innerHTML = name;
     tbody = document.getElementById('tbody-unavailabilities-human')
+    tbody.innerHTML = ''
  
     for (let i = 0; i < UNAVAILABILITIES_HUMAN.length; i++){
      if(UNAVAILABILITIES_HUMAN[i]['id_human_resource'] == id) {
@@ -305,7 +306,11 @@ function showUnavailabilityHuman(id, name){
      }
     }
     //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
- 
+    if(tbody.children.length == 0) {
+        var zeroUnav = document.createElement("p")
+        zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+        tbody.appendChild(zeroUnav);
+       }
  
  
  }
@@ -315,10 +320,9 @@ function showUnavailabilityMaterial(id, name) {
     document.getElementById('material-resource-id-unavailability').value = id;
     document.getElementById('material-resource-name-unavailability').innerHTML = name;
     tbody = document.getElementById('tbody-unavailabilities-material')
-
+    tbody.innerHTML = ''
 
     tbody = document.getElementById('tbody-unavailabilities-material')
-    console.log(UNAVAILABILITIES_MATERIAL)
    for (let i = 0; i < UNAVAILABILITIES_MATERIAL.length; i++){
     if(UNAVAILABILITIES_MATERIAL[i]['id_human_resource'] == id) {
         var dayBegin = UNAVAILABILITIES_MATERIAL[i]['startdatetime'].date.substring(8,10);
@@ -355,7 +359,13 @@ function showUnavailabilityMaterial(id, name) {
         tdBtn.appendChild(btnDelete)
         tr.appendChild(tdBtn)
     }
+
    } 
+   if(tbody.children.length == 0) {
+    var zeroUnav = document.createElement("p")
+    zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
+    tbody.appendChild(zeroUnav);
+   }
 }
 
 /**

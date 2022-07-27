@@ -11,6 +11,9 @@ var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de cr
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
+var ID_ACTIVITY_PREDECESSOR = -1;
+var lines= new Array();
+
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
  */
@@ -42,6 +45,11 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
     ACTIVITY_IN_PROGRESS.available = true
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
+}
+
+
+function showTargets() {
+    $('#add-pathway-modal-targets').modal("show");
 }
 
 function addArray() {
@@ -769,6 +777,11 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
+    if(RESOURCES_BY_ACTIVITIES.length <= 0){
+        for(i = 0; i < 5; i++){
+            createActivitiesGraph(i+1, i+1, 10*(i+1));
+        }
+    }
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
@@ -796,11 +809,50 @@ function createActivitiesGraph(name, idActivity, duration){
     $(".pathway-div-activity-graph").draggable({
         containment: "#divContent",
       });
+
+    div.addEventListener('mousemove', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+        }), false);
+
+
+    div.addEventListener('dblclick', function (e) {
+        if(ID_ACTIVITY_PREDECESSOR != -1){
+            //traitement
+            console.log(div.id);
+
+            start = document.getElementById(ID_ACTIVITY_PREDECESSOR);
+            end = document.getElementById(div.id);
+            l = new LeaderLine(start, end, {color: '#0dac2d'});
+
+            lines.push(l);
+            ID_ACTIVITY_PREDECESSOR = -1;
+        }
+        else{
+            ID_ACTIVITY_PREDECESSOR = div.id;
+            console.log(ID_ACTIVITY_PREDECESSOR);
+        }
+    });
 }
-/*
-RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
-RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
-RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].available = ACTIVITY_IN_PROGRESS.available
-RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].btnHM = 'human'
-RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].id = ACTIVITY_IN_PROGRESS.id
-*/
+
+function deleteArrows(){
+    for (var l of lines) {
+        l.remove();
+    }
+    lines = new Array();
+}
+
+function hideArrows(){
+    for (var l of lines) {
+        l.hide('none');
+    }
+}
+
+function showArrows(){
+    for (var l of lines) {
+        l.show();
+    }
+}

@@ -1,10 +1,13 @@
 /**
  * @file utils-planning.js
  * @brief This file contains the js scripts used to modify the window or the calendar in consultation mode
- * @author Luc Chereau
+ * @author Thomas Blumstein
  * @version 1.0
  * @date 2022/07
  */
+
+var humanCategoriesToDisplay = [];
+var materialCategoriesToDisplay = [];
 
 /**
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
@@ -19,21 +22,23 @@ function filterShow() {
       filter.removeChild(filter.firstChild); //remove the old content
     }
   } else {
-    var resourcesToDisplay = []; //create an array to store the resources to display
+    var allCategories = []; //create an array to store the resources to display
     switch (headerResources) {
       case "Ressources Humaines": //if we want to display by the patients
         var tempArray = JSON.parse(
           document.getElementById("human").value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
         for (var i = 0; i < tempArray.length; i++) {
-          console.log(tempArray[i]["categories"]);
           var temp = tempArray[i]["categories"];
           for (var j = 0; j < temp.length; j++) {
-            if (resourcesToDisplay.indexOf(temp[j]["name"]) == -1) {
-              resourcesToDisplay.push(temp[j]["name"]); //add the resource to the array if it is not already in it
+            if (allCategories.indexOf(temp[j]["name"]) == -1) {
+              allCategories.push(temp[j]["name"]); //add the resource to the array if it is not already in it
             }
           }
-          console.log(resourcesToDisplay);
+        }
+        console.log(humanCategoriesToDisplay);
+        if(humanCategoriesToDisplay.length == 0) {
+          humanCategoriesToDisplay = allCategories;
         }
         break;
       case "Ressources Matérielles": //if we want to display by the patients
@@ -41,52 +46,68 @@ function filterShow() {
           document.getElementById("material").value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
         for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i];
-          resourcesToDisplay.push(temp); //get the resources data
+          var temp = tempArray[i]["categories"];
+          for (var j = 0; j < temp.length; j++) {
+            if (allCategories.indexOf(temp[j]["name"]) == -1) {
+              allCategories.push(temp[j]["name"]); //add the resource to the array if it is not already in it
+            }
+          }
+        }
+        if(materialCategoriesToDisplay.length == 0) {
+          materialCategoriesToDisplay = allCategories;
         }
         break;
     }
     filter.style.display = "inline-block"; //display the filter
-    if (resourcesToDisplay.length == 0) {
+    if (allCategories.length == 0) {
       //if there is no resource in the calendar
       var label = document.createElement("label"); //display a label
       label.innerHTML = "Aucune Catégorie à filtrer"; //telling "no resources"
       filter.appendChild(label); //add the label to the filter
     } else {
       //for all the resources in the calendar
-      for (var i = 0; i < resourcesToDisplay.length; i++) {
-        if (document.getElementById(resourcesToDisplay[i]) == null) {
+      for (var i = 0; i < allCategories.length; i++) {
+        if (document.getElementById(allCategories[i]) == null) {
           var input = document.createElement("input"); //create a input
           input.type = "checkbox"; //set the type of the input to checkbox
-          input.id = resourcesToDisplay[i]; //set the name of the input to the title of the resource
-          input.value = i; //set the value of the input to the title of the resource
-          console.log(calendar.getResources());
-          input.onchange = function () {
-            //set the onchange event
-            changeFilter(this.id, resourcesToDisplay); //call the changeFilter function with the id of the resource
-          };
-          if (input.checked == false) {
-            for (var j = 0; j < calendar.getResources().length; j++) {
-              console.log(calendar.getResources()[j].extendedProps);
-              for ( var k = 0;k < calendar.getResources()[j].extendedProps.categories[0].length; k++
-              ) {
-                console.log(
-                  calendar.getResources()[j].extendedProps.categories[0][k].name
-                );
-                if (
-                  input.id ==
-                  calendar.getResources()[j].extendedProps.categories[0][k].name
-                ) {
-                  input.checked = true; //set the checkbox to unchecked
-                  j = calendar.getResources().length - 1;
+          input.id = allCategories[i]; //set the name of the input to the title of the resource
+          switch(headerResources) {
+            case "Ressources Humaines":
+              input.onchange = function () {
+                //set the onchange event
+                changeFilter(this.id, allCategories,'human'); //call the changeFilter function with the id of the resource
+              };
+              if (input.checked == false) {
+                for (var j = 0; j < humanCategoriesToDisplay.length; j++) {
+                  if ( input.id == humanCategoriesToDisplay[j]) {
+                    input.checked = true; //set the checkbox to checked
+                    j = calendar.getResources().length - 1; //stop the loop
+                  }
+                  else{
+                    input.checked = false; //set the checkbox to unchecked
+                  }
                 }
               }
+              break;
+            case "Ressources Matérielles":
+              input.onchange = function () {
+                //set the onchange event
+                changeFilter(this.id, allCategories,'material'); //call the changeFilter function with the id of the resource
+              };
+              if (input.checked == false) {
+                for (var j = 0; j < materialCategoriesToDisplay.length; j++) {
+                  if ( input.id == materialCategoriesToDisplay[j]) {
+                    input.checked = true; //set the checkbox to checked
+                    j = calendar.getResources().length - 1;
+                  }
+                }
+              }
+              break;
             }
-          }
           filter.appendChild(input); //add the input to the filter
           var label = document.createElement("label"); //create a label
-          label.htmlFor = resourcesToDisplay[i]; //set the htmlFor of the label to the id of the resource
-          label.innerHTML = "&nbsp;" + resourcesToDisplay[i]; //set the text of the label to the title of the resource
+          label.htmlFor = allCategories[i]; //set the htmlFor of the label to the id of the resource
+          label.innerHTML = "&nbsp;" + allCategories[i]; //set the text of the label to the title of the resource
           filter.appendChild(label); //add the label to the filter
           filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
         }
@@ -99,47 +120,78 @@ function filterShow() {
  * @brief This function is called when we want to filter the resources of the calendar
  * @param {*} id the id of resource to filter
  */
-function changeFilter(id, resourcesToDisplay) {
-  if (document.getElementById(id).checked == true) {
-    //if the resource is checked
-    switch (headerResources) {
-      case "Ressources Humaines":
-        var businessHours = []; //create an array to store the working hours
-        idTemp = [document.getElementById(id).value];
-        console.log(resourcesToDisplay);
-        for (
-          var j = 0;
-          j < resourcesToDisplay[idTemp]["workingHours"].length;
-          j++
-        ) {
-          businesstemp = {
-            //create a new business hour
-            startTime:
-              resourcesToDisplay[idTemp]["workingHours"][j]["startTime"], //set the start time
-            endTime: resourcesToDisplay[idTemp]["workingHours"][j]["endTime"], //set the end time
-            daysOfWeek: [resourcesToDisplay[idTemp]["workingHours"][j]["day"]], //set the day
-          };
-          businessHours.push(businesstemp); //add the business hour to the array
+function changeFilter(id, allCategories,type) {
+  console.log(allCategories)
+  switch(type) {
+    case "human":
+      for(var i = 0; i < allCategories.length; i++) {
+        if(document.getElementById(allCategories[i]).checked == true) {
+          console.log(document.getElementById(allCategories[i]).id)
+          console.log(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id))
+          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+            console.log("check!")
+            console.log(document.getElementById(allCategories[i]).id)
+            humanCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+            console.log(humanCategoriesToDisplay)
+          }
         }
-        calendar.addResource({
-          //add the resource to the calendar
-          id: id, //set the id of the resource
-          title: document.getElementById(id).name, //set the title of the resource
-          businessHours: businessHours, //set the business hours of the resource
-        });
-        break;
-      default:
-        calendar.addResource({
-          //add the resource to the calendar
-          id: id, //set the id of the resource
-          title: document.getElementById(id).name, //set the title of the resource
-        });
-        break;
+        if(document.getElementById(allCategories[i]).checked == false) {
+          console.log("uncheck!")
+          humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          console.log(humanCategoriesToDisplay)
+        }
     }
-  } else {
-    var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
-    resource.remove(); //remove the resource from the calendar
-  }
+      break;
+    case "material":
+      for(var i = 0; i < allCategories.length; i++) {
+        if(document.getElementById(allCategories[i]).checked == true) {
+          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+            materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+          }
+        }
+        else {
+          materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+      }
+      }
+      break;
+    }
+  // console.log(categoriesToDisplay)
+  // if (document.getElementById(id).checked == true) {
+  //   //if the resource is checked
+  //   switch (headerResources) {
+  //     case "Ressources Humaines":
+  //       var businessHours = []; //create an array to store the working hours
+  //       idTemp = [document.getElementById(id).value];
+  //       console.log(allCategories);
+  //       for (var j = 0; j < allCategories[idTemp]["workingHours"].length; j++) {
+  //         businesstemp = {
+  //           //create a new business hour
+  //           startTime:
+  //             allCategories[idTemp]["workingHours"][j]["startTime"], //set the start time
+  //           endTime: allCategories[idTemp]["workingHours"][j]["endTime"], //set the end time
+  //           daysOfWeek: [allCategories[idTemp]["workingHours"][j]["day"]], //set the day
+  //         };
+  //         businessHours.push(businesstemp); //add the business hour to the array
+  //       }
+  //       calendar.addResource({
+  //         //add the resource to the calendar
+  //         id: id, //set the id of the resource
+  //         title: document.getElementById(id).name, //set the title of the resource
+  //         businessHours: businessHours, //set the business hours of the resource
+  //       });
+  //       break;
+  //     default:
+  //       calendar.addResource({
+  //         //add the resource to the calendar
+  //         id: id, //set the id of the resource
+  //         title: document.getElementById(id).name, //set the title of the resource
+  //       });
+  //       break;
+  //   }
+  // } else {
+  //   var resource = calendar.getResourceById(id); //get the resource with the id from the calendar
+  //   resource.remove(); //remove the resource from the calendar
+  // }
 }
 
 /**

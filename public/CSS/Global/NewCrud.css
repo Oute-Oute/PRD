@@ -290,3 +290,22 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     margin: 15px;
 }
 
+.pathway-field {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+#btn-show-targets {
+    background-color: var(--main-blue);
+    color: white;
+    height: 35px;
+    border-radius: 10px;
+    border-width: 1px;
+    margin-top: 15px;
+    width: 100%;
+}
+#pathway-form-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
