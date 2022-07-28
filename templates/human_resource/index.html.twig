@@ -1,139 +1,139 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des ressources{% endblock %}
+{% block title %}Liste des ressources
+{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
-    <link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
-    <link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+	<link rel="stylesheet" href="{{ asset('CSS/Global/ModaleCalendar.css') }}">
 	<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
-{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
-		{% endif %}
-    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-    <script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
-    <script src="{{ asset('JS/Resource/Resource.js') }}"> </script>
-    <script src="{{ asset('JS/Resource/EditForm.js') }}"> </script>
-    <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
-    <script src='js/fullcalendar-scheduler/lib/main.js'></script>
-    <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/jquery-ui/jquery-ui.js"></script>  
-      
+	{% if app.user == null %}
+		<script type="text/javascript">
+			document.location.href = "/"
+		</script>
+	{% endif %}
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+	<script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+	<script src="{{ asset('JS/Resource/Resource.js') }}"></script>
+	<script src="{{ asset('JS/Resource/EditForm.js') }}"></script>
+	<script src="{{ asset('JS/Resource/infosResource.js') }}"></script>
+	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+	<script src="js/jquery-ui/jquery-ui.js"></script>
+
 {% endblock %}
 {% block body %}
-<div id="main_content">
-<li class="selected" id="resources" onclick="change_tab_human(this.id);">Ressources</li>
-<li class="notselected" id="categories" onclick="change_tab_human(this.id);">Catégories</li>
-<div class = "index" id="both-tables">
-<input id = "working-hours-content" style = "display : none" value = "{{workingHours.content}}">
-<input id = "categories-by-human-resource" style = "display : none" value = "{{categoriesByHumanResources.content}}">
-<input id = "unavailabilities-human-resource" style = "display : none" value = "{{unavailabilities.content}}">
+	<div id="main_content">
+		<li class="selected" id="resources" onclick="change_tab_human(this.id);">Ressources</li>
+		<li class="notselected" id="categories" onclick="change_tab_human(this.id);">Catégories</li>
+		<div class="index" id="both-tables">
+			<input id="working-hours-content" style="display : none" value="{{workingHours.content}}">
+			<input id="categories-by-human-resource" style="display : none" value="{{categoriesByHumanResources.content}}">
+			<input id="unavailabilities-human-resource" style="display : none" value="{{unavailabilities.content}}">
 
-<div id = 'list-human-resources'>
-    <h1>Liste des ressources humaines</h1>
-        <button class ="btn-add" onclick="showNewHumanModalForm()"> Ajouter une nouvelle ressource humaine </button>
-        <div><input type="text" id="autocompleteInputHumanName" onkeyup='displayAll("Human")' placeholder="Rechercher"></div>
-    <table class="table table-striped table-index-users" id='tableHumanResource'>
-        <thead>
-            <tr class='headerHumanResource'> 
-                <th style="width: 20%;">Ressource</th>
-                <th style="width: 20%;">Catégories</th>
-                <th style="width: 30%;">Actions</th>
-            </tr>
-        </thead>
-        <tbody id="humanTable">
-        {% set indexResource = 0 %}
-        {% for human_resource in human_resources %}
-            <tr class="original">
-                <td>{{ human_resource.humanresourcename }}</td>
-                <td style="max-width: 10%;">
-                    {% for category in human_resource.categories %}
-                        {% if category.id == human_resource.categories[0].id %}
-                            {{category.categoryname}}
-                        {% else %}
-                            , {{category.categoryname}}
-                        {% endif %}
-                    {% else %}
-                        Cette ressource humaine n'a pas de catégorie.
-                    {% endfor %}
-                </td>
-                <td>
-                    <button class = 'btn-infos btn-secondary' onclick='showInfosModalHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Informations</a>
-                    <button class = 'btn-add btn-secondary' onclick='showUnavailabilityHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Indisponibilités</a>
-                    <button class = 'btn-edit btn-secondary' onclick='showEditModalForm("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Éditer</a>
-                    {{ include('human_resource/delete_resource.html.twig') }}
-                </td>
-            </tr>
-            {% set indexResource = indexResource + 1 %}
-        {% else %}
-            <tr>
-                <td colspan="4">Pas de ressources humaines créées !</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-<br>
- </div>
- <div style = "display : none " id = 'list-human-categories'>
- <h1>Liste des catégories de ressources humaines</h1>
- <button class ="btn-add" onclick="showNewHumanCategModalForm()"> Ajouter une nouvelle catégorie de ressource humaine </button>
-    <div><input type="text" id="autocompleteInputHumanNameCategory" onkeyup="filterHumanResourceCategory('autocompleteInputHumanNameCategory')" placeholder="Rechercher"></div>
-    <table class="table table-striped table-index-users" id='tableHumanResourceCategory'>
-        <thead>
-            <tr class='headerHumanResourceCategory'> 
-                <th style="width: 20%;">Catégorie</th>
-                <th style="width: 30%;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for human_resource_category in human_resources_categories %}
-            <tr>
-                <td>{{ human_resource_category.categoryname }}</td>
-                <td>
-                    <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Informations</a>
-                    <button class = "btn-edit btn-secondary"  onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
-                    {{ include('human_resource/delete_category.html.twig') }}
+			<div id='list-human-resources'>
+				<h1>Liste des ressources humaines</h1>
+				<button class="btn-add" onclick="showNewHumanModalForm()">
+					Ajouter une nouvelle ressource humaine
+				</button>
+				<div><input type="text" id="autocompleteInputHumanName" onkeyup='displayAll("Human")' placeholder="Rechercher"></div>
+				<table class="table table-striped table-index-users" id='tableHumanResource'>
+					<thead>
+						<tr class='headerHumanResource'>
+							<th style="width: 20%;">Ressource</th>
+							<th style="width: 20%;">Catégories</th>
+							<th style="width: 30%;">Actions</th>
+						</tr>
+					</thead>
+					<tbody id="humanTable">
+						{% set indexResource = 0 %}
+						{% for human_resource in human_resources %}
+							<tr class="original">
+								<td>{{ human_resource.humanresourcename }}</td>
+								<td style="max-width: 10%;">
+									{% for category in human_resource.categories %}
+										{% if category.id == human_resource.categories[0].id %}
+											{{category.categoryname}}
+										{% else %}
+											,
+											{{category.categoryname}}
+										{% endif %}
+									{% else %}
+										Cette ressource humaine n'a pas de catégorie.
+									{% endfor %}
+								</td>
+								<td>
+									<button class='btn-infos btn-secondary' onclick='showInfosModalHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Informations</a>
+									<button class='btn-add btn-secondary' onclick='showUnavailabilityHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Indisponibilités</a>
+									<button class='btn-edit btn-secondary' onclick='showEditModalForm("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Éditer</a>
+									{{ include('human_resource/delete_resource.html.twig') }}
+								</td>
+							</tr>
+							{% set indexResource = indexResource + 1 %}
+						{% else %}
+							<tr>
+								<td colspan="4">Pas de ressources humaines créées !</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<br>
+			</div>
+			<div style="display : none " id='list-human-categories'>
+				<h1>Liste des catégories de ressources humaines</h1>
+				<button class="btn-add" onclick="showNewHumanCategModalForm()">
+					Ajouter une nouvelle catégorie de ressource humaine
+				</button>
+				<div><input type="text" id="autocompleteInputHumanNameCategory" onkeyup="filterHumanResourceCategory('autocompleteInputHumanNameCategory')" placeholder="Rechercher"></div>
+				<table class="table table-striped table-index-users" id='tableHumanResourceCategory'>
+					<thead>
+						<tr class='headerHumanResourceCategory'>
+							<th style="width: 20%;">Catégorie</th>
+							<th style="width: 30%;">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for human_resource_category in human_resources_categories %}
+							<tr>
+								<td>{{ human_resource_category.categoryname }}</td>
+								<td>
+									<button class="btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Informations</a>
+									<button class="btn-edit btn-secondary" onclick="showEditHumanCategModalForm('{{ human_resource_category.id }}', '{{ human_resource_category.categoryname }}')">Éditer</a>
+									{{ include('human_resource/delete_category.html.twig') }}
 
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Pas de catégorie de ressources humaines créées !</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
-{{ include ('human_resource/show_resource.html.twig') }}
-{{ include ('human_resource/new_resource.html.twig') }}
-{{ include ('human_resource/edit_resource.html.twig') }}
-{{ include ('human_resource/show_category.html.twig') }}
-{{ include ('human_resource/new_category.html.twig') }}
-{{ include ('human_resource/edit_category.html.twig')}}
-{{ include ('human_resource/edit_unavailability.html.twig')}}
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="3">Pas de catégorie de ressources humaines créées !</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div id="paginator">
+				{{knp_pagination_render(human_resources,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
+			</div>
+		</div>
+	</div>
+
+
+	{{ include ('human_resource/show_resource.html.twig') }}
+	{{ include ('human_resource/new_resource.html.twig') }}
+	{{ include ('human_resource/edit_resource.html.twig') }}
+	{{ include ('human_resource/show_category.html.twig') }}
+	{{ include ('human_resource/new_category.html.twig') }}
+	{{ include ('human_resource/edit_category.html.twig')}}
+	{{ include ('human_resource/edit_unavailability.html.twig')}}
 
 
 	<script>
-	$( "#autocompleteInputHumanName" ).autocomplete({
-	source: "/autocompleteHR",
-	select: function( event, ui ) {
-		filterResource("human", ui.item);
-	}
-	}
-	);
-    	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
-	source: hcrArray,
-	select: function( event, ui ) {
-		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
-	}
-	}
-	);
+		<<<<<<<HEAD$("#autocompleteInputHumanName").autocomplete({source:"/autocompleteHR",select:function(event,ui){filterResource("human",ui.item);}});$("#autocompleteInputHumanNameCategory").autocomplete({source:hcrArray,select:function(event,ui){filterHumanResourceCategory('autocompleteInputHumanNameCategory',ui.item.value);}});=======$("#autocompleteInputHumanName").autocomplete({source:hrArray,select:function(event,ui){filterHumanResource('autocompleteInputHumanName',ui.item.value);}});$("#autocompleteInputHumanNameCategory").autocomplete({source:hcrArray,select:function(event,ui){filterHumanResourceCategory('autocompleteInputHumanNameCategory',ui.item.value);}});>>>>>>> bef1067d69b1d96be0252f6c1e420264552341ae
 	</script>
 
 {% endblock %}
-

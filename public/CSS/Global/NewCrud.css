@@ -1,78 +1,12 @@
 /* CSS PAGE AJOUT PARCOURS*/
-div#pathway-form-body {
-    display: flex;
-    width: 100%;
-    height: 50%;
-    justify-content: space-between;
-    margin: 20px 0px;
-}
-div#create-activity-container {
-    width: 55%;
-    /*border: 1px solid lightgray;*/
-    /*border: 1px solid var(--main-blue);*/
-    box-shadow: 0px 0px 10px lightgray;
-    padding: 10px 20px;
-    border-radius: 10px;
-}
-.title{
-    margin: 20px;
-}
-
-#creation-form {
-    display : flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    /*margin: 10px 10px; */
-    background-color: #fff;
-
-}
 
 
-div#activities-list {
-    width: 35%;
-    /*border: 1px solid var(--main-blue);*/
-    box-shadow: 0px 0px 10px lightgray;
-    padding: 20px 0px;
-    border-radius: 10px;
-}
 
-div#activities-list #list{
-    display: flex;
-    flex-direction: column;
-    overflow-y:scroll; 
-}
 
-div#activities-list-graph {
-    width: 25%;
-    box-shadow: 0px 0px 10px lightgrey;
-    border-radius: 10px;
-}
 
-div#activities-list-graph #list-graph{
-    display: flex;
-    flex-direction: column;
-    overflow-y:scroll;
-    max-height: 250px;
-}
 
-.div-activity {
-    margin: 5px 10px;
-    border-radius: 10px;
-    background-color: #fff;
-    border: 1px solid lightgray;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0px 15px;
-    min-height: 35px;
-}
-.div-activity p {
-    margin: 0px;
-    width: 80%;
-}
+
+
 
 .div-successor {
     margin: 5px 10px;
@@ -83,27 +17,7 @@ div#activities-list-graph #list-graph{
     font-size: 70%;
 }
 
-/* bouton pour ajouter des activités au parcours */
-button#btn-add-activity {
-    color: #37BC9B;
-    background : none;    
-    border : 1px solid #37BC9B;
 
-}
-
-/* bouton pour confirmer l'édition d'une activité dans un parcours */
-button#btn-confirm-activity {
-    color: #37BC9B;
-    background : none;    
-    border : 1px solid #37BC9B;
-}
-/* bouton pour annuler l'édition d'une activité dans le parcours */
-button#btn-cancel-activity {
-    color: #DA4353;
-    background : none;    
-    border : 1px solid #DA4353;
-
-}
 button#btn-add-activity:hover {
 
 }
@@ -208,89 +122,7 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
 }
 
 
-/* ------------------ MODIFICATION RESOURCE DANS UNE ACTIVITY DANS UN PATHWAY ------------------ */
 
-#div-edit-activity {
-    display: flex;
-    flex-direction: column;
-   /* height: 100px;*/
-    border: 1px solid lightgrey;
-    /*max-height: 400px;*/
-    /*overflow-y: scroll;*/
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    background-color: #fff; 
-    width: 100%;
-}  
-/* bouton de selection materielles / humaines */
-#buttons-resources {
-    display: flex;
-    flex-direction: row;
-}
-#buttons-resources button{
-    border: none;
-    width: 50%;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-/* div qui contient le tableau des resources */
-#div-resources {
-    display: flex;
-    flex-direction: column;
-    background-color: transparent;
-    height: 100%;
-    position: relative;
-    padding: 10px;
-    overflow-y: scroll;
-    max-height: 150px;
-    height: 150px;
-}
-.div-resources-h {
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-    width: 90%;
-}
-.div-resources-m {
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-    width: 90%;
-}
-/* div pour ajouter une ressource (avec le select) */
-#div-add-resources {
-    display: flex;
-    justify-content: space-between;
-    border: 1px solid lightgray; 
-    border-radius: 10px;
-    border-top-right-radius: 0px;
-    align-items: center;
-    height: 35px;
-    background-color: #fff; 
-}   
-
-
-#div-add-resources select {
-    width: 70%;
-    border: none;
-    height: 100%;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
-
-#div-add-resources input {
-    width: 30%;
-    border: none;
-    border-right: 1px solid lightgray; 
-    border-left: 1px solid lightgray; 
-    height: 100%;
-
-}
 
 #lgd-working-hours{
     margin-left : 100px;
