@@ -235,17 +235,20 @@ function change_tab_material(id)
 {
   document.getElementById("resources").className="notselected";
   document.getElementById("categories").className="notselected";
+  var paginator=document.getElementById('paginator');
   document.getElementById(id).className="selected";
+  
   let resources = document.getElementById("list-material-resources")
   let categories = document.getElementById("list-material-categories")
   if(id == 'resources') {
     categories.style.display = 'none'
     resources.style.display = 'block'
+    paginator.style.display=''; 
   }
   else {
     categories.style.display = 'block'
     resources.style.display = 'none'
-
+    paginator.style.display='none';
   }
 }
 
@@ -253,17 +256,19 @@ function change_tab_human(id)
 {
   document.getElementById("resources").className="notselected";
   document.getElementById("categories").className="notselected";
+   var paginator=document.getElementById('paginator');
   document.getElementById(id).className="selected";
   let resources = document.getElementById("list-human-resources");
   let categories = document.getElementById("list-human-categories");
   if(id == 'resources') {
     categories.style.display = 'none';
     resources.style.display = 'block';
+    paginator.style.display='';
   }
   else {
     categories.style.display = 'block';
     resources.style.display = 'none';
-
+    paginator.style.display='none';
   }
 }
 // #container-modal 

@@ -22,6 +22,7 @@ use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\ScheduledActivityRepository;
 use App\Repository\UnavailabilityMaterialResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/material/resource")
@@ -31,9 +32,9 @@ class MaterialResourceController extends AbstractController
     /**
      * @Route("/", name="app_material_resource_index", methods={"GET"})
      */
-    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
+    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
     {
-        $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine);
+        $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine,$request,$paginator);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $materialResourceCategories = $materialResourceCategoryRepository->findAll();
@@ -50,12 +51,7 @@ class MaterialResourceController extends AbstractController
             
                 $categoriesByResource = array();
                 for($indexCategOf = 0; $indexCategOf < count($listCategOf); $indexCategOf++) {
-                    //dd($humanResourceCategories[$indexCategOf]->getCategoryname());
-                    //dd( $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]]));
-                    //array_push($categoriesByResource, $humanResourceCategoryRepository->findBy(['id' => $humanResourceCategories[$indexCategOf]])[0]);
-                    //dd($listCategOf[$indexCategOf]);
                     $materialResourceCategoriesBy =  $materialResourceCategoryRepository->findBy(['id' => $listCategOf[$indexCategOf]->getMaterialresourcecategory()->getId()]);
-                    //dd($materialResourceCategories);
                     if($materialResourceCategoriesBy != null){
                         array_push($categoriesByResource,$materialResourceCategoriesBy[0]);
                     }
@@ -77,7 +73,6 @@ class MaterialResourceController extends AbstractController
             }
             array_push($resourcesByCategories, $resourcesByCategory);
         }
-        //dd($categoriesByResources);
         return $this->render('material_resource/index.html.twig', [
             'material_resources' => $listMaterialResources,
             'material_resources_categories' => $materialResourceCategories,
@@ -86,7 +81,7 @@ class MaterialResourceController extends AbstractController
         ]); 
     }
 
-    public function listMaterialResources(MaterialResourceRepository $materialResourceRepository, ManagerRegistry $doctrine){
+    public function listMaterialResources(MaterialResourceRepository $materialResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $categoryOfMaterialResources = $categoryOfMaterialResourceRepository->findAll();
         
@@ -108,7 +103,11 @@ class MaterialResourceController extends AbstractController
                 'categories' => $categories
             ];
         }
-        //dd($materialResources);
+        $materialResources=$paginator->paginate(
+            $materialResources, 
+            $request->query->getInt('page',1),
+            10
+        ); 
         return $materialResources;
     }
 
