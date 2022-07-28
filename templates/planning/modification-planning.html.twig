@@ -223,8 +223,8 @@
 
 		<div id='container-top-right'>
 			<div id='top-right-buttons'>
-				<input type="button" class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
-				<button type="button" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
+				<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
+				<button type="button" id="button-top-right" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
 					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>
