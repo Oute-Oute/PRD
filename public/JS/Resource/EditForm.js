@@ -232,6 +232,11 @@ function showEditModalFormMaterial(id, name, index){
 
 
 function deleteHumanUnavailability(button) {
+
+    let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
+
+    if(deleted) {
+
     $.ajax({
         type : 'POST',
         url : '/deleteHumanUnavailability',
@@ -247,8 +252,14 @@ function deleteHumanUnavailability(button) {
         
     })
 }
+}
 
 function deleteMaterialUnavailability(button) {
+
+    let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
+
+   if(deleted) {
+
     $.ajax({
         type : 'POST',
         url : '/deleteMaterialUnavailability',
@@ -263,6 +274,7 @@ function deleteMaterialUnavailability(button) {
 
         
     })
+}
 }
 
 function showUnavailabilityHuman(id, name){
