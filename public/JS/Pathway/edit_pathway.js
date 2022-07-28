@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     TARGETS = JSON.parse(
         document.getElementById('json-targets').value
     )
+    console.log(TARGETS)
 
     document.getElementById('resource-nb').value = 1
 
@@ -59,13 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
  * Initialize the targets input
  */
 function initTargets() {
-    targets = document.getElementsByClassName('target')
-    let len = targets.length
-    for (let i = 0; i < Number(len-1); i++) {
-        targets[i].value = TARGETS[i+1].target
+    if (TARGETS.length != 0) {
+        targets = document.getElementsByClassName('target')
+        let len = targets.length
+        for (let i = 0; i < Number(len-1); i++) {
+            targets[i].value = TARGETS[i+1].target
+        }
+        targets[len-1].value = TARGETS[0].target
     }
-    targets[len-1].value = TARGETS[0].target
-
 }
 
 

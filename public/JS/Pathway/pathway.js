@@ -20,31 +20,7 @@ var SUCCESSORS = new Array();
 var lines= new Array();
 var VALIDATE = 0;
 
-/**
- * Appelée au chargement de la page de création d'un parcours (pathway)
- */
-document.addEventListener('DOMContentLoaded', () => {
-    SELECT_ID = 0;
 
-    HUMAN_RESOURCE_CATEGORIES = JSON.parse(
-        document.getElementById("json-human-resource-categories").value
-    );
-
-    MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
-        document.getElementById("json-material-resource-categories").value
-    );
-
-    //addActivity() 
-    initActivity()
-    handleHumanButton()
-    fillActivityList()
-
-    let heightTitle = document.getElementById('name').offsetHeight
-    let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
-    heightCreationDiv = heightCreationDiv - heightTitle
-    document.getElementById('list').style.height = heightCreationDiv + 'px'
-
-})
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()

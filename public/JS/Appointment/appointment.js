@@ -50,6 +50,12 @@ function getTargetsbyMonth(date,pathwayName) {
     dataType: "json",
     success: function (data) {
       console.log(data);
+      if(data[0]['pathway'].length == 0){
+        document.getElementById("empty-parcours").style.visibility = "visible";
+      }
+      else{
+        document.getElementById("empty-parcours").style.visibility = "hidden";
+      }
       addTargetsToCalendar(data[0]["targets"]);
     },
     error: function (data) {
@@ -410,4 +416,40 @@ function filterPatient(idInput) {
       trs[i].style.display = '';
     }
   }
+}
+
+function lookAddAutocompletes(){
+  var patientName = $('#autocompletePatientAdd').val();
+  var pathwayName = $('#autocompletePathwayAdd').val();
+  var allIsGood = true;
+  $.ajax({
+    type: 'POST',
+    url: '/ajaxAppointmentLookAddAutocompletes',
+    data: { pathway: pathwayName, patient: patientName },
+    dataType: "json",
+    success: function (data) {
+      console.log(data);
+      if(data['pathway'].length == 0){
+        console.log(data['pathway'])
+        allIsGood = false;
+      }
+      if(data['patient'].length == 0){
+        console.log(data['patient'])
+        allIsGood = false;
+      }
+    },
+    error: function (data) {
+      console.log(data['pathway'], data['pathway'].length);
+      if(data['pathway'].length == 0){
+        console.log(data['pathway'])
+        allIsGood = false;
+      }
+      if(data['patient'].length == 0){
+        console.log(data['patient'])
+        allIsGood = false;
+      }
+    }
+  });
+
+  return allIsGood;
 }
