@@ -6,7 +6,6 @@ var autocompleteArray = new Array()
 
 var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
-
 var RESOURCES_BY_ACTIVITIES = new Array()
 
 var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
@@ -34,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
     //addActivity() 
     initActivity()
     handleHumanButton()
