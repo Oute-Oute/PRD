@@ -12,6 +12,7 @@ var dateStr = date.toDateString();
 var headerResources = "Patients";
 const height = document.querySelector("div").clientHeight;
 var reloadTime = 600000;
+headerResources = "Patients";
 
 /**
 
@@ -49,14 +50,18 @@ dateStr = $_GET("date");
 date = new Date(dateStr);
 
 
-if ($_GET("headerResources") != null) {
-  headerResources = $_GET("headerResources"); //get the type of resources to display in the list
-  headerResources = headerResources.replaceAll("%20", " "); //set the space in the header
-  headerResources = headerResources.replaceAll("%C3%A9", "é"); //set the comma in the header
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("headerResources: " + document.getElementById("typeResources").value);
+if (document.getElementById("typeResources").value != "") {
+  headerResources = document.getElementById("typeResources").value; //get the type of resources to display in the list
+  console.log(headerResources);
+  headerResources = headerResources; //set the space in the header
+  headerResources = headerResources; //set the comma in the header
 } else {
   headerResources = "Patients";
+  console.log(headerResources);
 }
-document.addEventListener("DOMContentLoaded", function () {
+console.log(headerResources);
   createCalendar(headerResources); //create the calendar
 });
 

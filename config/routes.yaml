@@ -227,6 +227,11 @@ AjaxAppointment:
   controller: App\Controller\AppointmentController::getTargets
   methods: [POST]
 
+AjaxAppointmentLookAddAutocompletes:
+  path: /ajaxAppointmentLookAddAutocompletes
+  controller: App\Controller\AppointmentController::lookAutocompletes
+  methods: [POST]
+
 AjaxInfosAppointment:
   path: /ajaxInfosAppointment
   controller: App\Controller\AppointmentController::getInfosAppointmentById
