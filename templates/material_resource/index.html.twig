@@ -48,11 +48,15 @@
             <tr>
                 <td>{{ material_resource.materialresourcename }}</td>
                 <td>
-                    {% for category in material_resource.categories %}
-                        {{ category.categoryname }}, 
-                    {% else %}
-                        Cette ressource matérielle n'a pas de catégorie.
-                    {% endfor %}
+                        {% for category in material_resource.categories %}
+                            {% if category.id == material_resource.categories[0].id %}
+                                {{category.categoryname}}
+                            {% else %}
+                                , {{category.categoryname}}
+                            {% endif %}
+                        {% else %}
+                            Cette ressource matérielle n'a pas de catégorie.
+                        {% endfor %}
                 </td>
                 <td>
                    <button class = 'btn-infos btn-secondary' onclick='showInfosModalMaterial("{{ material_resource.id }}", "{{material_resource.materialresourcename}}")'>Informations</a>
