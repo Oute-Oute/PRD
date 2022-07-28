@@ -785,6 +785,7 @@ function submitPathway() {
     if (isTargetCorrect())  {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
             btnSubmit.click()
         }
     } else {
@@ -863,6 +864,7 @@ function showActivitiesPathway() {
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
+    drawArrows();
     
     $('#edit-pathway-modal-activities').modal("show");
 }
@@ -876,11 +878,6 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    if(RESOURCES_BY_ACTIVITIES.length <= 0){
-        for(i = 0; i < 5; i++){
-            createActivitiesGraph(i+1, i+1, 10*(i+1));
-        }
-    }
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
@@ -970,6 +967,15 @@ function addSuccessor(idA, idB, nameA, nameB) {
     fillSuccessorList();
 }
 
+function drawArrows(){
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        start = document.getElementById(SUCCESSORS[i].idActivityA);
+        end = document.getElementById(SUCCESSORS[i].idActivityB);
+        l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
+        lines.push(l);
+    }
+}
+
 function addArraySuccessor(idA, idB, nameA, nameB) {
     let len = SUCCESSORS.length
 
@@ -1030,7 +1036,7 @@ function fillSuccessorList() {
             labelMin.style.width = "70%";
 
             let inputMin = document.createElement('input');
-            inputMin.setAttribute('id', 'delayMin');
+            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
             inputMin.setAttribute('type', 'number');
             inputMin.setAttribute('min', 0);
             inputMin.setAttribute('step', 1);
@@ -1050,7 +1056,7 @@ function fillSuccessorList() {
             labelMax.style.width = "70%"
 
             let inputMax = document.createElement('input');
-            inputMax.setAttribute('id', 'delayMax');
+            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
             inputMax.setAttribute('type', 'number');
             inputMax.setAttribute('min', 0);
             inputMax.setAttribute('step', 1);
@@ -1128,6 +1134,7 @@ function deleteSuccessor(id) {
 }
 
 function deleteSuccessors(){
+    NB_SUCCESSOR = 0;
     SUCCESSORS = new Array()
     deleteArrows();
     fillSuccessorList();
@@ -1141,6 +1148,39 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    VALIDATE = 1;
-    $('#edit-pathway-modal-activities').modal("hide");
+    if(!checkSuccessor()){
+        alert("Il reste des activités non liées !")
+    }
+    else{
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            inputMin = document.getElementById("delayMinInput" + (i+1));
+            inputMax = document.getElementById("delayMaxInput" + (i+1));
+            SUCCESSORS[i].delayMin = inputMin.value;
+            SUCCESSORS[i].delayMax = inputMax.value;
+        }
+        deleteArrows();
+        VALIDATE = 1;
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
+    
+}
+
+function checkSuccessor(){
+    if(NB_ACTIVITY == 1){
+        return true;
+    }
+    for(i = 0; i < NB_ACTIVITY; i++){
+        var error = true;
+        
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
+                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
+                    error = false;
+            }
+        }
+        if(error){
+            return false;
+        }
+    }
+    return true;
 }
