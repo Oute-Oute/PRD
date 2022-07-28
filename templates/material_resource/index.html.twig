@@ -39,24 +39,26 @@
     <table class="table table-striped table-index-users" id='tableMaterialResource'>
         <thead>
             <tr class='headerMaterialResource'> 
-                <th>Identifiant</th>
-                <th>Ressource</th>
-                <th>Catégories</th>
-                <th>Actions</th>
+                <th style="width: 20%;">Ressource</th>
+                <th style="width: 20%;">Catégories</th>
+                <th style="width: 30%;">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% set indexResource = 0 %}
         {% for material_resource in material_resources %}
             <tr>
-                <td>{{ material_resource.id }}</td>
                 <td>{{ material_resource.materialresourcename }}</td>
                 <td>
-                    {% for category in material_resource.categories %}
-                        {{ category.categoryname }}, 
-                    {% else %}
-                        Cette ressource matérielle n'a pas de catégorie.
-                    {% endfor %}
+                        {% for category in material_resource.categories %}
+                            {% if category.id == material_resource.categories[0].id %}
+                                {{category.categoryname}}
+                            {% else %}
+                                , {{category.categoryname}}
+                            {% endif %}
+                        {% else %}
+                            Cette ressource matérielle n'a pas de catégorie.
+                        {% endfor %}
                 </td>
                 <td>
                    <button class = 'btn-infos btn-secondary' onclick='showInfosModalMaterial("{{ material_resource.id }}", "{{material_resource.materialresourcename}}")'>Informations</a>
@@ -80,16 +82,14 @@
         <div><input type="text" id="autocompleteInputMaterialNameCategory" onkeyup="filterMaterialResourceCategory('autocompleteInputMaterialNameCategory')" placeholder="Rechercher"></div>
     <table class="table table-striped table-index-users" id='tableMaterialResourceCategory'>
         <thead>
-            <tr class='headerMaterialResourceCategory'> 
-                <th>Identifiant</th>
-                <th>Catégorie</th>
-                <th>Actions</th>
+            <tr class='headerMaterialResourceCategory'>
+                <th style="width: 20%;">Catégorie</th>
+                <th style="width: 30%;">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for material_resource_category in material_resources_categories %}
             <tr>
-                <td>{{ material_resource_category.id }}</td>
                 <td>{{ material_resource_category.categoryname }}</td>
                 <td>
                    <button class = "btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{ material_resource_category.id }}', '{{material_resource_category.categoryname}}')">Informations</a>

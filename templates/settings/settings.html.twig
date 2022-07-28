@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
 	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/settings/settings.css') }}">
 {% endblock %}
 
 {% block javascripts %}
@@ -35,7 +36,7 @@
 								{% set timerModification = setting.getAlertmodificationtimer // 60000 %}
 								<label class="label" for="alertTimeMin">Minutes :
 								</label>
-								<input class="input" id='alertTimeMin' min="1" type='number' step=".5" name='alertTimeMin' value={{timerModification}}>
+								<input class="input" style="width: 10%;" id='alertTimeMin' min="1" type='number' step=".5" name='alertTimeMin' value={{timerModification}}>
 							</div>
 							<div style="margin-top:40px">
 								<label class="label">
@@ -44,15 +45,13 @@
 
 								<label class="label" for="reloadTimeMin">Minutes :
 								</label>
-								<input class="input" id='reloadTimeMin' min="1" type='number' step=".05" name='reloadTimeMin' value={{timerReload}}>
+								<input class="input" style="width: 10%;" id='reloadTimeMin' min="1" type='number' step=".05" name='reloadTimeMin' value={{timerReload}}>
 							</div>
 							<input class="input" type="hidden" id='idAlert' name='idAlert' value={{setting.getId}}>
 						</div><br>
 					{% endfor %}
-					<div style="margin-left: 40%;">
-						<button id='submit' type="submit" class="btn-edit btn-secondary">
-							Modifier
-						</button>
+					<div style="margin-left: 0%;">
+						<button id='submit' type="submit" class="btn-edit btn-secondary">Modifier</button>
 					</div>
 				</div>
 			</form>

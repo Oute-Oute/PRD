@@ -35,13 +35,14 @@
     <form action="{{ path('PathwayAdd') }}" method="post">
         <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
+        <input type="hidden" id="json-successors" name="json-successors" >
         <input style="display:none;" name="nbactivity" id="nbactivity">
 
         <div id="pathway-form">
             <div id="pathway-form-top">
                <div class="pathway-field"> 
                     <label class="label" style="width:100%;"  for="name"> Nom du parcours </label>
-                    <input class="input" style="width:100%;" id="pathwayname" type="text" name="pathwayname" onchange="disableSubmit()" placeholder="Ex : Parcours 3">
+                    <input class="input" style="width:100%;" id="pathwayname" type="text" name="pathwayname" placeholder="Ex : Parcours 3">
                 </div>
                 <div class="pathway-field"> 
                     <button type="button" id="btn-show-targets" onclick="showTargets()"> Objectifs journaliers  </button>
@@ -58,25 +59,25 @@
                             <div class="modal-body">
                                 <div id="target" class="flex-col"> 
                                     <label class="label" for='name'> Lundi </label>
-                                    <input name="target-1" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-1" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Mardi </label>
-                                    <input name="target-2" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-2" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Mercredi </label>
-                                    <input name="target-3" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-3" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Jeudi </label>
-                                    <input name="target-4" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-4" type="number" min="0" class="input target" > 
 
                                     <label class="label" for='name'> Vendredi </label>
-                                    <input name="target-5"type="number" min="0" class="input" >  
+                                    <input oninput="preventForTarget(this)" name="target-5"type="number" min="0" class="input target" >  
                                                     
                                     <label class="label" for='name'> Samedi </label>
-                                    <input name="target-6" type="number" min="0" class="input"> 
+                                    <input oninput="preventForTarget(this)" name="target-6" type="number" min="0" class="input target"> 
 
                                     <label class="label" for='name'> Dimanche </label>
-                                    <input name="target-0" type="number" min="0" class="input" > 
+                                    <input oninput="preventForTarget(this)" name="target-0" type="number" min="0" class="input target" > 
                                 </div>
                             
                             </div>
@@ -165,11 +166,13 @@
     </div>
 
 </div>
-{{ include ('pathway/modal-edit-activities.html.twig') }}
+{{ include ('pathway/modal_edit_activities.html.twig') }}
 
 <script>
 $('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
-    hideActivitiesPathway();
+    if(!VALIDATE){
+        hideActivitiesPathway();
+    }
 });
 </script>
 

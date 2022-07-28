@@ -39,21 +39,23 @@
     <table class="table table-striped table-index-users" id='tableHumanResource'>
         <thead>
             <tr class='headerHumanResource'> 
-                <th>Identifiant</th>
-                <th>Ressource</th>
-                <th>Catégories</th>
-                <th>Actions</th>
+                <th style="width: 20%;">Ressource</th>
+                <th style="width: 20%;">Catégories</th>
+                <th style="width: 30%;">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% set indexResource = 0 %}
         {% for human_resource in human_resources %}
             <tr>
-                <td>{{ human_resource.id }}</td>
                 <td>{{ human_resource.humanresourcename }}</td>
-                <td>
+                <td style="max-width: 10%;">
                     {% for category in human_resource.categories %}
-                        {{ category.categoryname }}, 
+                        {% if category.id == human_resource.categories[0].id %}
+                            {{category.categoryname}}
+                        {% else %}
+                            , {{category.categoryname}}
+                        {% endif %}
                     {% else %}
                         Cette ressource humaine n'a pas de catégorie.
                     {% endfor %}
@@ -82,15 +84,13 @@
     <table class="table table-striped table-index-users" id='tableHumanResourceCategory'>
         <thead>
             <tr class='headerHumanResourceCategory'> 
-                <th>Identifiant</th>
-                <th>Catégorie</th>
-                <th>Actions</th>
+                <th style="width: 20%;">Catégorie</th>
+                <th style="width: 30%;">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for human_resource_category in human_resources_categories %}
             <tr>
-                <td>{{ human_resource_category.id }}</td>
                 <td>{{ human_resource_category.categoryname }}</td>
                 <td>
                     <button class = "btn-infos btn-secondary" onclick="showInfosModalHumanCateg('{{human_resource_category.id}}', '{{human_resource_category.categoryname}}')">Informations</a>

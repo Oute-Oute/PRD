@@ -29,11 +29,12 @@
 	<div  class="index"  id="index-users">
 		<h1 onclick='filterShowUser()' >  Liste des utilisateurs</h1>
 		<button class="btn-add" onclick="addUser();filterShowUser()">Ajouter un nouvel utilisateur</button>
+		<div><input type="text" id="autocompleteInputUserNname" onclick="filterShowUser()" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Rechercher"></div>
 		<table class="table table-striped table-index-users" id="tableUser">
 			<thead>  
 				<tr class="headerUser" >
 					<th>Id</th>
-					<th><input type="text" id="autocompleteInputUserNname" onclick="filterShowUser()" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Nom d'utilisateur"></th>
+					<th>Nom d'utilisateur</th>
 					<th>
 					<button id="filterbutton" onclick="filterShowUser(false)" class="btn-calendar-edit" title="Selection des rôles à afficher">
 				Rôles

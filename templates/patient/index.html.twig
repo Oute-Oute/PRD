@@ -30,21 +30,19 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
-		<div><input type="text" id="autocompleteInputLastname" onkeyup="" placeholder="Rechercher"></input></div>	
+		<div><input type="text" id="autocompleteInputLastname" onkeyup='displayAll()' placeholder="Rechercher"></input></div>	
 
 		<table class="table table-striped" id="tablePatient">
 			<thead>
 			<tr class="headerPatient">
-					<th>Id</th>
-					<th>Nom</th>
-					<th>Prénom</th>
-					<th>Actions</th>
+					<th style="width: 20%;">Nom</th>
+					<th style="width: 20%;">Prénom</th>
+					<th style="width: 30%;">Actions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="patientTable">
 				{% for patient in patients %}
-					<tr>
-						<td>{{ patient.id }}</td>
+					<tr class="original">
 						<td>{{ patient.lastname }}</td>
 						<td>{{ patient.firstname }}</td>
 						<td>
@@ -72,7 +70,7 @@
 	$( "#autocompleteInputLastname" ).autocomplete({
 	source: "/autocompletePatient",
 	select: function( event, ui ) {
-		filterPatient('autocompleteInputLastname', ui.item.value);
+		filterPatient(ui.item);
 	}
 	}
 	);

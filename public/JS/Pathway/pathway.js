@@ -1,3 +1,5 @@
+//const { get } = require("core-js/core/dict");
+
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 var autocompleteArray = new Array()
@@ -17,6 +19,7 @@ var NB_SUCCESSOR= 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -51,14 +54,21 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
-
+/**
+ * Allow to show the modal for the target
+ */
 function showTargets() {
     $('#add-pathway-modal-targets').modal("show");
 }
 
+/**
+ * Allow to hide the modal for the target
+ */
 function hideTargets() {
     $('#add-pathway-modal-targets').modal("hide");
 }
+
+
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
@@ -366,7 +376,10 @@ function addResources() {
     
     // On verifie que le champs quantité est bien rempli 
     let verif = true
+    console.log(document.getElementById('resource-nb').value)
+
     if (document.getElementById('resource-nb').value == '') {
+        console.log('oui')
         verif = false
         alert("La quantité de la ressource n'est pas correcte")
     }
@@ -728,11 +741,36 @@ function deleteResource(id) {
 
 }
 
+/**
+ * delete the "," "." and "e" from the input for the target
+ * @param {delete} input 
+ */
+function preventForTarget(input) {
+ 
+    input.value = input.value.replace("e", "");
+    input.value = input.value.replace(".", "");
+    input.value = input.value.replace(",", "");
+}
 
 /**
- * Verifie que le nom du parcours est correct
- * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
- * Envoie la requete POST au serveur
+ * Verify that targets are correct
+ */
+function isTargetCorrect() {
+    errorInferiorToZero = false
+    let targets = document.getElementsByClassName('target')
+    for (let i = 0 ; (i < targets.length) && (!errorInferiorToZero) ; i++) {
+        if (Number(targets[i].value) < 0) {
+            return false
+        }  
+    }
+    return true
+}
+
+
+/**
+ * Verify that the name of the pathway is correct
+ * Store the array containing all the activities in an input to be accessible by the server
+ * Send the POST request to the server
  */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
@@ -744,40 +782,89 @@ function submitPathway() {
         alert("Le nom du parcours ne peut pas être vide")
     }
 
-    if (verif) {
-        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        btnSubmit.click()
+    if (isTargetCorrect())  {
+        if (verif) {
+            document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
+            btnSubmit.click()
+        }
+    } else {
+        alert("Au moins une valeur n'est pas bonne dans les objectifs journaliers")
     }
+
 }
 
-function filterPathway(idInput,selected=null) {
-    if(selected == null){
-        var filter = document.querySelector('#'+idInput).value; 
-        }
-        else{
-            var filter = selected;
-        }
+function filterPathway(selected=null){
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
-    var filter = document.querySelector('#' + idInput).value;
-    for (let i = 0; i < trs.length; i++) {
-        var regex = new RegExp(filter, 'i');
-        var pathwayName = trs[i].cells[1].outerText;
-        if(autocompleteArray.indexOf(pathwayName) == -1){
-            autocompleteArray.push(pathwayName);
-            }
-        if (regex.test(pathwayName) == false) {
-            trs[i].style.display = 'none';
+    for(let i=0; i<trs.length; i++){
+            trs[i].style.display='none';
+    }
+    table=document.getElementById('pathwayTable');
+    var tr=document.createElement('tr');
+    table.appendChild(tr);
+    var pathwayName=document.createElement('td');
+    pathwayName.append(selected.value);
+    tr.appendChild(pathwayName);
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showInfosPathway('+selected.id+',"'+selected.value+'")');
+    infos.append('Informations');
+    var formEdit=document.createElement('form');
+    formEdit.setAttribute('action','/pathway/edit/'+selected.id);
+    formEdit.setAttribute('style','display:inline');
+    formEdit.setAttribute('method','GET');
+    formEdit.setAttribute('id','formEdit'+selected.id);
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('type','submit');
+    edit.append('Editer');
+    formEdit.appendChild(edit);
+    var formDelete=document.createElement('form');
+    formDelete.setAttribute('action',"/pathway/delete");
+    formDelete.setAttribute('style','display:inline');
+    formDelete.setAttribute('method','POST');
+    formDelete.setAttribute('id','formDelete'+selected.id);
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce parours ?")');
+    var inputHidden=document.createElement('input');
+    inputHidden.setAttribute('type','hidden');
+    inputHidden.setAttribute('name','pathwayid');
+    inputHidden.setAttribute('value',selected.id);
+    formDelete.appendChild(inputHidden);
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('type','submit');
+    buttons.appendChild(infos);
+    buttons.appendChild(formEdit);
+    formDelete.appendChild(deleteButton);
+    buttons.appendChild(formDelete);
+    tr.appendChild(buttons);
+  }
+
+  function displayAll() {
+    var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
+    var input = document.getElementById('autocompleteInputPathwayNname');
+    console.log(input.value)
+    if(input.value == ''){
+    for(let i=0; i<trs.length; i++){
+        console.log(trs[i].className)
+        if(trs[i].style.display == 'none'){
+            trs[i].style.display='table-row';
         }
-        else {
-            trs[i].style.display = '';
+        else if(trs[i].className != 'original'){
+            trs[i].remove()
         }
     }
+}
 }
 
 function showActivitiesPathway() {
+    VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
+    drawArrows();
     
     $('#edit-pathway-modal-activities').modal("show");
 }
@@ -832,6 +919,14 @@ function createActivitiesGraph(name, idActivity, duration){
           });
     }), false);
 
+    div.addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+    }), false);
+
 
     div.addEventListener('dblclick', function (e) {
         if(ID_ACTIVITY_PREDECESSOR != -1){
@@ -853,7 +948,7 @@ function createActivitiesGraph(name, idActivity, duration){
                 }
             }
             if(!errorLine){
-                l = new LeaderLine(start, end, {color: '#0dac2d'});
+                l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR+1)});
 
                 lines.push(l);
                 addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
@@ -875,6 +970,15 @@ function addSuccessor(idA, idB, nameA, nameB) {
     addArraySuccessor(idA, idB, nameA, nameB);
     NB_SUCCESSOR++;
     fillSuccessorList();
+}
+
+function drawArrows(){
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        start = document.getElementById(SUCCESSORS[i].idActivityA);
+        end = document.getElementById(SUCCESSORS[i].idActivityB);
+        l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
+        lines.push(l);
+    }
 }
 
 function addArraySuccessor(idA, idB, nameA, nameB) {
@@ -908,8 +1012,7 @@ function fillSuccessorList() {
             idB.setAttribute('type', 'hidden');
             idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
             successor.appendChild(idA); successor.appendChild(idB);
-            let str = SUCCESSORS[indexSuccessor].nameActivityA;
-            str += ' -> ' + SUCCESSORS[indexSuccessor].nameActivityB;
+            let str = "Lien n°" + (indexSuccessor+1);
             let p = document.createElement('p')
             p.innerHTML = str
 
@@ -921,18 +1024,92 @@ function fillSuccessorList() {
             imgDelete.style.width = '20px';
             imgDelete.style.cursor = 'pointer';
 
-            let div = document.createElement('div');
-            div.appendChild(imgDelete);
+            let imgDownArrow = new Image();
+            imgDownArrow.src = '../img/down-arrow.svg';
+            imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
+            imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
+            imgDownArrow.setAttribute('title', 'Montrer les délais');
+            imgDownArrow.style.width = '20px';
+            imgDownArrow.style.cursor = 'pointer';
+
+            let divMin = document.createElement('div')
+            divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+
+            let labelMin = document.createElement('label');
+            labelMin.classList.add("label");
+            labelMin.innerHTML = "Délai min (minutes) : ";
+            labelMin.style.width = "70%";
+
+            let inputMin = document.createElement('input');
+            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
+            inputMin.setAttribute('type', 'number');
+            inputMin.setAttribute('min', 0);
+            inputMin.setAttribute('step', 1);
+            inputMin.setAttribute('value', 0);
+            inputMin.style.width = "30%";
+
+            divMin.appendChild(labelMin);
+            divMin.appendChild(inputMin);
+            divMin.style.display = "none";
+
+            let divMax = document.createElement('div')
+            divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+
+            let labelMax = document.createElement('label');
+            labelMax.classList.add("label");
+            labelMax.innerHTML = "Délai max (minutes) : ";
+            labelMax.style.width = "70%"
+
+            let inputMax = document.createElement('input');
+            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
+            inputMax.setAttribute('type', 'number');
+            inputMax.setAttribute('min', 0);
+            inputMax.setAttribute('step', 1);
+            inputMax.setAttribute('value', 10);
+            inputMax.style.width = "30%"
+
+            divMax.appendChild(labelMax);
+            divMax.appendChild(inputMax);
+            divMax.style.display = "none";
+
+            let divDel = document.createElement('div');
+            divDel.appendChild(imgDelete);
+
+            let divDown = document.createElement('div');
+            divDown.appendChild(imgDownArrow);
 
             successor.appendChild(p);
-            successor.appendChild(div);
-            divSuccessorsList.appendChild(successor);
+            successor.appendChild(divDel);
+            successor.appendChild(divDown);
+
+            let divSuccessor = document.createElement('div');
+            divSuccessor.classList.add("div-successor")
+
+            divSuccessor.appendChild(successor);
+            divSuccessor.appendChild(divMin);
+            divSuccessor.appendChild(divMax);
+
+            divSuccessorsList.appendChild(divSuccessor);
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
         nosuccessor.innerHTML = "Aucun lien pour le moment !";
         nosuccessor.style.marginLeft ="10px";
         divSuccessorsList.appendChild(nosuccessor);
+    }
+}
+
+function showDelay(id){
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    if(divMin.style.display == "none" || divMax.style.display == "none"){
+        divMin.style.display = "block";
+        divMax.style.display = "block";
+    }
+    else{
+        divMin.style.display = "none";
+        divMax.style.display = "none";
     }
 }
 
@@ -951,6 +1128,10 @@ function deleteSuccessor(id) {
         }
     }
 
+    for(i = 0; i < lines.length; i++){
+        lines[i].middleLabel="Lien n°" + (i+1);
+    }
+
     NB_SUCCESSOR--;
     SUCCESSORS.splice(id, 1);
     
@@ -958,6 +1139,7 @@ function deleteSuccessor(id) {
 }
 
 function deleteSuccessors(){
+    NB_SUCCESSOR = 0;
     SUCCESSORS = new Array()
     deleteArrows();
     fillSuccessorList();
@@ -970,14 +1152,40 @@ function deleteArrows(){
     lines = new Array();
 }
 
-function hideArrows(){
-    for (var l of lines) {
-        l.hide('none');
+function validateSuccessors(){
+    if(!checkSuccessor()){
+        alert("Il reste des activités non liées !")
     }
+    else{
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            inputMin = document.getElementById("delayMinInput" + (i+1));
+            inputMax = document.getElementById("delayMaxInput" + (i+1));
+            SUCCESSORS[i].delayMin = inputMin.value;
+            SUCCESSORS[i].delayMax = inputMax.value;
+        }
+        deleteArrows();
+        VALIDATE = 1;
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
+    
 }
 
-function showArrows(){
-    for (var l of lines) {
-        l.show();
+function checkSuccessor(){
+    if(NB_ACTIVITY == 1){
+        return true;
     }
+    for(i = 0; i < NB_ACTIVITY; i++){
+        var error = true;
+        
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
+                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
+                    error = false;
+            }
+        }
+        if(error){
+            return false;
+        }
+    }
+    return true;
 }

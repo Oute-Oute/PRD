@@ -289,6 +289,8 @@ function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
           var categoriesArray=[];
           if (categories.length > 0) {
             for (var i = 0; i < categories.length - 1; i++) {
+              
+            
               //for each human resource except the last one
               categoriesStr += categories[i]["name"] + ", "; //add the human resource name to the string with a ; and a space
               categoriesArray.push(categories[i]["name"]);

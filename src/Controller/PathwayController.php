@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Component\Pager\PaginatorInterface;
+
 use Symfony\Component\Validator\Constraints\Length;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
@@ -165,7 +167,7 @@ class PathwayController extends AbstractController
      * Redirige vers la page qui liste les utilisateurs 
      * route : "/pathways"
      */
-    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
+    public function pathwayGet(PathwayRepository $pathwayRepository, ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): Response
     {
 
         $activityRepository = $doctrine->getManager()->getRepository("App\Entity\Activity");
@@ -179,6 +181,11 @@ class PathwayController extends AbstractController
         //$materialResources = $materialResourceRepo->findAll();
 
         $pathways = $pathwayRepository->findAll();
+        $pathways=$paginator->paginate(
+            $pathways, 
+            $request->query->getInt('page',1),
+            8
+        ); 
         $nbPathway = count($pathways);
 
         $activitiesByPathways = array();
@@ -302,10 +309,10 @@ class PathwayController extends AbstractController
             // We get all the datas from the request
             $param = $request->request->all();
 
-            // On get the json which contains the list of the resources by activities  
+            // On get the json which contains the list of the resources by activities and successors
             // et we convert it into a PHP Array
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
-
+            $successors= json_decode($param['json-successors']);
             // First we add the pathway to the db :
             
             // We create the pathway object
@@ -329,51 +336,27 @@ class PathwayController extends AbstractController
             // We get all the activities
             $activities = $activityRepository->findAll();
 
-            // We get the number of activities
+            // We get the number of activities and successors
             $nbActivity = count($resourcesByActivities);
+            $nbSuccessor = count($successors);
+
+            // We create an array to store the activies id in the database after we added them
+            // So we don't have to use the name (which can be the same for different activities)
+            $activitiesIdArray = array();
 
             if ($nbActivity != 0) {
-                
-                $firstActivityAvailableFound = false;
                 for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
-
                     if ($resourcesByActivities[$indexActivity]->available) {
-                        
-                        // On cherche la premiere activité available = true
-                        if ($firstActivityAvailableFound === false) {
-                            $firstActivityAvailableFound = true;
-                            $activity_old = new Activity();
-                            $activity_old->setActivityname($resourcesByActivities[$indexActivity]->activityname);
-                            $activity_old->setDuration($resourcesByActivities[$indexActivity]->activityduration);
-                            $activity_old->setPathway($pathway);
-
-                            $activityRepository->add($activity_old, true);
-
-                        } else {
-                            // If the first activity has been found
-
-                            // Création of the activity
-                            $activity = new Activity();
-                            $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
-                            $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
-                            $activity->setPathway($pathway);
-                            $activityRepository->add($activity, true);
-            
-                            $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
+                        // Création of the activity
+                        $activity = new Activity();
+                        $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                        $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
+                        $activity->setPathway($pathway);
+                        $activityRepository->add($activity, true);
         
-                            // Creating of the successor between the 2 activities
-                            $successor = new Successor();
-                            $successor->setActivitya($activity_old);
-                            $successor->setActivityb($activity);
-                            $successor->setDelaymin(0);
-                            $successor->setDelaymax(1);
-                            $successorRepository->add($successor, true);
-
-
-                            // We def the new activity : activity_old which is the activity in progress
-                            $activity_old = $activityRepository->findById($activity->getId())[0];
-                        }
-
+                        // Get the last inserted row, i.e the activity we just added
+                        $activity =  $activityRepository->findOneBy(array(),array('id'=>'DESC'),1,0);
+                        array_push($activitiesIdArray, $activity->getId());
 
                         // Add the link between activity - human resources
                         
@@ -388,15 +371,13 @@ class PathwayController extends AbstractController
                                                                                             
                                     // The we create the object ActivityMaterialResource
                                     $activityHumanResource = new ActivityHumanResource();
-                                    $activityHumanResource->setActivity($activity_old);
+                                    $activityHumanResource->setActivity($activity);
                                     $activityHumanResource->setHumanresourcecategory($HRC);
-                                    $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                    $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                                                     
                                     // We add it to the db
                                     $AHRRepository->add($activityHumanResource , true);
                                 }
-
-                     
                             }
                         }
                     
@@ -415,19 +396,33 @@ class PathwayController extends AbstractController
                                     
                                     // We create the object ActivityMaterialResource
                                     $activityMaterialResource = new ActivityMaterialResource();
-                                    $activityMaterialResource->setActivity($activity_old);
+                                    $activityMaterialResource->setActivity($activity);
                                     $activityMaterialResource->setMaterialresourcecategory($MRC);
-                                    $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                    $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                     
                                     // then we add it to the db
                                     $AMRRepository->add($activityMaterialResource , true);
                                 }
-
                             }
                         }
-
                     }
-
+                }
+                for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
+                    // Creating of the successor between the 2 activities
+                    $successor = new Successor();
+                    
+                    $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
+                    $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
+                    
+                    $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
+                    $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
+                    $successor->setActivitya($activitya);
+                    $successor->setActivityb($activityb);
+                    
+                    $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
+                    $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
+                    
+                    $successorRepository->add($successor, true);
                 }
             
             }                
@@ -475,9 +470,7 @@ class PathwayController extends AbstractController
             // then we transform it into a PHP Array
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
 
-            //dd($resourcesByActivities);
-
-
+            
             // First we want to add the pathway to the db :
             
             // We create the pathway object
@@ -559,7 +552,7 @@ class PathwayController extends AbstractController
                                         $activityMaterialResource = new ActivityMaterialResource();
                                         $activityMaterialResource->setActivity($activity);
                                         $activityMaterialResource->setMaterialresourcecategory($MRC);
-                                        $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                        $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                         
                                         // Puis on l'ajoute dans la bd
                                         $AMRRepository->add($activityMaterialResource , true);
@@ -595,7 +588,7 @@ class PathwayController extends AbstractController
                                         $activityHumanResource = new ActivityHumanResource();
                                         $activityHumanResource->setActivity($activity);
                                         $activityHumanResource->setHumanresourcecategory($HRC);
-                                        $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                        $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                         
                                         // Puis on l'ajoute dans la bd
                                         $AHRRepository->add($activityHumanResource , true);
@@ -664,7 +657,8 @@ class PathwayController extends AbstractController
 
             $activityHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
             $activityMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-
+            $unavailabilityMaterialResourceRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
+            
             // On recupere toutes les informations de la requete 
             $param = $request->request->all();
 
@@ -701,10 +695,10 @@ class PathwayController extends AbstractController
                         foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
                         {
                             $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                            $entityManager->remove($unavailabilityMaterialResource);
-                            $entityManager->flush($unavailabilityMaterialResource);
-                            $entityManager->remove($unavailability);
-                            $entityManager->flush($unavailability);
+                            $em->remove($unavailabilityMaterialResource);
+                            $em->flush($unavailabilityMaterialResource);
+                            $em->remove($unavailability);
+                            $em->flush($unavailability);
                         }
                     }
 
@@ -722,10 +716,10 @@ class PathwayController extends AbstractController
                         foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
                         {
                             $unavailability = $unavailabilityHumanResource->getUnavailability();
-                            $entityManager->remove($unavailabilityHumanResource);
-                            $entityManager->flush($unavailabilityHumanResource);
-                            $entityManager->remove($unavailability);
-                            $entityManager->flush($unavailability);
+                            $em->remove($unavailabilityHumanResource);
+                            $em->flush($unavailabilityHumanResource);
+                            $em->remove($unavailability);
+                            $em->flush($unavailability);
                         }
                     }
 
@@ -968,8 +962,8 @@ class PathwayController extends AbstractController
         $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
         $appointmentArray=[];
         foreach ($appointments as $appointment) {
-            $date = $appointment->getDayappointment()->format('d-m-Y');
-            if($date >= date('d-m-Y')){
+            $date = $appointment->getDayappointment()->format('U');
+            if($date >= date('U')){
                 $appointmentArray[] = [
                     'lastname' => $appointment->getPatient()->getLastname(),
                     'firstname' => $appointment->getPatient()->getFirstname(),
@@ -979,5 +973,21 @@ class PathwayController extends AbstractController
         }
 
         return new JsonResponse($appointmentArray);
+    }
+
+    public function autocompletePathway(Request $request, PathwayRepository $pathwayRepository){
+        $term = strtolower($request->query->get('term'));
+        $patwhay = $pathwayRepository->findAll();
+        $results = array();
+        foreach ($patwhay as $pathway) {
+            if (   strpos(strtolower($pathway->getPathwayname()), $term) !== false){
+                $results[] = [
+                    'id' => $pathway->getId(),
+                    'value' => $pathway->getPathwayname()
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
     }
 }
