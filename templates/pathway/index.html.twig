@@ -30,24 +30,20 @@
 
 		<h1>Liste des parcours</h1>
 		<button type="button" class="btn-add" onclick="location.href='pathway/add'">Ajouter un nouveau parcours</button>
-		<div><input type="text" id="autocompleteInputPathwayNname" onkeyup="filterPathway('autocompleteInputPathwayNname')" placeholder="Rechercher"></div>
+		<div><input type="text" id="autocompleteInputPathwayNname" onkeyup='displayAll()' placeholder="Rechercher"></div>
 		<br>
 		<table class="table table-striped table-index-users" id="tablePathway">
 
 			<thead>
 				<tr class="headerPathway">
-					<th>Identifiant</th>
-					<th>Parcours</th>
-					<th>Actions</th>
+					<th style="width: 20%;">Parcours</th>
+					<th style="width: 30%;">Actions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="pathwayTable">
 				{% set indexPathway = 0 %}
 				{% for pathway in pathways %}
-					<tr>
-						<td>
-							{{ pathway.id }}
-						</td>
+					<tr class="original">
 						<td>
 							{{ pathway.pathwayname }}
 						</td>
@@ -68,7 +64,7 @@
 							</div>
 
 							<div>
-								<form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');" style="width:100%;">
+								<form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce parours ?');" style="width:100%;">
 									<input type="hidden" value="{{pathway.id}}" name="pathwayid">
 									<button type="submit" class="btn-delete btn-secondary">
 										<p style="margin:0px;">
@@ -100,9 +96,9 @@ $('#infos-pathway-modal').on('hidden.bs.modal', function () {
     deleteArrows();
 });
 $("#autocompleteInputPathwayNname").autocomplete({
-source: autocompleteArray,
+source: "/autocompletePathway",
 select: function (event, ui) {
-filterPathway('autocompleteInputPathwayNname', ui.item.value);
+filterPathway(ui.item);
 }
 });
 	</script>

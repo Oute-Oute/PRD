@@ -82,7 +82,7 @@ UserEdit:
 
 AutocompleteUser:
   path: /autocompleteUser
-  controller: App\Controller\PatientController::autocompleteUser
+  controller: App\Controller\UserController::autocompleteUser
   methods: [GET]
 
 Profil:
@@ -234,7 +234,7 @@ AjaxInfosAppointment:
 
 AutocompleteAppointment:
   path: /autocompleteAppointment
-  controller: App\Controller\PatientController::autocompleteAppointment
+  controller: App\Controller\AppointmentController::autocompleteAppointment
   methods: [GET]
 
 AjaxPathwayAppointments:
@@ -259,7 +259,7 @@ AjaxPathwayActivities:
 
 AutocompletePathway:
   path: /autocompletePathway
-  controller: App\Controller\PatientController::autocompletePathway
+  controller: App\Controller\PathwayController::autocompletePathway
   methods: [GET]
 
 AjaxHumanResource:
@@ -269,7 +269,7 @@ AjaxHumanResource:
 
 AutocompleteHR:
   path: /autocompleteHR
-  controller: App\Controller\PatientController::autocompleteHR
+  controller: App\Controller\HumanResourceController::autocompleteHR
   methods: [GET]
 
 AjaxMaterialResource:
@@ -279,5 +279,5 @@ AjaxMaterialResource:
 
 AutocompleteMR:
   path: /autocompleteMR
-  controller: App\Controller\PatientController::autocompleteMR
+  controller: App\Controller\MaterialResourceController::autocompleteMR
   methods: [GET]

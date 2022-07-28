@@ -333,11 +333,12 @@ class ConsultationPlanningController extends AbstractController
                     ->findBy(array("scheduledactivity" => $displayedActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
-                    $materialCategories = $this->getMaterialCategory($doctrine, $MaterialResourceScheduled->getMaterialresource());
+                    $materialCategories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $MaterialResourceScheduled->getMaterialresource()));
                     $materialCategoryArray = array();
                     foreach ($materialCategories as $materialCategory) {
                         $materialCategoryArray[] = array(
-                            'name' => ($materialCategory),
+                            'id' => $materialCategory->getId(),
+                            'name' => $materialCategory->getMaterialResourceCategory()->getCategoryname(),
                         );
                     }
                     $id = $MaterialResourceScheduled->getMaterialresource()->getId();
