@@ -32,7 +32,9 @@ var lines= new Array();
             drawActivities(data);
         },
         error: function() {
-            console.log("can't access activities");
+            var divContent = document.getElementById('divContent');
+            divContent.innerHTML = "Pas d'activités créées !";
+            document.getElementById('load-path').style.visibility = "hidden";
           }
         });
 
