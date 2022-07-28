@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Paramètres
 {% endblock %}
 
@@ -14,6 +13,14 @@
 {% block javascripts %}
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+	{% if app.user == null %}
+<script type="text/javascript">document.location.href="/"</script>
+	{% endif %}
+	{% if app.user != null %}
+	{% if app.user.roles[1] != 'Admin' %}
+		<script type="text/javascript">document.location.href="/ConsultationPlanning"</script>
+		{% endif %}
+		{% endif %}
 {% endblock %}
 {% block body %}
 	<div class="index">
