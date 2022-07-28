@@ -34,6 +34,8 @@ var lines= new Array();
         error: function() {
             var divContent = document.getElementById('divContent');
             divContent.innerHTML = "Pas d'activités créées !";
+            divBr = document.getElementById('modal-br');
+            divBr.innerHTML = "";   
             document.getElementById('load-path').style.visibility = "hidden";
           }
         });
@@ -88,6 +90,7 @@ function change_tab(id) {
 }
 
 function drawActivities(data){
+    console.log(data);
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 

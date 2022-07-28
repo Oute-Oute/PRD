@@ -43,6 +43,10 @@ class ConsultationPlanningController extends AbstractController
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
         }
+        $header="";
+        if (isset($_GET["headerResources"])) {
+            $header = $_GET["headerResources"];
+        }
         //Récupération des données ressources de la base de données
         $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
@@ -54,6 +58,7 @@ class ConsultationPlanningController extends AbstractController
             'planning/consultation-planning.html.twig',
             [
                 'currentdate' => $date,
+                'headerResources' => $header,
                 'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
                 'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
