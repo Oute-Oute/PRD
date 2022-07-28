@@ -48,7 +48,11 @@
                 <td>{{ human_resource.humanresourcename }}</td>
                 <td style="max-width: 10%;">
                     {% for category in human_resource.categories %}
-                        {{ category.categoryname }}, 
+                        {% if category.id == human_resource.categories[0].id %}
+                            {{category.categoryname}}
+                        {% else %}
+                            , {{category.categoryname}}
+                        {% endif %}
                     {% else %}
                         Cette ressource humaine n'a pas de catégorie.
                     {% endfor %}
