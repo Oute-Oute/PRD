@@ -878,11 +878,6 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    if(RESOURCES_BY_ACTIVITIES.length <= 0){
-        for(i = 0; i < 5; i++){
-            createActivitiesGraph(i+1, i+1, 10*(i+1));
-        }
-    }
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
