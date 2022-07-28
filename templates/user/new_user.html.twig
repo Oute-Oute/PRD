@@ -1,49 +1,49 @@
 <div class="modal" id="add-user-modal">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h2 class="modal-title">Ajouter un utilisateur</h2>
-					</div>
-					<form action="{{ path('UserAdd') }}" method="post">
-						<div class="modal-body">
-							<div>
-								<label for='usernameAdd'>
-									Nom d'utilisateur
-								</label>
-								<input type='text' oninput="usernameNew()" required="required" name='usernameAdd' id="usernameAdd">
-
-								<p1 id="ErrorUser">
-									Nom d'utilisateur deja pris</p1>
-
-							</div>
-							<div>
-								<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
-							</div>
-
-							<div>
-								<label for='passwordAdd'>
-									Mot de passe Temporaire
-								</label>
-								<input type='passwordAdd' required="required" name='passwordAdd'>
-							</div>
-							<div>
-								<label for='roleAdd'>
-									Roles
-								</label>
-								<select name="roleAdd" id="roleAdd" required="required">
-									<option value="">Choisissez le role de l'utilisateur</option>
-									<option value="Admin">Admin</option>
-									<option value="Editeur">Editeur</option>
-									<option value="Visiteur">Visiteur</option>
-								</select>
-							</div>
-							<br>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Retour</button>
-							<button type="submit" id="buttonConfirmAdd" class="btn-valide btn-secondary">Ajouter</button>
-						</div>
-					</form>
-				</div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Ajouter un utilisateur</h2>
 			</div>
+			<form action="{{ path('UserAdd') }}" method="post">
+				<div class="modal-body">
+					<div>
+						<label for='usernameAdd'>
+							Nom d'utilisateur
+						</label>
+						<input type='text' oninput="usernameNew()" required="required" name='usernameAdd' id="usernameAdd">
+
+						<p1 id="ErrorUser">
+							Nom d'utilisateur déjà pris</p1>
+
+					</div>
+					<div>
+						<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+					</div>
+
+					<div>
+						<label for='passwordAdd'>
+							Mot de passe Temporaire
+						</label>
+						<input type='passwordAdd' required="required" name='passwordAdd'>
+					</div>
+					<div>
+						<label for='roleAdd'>
+							Roles
+						</label>
+						<select name="roleAdd" id="roleAdd" required="required">
+							<option value="">Choisissez le role de l'utilisateur</option>
+							<option value="Admin">Admin</option>
+							<option value="Editeur">Editeur</option>
+							<option value="Visiteur">Visiteur</option>
+						</select>
+					</div>
+					<br>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Retour</button>
+					<button type="submit" id="buttonConfirmAdd" class="btn-valide btn-secondary">Ajouter</button>
+				</div>
+			</form>
 		</div>
+	</div>
+</div>
