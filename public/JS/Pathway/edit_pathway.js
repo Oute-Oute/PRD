@@ -94,6 +94,8 @@ function hideTargets() {
 
 /**
  * Permet d'afficher la fenêtre modale d'informations
+ * @param {*} idPathway 
+ * @param {*} name 
  */
 function showInfosPathway(idPathway, name) {
     document.getElementById('pathway').innerHTML = name;
@@ -829,6 +831,29 @@ function deleteResource(id) {
     }
 }
 
+/**
+ * delete the "," "." and "e" from the input for the target
+ * @param {delete} input 
+ */
+function preventForTarget(input) {
+    input.value = input.value.replace(",", "");
+    input.value = input.value.replace("e", "");
+    input.value = input.value.replace(".", "");
+}
+
+/**
+ * Verify that targets are correct
+ */
+function isTargetCorrect() {
+    errorInferiorToZero = false
+    let targets = document.getElementsByClassName('target')
+    for (let i = 0 ; (i < targets.length) && (!errorInferiorToZero) ; i++) {
+        if (Number(targets[i].value) < 0) {
+            return false
+        }  
+    }
+    return true
+}
 
 /**
  * Verifie que le nom du parcours est correct
@@ -845,8 +870,13 @@ function submitPathway() {
         alert("Le nom du parcours ne peut pas être vide")
     }
 
-    if (verif) {
-        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        btnSubmit.click()
+    if (isTargetCorrect())
+    {
+        if (verif) {
+            document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            btnSubmit.click()
+        }
+    } else {
+        alert("Au moins une valeur n'est pas bonne dans les objectifs journaliers")
     }
 }
