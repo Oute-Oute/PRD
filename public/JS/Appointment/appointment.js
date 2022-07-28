@@ -103,6 +103,7 @@ function editAppointment(
     tagsPatients.pop();
   }
   //on initialise les informations affichées avec les données du rendez-vous modifié
+  document.getElementById("wrong-edit-input").style.visibility = "hidden";
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
@@ -418,38 +419,60 @@ function filterPatient(idInput) {
   }
 }
 
-function lookAddAutocompletes(){
-  var patientName = $('#autocompletePatientAdd').val();
-  var pathwayName = $('#autocompletePathwayAdd').val();
+function lookAutocompletes(statut){
+  var listPatients;
+  var listPathways;
+  var patientName;
+  var pathwayName;
+  if(statut == "add"){
+    inputClass = 'wrong-add-input';
+    patientName = document.getElementById('autocompletePatientAdd').value;
+    pathwayName = document.getElementById('autocompletePathwayAdd').value;
+    listPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
+    listPathways = JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
+  }
+  else if (statut == "edit"){
+    inputClass = 'wrong-edit-input';
+    patientName = document.getElementById('autocompletePatientEdit').value;
+    pathwayName = document.getElementById('autocompletePathwayEdit').value;
+    listPatients = JSON.parse(document.getElementById("patient").value.replaceAll("3aZt3r", " "));
+    listPathways = JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
+  }
+  document.getElementById(inputClass).style.visibility = "hidden";
   var allIsGood = true;
-  $.ajax({
-    type: 'POST',
-    url: '/ajaxAppointmentLookAddAutocompletes',
-    data: { pathway: pathwayName, patient: patientName },
-    dataType: "json",
-    success: function (data) {
-      console.log(data);
-      if(data['pathway'].length == 0){
-        console.log(data['pathway'])
-        allIsGood = false;
-      }
-      if(data['patient'].length == 0){
-        console.log(data['patient'])
-        allIsGood = false;
-      }
-    },
-    error: function (data) {
-      console.log(data['pathway'], data['pathway'].length);
-      if(data['pathway'].length == 0){
-        console.log(data['pathway'])
-        allIsGood = false;
-      }
-      if(data['patient'].length == 0){
-        console.log(data['patient'])
-        allIsGood = false;
-      }
-    }
-  });
 
+  var patientExist = false;
+  var lookPatientName = patientName.split(' ')
+  if(lookPatientName[0] != undefined && lookPatientName[1] != undefined){
+    listPatients.forEach((onePatient) => {
+      if(onePatient.lastname == lookPatientName[0] && onePatient.firstname == lookPatientName[1]){
+        patientExist = true;
+      }
+    })
+  }
+
+  var pathwayExist = false;
+  listPathways.forEach((onePathway) => {
+    if(onePathway.title == pathwayName){
+      pathwayExist = true;
+    }
+  })
+
+  if(patientExist == false){
+    allIsGood = false;
+    document.getElementById(inputClass).style.visibility = "visible";
+    if(pathwayExist == false){
+      document.getElementById(inputClass).textContent = "Le parcours et le patient proposés n'existent pas."
+    }
+    else {
+      document.getElementById(inputClass).textContent = "Le patient proposé n'existe pas.";
+    }
+  }
+  else if(pathwayExist == false){
+    allIsGood = false;
+    document.getElementById(inputClass).style.visibility = "visible";
+    document.getElementById(inputClass).textContent = "Le parcours proposé n'existe pas.";
+  }
   return allIsGood;
 }
+
