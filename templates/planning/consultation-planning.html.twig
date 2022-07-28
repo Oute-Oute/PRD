@@ -34,6 +34,7 @@
 			<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
 			{% endif %}
 			{% endif %}
+			<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
 				<option value="0" selected disabled>Changer l'affichage
 				</option>
