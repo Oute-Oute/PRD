@@ -1058,6 +1058,8 @@ function updateErrorMessages() {
     }
   })
 
+  listErrorMessages.listScheduledAppointment = [];
+
   //browse all events
   listScheduledActivities.forEach((scheduledActivity) => {
     if(scheduledActivity.display != "background"){ //check if the scheduled activity is not an unavailability
@@ -1132,6 +1134,7 @@ function updateErrorMessages() {
       }
     }
   })
+  console.log(listErrorMessages, calendar.getEvents());
   updatePanelErrorMessages(); //update the panel error messages
 }
 

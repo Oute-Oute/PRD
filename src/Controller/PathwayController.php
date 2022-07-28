@@ -1000,9 +1000,9 @@ class PathwayController extends AbstractController
 
     public function autocompletePathway(Request $request, PathwayRepository $pathwayRepository){
         $term = strtolower($request->query->get('term'));
-        $patwhay = $pathwayRepository->findAll();
+        $patwhays = $pathwayRepository->findAll();
         $results = array();
-        foreach ($patwhay as $pathway) {
+        foreach ($patwhays as $pathway) {
             if (   strpos(strtolower($pathway->getPathwayname()), $term) !== false){
                 $results[] = [
                     'id' => $pathway->getId(),
