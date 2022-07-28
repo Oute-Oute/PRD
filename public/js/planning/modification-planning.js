@@ -1053,7 +1053,7 @@ function updateErrorMessages() {
     })
     if(unscheduledAppointment == true){ //if the appointment is not already on the planning
       //we set an error message
-      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours " + currentAppointment.idPathway[0].title + " n'est pas encore plannifié.";
+      var message = "Le rendez-vous de " + currentAppointment.idPatient[0].lastname + " " + currentAppointment.idPatient[0].firstname + " pour le parcours " + currentAppointment.idPathway[0].title + " n'est pas encore planifié.";
       listErrorMessages.messageUnscheduledAppointment.push(message);
     }
   })
@@ -1762,7 +1762,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var img = document.createElement("img");
           img.src="/img/exclamation-triangle-fill.svg"; 
           var text=document.createElement('h3'); 
-          text.innerHTML='Rendez-vous non plannifiés'; 
+          text.innerHTML='Rendez-vous non planifiés'; 
           var reduceButton=document.createElement('input'); 
           reduceButton.setAttribute('type','button');
           reduceButton.setAttribute('value','+');
