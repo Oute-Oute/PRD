@@ -779,7 +779,6 @@ class HumanResourceController extends AbstractController
         $param = $request->request->all(); 
         $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
         $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
-
         $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
         $unavailabilities = $unavailabilitiesRepository->findAll();
         $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());

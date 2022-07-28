@@ -757,6 +757,10 @@ function submitPathway() {
         verif = false
         alert("Le nom du parcours ne peut pas être vide")
     }
+    else if(VALIDATE == 0){
+        verif = false;
+        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique.");
+    }
 
     if (isTargetCorrect())  {
         if (verif) {
@@ -1124,39 +1128,59 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    if(!checkSuccessor()){
-        alert("Il reste des activités non liées !")
+    error = checkSuccessor();
+    switch(error){
+        case 0:
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                inputMin = document.getElementById("delayMinInput" + (i+1));
+                inputMax = document.getElementById("delayMaxInput" + (i+1));
+                SUCCESSORS[i].delayMin = inputMin.value;
+                SUCCESSORS[i].delayMax = inputMax.value;
+            }
+            deleteArrows();
+            VALIDATE = 1;
+            $('#edit-pathway-modal-activities').modal("hide");
+        break;
+        case 1:
+            alert("Il reste des activités non liées !");
+        break;
+        case 2:
+            alert("Vous avez formé une boucle ! Veuillez laisser une activité de départ sans lien entrant.")
+        break;
     }
-    else{
-        for(i = 0; i < NB_SUCCESSOR; i++){
-            inputMin = document.getElementById("delayMinInput" + (i+1));
-            inputMax = document.getElementById("delayMaxInput" + (i+1));
-            SUCCESSORS[i].delayMin = inputMin.value;
-            SUCCESSORS[i].delayMax = inputMax.value;
-        }
-        deleteArrows();
-        VALIDATE = 1;
-        $('#edit-pathway-modal-activities').modal("hide");
-    }
-    
 }
 
 function checkSuccessor(){
-    if(NB_ACTIVITY == 1){
-        return true;
+    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
+    if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
+        return 0;
     }
+    var predecessor;
+    var loop = true;
     for(i = 0; i < NB_ACTIVITY; i++){
-        var error = true;
-        
+        var link = true;
+        predecessor = false;
         for(j = 0; j < NB_SUCCESSOR; j++){
+            // Check if 
             if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
                 SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
-                    error = false;
+                    link = false;
+            }
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
+                predecessor = true;
             }
         }
-        if(error){
-            return false;
+        if(link){
+            return 1;
+        }
+        if(!predecessor){
+            loop = false;
         }
     }
-    return true;
+    if(loop){
+        return 2;
+    }
+    else{
+        return 0;  
+    }
 }
