@@ -18,6 +18,7 @@ use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceRepository;
 use App\Repository\SuccessorRepository;
 use App\Repository\TargetRepository;
+use App\Repository\UnavailabilityMaterialResourceRepository;
 use App\Form\PathwayType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
@@ -84,6 +85,8 @@ class PathwayController extends AbstractController
         return $materialResourceCategoriesArrayJson;    
     }
 
+
+
     /**
      * Permet de créer un objet json a partir d'une entité de type pathway
      */
@@ -97,8 +100,6 @@ class PathwayController extends AbstractController
             'id' => $pathway->getId(),
             'pathwayname' => $pathway->getPathwayname()
         );
-        //dd($pathwayArray);
-
         
         $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
         $activityMaterialResourceRepo = new ActivityMaterialResourceRepository($this->getDoctrine());
@@ -162,6 +163,29 @@ class PathwayController extends AbstractController
         return $pathwayJson;    
     }
 
+    /**
+     * Permet de créer un objet json contenant les targets d'un pathway
+     */
+    public function listTargetsJSON($pathway)
+    {
+        $targetRepository = new TargetRepository($this->getDoctrine());
+
+        $targets = $targetRepository->findBy(["pathway" => $pathway]);
+
+        if ($targets != null) {
+            foreach ($targets as $target) {
+                $targetsArray[] = array(
+                    'id' => strval($target->getId()),
+                    'target' => $target->getTarget(),
+                    'dayweek' => $target->getDayweek(),
+                );
+            }
+        }
+
+        //Conversion des données ressources en json
+        $targetsArrayJson = new JsonResponse($targetsArray);
+        return $targetsArrayJson;    
+    }
 
     /**
      * Redirige vers la page qui liste les utilisateurs 
@@ -224,9 +248,7 @@ class PathwayController extends AbstractController
 
             $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
 
-            // création d'un tableau contenant les ressources des activités
-            $resourcesByActivities = array();
-            //for ()
+            $targetsJson = $this->listTargetsJSON($pathway);            
 
             return $this->render('pathway/edit.html.twig', [
                 'pathway' => $pathway,
@@ -234,6 +256,7 @@ class PathwayController extends AbstractController
                 'activitiesByPathways' => $activitiesByPathways,
                 'humanResourceCategories' => $humanResourceCategoriesJson,
                 'materialResourceCategories' => $materialResourceCategoriesJson,
+                'targets' => $targetsJson,
             ]);
         }
             

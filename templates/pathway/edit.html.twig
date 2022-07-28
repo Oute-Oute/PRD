@@ -16,19 +16,19 @@
 
 
 
-    {#  inputs pour passer les json venant du serveur #}
+    {#  inputs to get json from the server #}
     <input type="hidden" id="json-human-resource-categories" value="{{ humanResourceCategories.content }}">
     <input type="hidden" id="json-material-resource-categories" value="{{ materialResourceCategories.content }}">
     <input type="hidden" id="json-pathway" value="{{ pathwayJson.content }}">
+    <input type="hidden" id="json-targets" value="{{ targets.content }}">
 
     <div id="title-pathway">     
         <h1> Éditer un parcours </h1>
-        {# <div>    <p> contraintes </p>     <img src="{{ asset('img/eye.png') }}"> </img></div> #}
     </div>
 
     <form action="{{ path('PathwayEdit') }}" method="post">
 
-        <!-- inputs pour envoyer des json ou des valeurs au serveur sans les afficher -->
+        <!-- inputs to send json or value to server without displaying them -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
         <input style="display:none;" name="nbactivity" id="nbactivity">
 
