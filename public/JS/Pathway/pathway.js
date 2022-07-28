@@ -223,11 +223,24 @@ function fillActivityList() {
  * @param {*} id : img-0, img-1
  */
 function deleteActivity(id) {
-
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
+    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
+    deleteArrows();
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        idA = SUCCESSORS[i].idActivityA;
+        idB = SUCCESSORS[i].idActivityB;
+        idDivActivity = parseInt(id) + 1;
+        activityname = 'activity' + idDivActivity;
+        console.log('a : ', idA, 'b ; ', idB, 'name : ', activityname)
+        if(activityname == idA || activityname == idB){
+            SUCCESSORS.splice(i, 1);
+            NB_SUCCESSOR--;
+        }
+    }
+    
     // On peut donc recuperer la div
     /*let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
@@ -860,7 +873,9 @@ function drawActivitiesGraph(){
 
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
-        createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+        if(rba.available){
+            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+        }
     }
 }
 
@@ -947,7 +962,7 @@ function addSuccessor(idA, idB, nameA, nameB) {
     fillSuccessorList();
 }
 
-function drawArrows(){
+function drawArrows(){  
     for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
@@ -1089,8 +1104,7 @@ function showDelay(id){
 }
 
 function deleteSuccessor(id) {
-    id = getId(id)
-
+    id = getId(id);
     let divSuccessor = document.getElementById('link-' + id);
     let inputs = divSuccessor.getElementsByTagName('input');
 
