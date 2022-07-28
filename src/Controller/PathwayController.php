@@ -962,8 +962,8 @@ class PathwayController extends AbstractController
         $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
         $appointmentArray=[];
         foreach ($appointments as $appointment) {
-            $date = $appointment->getDayappointment()->format('d-m-Y');
-            if($date >= date('d-m-Y')){
+            $date = $appointment->getDayappointment()->format('U');
+            if($date >= date('U')){
                 $appointmentArray[] = [
                     'lastname' => $appointment->getPatient()->getLastname(),
                     'firstname' => $appointment->getPatient()->getFirstname(),
