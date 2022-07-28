@@ -1751,7 +1751,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         var div = document.createElement('div');
         div.setAttribute('class', 'alert alert-warning');
         div.setAttribute('role','alert');
-        div.setAttribute('id','notification');
+        div.setAttribute('id','notification'+'unplanned');
         div.setAttribute('style','display: flex; flex-direction : column;'); 
         var divRow=document.createElement('divRow'); 
         divRow.setAttribute('style','display: flex; flex-direction : row;'); 
@@ -1760,7 +1760,12 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           img.src="/img/exclamation-triangle-fill.svg"; 
           var text=document.createElement('h3'); 
           text.innerHTML='Rendez-vous non plannifiés'; 
-          divRow.append(img,text);
+          var reduceButton=document.createElement('input'); 
+          reduceButton.setAttribute('type','button');
+          reduceButton.setAttribute('value','+');
+          reduceButton.setAttribute('style','background:none;height:50%;right:0%');
+          reduceButton.setAttribute('onclick',"reduceNotification("+div.id+")");
+          divRow.append(img,text,reduceButton,reduceButton);
         
         listErrorMessages.messageUnscheduledAppointment.forEach((oneMessageUnscheduledAppointment) => {
           var divColumn=document.createElement('divColumn');
@@ -1769,6 +1774,9 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           divColumn.append(messageUnscheduledAppointment);
         })
         document.getElementById('lateral-panel-bloc').appendChild(div);
+        //reduceButton
+        
+        
       }
 
       for(let i=0; i<listErrorMessages.listScheduledAppointment.length; i++){                    //All Appointments of the day
@@ -1777,7 +1785,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           var div = document.createElement('div');                      //Creating the div for the Appointment
           div.setAttribute('class', 'alert alert-warning');
           div.setAttribute('role','alert');
-          div.setAttribute('id','notification');
+          div.setAttribute('id','notification'+i);
           div.setAttribute('style','display: flex; flex-direction : column;'); 
           var divRow=document.createElement('divRow'); 
           divRow.setAttribute('style','display: flex; flex-direction : row;'); 
@@ -1786,8 +1794,13 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           img.src="/img/exclamation-triangle-fill.svg"; 
           var text=document.createElement('h3'); 
           text.innerHTML=listErrorMessages.listScheduledAppointment[i].patientName + ' / '+ listErrorMessages.listScheduledAppointment[i].pathwayName; 
-          divRow.append(img,text);
-        
+          var reduceButtonAppointment=document.createElement('input'); 
+          reduceButtonAppointment.setAttribute('type','button');
+          reduceButtonAppointment.setAttribute('value','+');
+          reduceButtonAppointment.setAttribute('style','background:none;heigth:50%;right:0%');
+          reduceButtonAppointment.setAttribute('onclick',"reduceNotification("+div.id+")");
+          divRow.append(img,text,reduceButtonAppointment);
+          
           //messageEarliestAppointmentTime
           if(listErrorMessages.listScheduledAppointment[i].messageEarliestAppointmentTime!=[]){
             listErrorMessages.listScheduledAppointment[i].messageEarliestAppointmentTime.forEach((messageEarliest) => {
@@ -2141,4 +2154,17 @@ else{
   }]
 }
 createCalendar(headerResources);
+}
+
+function reduceNotification(childs){
+  if(childs.childNodes[1].style.display==''){
+    for(let i=1; i<childs.childNodes.length; i++){
+      childs.childNodes[i].style.display='none';
+    }
+  }
+  else{
+    for(let i=1; i<childs.childNodes.length; i++){
+      childs.childNodes[i].style.display='';
+    }
+  }
 }
