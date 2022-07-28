@@ -249,7 +249,6 @@ function deleteHumanUnavailability(button) {
             console.log(ajaxOptions)
         }
 
-        
     })
 }
 }
@@ -446,12 +445,12 @@ function edit__handleAddUnavailability() {
     var nbCateg = 0;
     let beginTime = document.getElementById('datetime-begin-unavailability').value
     let endTime = document.getElementById('datetime-end-unavailability').value
-    if(beginTime < endTime && beginTime != '' && endTime != '') {
-        btnAdd.click();
-        }
-        else {
-            alert('Veuillez saisir les deux dates complètes, et la date de début doit être antérieure à celle de fin !')
-        }
+    if(beginTime < endTime && beginTime != '' && endTime != '' && beginTime[4] == '-' && endTime[4] == '-') {
+    btnAdd.click();
+    }
+    else {
+        alert('Veuillez saisir les deux dates complètes, situées entre 0001 et 9999. La date de début doit être antérieure à celle de fin !')
+    }
 
 }
 
@@ -464,11 +463,11 @@ function edit__verifyUnavailabilityMaterial() {
     var nbCateg = 0;
     let beginTime = document.getElementById('datetime-begin-unavailability').value
     let endTime = document.getElementById('datetime-end-unavailability').value
-    if(beginTime < endTime && beginTime != '' && endTime != '') {
+    if(beginTime < endTime && beginTime != '' && endTime != '' && beginTime[4] == '-' && endTime[4] == '-') {
     btnAdd.click();
     }
     else {
-        alert('Veuillez saisir les deux dates complètes, et la date de début doit être antérieure à celle de fin !')
+        alert('Veuillez saisir les deux dates complètes, situées entre 0001 et 9999. La date de début doit être antérieure à celle de fin !')
     }
 
 }

@@ -176,20 +176,25 @@ function fillActivityList() {
             let str = 'Activité ' + Number(indexActivityAvailable + 1) + ' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' + RESOURCES_BY_ACTIVITIES[indexActivity].activityduration + 'min)'
+            
+            let divContainerP = document.createElement('div')
+            divContainerP.setAttribute('class', 'container-p')
             let p = document.createElement('p')
+            p.style.width = '80%';
             p.innerHTML = str
+            divContainerP.appendChild(p)
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('id', 'imgd-' + indexActivity)
+            imgDelete.src = '../../img/delete.svg'
+            imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
 
             let imgEdit = new Image();
-            imgEdit.src = '../img/edit.svg'
-            imgEdit.setAttribute('id', 'imge-' + indexActivity)
+            imgEdit.src = '../../img/edit.svg'
+            imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
             imgEdit.style.width = '20px'
@@ -197,10 +202,11 @@ function fillActivityList() {
             imgEdit.style.marginRight = '10px'
 
             let div = document.createElement('div')
+            div.setAttribute('class', 'btns')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
 
-            activity.appendChild(p)
+            activity.appendChild(divContainerP)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
             indexActivityAvailable++
@@ -223,11 +229,24 @@ function fillActivityList() {
  * @param {*} id : img-0, img-1
  */
 function deleteActivity(id) {
-
     // On récupère le numero de la div a supprimer  
     // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
+    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
+    deleteArrows();
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        idA = SUCCESSORS[i].idActivityA;
+        idB = SUCCESSORS[i].idActivityB;
+        idDivActivity = parseInt(id) + 1;
+        activityname = 'activity' + idDivActivity;
+        console.log('a : ', idA, 'b ; ', idB, 'name : ', activityname)
+        if(activityname == idA || activityname == idB){
+            SUCCESSORS.splice(i, 1);
+            NB_SUCCESSOR--;
+        }
+    }
+    
     // On peut donc recuperer la div
     /*let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
@@ -860,7 +879,9 @@ function drawActivitiesGraph(){
 
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
-        createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+        if(rba.available){
+            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+        }
     }
 }
 
@@ -947,7 +968,7 @@ function addSuccessor(idA, idB, nameA, nameB) {
     fillSuccessorList();
 }
 
-function drawArrows(){
+function drawArrows(){  
     for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
@@ -1089,8 +1110,7 @@ function showDelay(id){
 }
 
 function deleteSuccessor(id) {
-    id = getId(id)
-
+    id = getId(id);
     let divSuccessor = document.getElementById('link-' + id);
     let inputs = divSuccessor.getElementsByTagName('input');
 
