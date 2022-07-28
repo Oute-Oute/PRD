@@ -19,6 +19,7 @@ var NB_SUCCESSOR= 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -53,14 +54,21 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
-
+/**
+ * Allow to show the modal for the target
+ */
 function showTargets() {
     $('#add-pathway-modal-targets').modal("show");
 }
 
+/**
+ * Allow to hide the modal for the target
+ */
 function hideTargets() {
     $('#add-pathway-modal-targets').modal("hide");
 }
+
+
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
@@ -368,7 +376,10 @@ function addResources() {
     
     // On verifie que le champs quantité est bien rempli 
     let verif = true
+    console.log(document.getElementById('resource-nb').value)
+
     if (document.getElementById('resource-nb').value == '') {
+        console.log('oui')
         verif = false
         alert("La quantité de la ressource n'est pas correcte")
     }
@@ -730,11 +741,36 @@ function deleteResource(id) {
 
 }
 
+/**
+ * delete the "," "." and "e" from the input for the target
+ * @param {delete} input 
+ */
+function preventForTarget(input) {
+ 
+    input.value = input.value.replace("e", "");
+    input.value = input.value.replace(".", "");
+    input.value = input.value.replace(",", "");
+}
 
 /**
- * Verifie que le nom du parcours est correct
- * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
- * Envoie la requete POST au serveur
+ * Verify that targets are correct
+ */
+function isTargetCorrect() {
+    errorInferiorToZero = false
+    let targets = document.getElementsByClassName('target')
+    for (let i = 0 ; (i < targets.length) && (!errorInferiorToZero) ; i++) {
+        if (Number(targets[i].value) < 0) {
+            return false
+        }  
+    }
+    return true
+}
+
+
+/**
+ * Verify that the name of the pathway is correct
+ * Store the array containing all the activities in an input to be accessible by the server
+ * Send the POST request to the server
  */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
@@ -746,10 +782,15 @@ function submitPathway() {
         alert("Le nom du parcours ne peut pas être vide")
     }
 
-    if (verif) {
-        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        btnSubmit.click()
+    if (isTargetCorrect())  {
+        if (verif) {
+            document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            btnSubmit.click()
+        }
+    } else {
+        alert("Au moins une valeur n'est pas bonne dans les objectifs journaliers")
     }
+
 }
 
 function filterPathway(selected=null){
@@ -818,6 +859,7 @@ function filterPathway(selected=null){
 }
 
 function showActivitiesPathway() {
+    VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
@@ -1098,14 +1140,7 @@ function deleteArrows(){
     lines = new Array();
 }
 
-function hideArrows(){
-    for (var l of lines) {
-        l.hide('none');
-    }
-}
-
-function showArrows(){
-    for (var l of lines) {
-        l.show();
-    }
+function validateSuccessors(){
+    VALIDATE = 1;
+    $('#edit-pathway-modal-activities').modal("hide");
 }
