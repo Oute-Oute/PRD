@@ -1,4 +1,13 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+		{% endif %}
+{% if app.user != null %}
+{% if app.user.roles[1] == 'Visiteur' %}
+<script type="text/javascript">document.location.href="/ConsultationPlanning"</script>
+{% endif %}
+{% endif %}
+{% endblock %}
 
 {% block title %}Modification du Planning
 {% endblock %}

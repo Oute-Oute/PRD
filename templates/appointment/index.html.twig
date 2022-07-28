@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
-
+{% block javascripts %} 
+        {% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+		{% endif %}
+	{% endblock %}
 {% block title %}Liste des rendez-vous
 {% endblock %}
+
 {% block stylesheets %}
 	<!-- insertion de bootstrap et jquery -->
 	<script src="js/Appointment/appointment.js"></script>
@@ -16,6 +20,8 @@
 	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
 
 {% endblock %}
+
+
 
 {% block body %}
 	<div class="index">
