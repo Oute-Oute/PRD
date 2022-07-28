@@ -757,6 +757,10 @@ function submitPathway() {
         verif = false
         alert("Le nom du parcours ne peut pas être vide")
     }
+    else if(VALIDATE == 0){
+        verif = false;
+        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique.");
+    }
 
     if (isTargetCorrect())  {
         if (verif) {
