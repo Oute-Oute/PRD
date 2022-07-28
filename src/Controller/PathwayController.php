@@ -987,4 +987,20 @@ class PathwayController extends AbstractController
 
         return new JsonResponse($appointmentArray);
     }
+
+    public function autocompletePathway(Request $request, PathwayRepository $pathwayRepository){
+        $term = strtolower($request->query->get('term'));
+        $patwhay = $pathwayRepository->findAll();
+        $results = array();
+        foreach ($patwhay as $pathway) {
+            if (   strpos(strtolower($pathway->getPathwayname()), $term) !== false){
+                $results[] = [
+                    'id' => $pathway->getId(),
+                    'value' => $pathway->getPathwayname()
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
+    }
 }

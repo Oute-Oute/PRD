@@ -752,28 +752,69 @@ function submitPathway() {
     }
 }
 
-function filterPathway(idInput,selected=null) {
-    if(selected == null){
-        var filter = document.querySelector('#'+idInput).value; 
-        }
-        else{
-            var filter = selected;
-        }
+function filterPathway(selected=null){
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
-    var filter = document.querySelector('#' + idInput).value;
-    for (let i = 0; i < trs.length; i++) {
-        var regex = new RegExp(filter, 'i');
-        var pathwayName = trs[i].cells[1].outerText;
-        if(autocompleteArray.indexOf(pathwayName) == -1){
-            autocompleteArray.push(pathwayName);
-            }
-        if (regex.test(pathwayName) == false) {
-            trs[i].style.display = 'none';
+    for(let i=0; i<trs.length; i++){
+            trs[i].style.display='none';
+    }
+    table=document.getElementById('pathwayTable');
+    var tr=document.createElement('tr');
+    table.appendChild(tr);
+    var pathwayName=document.createElement('td');
+    pathwayName.append(selected.value);
+    tr.appendChild(pathwayName);
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showInfosPathway('+selected.id+',"'+selected.value+'")');
+    infos.append('Informations');
+    var formEdit=document.createElement('form');
+    formEdit.setAttribute('action','/pathway/edit/'+selected.id);
+    formEdit.setAttribute('style','display:inline');
+    formEdit.setAttribute('method','GET');
+    formEdit.setAttribute('id','formEdit'+selected.id);
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('type','submit');
+    edit.append('Editer');
+    formEdit.appendChild(edit);
+    var formDelete=document.createElement('form');
+    formDelete.setAttribute('action',"/pathway/delete");
+    formDelete.setAttribute('style','display:inline');
+    formDelete.setAttribute('method','POST');
+    formDelete.setAttribute('id','formDelete'+selected.id);
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce patient ?")');
+    var inputHidden=document.createElement('input');
+    inputHidden.setAttribute('type','hidden');
+    inputHidden.setAttribute('name','pathwayid');
+    inputHidden.setAttribute('value',selected.id);
+    formDelete.appendChild(inputHidden);
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('type','submit');
+    buttons.appendChild(infos);
+    buttons.appendChild(formEdit);
+    formDelete.appendChild(deleteButton);
+    buttons.appendChild(formDelete);
+    tr.appendChild(buttons);
+  }
+
+  function displayAll() {
+    var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
+    var input = document.getElementById('autocompleteInputPathwayNname');
+    console.log(input.value)
+    if(input.value == ''){
+    for(let i=0; i<trs.length; i++){
+        console.log(trs[i].className)
+        if(trs[i].style.display == 'none'){
+            trs[i].style.display='table-row';
         }
-        else {
-            trs[i].style.display = '';
+        else if(trs[i].className != 'original'){
+            trs[i].remove()
         }
     }
+}
 }
 
 function showActivitiesPathway() {
