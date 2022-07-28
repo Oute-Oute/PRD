@@ -86,7 +86,7 @@ function formatDate(date) {
  * Nom du pathway
  * Les noms et durée des activités déjà présentes dans le pathway
  */
-function showEditModalForm(id, name, index){
+function showEditModalFormHuman(id, name){
         //let WORKING_HOURS_FILTERED = WORKING_HOURS.filter(WORKING_HOURS[0].humanresource_id => index >= 0);
         var WORKING_HOURS_FILTERED =  WORKING_HOURS.filter(function(WORKING_HOUR) {
             return WORKING_HOUR.humanresource_id == id;

@@ -883,16 +883,15 @@ class HumanResourceController extends AbstractController
         $HRs = $HRRepository->findAll();
         $results = array();
         foreach ($HRs as $HR) {
-            $categories=$categoryOfHRRepository->findBy(['humanresource' => $HR->getId()]);
+            $name = strtolower($HR->getHumanresourcename());
+            if (strpos($name, $term) !== false ){
+                $categories=$categoryOfHRRepository->findBy(['humanresource' => $HR->getId()]);
                 $categoriesArray=[];
                 foreach($categories as $category){
                     $categoriesArray[] = [
-                        'id' => $HR->getId(),
-                        'label' => $HR->getHumanresourcename(),
                         'category' => $category->getHumanresourcecategory()->getCategoryname(),
                     ];
                 }
-            if (   strpos(strtolower($HR->getHumanresourcename()), $term) !== false ){
                 $results[] = [
                     'id' => $HR->getId(),
                     'value' => $HR->getHumanresourcename(),
@@ -904,3 +903,4 @@ class HumanResourceController extends AbstractController
         return new JsonResponse($results);
     }
 }
+
