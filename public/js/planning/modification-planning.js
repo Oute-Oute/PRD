@@ -1757,7 +1757,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
         div.setAttribute('id','notification'+'unplanned');
         div.setAttribute('style','display: flex; flex-direction : column;'); 
         var divRow=document.createElement('divRow'); 
-        divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+        divRow.setAttribute('style','display: flex; flex-direction : row; position:relative'); 
         div.append(divRow);
         var img = document.createElement("img");
           img.src="/img/exclamation-triangle-fill.svg"; 
@@ -1766,7 +1766,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           var reduceButton=document.createElement('input'); 
           reduceButton.setAttribute('type','button');
           reduceButton.setAttribute('value','+');
-          reduceButton.setAttribute('style','background:none;height:50%;right:0%');
+          reduceButton.setAttribute('style','background:none;height:50%;position:absolute;right:0%;');
           reduceButton.setAttribute('onclick',"reduceNotification("+div.id+")");
           divRow.append(img,text,reduceButton,reduceButton);
         
@@ -1791,7 +1791,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           div.setAttribute('id','notification'+i);
           div.setAttribute('style','display: flex; flex-direction : column;'); 
           var divRow=document.createElement('divRow'); 
-          divRow.setAttribute('style','display: flex; flex-direction : row;'); 
+          divRow.setAttribute('style','display: flex; flex-direction : row; position : relative'); 
           div.append(divRow);
           var img = document.createElement("img");
           img.src="/img/exclamation-triangle-fill.svg"; 
@@ -1800,7 +1800,7 @@ function getMessageWorkingHours(scheduledActivity, humanResourceId){
           var reduceButtonAppointment=document.createElement('input'); 
           reduceButtonAppointment.setAttribute('type','button');
           reduceButtonAppointment.setAttribute('value','+');
-          reduceButtonAppointment.setAttribute('style','background:none;heigth:50%;right:0%');
+          reduceButtonAppointment.setAttribute('style','background:none;heigth:10%;position:absolute;right:0%;');
           reduceButtonAppointment.setAttribute('onclick',"reduceNotification("+div.id+")");
           divRow.append(img,text,reduceButtonAppointment);
           

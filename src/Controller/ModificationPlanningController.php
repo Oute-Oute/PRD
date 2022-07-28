@@ -47,6 +47,9 @@ class ModificationPlanningController extends AbstractController
         if (isset($_GET['id'])) {
             $idUser = $_GET["id"];
         }
+        else{
+            $idUser=-1; 
+        }
 
         //Récupération des données via la base de donnée avec Doctrine
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
