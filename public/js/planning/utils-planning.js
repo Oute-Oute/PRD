@@ -124,6 +124,7 @@ function changeFilter(id, allCategories, type) {
   var resources = [];
   var categoriesToDisplay = [];
   var resourcesToDisplay = [];
+
   switch (type) {
     case "human":
       for (var i = 0; i < allCategories.length; i++) {
@@ -133,7 +134,9 @@ function changeFilter(id, allCategories, type) {
           }
         }
         if (document.getElementById(allCategories[i]).checked == false) {
-          humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
+            humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          }
         }
         resources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
         categoriesToDisplay = humanCategoriesToDisplay;
@@ -147,8 +150,10 @@ function changeFilter(id, allCategories, type) {
             materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
           }
         }
-        else {
-          materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+        if (document.getElementById(allCategories[i]).checked == false) {
+          if(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
+            materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          }
         }
         resources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
         categoriesToDisplay = materialCategoriesToDisplay;
@@ -160,7 +165,6 @@ function changeFilter(id, allCategories, type) {
     for (var j = 0; j < resources[i]["categories"].length; j++) {
       if (categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
         resourcesToDisplay.push(resources[i]);
-
       }
     }
   }
@@ -187,6 +191,7 @@ function changePlanning() {
 
   }
   else {
+    
     document.getElementById("filterbutton").disabled = false;
     document.getElementById("filterbutton").style.color = "";
     document.getElementById("filterbutton").style.backgroundColor = "";
