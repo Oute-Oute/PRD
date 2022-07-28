@@ -64,7 +64,7 @@
 							</div>
 
 							<div>
-								<form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');" style="width:100%;">
+								<form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce parours ?');" style="width:100%;">
 									<input type="hidden" value="{{pathway.id}}" name="pathwayid">
 									<button type="submit" class="btn-delete btn-secondary">
 										<p style="margin:0px;">
