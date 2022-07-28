@@ -824,7 +824,7 @@ function filterPathway(selected=null){
     formDelete.setAttribute('style','display:inline');
     formDelete.setAttribute('method','POST');
     formDelete.setAttribute('id','formDelete'+selected.id);
-    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce patient ?")');
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce parours ?")');
     var inputHidden=document.createElement('input');
     inputHidden.setAttribute('type','hidden');
     inputHidden.setAttribute('name','pathwayid');
