@@ -172,6 +172,8 @@ class PathwayController extends AbstractController
 
         $targets = $targetRepository->findBy(["pathway" => $pathway]);
 
+        $targetsArrayJson = new JsonResponse([]);
+
         if ($targets != null) {
             foreach ($targets as $target) {
                 $targetsArray[] = array(
@@ -180,10 +182,11 @@ class PathwayController extends AbstractController
                     'dayweek' => $target->getDayweek(),
                 );
             }
+            $targetsArrayJson = new JsonResponse($targetsArray);
+
         }
 
         //Conversion des données ressources en json
-        $targetsArrayJson = new JsonResponse($targetsArray);
         return $targetsArrayJson;    
     }
 
