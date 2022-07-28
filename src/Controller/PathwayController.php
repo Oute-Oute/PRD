@@ -397,7 +397,7 @@ class PathwayController extends AbstractController
                                     $activityHumanResource = new ActivityHumanResource();
                                     $activityHumanResource->setActivity($activity_old);
                                     $activityHumanResource->setHumanresourcecategory($HRC);
-                                    $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                    $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                                                     
                                     // We add it to the db
                                     $AHRRepository->add($activityHumanResource , true);
@@ -424,7 +424,7 @@ class PathwayController extends AbstractController
                                     $activityMaterialResource = new ActivityMaterialResource();
                                     $activityMaterialResource->setActivity($activity_old);
                                     $activityMaterialResource->setMaterialresourcecategory($MRC);
-                                    $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                    $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                     
                                     // then we add it to the db
                                     $AMRRepository->add($activityMaterialResource , true);
@@ -482,9 +482,7 @@ class PathwayController extends AbstractController
             // then we transform it into a PHP Array
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
 
-            //dd($resourcesByActivities);
-
-
+            
             // First we want to add the pathway to the db :
             
             // We create the pathway object
@@ -566,7 +564,7 @@ class PathwayController extends AbstractController
                                         $activityMaterialResource = new ActivityMaterialResource();
                                         $activityMaterialResource->setActivity($activity);
                                         $activityMaterialResource->setMaterialresourcecategory($MRC);
-                                        $activityMaterialResource->setQuantity(strval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
+                                        $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                         
                                         // Puis on l'ajoute dans la bd
                                         $AMRRepository->add($activityMaterialResource , true);
@@ -602,7 +600,7 @@ class PathwayController extends AbstractController
                                         $activityHumanResource = new ActivityHumanResource();
                                         $activityHumanResource->setActivity($activity);
                                         $activityHumanResource->setHumanresourcecategory($HRC);
-                                        $activityHumanResource->setQuantity(strval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
+                                        $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                         
                                         // Puis on l'ajoute dans la bd
                                         $AHRRepository->add($activityHumanResource , true);
@@ -671,7 +669,8 @@ class PathwayController extends AbstractController
 
             $activityHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
             $activityMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-
+            $unavailabilityMaterialResourceRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
+            
             // On recupere toutes les informations de la requete 
             $param = $request->request->all();
 
@@ -708,10 +707,10 @@ class PathwayController extends AbstractController
                         foreach($listUnavailabilityMaterialResource as $unavailabilityMaterialResource)
                         {
                             $unavailability = $unavailabilityMaterialResource->getUnavailability();
-                            $entityManager->remove($unavailabilityMaterialResource);
-                            $entityManager->flush($unavailabilityMaterialResource);
-                            $entityManager->remove($unavailability);
-                            $entityManager->flush($unavailability);
+                            $em->remove($unavailabilityMaterialResource);
+                            $em->flush($unavailabilityMaterialResource);
+                            $em->remove($unavailability);
+                            $em->flush($unavailability);
                         }
                     }
 
@@ -729,10 +728,10 @@ class PathwayController extends AbstractController
                         foreach($listUnavailabilityHumanResource as $unavailabilityHumanResource)
                         {
                             $unavailability = $unavailabilityHumanResource->getUnavailability();
-                            $entityManager->remove($unavailabilityHumanResource);
-                            $entityManager->flush($unavailabilityHumanResource);
-                            $entityManager->remove($unavailability);
-                            $entityManager->flush($unavailability);
+                            $em->remove($unavailabilityHumanResource);
+                            $em->flush($unavailabilityHumanResource);
+                            $em->remove($unavailability);
+                            $em->flush($unavailability);
                         }
                     }
 
@@ -986,5 +985,21 @@ class PathwayController extends AbstractController
         }
 
         return new JsonResponse($appointmentArray);
+    }
+
+    public function autocompletePathway(Request $request, PathwayRepository $pathwayRepository){
+        $term = strtolower($request->query->get('term'));
+        $patwhay = $pathwayRepository->findAll();
+        $results = array();
+        foreach ($patwhay as $pathway) {
+            if (   strpos(strtolower($pathway->getPathwayname()), $term) !== false){
+                $results[] = [
+                    'id' => $pathway->getId(),
+                    'value' => $pathway->getPathwayname()
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
     }
 }

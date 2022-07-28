@@ -69,9 +69,6 @@ function filterPatient(selected=null){
     table=document.getElementById('patientTable');
     var tr=document.createElement('tr');
     table.appendChild(tr);
-    var id=document.createElement('td');
-    id.append(selected.id);
-    tr.appendChild(id);
     var lastname=document.createElement('td');
     lastname.append(selected.lastname);
     tr.appendChild(lastname);

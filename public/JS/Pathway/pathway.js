@@ -19,6 +19,7 @@ var NB_SUCCESSOR= 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Appelée au chargement de la page de création d'un parcours (pathway)
@@ -53,14 +54,21 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
-
+/**
+ * Allow to show the modal for the target
+ */
 function showTargets() {
     $('#add-pathway-modal-targets').modal("show");
 }
 
+/**
+ * Allow to hide the modal for the target
+ */
 function hideTargets() {
     $('#add-pathway-modal-targets').modal("hide");
 }
+
+
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
@@ -368,7 +376,10 @@ function addResources() {
     
     // On verifie que le champs quantité est bien rempli 
     let verif = true
+    console.log(document.getElementById('resource-nb').value)
+
     if (document.getElementById('resource-nb').value == '') {
+        console.log('oui')
         verif = false
         alert("La quantité de la ressource n'est pas correcte")
     }
@@ -730,11 +741,36 @@ function deleteResource(id) {
 
 }
 
+/**
+ * delete the "," "." and "e" from the input for the target
+ * @param {delete} input 
+ */
+function preventForTarget(input) {
+ 
+    input.value = input.value.replace("e", "");
+    input.value = input.value.replace(".", "");
+    input.value = input.value.replace(",", "");
+}
 
 /**
- * Verifie que le nom du parcours est correct
- * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
- * Envoie la requete POST au serveur
+ * Verify that targets are correct
+ */
+function isTargetCorrect() {
+    errorInferiorToZero = false
+    let targets = document.getElementsByClassName('target')
+    for (let i = 0 ; (i < targets.length) && (!errorInferiorToZero) ; i++) {
+        if (Number(targets[i].value) < 0) {
+            return false
+        }  
+    }
+    return true
+}
+
+
+/**
+ * Verify that the name of the pathway is correct
+ * Store the array containing all the activities in an input to be accessible by the server
+ * Send the POST request to the server
  */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
@@ -746,37 +782,84 @@ function submitPathway() {
         alert("Le nom du parcours ne peut pas être vide")
     }
 
-    if (verif) {
-        document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
-        btnSubmit.click()
+    if (isTargetCorrect())  {
+        if (verif) {
+            document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            btnSubmit.click()
+        }
+    } else {
+        alert("Au moins une valeur n'est pas bonne dans les objectifs journaliers")
     }
+
 }
 
-function filterPathway(idInput,selected=null) {
-    if(selected == null){
-        var filter = document.querySelector('#'+idInput).value; 
-        }
-        else{
-            var filter = selected;
-        }
+function filterPathway(selected=null){
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
-    var filter = document.querySelector('#' + idInput).value;
-    for (let i = 0; i < trs.length; i++) {
-        var regex = new RegExp(filter, 'i');
-        var pathwayName = trs[i].cells[1].outerText;
-        if(autocompleteArray.indexOf(pathwayName) == -1){
-            autocompleteArray.push(pathwayName);
-            }
-        if (regex.test(pathwayName) == false) {
-            trs[i].style.display = 'none';
+    for(let i=0; i<trs.length; i++){
+            trs[i].style.display='none';
+    }
+    table=document.getElementById('pathwayTable');
+    var tr=document.createElement('tr');
+    table.appendChild(tr);
+    var pathwayName=document.createElement('td');
+    pathwayName.append(selected.value);
+    tr.appendChild(pathwayName);
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showInfosPathway('+selected.id+',"'+selected.value+'")');
+    infos.append('Informations');
+    var formEdit=document.createElement('form');
+    formEdit.setAttribute('action','/pathway/edit/'+selected.id);
+    formEdit.setAttribute('style','display:inline');
+    formEdit.setAttribute('method','GET');
+    formEdit.setAttribute('id','formEdit'+selected.id);
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('type','submit');
+    edit.append('Editer');
+    formEdit.appendChild(edit);
+    var formDelete=document.createElement('form');
+    formDelete.setAttribute('action',"/pathway/delete");
+    formDelete.setAttribute('style','display:inline');
+    formDelete.setAttribute('method','POST');
+    formDelete.setAttribute('id','formDelete'+selected.id);
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce patient ?")');
+    var inputHidden=document.createElement('input');
+    inputHidden.setAttribute('type','hidden');
+    inputHidden.setAttribute('name','pathwayid');
+    inputHidden.setAttribute('value',selected.id);
+    formDelete.appendChild(inputHidden);
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('type','submit');
+    buttons.appendChild(infos);
+    buttons.appendChild(formEdit);
+    formDelete.appendChild(deleteButton);
+    buttons.appendChild(formDelete);
+    tr.appendChild(buttons);
+  }
+
+  function displayAll() {
+    var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
+    var input = document.getElementById('autocompleteInputPathwayNname');
+    console.log(input.value)
+    if(input.value == ''){
+    for(let i=0; i<trs.length; i++){
+        console.log(trs[i].className)
+        if(trs[i].style.display == 'none'){
+            trs[i].style.display='table-row';
         }
-        else {
-            trs[i].style.display = '';
+        else if(trs[i].className != 'original'){
+            trs[i].remove()
         }
     }
+}
 }
 
 function showActivitiesPathway() {
+    VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
@@ -1057,14 +1140,7 @@ function deleteArrows(){
     lines = new Array();
 }
 
-function hideArrows(){
-    for (var l of lines) {
-        l.hide('none');
-    }
-}
-
-function showArrows(){
-    for (var l of lines) {
-        l.show();
-    }
+function validateSuccessors(){
+    VALIDATE = 1;
+    $('#edit-pathway-modal-activities').modal("hide");
 }
