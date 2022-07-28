@@ -6,7 +6,6 @@ var autocompleteArray = new Array()
 
 var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
-
 var RESOURCES_BY_ACTIVITIES = new Array()
 
 var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
@@ -34,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-material-resource-categories").value
     );
+
     //addActivity() 
     initActivity()
     handleHumanButton()
@@ -878,11 +878,6 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    if(RESOURCES_BY_ACTIVITIES.length <= 0){
-        for(i = 0; i < 5; i++){
-            createActivitiesGraph(i+1, i+1, 10*(i+1));
-        }
-    }
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         createActivitiesGraph(rba.activityname, i+1, rba.activityduration);

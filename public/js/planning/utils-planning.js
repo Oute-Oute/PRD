@@ -21,7 +21,7 @@ function filterShow() {
       //while there is something in the filter
       filter.removeChild(filter.firstChild); //remove the old content
     }
-  } 
+  }
   else {
     var allCategories = []; //create an array to store the resources to display
     switch (headerResources) {
@@ -37,7 +37,7 @@ function filterShow() {
             }
           }
         }
-        if(humanCategoriesToDisplay.length == 0) {
+        if (humanCategoriesToDisplay.length == 0) {
           humanCategoriesToDisplay = allCategories;
         }
         break;
@@ -53,7 +53,7 @@ function filterShow() {
             }
           }
         }
-        if(materialCategoriesToDisplay.length == 0) {
+        if (materialCategoriesToDisplay.length == 0) {
           materialCategoriesToDisplay = allCategories;
         }
         break;
@@ -71,19 +71,19 @@ function filterShow() {
           var input = document.createElement("input"); //create a input
           input.type = "checkbox"; //set the type of the input to checkbox
           input.id = allCategories[i]; //set the name of the input to the title of the resource
-          switch(headerResources) {
+          switch (headerResources) {
             case "Ressources Humaines":
               input.onchange = function () {
                 //set the onchange event
-                changeFilter(this.id, allCategories,'human'); //call the changeFilter function with the id of the resource
+                changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
               };
               if (input.checked == false) {
                 for (var j = 0; j < humanCategoriesToDisplay.length; j++) {
-                  if ( input.id == humanCategoriesToDisplay[j]) {
+                  if (input.id == humanCategoriesToDisplay[j]) {
                     input.checked = true; //set the checkbox to checked
                     j = calendar.getResources().length - 1; //stop the loop
                   }
-                  else{
+                  else {
                     input.checked = false; //set the checkbox to unchecked
                   }
                 }
@@ -92,18 +92,18 @@ function filterShow() {
             case "Ressources Matérielles":
               input.onchange = function () {
                 //set the onchange event
-                changeFilter(this.id, allCategories,'material'); //call the changeFilter function with the id of the resource
+                changeFilter(this.id, allCategories, 'material'); //call the changeFilter function with the id of the resource
               };
               if (input.checked == false) {
                 for (var j = 0; j < materialCategoriesToDisplay.length; j++) {
-                  if ( input.id == materialCategoriesToDisplay[j]) {
+                  if (input.id == materialCategoriesToDisplay[j]) {
                     input.checked = true; //set the checkbox to checked
                     j = calendar.getResources().length - 1;
                   }
                 }
               }
               break;
-            }
+          }
           filter.appendChild(input); //add the input to the filter
           var label = document.createElement("label"); //create a label
           label.htmlFor = allCategories[i]; //set the htmlFor of the label to the id of the resource
@@ -120,51 +120,51 @@ function filterShow() {
  * @brief This function is called when we want to filter the resources of the calendar
  * @param {*} id the id of resource to filter
  */
-function changeFilter(id, allCategories,type) {
-  var resources=[];
-  var categoriesToDisplay=[];
-  var resourcesToDisplay=[];
-  switch(type) {
+function changeFilter(id, allCategories, type) {
+  var resources = [];
+  var categoriesToDisplay = [];
+  var resourcesToDisplay = [];
+  switch (type) {
     case "human":
-      for(var i = 0; i < allCategories.length; i++) {
-        if(document.getElementById(allCategories[i]).checked == true) {
-          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+      for (var i = 0; i < allCategories.length; i++) {
+        if (document.getElementById(allCategories[i]).checked == true) {
+          if (humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
             humanCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
           }
         }
-        if(document.getElementById(allCategories[i]).checked == false) {
+        if (document.getElementById(allCategories[i]).checked == false) {
           humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
         }
-        resources=JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
-        categoriesToDisplay=humanCategoriesToDisplay;
-        headerResources="Ressources Humaines";
-    }
+        resources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+        categoriesToDisplay = humanCategoriesToDisplay;
+        headerResources = "Ressources Humaines";
+      }
       break;
     case "material":
-      for(var i = 0; i < allCategories.length; i++) {
-        if(document.getElementById(allCategories[i]).checked == true) {
-          if(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+      for (var i = 0; i < allCategories.length; i++) {
+        if (document.getElementById(allCategories[i]).checked == true) {
+          if (materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
             materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
           }
         }
         else {
           materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
-      }
-        resources=JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
-        categoriesToDisplay=materialCategoriesToDisplay;
-        headerResources="Ressources Matérielles";
+        }
+        resources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+        categoriesToDisplay = materialCategoriesToDisplay;
+        headerResources = "Ressources Matérielles";
       }
       break;
   }
-    for(var i = 0; i < resources.length; i++) {
-      for (var j = 0; j < resources[i]["categories"].length; j++) {
-        if(categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
-          resourcesToDisplay.push(resources[i]);
-          
-        }
+  for (var i = 0; i < resources.length; i++) {
+    for (var j = 0; j < resources[i]["categories"].length; j++) {
+      if (categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
+        resourcesToDisplay.push(resources[i]);
+
       }
     }
-    createCalendar(headerResources,"",resourcesToDisplay);
+  }
+  createCalendar(headerResources, "", resourcesToDisplay);
 
 }
 
@@ -180,6 +180,18 @@ function changePlanning() {
   createCalendar(header); //rerender the calendar with the new type of resources
   filterShow()
   filterShow()
+  if (header == "Patients") {
+    document.getElementById("filterbutton").disabled = true;
+    document.getElementById("filterbutton").style.color = "#666666";
+    document.getElementById("filterbutton").style.backgroundColor = "#cccccc";
+
+  }
+  else {
+    document.getElementById("filterbutton").disabled = false;
+    document.getElementById("filterbutton").style.color = "";
+    document.getElementById("filterbutton").style.backgroundColor = "";
+
+  }
 }
 
 /**
@@ -216,9 +228,9 @@ function changeDate() {
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
   window.location.assign(
     "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
+    dateStr +
+    "&headerResources=" +
+    headerResources
   ); //rerender the page with a new date
 }
 
@@ -244,9 +256,9 @@ function PreviousDay() {
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
   window.location.assign(
     "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
+    dateStr +
+    "&headerResources=" +
+    headerResources
   ); //rerender the page with a new date
 }
 
@@ -272,9 +284,9 @@ function NextDay() {
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
   window.location.assign(
     "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
+    dateStr +
+    "&headerResources=" +
+    headerResources
   ); //rerender the page with a new date
 }
 
@@ -295,9 +307,9 @@ function Today() {
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
   window.location.assign(
     "/ConsultationPlanning?date=" +
-      dateStr +
-      "&headerResources=" +
-      headerResources
+    dateStr +
+    "&headerResources=" +
+    headerResources
   ); //rerender the page with a new date
 }
 
