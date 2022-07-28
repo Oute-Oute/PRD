@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/human/resource")
@@ -34,9 +34,9 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/", name="app_human_resource_index", methods={"GET"})
      */
-    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
+    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
     {
-        $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine);
+        $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine,$request,$paginator);
 
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
@@ -53,7 +53,7 @@ class HumanResourceController extends AbstractController
         ]); 
     }
 
-    public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine){
+    public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
         $categoryOfHumanResources = $categoryOfHumanResourceRepository->findAll();
         
@@ -75,6 +75,11 @@ class HumanResourceController extends AbstractController
                 'categories' => $categories
             ];
         }
+        $humanResources=$paginator->paginate(
+            $humanResources, 
+            $request->query->getInt('page',1),
+            10
+        ); 
         return $humanResources;
     }
 
@@ -779,7 +784,6 @@ class HumanResourceController extends AbstractController
         $param = $request->request->all(); 
         $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
         $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
-
         $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
         $unavailabilities = $unavailabilitiesRepository->findAll();
         $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
