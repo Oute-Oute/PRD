@@ -19,7 +19,9 @@
     <script src="{{ asset('JS/Resource/infosResource.js') }}"> </script>
     <script src='js/fullcalendar-scheduler/lib/main.js'></script>
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/jquery-ui/jquery-ui.js"></script>    
+    <script src="js/jquery-ui/jquery-ui.js"></script> 
+{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+		{% endif %}   
 {% endblock %}
 {% block body %}
 <div id="main_content">

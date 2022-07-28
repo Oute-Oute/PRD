@@ -1,5 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+{% if app.user == null %}
+<script type="text/javascript">document.location.href="/"</script>
+{% endif %}
+{% if app.user != null %}
+{% if app.user.roles[1] != 'Admin' %}
+<script type="text/javascript">document.location.href="/ConsultationPlanning"</script>
+{% endif %}
+{% endif %}
+{% endblock %}
+
 {% block title %}Liste des utilisateurs
 {% endblock %}
 
@@ -16,7 +27,6 @@
 {% endblock %}
 {% block body %}
 	<div  class="index"  id="index-users">
-	
 		<h1 onclick='filterShowUser()' >  Liste des utilisateurs</h1>
 		<button class="btn-add" onclick="addUser();filterShowUser()">Ajouter un nouvel utilisateur</button>
 		<table class="table table-striped table-index-users" id="tableUser">

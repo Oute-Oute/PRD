@@ -11,6 +11,8 @@
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
 	<script src="js/jquery-ui/jquery-ui.js"></script>
 	<script src="js/leader-line/leader-line.min.js"></script>
+{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+		{% endif %}
 {% endblock %}
 
 {% block stylesheets %}

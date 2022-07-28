@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MaterialResource;
 use App\Entity\CategoryOfMaterialResource;
+use App\Entity\ScheduledActivity;
 use App\Entity\Unavailability;
 use App\Entity\UnavailabilityMaterialResource;
 use App\Repository\MaterialResourceRepository;
@@ -18,6 +19,7 @@ use DateTime;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryOfMaterialResourceRepository;
 use App\Repository\MaterialResourceScheduledRepository;
+use App\Repository\ScheduledActivityRepository;
 use App\Repository\UnavailabilityMaterialResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -350,6 +352,7 @@ public function unavailability(Request $request) {
         $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
         $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
         $scheduledMaterialResourcesRepository = new MaterialResourceScheduledRepository($doctrine);
+        $scheduledActivity = new ScheduledActivityRepository($doctrine);
 
 
         $em=$doctrine->getManager();
@@ -383,7 +386,7 @@ public function unavailability(Request $request) {
             $unavailabilitiesRepository->remove($unavailabilityToDelete[0], true);
             $em->remove($unavailabilitiesMaterial[$indexUnavailabilityMaterial]);
 
-            }        
+            }     
 
             $scheduledMaterialResources = $scheduledMaterialResourcesRepository->findBy(['materialresource' => $materialResource]);
             for ($indexScheduledMaterialResource = 0; $indexScheduledMaterialResource < count($scheduledMaterialResources); $indexScheduledMaterialResource++){
