@@ -309,10 +309,10 @@ class PathwayController extends AbstractController
             // We get all the datas from the request
             $param = $request->request->all();
 
-            // On get the json which contains the list of the resources by activities  
+            // On get the json which contains the list of the resources by activities and successors
             // et we convert it into a PHP Array
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
-
+            $successors= json_decode($param['json-successors']);
             // First we add the pathway to the db :
             
             // We create the pathway object
@@ -336,51 +336,27 @@ class PathwayController extends AbstractController
             // We get all the activities
             $activities = $activityRepository->findAll();
 
-            // We get the number of activities
+            // We get the number of activities and successors
             $nbActivity = count($resourcesByActivities);
+            $nbSuccessor = count($successors);
+
+            // We create an array to store the activies id in the database after we added them
+            // So we don't have to use the name (which can be the same for different activities)
+            $activitiesIdArray = array();
 
             if ($nbActivity != 0) {
-                
-                $firstActivityAvailableFound = false;
                 for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
-
                     if ($resourcesByActivities[$indexActivity]->available) {
-                        
-                        // On cherche la premiere activité available = true
-                        if ($firstActivityAvailableFound === false) {
-                            $firstActivityAvailableFound = true;
-                            $activity_old = new Activity();
-                            $activity_old->setActivityname($resourcesByActivities[$indexActivity]->activityname);
-                            $activity_old->setDuration($resourcesByActivities[$indexActivity]->activityduration);
-                            $activity_old->setPathway($pathway);
-
-                            $activityRepository->add($activity_old, true);
-
-                        } else {
-                            // If the first activity has been found
-
-                            // Création of the activity
-                            $activity = new Activity();
-                            $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
-                            $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
-                            $activity->setPathway($pathway);
-                            $activityRepository->add($activity, true);
-            
-                            $activity =  $activityRepository->findBy(['activityname' => $activity->getActivityname()])[0];
+                        // Création of the activity
+                        $activity = new Activity();
+                        $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
+                        $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
+                        $activity->setPathway($pathway);
+                        $activityRepository->add($activity, true);
         
-                            // Creating of the successor between the 2 activities
-                            $successor = new Successor();
-                            $successor->setActivitya($activity_old);
-                            $successor->setActivityb($activity);
-                            $successor->setDelaymin(0);
-                            $successor->setDelaymax(1);
-                            $successorRepository->add($successor, true);
-
-
-                            // We def the new activity : activity_old which is the activity in progress
-                            $activity_old = $activityRepository->findById($activity->getId())[0];
-                        }
-
+                        // Get the last inserted row, i.e the activity we just added
+                        $activity =  $activityRepository->findOneBy(array(),array('id'=>'DESC'),1,0);
+                        array_push($activitiesIdArray, $activity->getId());
 
                         // Add the link between activity - human resources
                         
@@ -395,15 +371,13 @@ class PathwayController extends AbstractController
                                                                                             
                                     // The we create the object ActivityMaterialResource
                                     $activityHumanResource = new ActivityHumanResource();
-                                    $activityHumanResource->setActivity($activity_old);
+                                    $activityHumanResource->setActivity($activity);
                                     $activityHumanResource->setHumanresourcecategory($HRC);
                                     $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                                                     
                                     // We add it to the db
                                     $AHRRepository->add($activityHumanResource , true);
                                 }
-
-                     
                             }
                         }
                     
@@ -422,19 +396,33 @@ class PathwayController extends AbstractController
                                     
                                     // We create the object ActivityMaterialResource
                                     $activityMaterialResource = new ActivityMaterialResource();
-                                    $activityMaterialResource->setActivity($activity_old);
+                                    $activityMaterialResource->setActivity($activity);
                                     $activityMaterialResource->setMaterialresourcecategory($MRC);
                                     $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                     
                                     // then we add it to the db
                                     $AMRRepository->add($activityMaterialResource , true);
                                 }
-
                             }
                         }
-
                     }
-
+                }
+                for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
+                    // Creating of the successor between the 2 activities
+                    $successor = new Successor();
+                    
+                    $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
+                    $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
+                    
+                    $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
+                    $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
+                    $successor->setActivitya($activitya);
+                    $successor->setActivityb($activityb);
+                    
+                    $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
+                    $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
+                    
+                    $successorRepository->add($successor, true);
                 }
             
             }                

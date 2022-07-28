@@ -785,6 +785,7 @@ function submitPathway() {
     if (isTargetCorrect())  {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
             btnSubmit.click()
         }
     } else {
@@ -823,6 +824,7 @@ function showActivitiesPathway() {
     document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
     drawActivitiesGraph();
     fillSuccessorList();
+    drawArrows();
     
     $('#edit-pathway-modal-activities').modal("show");
 }
@@ -928,6 +930,15 @@ function addSuccessor(idA, idB, nameA, nameB) {
     addArraySuccessor(idA, idB, nameA, nameB);
     NB_SUCCESSOR++;
     fillSuccessorList();
+}
+
+function drawArrows(){
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        start = document.getElementById(SUCCESSORS[i].idActivityA);
+        end = document.getElementById(SUCCESSORS[i].idActivityB);
+        l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
+        lines.push(l);
+    }
 }
 
 function addArraySuccessor(idA, idB, nameA, nameB) {
@@ -1088,6 +1099,7 @@ function deleteSuccessor(id) {
 }
 
 function deleteSuccessors(){
+    NB_SUCCESSOR = 0;
     SUCCESSORS = new Array()
     deleteArrows();
     fillSuccessorList();
@@ -1101,6 +1113,8 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
+    deleteArrows();
+    console.log(SUCCESSORS);
     VALIDATE = 1;
     $('#edit-pathway-modal-activities').modal("hide");
 }
