@@ -6,6 +6,12 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
 
 {% endblock %}
+
+{% block javascripts %}
+{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+		{% endif %}
+{% endblock %}
+
 {% block body %}
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
 	
@@ -23,7 +29,12 @@
 		<h1>Consultation du Planning du
 			{{ currentdate|date("d/m/Y") }}</h1>
 		<div class="flex">
+			{% if app.user != null %}
+			{% if app.user.roles[1] != 'Visiteur' %}
 			<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
+			{% endif %}
+			{% endif %}
+			<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
 				<option value="0" selected disabled>Changer l'affichage
 				</option>

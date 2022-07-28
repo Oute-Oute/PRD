@@ -877,4 +877,30 @@ class HumanResourceController extends AbstractController
         }
         return $activitiesArray;
     }
+
+    public function autocompleteHR(Request $request, HumanResourceRepository $HRRepository, CategoryOfHumanResourceRepository $categoryOfHRRepository){
+        $term = strtolower($request->query->get('term'));
+        $HRs = $HRRepository->findAll();
+        $results = array();
+        foreach ($HRs as $HR) {
+            $categories=$categoryOfHRRepository->findBy(['humanresource' => $HR->getId()]);
+                $categoriesArray=[];
+                foreach($categories as $category){
+                    $categoriesArray[] = [
+                        'id' => $HR->getId(),
+                        'label' => $HR->getHumanresourcename(),
+                        'category' => $category->getHumanresourcecategory()->getCategoryname(),
+                    ];
+                }
+            if (   strpos(strtolower($HR->getHumanresourcename()), $term) !== false ){
+                $results[] = [
+                    'id' => $HR->getId(),
+                    'value' => $HR->getHumanresourcename(),
+                    'categories' => $categoriesArray,
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
+    }
 }

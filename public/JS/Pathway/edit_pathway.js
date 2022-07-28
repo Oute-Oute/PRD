@@ -4,7 +4,7 @@ var NB_ACTIVITY = 0;
 
 var HUMAN_RESOURCE_CATEGORIES // list of humans resources categories
 var MATERIAL_RESOURCE_CATEGORIES // list of materials resources categories
-
+var TARGETS // list of targets of the pathway we want to edit
 var RESOURCES_BY_ACTIVITIES = new Array()
 var PATHWAY // Contain all the data of a pathway to edit
 
@@ -31,13 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("json-pathway").value
     );
 
+    TARGETS = JSON.parse(
+        document.getElementById('json-targets').value
+    )
+    console.log(TARGETS)
+
     document.getElementById('resource-nb').value = 1
-  
 
     document.getElementById('pathwayid').value = PATHWAY.id
 
     document.getElementById('pathwayname').value = PATHWAY.pathwayname
     
+    initTargets()
     initActivity()
     handleHumanButton()
     initActivitiesList()
@@ -50,6 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('list').style.height = heightCreationDiv+'px'
 
 })
+
+/**
+ * Initialize the targets input
+ */
+function initTargets() {
+    if (TARGETS.length != 0) {
+        targets = document.getElementsByClassName('target')
+        let len = targets.length
+        for (let i = 0; i < Number(len-1); i++) {
+            targets[i].value = TARGETS[i+1].target
+        }
+        targets[len-1].value = TARGETS[0].target
+    }
+}
 
 
 function initActivitiesList() {

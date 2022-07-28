@@ -204,10 +204,29 @@ class AppointmentController extends AbstractController
         return new JsonResponse($data);
     }
 
+    public function lookAutocompletes(ManagerRegistry $doctrine)
+    {
+        $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
+        $patient = $this->getPatientByName($_POST["patient"], $doctrine);
+        $data[] =
+            [
+                "pathway" => $pathway,
+                "patient" => $patient
+            ];
+        return new JsonResponse($data);
+    }
+
     public function getPathwayByName($name, ManagerRegistry $doctrine)
     {
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findBy(["pathwayname" => $name]);
         return $pathway;
+    }
+
+    public function getPatientByName($name, ManagerRegistry $doctrine)
+    {
+        $name = explode(" ", $name);
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findBy(['firstname' => $name[1], 'lastname' => $name[0]]);
+        return $patient;
     }
 
     public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway, AppointmentRepository $AR, $date)

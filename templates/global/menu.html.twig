@@ -15,6 +15,7 @@
 
 					Planning
 				</a>
+				{% if app.user.roles[1] != 'Visiteur' %}
 				<a href="/appointments" class="dashboard-nav-item" id="appointment">
 					<img src="/img/appointment.svg">
 					Rendez-vous</a>
@@ -40,8 +41,10 @@
 				</a>
 
 			</div>
+			{% endif %}
 			<div id='menu-bottom'>
 				<div class="nav-item-divider"></div>
+				{% if app.user.roles[1] =='Admin' %}
 				<a href="/settings" class="dashboard-nav-item" id="settings">
 					<img src="/img/setting.svg">
 					Paramètres</a>
@@ -49,6 +52,7 @@
 					<img src="/img/user.svg">
 					Utilisateurs
 				</a>
+				{% endif %}
 				<a href='/profil' class="dashboard-nav-item">
 					<img src="/img/profile.svg">
 

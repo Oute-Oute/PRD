@@ -1,4 +1,13 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+{% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
+{% endif %}
+<script src="{{ asset('JS/Profile/profile.js')}}"></script>
+{% endblock %}
+
+
+
+
 
 {% block title %}Mon profil
 
@@ -13,7 +22,7 @@
 
 
 {% block body %}
-
+{% if app.user != null %}
 <div class="index">
 	<form id="edit-form" method="POST">
 		<div id="container">
@@ -56,10 +65,6 @@
 	</form>
 
 </div>
+{% endif %}
 
-{% endblock %}
-
-
-{% block javascripts %}
-	<script src="{{ asset('JS/Profile/profile.js')}}"></script>
 {% endblock %}

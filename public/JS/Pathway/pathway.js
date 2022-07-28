@@ -6,7 +6,6 @@ var autocompleteArray = new Array()
 
 var HUMAN_RESOURCE_CATEGORIES // liste des categories de ressources humaines
 var MATERIAL_RESOURCE_CATEGORIES // liste des categories de ressources materielles 
-
 var RESOURCES_BY_ACTIVITIES = new Array()
 
 var ACTIVITY_IN_PROGRESS // permet de stocker l'activité qui est en cours de création / d'édition 
@@ -21,30 +20,7 @@ var SUCCESSORS = new Array();
 var lines= new Array();
 var VALIDATE = 0;
 
-/**
- * Appelée au chargement de la page de création d'un parcours (pathway)
- */
-document.addEventListener('DOMContentLoaded', () => {
-    SELECT_ID = 0;
 
-    HUMAN_RESOURCE_CATEGORIES = JSON.parse(
-        document.getElementById("json-human-resource-categories").value
-    );
-
-    MATERIAL_RESOURCE_CATEGORIES = JSON.parse(
-        document.getElementById("json-material-resource-categories").value
-    );
-    //addActivity() 
-    initActivity()
-    handleHumanButton()
-    fillActivityList()
-
-    let heightTitle = document.getElementById('name').offsetHeight
-    let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
-    heightCreationDiv = heightCreationDiv - heightTitle
-    document.getElementById('list').style.height = heightCreationDiv + 'px'
-
-})
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -878,11 +854,6 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    if(RESOURCES_BY_ACTIVITIES.length <= 0){
-        for(i = 0; i < 5; i++){
-            createActivitiesGraph(i+1, i+1, 10*(i+1));
-        }
-    }
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
@@ -1041,7 +1012,7 @@ function fillSuccessorList() {
             labelMin.style.width = "70%";
 
             let inputMin = document.createElement('input');
-            inputMin.setAttribute('id', 'delayMin');
+            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
             inputMin.setAttribute('type', 'number');
             inputMin.setAttribute('min', 0);
             inputMin.setAttribute('step', 1);
@@ -1061,7 +1032,7 @@ function fillSuccessorList() {
             labelMax.style.width = "70%"
 
             let inputMax = document.createElement('input');
-            inputMax.setAttribute('id', 'delayMax');
+            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
             inputMax.setAttribute('type', 'number');
             inputMax.setAttribute('min', 0);
             inputMax.setAttribute('step', 1);
@@ -1153,8 +1124,39 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    deleteArrows();
-    console.log(SUCCESSORS);
-    VALIDATE = 1;
-    $('#edit-pathway-modal-activities').modal("hide");
+    if(!checkSuccessor()){
+        alert("Il reste des activités non liées !")
+    }
+    else{
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            inputMin = document.getElementById("delayMinInput" + (i+1));
+            inputMax = document.getElementById("delayMaxInput" + (i+1));
+            SUCCESSORS[i].delayMin = inputMin.value;
+            SUCCESSORS[i].delayMax = inputMax.value;
+        }
+        deleteArrows();
+        VALIDATE = 1;
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
+    
+}
+
+function checkSuccessor(){
+    if(NB_ACTIVITY == 1){
+        return true;
+    }
+    for(i = 0; i < NB_ACTIVITY; i++){
+        var error = true;
+        
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
+                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
+                    error = false;
+            }
+        }
+        if(error){
+            return false;
+        }
+    }
+    return true;
 }
