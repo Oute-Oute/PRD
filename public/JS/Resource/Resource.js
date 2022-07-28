@@ -280,7 +280,7 @@ function filterHumanResource(idInput,selected=null){
         }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[1].outerText;
+        var name=trs[i].cells[0].outerText;
         if(hrArray.indexOf(name) == -1){
             hrArray.push(name);
             }
@@ -304,7 +304,7 @@ function filterHumanResource(idInput,selected=null){
     console.log(filter);
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[1].outerText;
+        var name=trs[i].cells[0].outerText;
         if(hcrArray.indexOf(name) == -1){
             hcrArray.push(name);
             }
@@ -327,7 +327,7 @@ function filterHumanResource(idInput,selected=null){
         }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[1].outerText;
+        var name=trs[i].cells[0].outerText;
         if(mrArray.indexOf(name) == -1){
             mrArray.push(name);
             }
@@ -350,7 +350,7 @@ function filterHumanResource(idInput,selected=null){
         }
     for(let i=0; i<trs.length; i++){
         var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[1].outerText;
+        var name=trs[i].cells[0].outerText;
         if(mcrArray.indexOf(name) == -1){
             mcrArray.push(name);
             }
