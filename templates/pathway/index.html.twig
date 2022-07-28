@@ -36,18 +36,14 @@
 
 			<thead>
 				<tr class="headerPathway">
-					<th>Identifiant</th>
-					<th>Parcours</th>
-					<th>Actions</th>
+					<th style="width: 20%;">Parcours</th>
+					<th style="width: 30%;">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% set indexPathway = 0 %}
 				{% for pathway in pathways %}
 					<tr>
-						<td>
-							{{ pathway.id }}
-						</td>
 						<td>
 							{{ pathway.pathwayname }}
 						</td>

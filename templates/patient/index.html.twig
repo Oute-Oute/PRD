@@ -31,16 +31,14 @@
 		<table class="table table-striped" id="tablePatient">
 			<thead>
 			<tr class="headerPatient">
-					<th>Id</th>
-					<th>Nom</th>
-					<th>Prénom</th>
-					<th>Actions</th>
+					<th style="width: 20%;">Nom</th>
+					<th style="width: 20%;">Prénom</th>
+					<th style="width: 30%;">Actions</th>
 				</tr>
 			</thead>
 			<tbody id="patientTable">
 				{% for patient in patients %}
 					<tr class="original">
-						<td>{{ patient.id }}</td>
 						<td>{{ patient.lastname }}</td>
 						<td>{{ patient.firstname }}</td>
 						<td>
