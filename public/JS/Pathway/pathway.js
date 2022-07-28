@@ -1041,7 +1041,7 @@ function fillSuccessorList() {
             labelMin.style.width = "70%";
 
             let inputMin = document.createElement('input');
-            inputMin.setAttribute('id', 'delayMin');
+            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
             inputMin.setAttribute('type', 'number');
             inputMin.setAttribute('min', 0);
             inputMin.setAttribute('step', 1);
@@ -1061,7 +1061,7 @@ function fillSuccessorList() {
             labelMax.style.width = "70%"
 
             let inputMax = document.createElement('input');
-            inputMax.setAttribute('id', 'delayMax');
+            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
             inputMax.setAttribute('type', 'number');
             inputMax.setAttribute('min', 0);
             inputMax.setAttribute('step', 1);
@@ -1153,8 +1153,39 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    deleteArrows();
-    console.log(SUCCESSORS);
-    VALIDATE = 1;
-    $('#edit-pathway-modal-activities').modal("hide");
+    if(!checkSuccessor()){
+        alert("Il reste des activités non liées !")
+    }
+    else{
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            inputMin = document.getElementById("delayMinInput" + (i+1));
+            inputMax = document.getElementById("delayMaxInput" + (i+1));
+            SUCCESSORS[i].delayMin = inputMin.value;
+            SUCCESSORS[i].delayMax = inputMax.value;
+        }
+        deleteArrows();
+        VALIDATE = 1;
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
+    
+}
+
+function checkSuccessor(){
+    if(NB_ACTIVITY == 1){
+        return true;
+    }
+    for(i = 0; i < NB_ACTIVITY; i++){
+        var error = true;
+        
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
+                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
+                    error = false;
+            }
+        }
+        if(error){
+            return false;
+        }
+    }
+    return true;
 }
