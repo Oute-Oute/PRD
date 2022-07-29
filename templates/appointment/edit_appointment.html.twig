@@ -10,27 +10,27 @@
 			<div class="modal-header">
 				<h2 class="modal-title">Modifier un rendez-vous</h2>
 			</div>
-			<form action="{{ path('AppointmentEdit') }}" method="post" onsubmit="return lookAutocompletes('edit')">
+			<form action="{{ path('AppointmentEdit') }}" method="post" onsubmit="return lookAutocompletes()">
 				<div class="modal-body">
 					<div style="color: red;" id="wrong-edit-input" style="visibility:hidden"></div>
 					<div class="flex-col">
 						<input type="hidden" name="idappointment" id="idappointment">
 						<label for='idpatient'>Patient</label>
-						<input type="hidden" id="patient" name="patient" value="{{patientsJSON.content}}"/>
-						<input class="input" type="text" id="autocompletePatientEdit" name="patient" required/>
+						<input type="hidden" id="patient" name="patient" value="{{patientsJSON.content}}" disabled/>
+						<input class="input" type="text" id="autocompletePatientEdit" name="patient" disabled/>
 					</div>
 					</br>
 					<div class="flex-col">
 						<label class="label" for='idpathway'>Parcours</label>
-						<input type="hidden" id="pathway" name="pathway" value="{{pathwaysJSON.content}}"/>
-						<input class="input" type="text" id="autocompletePathwayEdit" name="pathway" required/>
+						<input type="hidden" id="pathway" name="pathway" value="{{pathwaysJSON.content}}" disabled/>
+						<input class="input" type="text" id="autocompletePathwayEdit" name="pathway" disabled/>
 					</div>
 					</br>
 					<div class="flex-col">
 						<label for='dayappointment'>
 							Jour du rendez-vous
 						</label>
-						<input class="input" id="dayAppointment"  name='dayappointment' onclick="openDayModale('edit')" required>
+						<input class="input" id="dayAppointment"  name='dayappointment' onclick="openDayModale('edit')" disabled>
 						</div>
 					</br>
 					<div class="flex-col">

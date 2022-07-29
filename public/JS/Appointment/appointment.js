@@ -419,25 +419,16 @@ function filterPatient(idInput) {
   }
 }
 
-function lookAutocompletes(statut){
+function lookAutocompletes(){
   var listPatients;
   var listPathways;
   var patientName;
   var pathwayName;
-  if(statut == "add"){
-    inputClass = 'wrong-add-input';
-    patientName = document.getElementById('autocompletePatientAdd').value;
-    pathwayName = document.getElementById('autocompletePathwayAdd').value;
-    listPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
-    listPathways = JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
-  }
-  else if (statut == "edit"){
-    inputClass = 'wrong-edit-input';
-    patientName = document.getElementById('autocompletePatientEdit').value;
-    pathwayName = document.getElementById('autocompletePathwayEdit').value;
-    listPatients = JSON.parse(document.getElementById("patient").value.replaceAll("3aZt3r", " "));
-    listPathways = JSON.parse(document.getElementById("pathway").value.replaceAll("3aZt3r", " "));
-  }
+  inputClass = 'wrong-add-input';
+  patientName = document.getElementById('autocompletePatientAdd').value;
+  pathwayName = document.getElementById('autocompletePathwayAdd').value;
+  listPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
+  listPathways = JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
   document.getElementById(inputClass).style.visibility = "hidden";
   var allIsGood = true;
 

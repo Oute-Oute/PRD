@@ -27,6 +27,7 @@ use DateTime;
 use DateTimeZone;
 use Symfony\Component\Validator\Constraints\Length;
 
+
 /**
  * Controller de la page modification du planning
  */
@@ -39,6 +40,9 @@ class ModificationPlanningController extends AbstractController
      */
     public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
     {
+        $english_months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+    $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
+        
         global $dateModified;
         //Récupération de la date à laquelle on modifie le planning
         if (isset($_GET['date'])) {
@@ -50,6 +54,10 @@ class ModificationPlanningController extends AbstractController
         else{
             $idUser=-1; 
         }
+        $dateFormatted=date_create($dateModified);
+        $dateFormatted->format('Y-F-d');
+        $dateStr=str_replace($english_months, $french_months,$dateFormatted->format('d F Y'));
+
 
         //Récupération des données via la base de donnée avec Doctrine
         $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
@@ -84,6 +92,7 @@ class ModificationPlanningController extends AbstractController
             'listHumanResources' => $listHumanResources,
             'listMaterialResources' => $listMaterialResources,
             'currentdate' => $dateModified,
+            'dateFormatted' => $dateStr,
             'listScheduledActivitiesJSON' => $listscheduledActivity,
             'listAppointments' => $listAppointment,
             'listSuccessorsJSON' => $listSuccessorJSON,
