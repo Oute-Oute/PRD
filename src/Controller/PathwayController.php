@@ -866,26 +866,12 @@ class PathwayController extends AbstractController
             return new JsonResponse((null));
         }
 
-        $test = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
-
-        $activity = $test['activity'];
-        $level = $test['level'];
-
-        unset($test['activity']);
-        unset($test['level']);
-        $test = array_values($test);
-        $test[]=[
-            'activity' => $activity,
-            'level' => $level,
-        ];
-
-        $data = $this->checkDuplicate($test);
-
-        return new JsonResponse($this->addIndexSuccessors($data));
+        $data = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
+        return new JsonResponse($data);
     }
 
     public function sortActivities($activityArray, $arraySuccessor, ManagerRegistry $doctrine){
-        $activitiesSorted = [];
+        $activitiesSortedByLevel = [];
         
         for($i=0; $i < count($activityArray); $i++){
             $racine = true;
@@ -895,93 +881,35 @@ class PathwayController extends AbstractController
                 }
             }
             if($racine){
-                $activityRacine = $activityArray[$i];
+                $activitiesSortedByLevel[0][] = $activityArray[$i];
             }
         }
-
-        return $this->sortActivitiesRecursive($doctrine, $activitiesSorted, $activityRacine, 1);
-    }
-
-    public function sortActivitiesRecursive(ManagerRegistry $doctrine, $activitiesArray, $activityToAdd, $level){
-        $listSuccessors = $activityToAdd['successor'];
-        if($listSuccessors == []){
-            return array(
-                'activity' => $activityToAdd,
-                'level' => $level,
-            );
-        }
-
-        $activitiesArray[] = [
-            'activity' => $activityToAdd,
-            'level' => $level,
-        ];
-
-        for($j = 0; $j < count($listSuccessors); $j++){
-            $nextActivity = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$activityToAdd['successor'][$j]['idB']]);
-            $nextActivityArray = $this->activityToArray($doctrine, $nextActivity);
-            $activitiesArray += $this->sortActivitiesRecursive($doctrine, $activitiesArray, $nextActivityArray, $level+1);
-        }
-
-        return $activitiesArray;
-    }
-
-    public function addIndexSuccessors($activitiesArray){
-        $temp_array = [];
-        $i = 0;
-                    
-        foreach($activitiesArray as $activity){
-            $arraySuccessorIndex = [];
-            $listSuccessors = $activity['activity']['successor']; 
-            if($listSuccessors != []){
-                for($j=0; $j < count($listSuccessors); $j++){
-                    $indexSuccessor = 0;
-                    foreach($activitiesArray as $act){
-                        if($act['activity']['id'] == $listSuccessors[$j]['idB']){
-                            $arraySuccessorIndex = array_merge($arraySuccessorIndex, [$indexSuccessor]);
+        $level = 0;
+        while($activitiesSortedByLevel[$level] != null){
+            for($i = 0; $i < count($activitiesSortedByLevel[$level]); $i++){
+                $listSuccessors = $activitiesSortedByLevel[$level][$i]['successor'];
+                for($j = 0; $j < count($listSuccessors); $j++){
+                    $activityToAdd = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$listSuccessors[$j]['idB']]);
+                    $activityToAddArray = $this->activityToArray($doctrine, $activityToAdd);
+                    if(count($activitiesSortedByLevel[$level+1]) == 0){
+                        $activitiesSortedByLevel[$level+1][] = $activityToAddArray;
+                    }
+                    else{
+                        $found = false; 
+                        for($k = 0; $k < count($activitiesSortedByLevel[$level+1]); $k++){
+                            if($activitiesSortedByLevel[$level+1][$k] == $activityToAddArray){
+                                $found = true;
+                            }
                         }
-                        $indexSuccessor++;
+                        if(!$found){
+                            $activitiesSortedByLevel[$level+1][] = $activityToAddArray;
+                        }
                     }
                 }
             }
-            $temp_array[$i] = [
-                'activity' => $activity['activity'],
-                'level' => $activity['level'],
-                'successorsIndex' => $arraySuccessorIndex
-            ];
-            
-            $i++;
+            $level++;
         }
-
-        foreach($temp_array as $activity){
-            foreach($activity['successorsIndex'] as $successor){
-                if($temp_array[$successor]['level'] <= $activity['level']){
-                    $temp_array[$successor]['level'] = $activity['level']+1;
-                }
-            }
-        }
-        
-        return $temp_array;
-    }
-
-    public function checkDuplicate($activitiesArray) { 
-        $temp_array = array(); 
-        $i = 0; 
-        $key_array = array(); 
-        
-        foreach($activitiesArray as $activity) { 
-            if (in_array($activity['activity']['id'], $key_array)) {
-                $index = array_search($activity['activity']['id'], $key_array);
-                if($temp_array[$index]['level'] < $activity['level']){
-                    $temp_array[$index] = $activity;
-                }
-            }
-            else{
-                $key_array[$i] = $activity['activity']['id']; 
-                $temp_array[$i] = $activity;
-            }
-            $i++; 
-        } 
-        return $temp_array; 
+        return $activitiesSortedByLevel;
     }
 
     public function activityToArray(ManagerRegistry $doctrine, $activity){
