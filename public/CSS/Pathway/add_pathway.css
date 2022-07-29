@@ -26,6 +26,7 @@ div#create-activity-container {
     box-shadow: 0px 0px 10px lightgray;
     padding: 10px 20px;
     border-radius: 10px;
+    height: 600px;
 }
 /* bouton pour ajouter des activités au parcours */
 button#btn-add-activity {
@@ -114,15 +115,19 @@ div#activities-list #list{
 #buttons-resources {
     display: flex;
     flex-direction: row;
+    border-bottom: 1px solid lightgrey;
 }
 #buttons-resources button{
-    border: none;
     width: 50%;
     background-color: transparent;
     border: none;
     cursor: pointer;
+    border: none;
+    border-right: 1px solid lightgrey;
 }
-
+#buttons-resources button:nth-last-child(1){
+    border: none;
+}
 /* div qui contient le tableau des resources */
 #div-resources {
     display: flex;
@@ -180,28 +185,6 @@ div#activities-list #list{
 }
 
 /* --- BOTTOM of the page --- */
-
-
-
-
-
-
-
-/*
-#creation-form {
-    display : flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid lightgray;
-    border-radius: 10px;
-    background-color: #fff;
-
-}
-*/
-
-
-
 div#activities-list-graph {
     width: 25%;
     box-shadow: 0px 0px 10px lightgrey;
