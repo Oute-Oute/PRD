@@ -12,6 +12,13 @@ var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / edit
 var ID_EDITED_ACTIVITY 
 var IS_EDIT_MODE = false
 
+var ID_ACTIVITY_PREDECESSOR = -1;
+var NAME_ACTIVITY_PREDECESSOR = '';
+var NB_SUCCESSOR= 0;
+var ACTIVITY_POSITION = new Array();
+var SUCCESSORS = new Array();
+var lines= new Array();
+var VALIDATE = 0;
 
 /**
  * Call at the loading of the add pathway page
@@ -46,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHumanButton()
     initActivitiesList()
     fillActivityList()
+    initSuccessorsList()
 
     // calcul de la taille de la liste
     let heightTitle = document.getElementById('name').offsetHeight
@@ -92,8 +100,34 @@ function initActivitiesList() {
         RESOURCES_BY_ACTIVITIES[i].id = PATHWAY.activities[i].id
         RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
         RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
-    }
 
+        NB_ACTIVITY++;
+    }
+}
+
+function initSuccessorsList() {
+    for (let i = 0; i < PATHWAY.successors.length; i++) {
+        SUCCESSORS[i] = new Object()
+        for(j = 1; j <= NB_ACTIVITY; j++){
+            divAct = document.getElementById('act' + j)
+            inputs = divAct.getElementsByTagName('input')
+            let idActivity = inputs[0].value
+            if(idActivity == PATHWAY.successors[i].idActivityA){
+                SUCCESSORS[i].idActivityA = 'activity' + j
+            }
+            if(idActivity == PATHWAY.successors[i].idActivityB){
+                SUCCESSORS[i].idActivityB = 'activity' + j
+            }
+        }
+        SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
+        SUCCESSORS[i].nameActivityB = PATHWAY.successors[i].nameActivityB
+
+        SUCCESSORS[i].delayMin = PATHWAY.successors[i].delayMin
+        SUCCESSORS[i].delayMax = PATHWAY.successors[i].delayMax
+
+        NB_SUCCESSOR++;
+    }
+    console.log(SUCCESSORS);
 }
 
 /**
@@ -108,55 +142,6 @@ function showTargets() {
  */
 function hideTargets() {
     $('#edit-pathway-modal-targets').modal("hide");
-}
-
-/**
- * Permet d'afficher la fenêtre modale d'informations
- * @param {*} idPathway 
- * @param {*} name 
- */
-function showInfosPathway(idPathway, name) {
-    document.getElementById('pathway').innerHTML = name;
-   
-    var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // We delete what we wrote in the modal form precedently
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxPathway',
-        data : {idPathway: idPathway},
-        dataType : "json",
-        success : function(data){        
-            tableAppointment(tableBody, data);
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-    
-    $('#infos-pathway-modal').modal("show");
-}
-
-function tableAppointment(tableBody, data){
-    if(data.length <= 0){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de patients prévus pour ce parcours");
-        tr.appendChild(td);
-    }
-    else{
-        for(i = 0; i < data.length; i++){
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td1 = document.createElement('TD');
-            var td2 = document.createElement('TD');
-            td1.append(data[i]['lastname'] + ' ' + data[i]['firstname']);
-            td2.append(data[i]['date']);
-            tr.appendChild(td1);tr.appendChild(td2);
-        }
-    }
 }
 
 function initActivity() {
@@ -301,8 +286,14 @@ function fillActivityList() {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
             let activity = document.createElement('div')
             activity.setAttribute('class', 'div-activity')
+            activity.setAttribute('id', 'act' + (indexActivity+1))
             activity.style.maxHeight = '150px'
             //activity.setAttribute('disabled', 'disabled')
+
+            let input = document.createElement('input')
+            input.setAttribute('type', 'hidden')
+            input.setAttribute('value', RESOURCES_BY_ACTIVITIES[indexActivity].id)
+
             let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
@@ -339,6 +330,7 @@ function fillActivityList() {
            /* pindex = document.createElement('p')
             pindex.innerText = indexActivity
             activity.appendChild(pindex)*/
+            activity.appendChild(input);
             activity.appendChild(divContainerP)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
@@ -896,9 +888,359 @@ function submitPathway() {
     {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
+            document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
             btnSubmit.click()
         }
     } else {
         alert("Au moins une valeur n'est pas bonne dans les objectifs journaliers")
+    }
+}
+
+function showActivitiesPathway() {
+    VALIDATE = 0;
+    document.getElementById('title-pathway-activities').innerHTML = "Lier les activités";
+    drawActivitiesGraph();
+    fillSuccessorList();
+    drawArrows();
+    
+    $('#edit-pathway-modal-activities').modal("show");
+}
+
+function hideActivitiesPathway(){
+    deleteSuccessors();
+    $('#edit-pathway-modal-activities').modal("hide");
+}
+
+function drawActivitiesGraph(){
+    var divContent = document.getElementById('divContent');
+    divContent.innerHTML = ""; // reset the content
+
+    for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
+        rba = RESOURCES_BY_ACTIVITIES[i];
+        if(rba.available){
+            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+        }
+    }
+}
+
+function createActivitiesGraph(name, idActivity, duration){
+    var divContent = document.getElementById('divContent');
+
+    var div = document.createElement('DIV');
+    div.setAttribute('id', 'activity'+ idActivity);
+    div.classList.add("pathway-div-activity-graph");
+
+    var divHeader = document.createElement('div');
+    divHeader.classList.add("pathway-div-activity-header");
+    divHeader.innerHTML = name;
+
+    var p = document.createElement('p');
+    p.style.fontSize = '80%';
+    p.innerHTML = "durée : " + duration + "min"; 
+
+    div.appendChild(divHeader); div.appendChild(p);
+    divContent.appendChild(div);
+    
+    $(".pathway-div-activity-graph").draggable({
+        containment: "#divContent",
+      });
+
+    div.addEventListener('mousemove', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+    }), false);
+
+    div.addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+    }), false);
+
+
+    div.addEventListener('dblclick', function (e) {
+        if(ID_ACTIVITY_PREDECESSOR != -1){
+            errorLine = false;
+            if(ID_ACTIVITY_PREDECESSOR == div.id){
+                errorLine = true;
+                alert("Vous ne pouvez pas lier une activité à elle-même !");
+            }
+            start = document.getElementById(ID_ACTIVITY_PREDECESSOR);
+            end = document.getElementById(div.id);
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                if(SUCCESSORS[i].idActivityA == start.id && SUCCESSORS[i].idActivityB == end.id){
+                    alert('Ce lien est déjà créé !')
+                    errorLine = true;
+                }
+                if(SUCCESSORS[i].idActivityA == end.id && SUCCESSORS[i].idActivityB == start.id){
+                    alert("Un lien existe déjà dans l'autre sens, veuillez le supprimer avant d'en ajouter un autre.")
+                    errorLine = true;
+                }
+            }
+            if(!errorLine){
+                l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR+1)});
+
+                lines.push(l);
+                addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
+                ID_ACTIVITY_PREDECESSOR = -1;
+            }
+            else{
+                ID_ACTIVITY_PREDECESSOR = -1;
+                NAME_ACTIVITY_PREDECESSOR = '';
+            }
+        }
+        else{
+            ID_ACTIVITY_PREDECESSOR = div.id;
+            NAME_ACTIVITY_PREDECESSOR = name;
+        }
+    });
+}
+
+function addSuccessor(idA, idB, nameA, nameB) {
+    addArraySuccessor(idA, idB, nameA, nameB);
+    NB_SUCCESSOR++;
+    fillSuccessorList();
+}
+
+function drawArrows(){ 
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        start = document.getElementById(SUCCESSORS[i].idActivityA);
+        end = document.getElementById(SUCCESSORS[i].idActivityB);
+        l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
+        lines.push(l);
+    }
+}
+
+function addArraySuccessor(idA, idB, nameA, nameB) {
+    let len = SUCCESSORS.length
+
+    SUCCESSORS[len] = new Object()
+    SUCCESSORS[len].idActivityA = idA;
+    SUCCESSORS[len].idActivityB = idB;
+
+    SUCCESSORS[len].nameActivityA = nameA;
+    SUCCESSORS[len].nameActivityB = nameB;
+
+    SUCCESSORS[len].delayMin = 0;
+    SUCCESSORS[len].delayMax = 10;
+}
+
+/* remplit la liste des successeurs (sur la droite) */
+function fillSuccessorList() {
+
+    let divSuccessorsList = document.getElementById('list-graph')
+    divSuccessorsList.innerHTML = ''
+
+    for (let indexSuccessor = 0; indexSuccessor < SUCCESSORS.length; indexSuccessor++) {
+            let successor = document.createElement('div')
+            successor.setAttribute('class', 'div-activity')
+            successor.setAttribute('id', 'link-' + indexSuccessor);
+            let idA = document.createElement('input');
+            idA.setAttribute('type', 'hidden');
+            idA.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityA);
+            let idB = document.createElement('input');
+            idB.setAttribute('type', 'hidden');
+            idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
+            successor.appendChild(idA); successor.appendChild(idB);
+            let str = "Lien n°" + (indexSuccessor+1);
+            let p = document.createElement('p')
+            p.innerHTML = str
+
+            let imgDelete = new Image();
+            imgDelete.src = '../../img/delete.svg';
+            imgDelete.setAttribute('id', 'succ_imgd-' + indexSuccessor);
+            imgDelete.setAttribute('onclick', 'deleteSuccessor(this.id)');
+            imgDelete.setAttribute('title', 'Supprimer le lien');
+            imgDelete.style.width = '20px';
+            imgDelete.style.cursor = 'pointer';
+
+            let imgDownArrow = new Image();
+            imgDownArrow.src = '../../img/down-arrow.svg';
+            imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
+            imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
+            imgDownArrow.setAttribute('title', 'Montrer les délais');
+            imgDownArrow.style.width = '20px';
+            imgDownArrow.style.cursor = 'pointer';
+
+            let divMin = document.createElement('div')
+            divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+
+            let labelMin = document.createElement('label');
+            labelMin.classList.add("label");
+            labelMin.innerHTML = "Délai min (minutes) : ";
+            labelMin.style.width = "70%";
+
+            let inputMin = document.createElement('input');
+            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
+            inputMin.setAttribute('type', 'number');
+            inputMin.setAttribute('min', 0);
+            inputMin.setAttribute('step', 1);
+            inputMin.setAttribute('value', 0);
+            inputMin.style.width = "30%";
+
+            divMin.appendChild(labelMin);
+            divMin.appendChild(inputMin);
+            divMin.style.display = "none";
+
+            let divMax = document.createElement('div')
+            divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+
+            let labelMax = document.createElement('label');
+            labelMax.classList.add("label");
+            labelMax.innerHTML = "Délai max (minutes) : ";
+            labelMax.style.width = "70%"
+
+            let inputMax = document.createElement('input');
+            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
+            inputMax.setAttribute('type', 'number');
+            inputMax.setAttribute('min', 0);
+            inputMax.setAttribute('step', 1);
+            inputMax.setAttribute('value', 360);
+            inputMax.style.width = "30%"
+
+            divMax.appendChild(labelMax);
+            divMax.appendChild(inputMax);
+            divMax.style.display = "none";
+
+            let divDel = document.createElement('div');
+            divDel.appendChild(imgDelete);
+
+            let divDown = document.createElement('div');
+            divDown.appendChild(imgDownArrow);
+
+            successor.appendChild(p);
+            successor.appendChild(divDel);
+            successor.appendChild(divDown);
+
+            let divSuccessor = document.createElement('div');
+            divSuccessor.classList.add("div-successor")
+
+            divSuccessor.appendChild(successor);
+            divSuccessor.appendChild(divMin);
+            divSuccessor.appendChild(divMax);
+
+            divSuccessorsList.appendChild(divSuccessor);
+    }
+    if (SUCCESSORS.length == 0) {
+        let nosuccessor = document.createElement('p');
+        nosuccessor.innerHTML = "Aucun lien pour le moment !";
+        nosuccessor.style.marginLeft ="10px";
+        divSuccessorsList.appendChild(nosuccessor);
+    }
+}
+
+function showDelay(id){
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    if(divMin.style.display == "none" || divMax.style.display == "none"){
+        divMin.style.display = "block";
+        divMax.style.display = "block";
+    }
+    else{
+        divMin.style.display = "none";
+        divMax.style.display = "none";
+    }
+}
+
+function deleteSuccessor(id) {
+    id = getId(id);
+    let divSuccessor = document.getElementById('link-' + id);
+    let inputs = divSuccessor.getElementsByTagName('input');
+
+    for(i = 0; i < lines.length; i++){
+        idA = inputs[0].value;
+        idB = inputs[1].value;
+        if (lines[i].start == document.getElementById(idA) && lines[i].end == document.getElementById(idB)){
+            lines[i].remove();
+            lines.splice(i, 1);
+        }
+    }
+
+    for(i = 0; i < lines.length; i++){
+        lines[i].middleLabel="Lien n°" + (i+1);
+    }
+
+    NB_SUCCESSOR--;
+    SUCCESSORS.splice(id, 1);
+    
+    fillSuccessorList();
+}
+
+function deleteSuccessors(){
+    NB_SUCCESSOR = 0;
+    SUCCESSORS = new Array();
+    initSuccessorsList();
+    deleteArrows();
+    fillSuccessorList();
+}
+
+function deleteArrows(){
+    for (var l of lines) {
+        l.remove();
+    }
+    lines = new Array();
+}
+
+function validateSuccessors(){
+    error = checkSuccessor();
+    switch(error){
+        case 0:
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                inputMin = document.getElementById("delayMinInput" + (i+1));
+                inputMax = document.getElementById("delayMaxInput" + (i+1));
+                SUCCESSORS[i].delayMin = inputMin.value;
+                SUCCESSORS[i].delayMax = inputMax.value;
+            }
+            deleteArrows();
+            VALIDATE = 1;
+            $('#edit-pathway-modal-activities').modal("hide");
+        break;
+        case 1:
+            alert("Il reste des activités non liées !");
+        break;
+        case 2:
+            alert("Vous avez formé une boucle ! Veuillez laisser une activité de départ sans lien entrant.")
+        break;
+    }
+}
+
+function checkSuccessor(){
+    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error
+    console.log(SUCCESSORS)
+    if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
+        return 0;
+    }
+    var predecessor;
+    var loop = true;
+    for(i = 0; i < NB_ACTIVITY; i++){
+        var link = true;
+        predecessor = false;
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            // Check if 
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname || 
+                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname){
+                    link = false;
+            }
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
+                predecessor = true;
+            }
+        }
+        if(link){
+            return 1;
+        }
+        if(!predecessor){
+            loop = false;
+        }
+    }
+    if(loop){
+        return 2;
+    }
+    else{
+        return 0;  
     }
 }

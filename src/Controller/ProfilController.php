@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Persistence\ManagerRegistry;   
 
 
 
@@ -25,7 +26,7 @@ class ProfilController extends AbstractController
     }
 
 
-    public function profilEdit(Request $request,  UserRepository $userRepository): Response
+    public function profilEdit(Request $request,  UserRepository $userRepository,ManagerRegistry $doctrine): Response
     {
         // Variable message  
 
@@ -39,7 +40,7 @@ class ProfilController extends AbstractController
         if (password_verify($password1, $user->getPassword())) {
             //Succes et MAJ de la base de donnée
             $user->setPassword(password_hash($password2, PASSWORD_DEFAULT));
-            $em = $this->getDoctrine()->getManager();
+            $em = $doctrine->getManager();
             $em->persist($user);
             $em->flush();
             $messageSucces = "Modification effectuée avec succès";

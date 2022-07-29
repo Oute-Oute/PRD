@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @Route("/material/resource/category")
@@ -31,7 +32,7 @@ class MaterialResourceCategoryController extends AbstractController
     /**
      * @Route("/new", name="app_material_resource_category_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
+    public function new(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
             $materialResourceCateg = new MaterialResourceCategory();
@@ -39,7 +40,7 @@ class MaterialResourceCategoryController extends AbstractController
             $name = $param['name'];
 
             $materialResourceCateg->setCategoryname($name);
-            $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
+            $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
             $materialResourceCategoryRepository->add($materialResourceCateg, true);
 
             return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
@@ -76,12 +77,12 @@ class MaterialResourceCategoryController extends AbstractController
     /**
      * @Route("/{id}", name="app_material_resource_category_delete", methods={"POST"})
      */
-    public function delete(Request $request, MaterialResourceCategory $materialResourceCategory, MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
+    public function delete(Request $request, MaterialResourceCategory $materialResourceCategory, MaterialResourceCategoryRepository $materialResourceCategoryRepository,ManagerRegistry $doctrine): Response
     {
-        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($this->getDoctrine());
-        $activitiesMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
+        $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
+        $activitiesMaterialResourceRepository = new ActivityMaterialResourceRepository($doctrine);
 
-        $em=$this->getDoctrine()->getManager();
+        $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresourcecategory' => $materialResourceCategory]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);

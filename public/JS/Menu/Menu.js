@@ -1,4 +1,5 @@
 const mobileScreen = window.matchMedia("(max-width: 990px )");
+var IS_MENU_DISPLAYED = true;
 
 /**
  * Function call at the loading of the pages
@@ -49,5 +50,24 @@ window.addEventListener('DOMContentLoaded', () => {
     //});
 
 
+function displayMenu(buttonThis) {
+    
+    buttonThis.classList.toggle('opened');
+    buttonThis.setAttribute('aria-expanded', buttonThis.classList.contains('opened'));
+    dashboardNav = document.getElementById('dashboard-nav');
+    if(IS_MENU_DISPLAYED) {
+        //dashboardNav.style.animation = 'displayMenu 1s forward';
+        //dashboardNav.style.visibility = 'hidden'
+        //dashboardNav.style.opacitiy = '0'
+        IS_MENU_DISPLAYED = false;
+        dashboardNav.style.animation = "hideMenu 1s forwards"
 
+    } 
+    else {
+        //dashboardNav.style.animation = 'hideMenu 1s forward';
+        dashboardNav.style.animation = "displayMenu 1s forwards"
+        IS_MENU_DISPLAYED = true;
+
+    }
+}
 

@@ -23,7 +23,7 @@ class ConnexionController extends AbstractController
     // POST 
     public function connexionPost(Request $request, ManagerRegistry $doctrine)
     {
-        $userRepository = new UserRepository($this->getDoctrine());
+        $userRepository = new UserRepository($doctrine);
         $username = $request->request->get('username');
         $password = $request->request->get('password');
         $user     = $userRepository->findOneBy(['username' => $username]);
