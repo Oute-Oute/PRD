@@ -704,6 +704,7 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
         document.getElementById('eventClicked').value = JSON.stringify(event);
         updateEventsAppointment(event)
         calendar.getEvents().forEach((currentEvent) => {
+          currentEvent._def.ui.textColor = "#fff";
           currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
           currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
           currentEvent.setEnd(currentEvent.end);
@@ -716,6 +717,7 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
       var modifyEvent = event.event;
       updateEventsAppointment(modifyEvent)
       calendar.getEvents().forEach((currentEvent) => {
+        currentEvent._def.ui.textColor = "#fff";
         currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
         currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
         currentEvent.setEnd(currentEvent.end);
@@ -882,6 +884,7 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
 
   let listCurrentEvent = calendar.getEvents();
   listCurrentEvent.forEach((currentEvent) => {
+    currentEvent._def.ui.textColor = "#fff";
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
@@ -980,6 +983,7 @@ function undoEvent() {
     createCalendar(headerResources, 'recreate');
   }
   calendar.getEvents().forEach((currentEvent) => {
+    currentEvent._def.ui.textColor = "#fff";
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
@@ -1723,6 +1727,73 @@ function displayPanelErrorMessages() {
 
 }
 
+function highlightAppointmentOnMouseOver(event){
+  var appointmentId = event.id.split("-")[1];
+  console.log(event.id, appointmentId)
+  calendar.getEvents().forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(scheduledActivity._def.ui.borderColor != "#ffbf00"){
+        scheduledActivity._def.ui.textColor = "#212529";
+        if(RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)"){
+          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+        }
+        else {
+          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+        }
+        scheduledActivity._def.ui.borderColor = "#ffbf01";
+      }
+      scheduledActivity.setEnd(scheduledActivity.end);
+    }
+  })
+}
+
+function highlightAppointmentOnMouseOut(event){
+  var appointmentId = event.id.split("-")[1];
+  console.log(event.id, appointmentId)
+  calendar.getEvents().forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(scheduledActivity._def.ui.borderColor == "#ffbf01"){
+        scheduledActivity._def.ui.textColor = "#fff";
+        scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
+        scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
+      }
+      scheduledActivity.setEnd(scheduledActivity.end);
+    }
+  })
+}
+
+function highlightAppointmentOnClick(event){
+  var appointmentId = event.id.split("-")[1];
+  console.log(event.id, appointmentId)
+  calendar.getEvents().forEach((scheduledActivity) => {
+    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
+      if(scheduledActivity._def.ui.borderColor == "#ffbf00"){
+        scheduledActivity._def.ui.textColor = "#fff";
+        scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
+        scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
+      }
+      else{
+        scheduledActivity._def.ui.textColor = "#212529";
+        if(RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)"){
+          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+        }
+        else {
+          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+        }
+        scheduledActivity._def.ui.borderColor = "#ffbf00";
+      }
+    }
+    else {
+      if(scheduledActivity._def.ui.borderColor == "#ffbf00"){
+        scheduledActivity._def.ui.textColor = "#fff";
+        scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
+        scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
+      }
+    }
+    scheduledActivity.setEnd(scheduledActivity.end);
+  })
+}
+
 /**
  * Update the Panel of List error by removing all notifications and re-creating it with the new informations. 
  */
@@ -1740,7 +1811,7 @@ function updatePanelErrorMessages() {
       div.setAttribute('class', 'alert alert-warning');
       div.setAttribute('role', 'alert');
       div.setAttribute('id', 'notification' + 'unplanned');
-      div.setAttribute('style', 'display: flex; flex-direction : column;');
+      div.setAttribute('style', 'display: flex; flex-direction : column; cursor: pointer;');
       var divRow = document.createElement('divRow');
       divRow.setAttribute('style', 'display: flex; flex-direction : row; position:relative');
       div.append(divRow);
@@ -1781,8 +1852,11 @@ function updatePanelErrorMessages() {
         var div = document.createElement('div');                      //Creating the div for the Appointment
         div.setAttribute('class', 'alert alert-warning');
         div.setAttribute('role', 'alert');
-        div.setAttribute('id', 'notification' + i);
-        div.setAttribute('style', 'display: flex; flex-direction : column;');
+        div.setAttribute('id', 'appointment-' + listErrorMessages.listScheduledAppointment[i].appointmentId);
+        div.setAttribute('onmouseover', 'highlightAppointmentOnMouseOver(this)');
+        div.setAttribute('onmouseout', 'highlightAppointmentOnMouseOut(this)');
+        div.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        div.setAttribute('style', 'display: flex; flex-direction : column; cursor: pointer;');
         var divRow = document.createElement('divRow');
         divRow.setAttribute('style', 'display: flex; flex-direction : row; position : relative; justify-content:space-between;');
         div.append(divRow);
