@@ -1790,6 +1790,7 @@ function updatePanelErrorMessages() {
     }
 
     for (let i = 0; i < listErrorMessages.listScheduledAppointment.length; i++) {                    //All Appointments of the day
+      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaa')
       if (repertoryErrors.repertory.includes(i)) {                      //if the Appointment[i] has an error we have to display it
         var indexAppointment = repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
         var div = document.createElement('div');                      //Creating the div for the Appointment
@@ -1981,7 +1982,7 @@ function updatePanelErrorMessages() {
           }
         }
       }
-      document.getElementById('lateral-panel-bloc').appendChild(div); //Append all the messages into the lateral-panel-bloc
+      document.getElementById('lateral-panel-bloc').append(div); //Append all the messages into the lateral-panel-bloc
     }
   }
   else {     //No errors
