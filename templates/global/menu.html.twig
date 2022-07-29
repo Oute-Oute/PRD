@@ -1,5 +1,4 @@
 {% if app.user != null %}
-<div id = "menu">
 
 	<div id = "menu-button-container">
 	    <button id = "menu-button" class="menu-button" onclick="displayMenu(this)" aria-label="Main Menu">
@@ -14,12 +13,9 @@
 	<div id = "dashboard-nav" class="dashboard-nav">
 		<nav onclick='filterShowUser()' class="dashboard-nav-list">
 			<div id="menu-top">
-		
 				<header>
-
 					<a id="title" href="/ConsultationPlanning" class="brand-logo">
 						<img src="/img/hospital_icon.svg">
-
 						<span>HOSPITOOL</span>
 					</a>
 				</header>
@@ -77,12 +73,11 @@
 
 					Se déconnecter
 				</a>
-			{% endif %}
 
 		</nav>
 	</div>
 	
 
-</div>
+			{% endif %}
 
 

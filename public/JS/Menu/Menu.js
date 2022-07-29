@@ -9,6 +9,9 @@ var IS_MENU_DISPLAYED = true;
 window.addEventListener('DOMContentLoaded', () => {   
     var path = window.location.pathname;
     var page = path.split("/").pop();
+    
+
+
 
     switch (page) {
         case 'appointments':
@@ -56,18 +59,12 @@ function displayMenu(buttonThis) {
     buttonThis.setAttribute('aria-expanded', buttonThis.classList.contains('opened'));
     dashboardNav = document.getElementById('dashboard-nav');
     if(IS_MENU_DISPLAYED) {
-        //dashboardNav.style.animation = 'displayMenu 1s forward';
-        //dashboardNav.style.visibility = 'hidden'
-        //dashboardNav.style.opacitiy = '0'
         IS_MENU_DISPLAYED = false;
-        dashboardNav.style.animation = "hideMenu 1s forwards"
-
+        dashboardNav.style.animation = "displayMenu 0.7s forwards"
     } 
     else {
-        //dashboardNav.style.animation = 'hideMenu 1s forward';
-        dashboardNav.style.animation = "displayMenu 1s forwards"
+        dashboardNav.style.animation = "hideMenu 0.7s forwards"
         IS_MENU_DISPLAYED = true;
-
     }
 }
 
