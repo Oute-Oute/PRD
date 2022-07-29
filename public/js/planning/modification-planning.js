@@ -1232,35 +1232,37 @@ function getMessageDelay(listScheduledActivities, scheduledActivity) {
   listSuccessors.forEach((successor) => { //browse all successors
     if (successor.idactivitya == scheduledActivity._def.extendedProps.activity) { //if the scheduled activity has a successor
       listScheduledActivities.forEach((scheduledActivityB) => { //browse all events
-        if (successor.idactivityb == scheduledActivityB._def.extendedProps.activity) { //if the scheduled activity check is a successor of the scheduled activity verified
-          //we check the delay between the two scheduled activities
-          var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime()) / (60 * 1000);
-          if (duration < successor.delaymin) {
-            //if the delay is shorter, we set an error message
-            var message = "";
-            if (duration < 0) {
-              duration = duration * (-1);
-              if (successor.delaymin == 0) {
-                message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer après.";
+        if(scheduledActivityB._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment){
+          if (successor.idactivityb == scheduledActivityB._def.extendedProps.activity) { //if the scheduled activity check is a successor of the scheduled activity verified
+            //we check the delay between the two scheduled activities
+            var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime()) / (60 * 1000);
+            if (duration < successor.delaymin) {
+              //if the delay is shorter, we set an error message
+              var message = "";
+              if (duration < 0) {
+                duration = duration * (-1);
+                if (successor.delaymin == 0) {
+                  message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer après.";
+                }
+                else {
+                  message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer au minimum " + successor.delaymin + " minutes après.";
+                }
               }
               else {
-                message = scheduledActivityB._def.title + " commence " + duration + " minutes avant la fin de " + scheduledActivity._def.title + " alors qu'elle devrait commencer au minimum " + successor.delaymin + " minutes après.";
+                if (duration == 0) {
+                  message = "Il n'y a pas de délai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " alors qu'il devrait être au minimum de " + successor.delaymin + " minutes.";
+                }
+                else {
+                  message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est inférieur au délai minimum de " + successor.delaymin + " minutes.";
+                }
               }
+              messages.push(message);
             }
-            else {
-              if (duration == 0) {
-                message = "Il n'y a pas de délai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " alors qu'il devrait être au minimum de " + successor.delaymin + " minutes.";
-              }
-              else {
-                message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est inférieur au délai minimum de " + successor.delaymin + " minutes.";
-              }
+            if (duration > successor.delaymax) {
+              //if the delay is longer, we set an error message
+              var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est supèrieur au délai maximum de " + successor.delaymax + " minutes.";
+              messages.push(message);
             }
-            messages.push(message);
-          }
-          if (duration > successor.delaymax) {
-            //if the delay is longer, we set an error message
-            var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est supèrieur au délai maximum de " + successor.delaymax + " minutes.";
-            messages.push(message);
           }
         }
       })

@@ -58,7 +58,7 @@ class ModificationPlanningController extends AbstractController
         $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $listAppointment = $this->getAppointment($doctrine, $dateModified);
         $listscheduledActivity = $this->getScheduledActivity($doctrine, $SAR, $dateModified);
-        $listsuccessionJSON = $this->getSuccessorJSON($doctrine);
+        $listSuccessorJSON = $this->getSuccessorJSON($doctrine);
         $listActivitiesJSON = $this->getActivityJSON($doctrine);
         $listAppointmentJSON = $this->getAppointmentJSON($doctrine, $dateModified);
         $listMaterialResourceJSON = $this->getMaterialResourcesJSON($doctrine);
@@ -86,7 +86,7 @@ class ModificationPlanningController extends AbstractController
             'currentdate' => $dateModified,
             'listScheduledActivitiesJSON' => $listscheduledActivity,
             'listAppointments' => $listAppointment,
-            'listSuccessorsJSON' => $listsuccessionJSON,
+            'listSuccessorsJSON' => $listSuccessorJSON,
             'listActivitiesJSON' => $listActivitiesJSON,
             'listAppointmentsJSON' => $listAppointmentJSON,
             'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
