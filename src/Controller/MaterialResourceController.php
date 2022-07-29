@@ -203,17 +203,17 @@ class MaterialResourceController extends AbstractController
         }
     
 }
-public function unavailability(Request $request) {
+public function unavailability(Request $request,ManagerRegistry $doctrine) {
 
     $param = $request->request->all(); 
     $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
     $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
 
-    $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
+    $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
     $unavailabilities = $unavailabilitiesRepository->findAll();
-    $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
+    $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
     $unavailabilitiesMaterial = $unavailabilitiesMaterialRepository->findAll();
-    $materialResourcesRepository = new MaterialResourceRepository($this->getDoctrine());
+    $materialResourcesRepository = new MaterialResourceRepository($doctrine);
     $materialResource = $materialResourcesRepository->findBy(['id' => $param['id-material-resource-unavailability']]);
 
     
@@ -327,8 +327,8 @@ public function unavailability(Request $request) {
             if (isset($_POST['idUnavailability'])) {
                 $idUnavailability = $_POST['idUnavailability'];
 
-                $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
-                $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
+                $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+                $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
                 $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $idUnavailability]);
                 $unavailabilityMaterialToDelete = $unavailabilitiesMaterialRepository->findBy(['id' => $idMaterialAvailability]);
         
@@ -345,7 +345,7 @@ public function unavailability(Request $request) {
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
-    public function delete(Request $request, EntityManagerInterface $entityManager, MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
+    public function delete(MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $unavailabilitiesMaterialRepository = new UnavailabilityMaterialResourceRepository($doctrine);
@@ -360,7 +360,6 @@ public function unavailability(Request $request) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
         $em->flush();
-        if ($this->isCsrfTokenValid('delete'.$materialResource->getId(), $request->request->get('_token'))) {
             $listCategoryOfMaterialResource = $categoryOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
 
             foreach($listCategoryOfMaterialResource as $categoryOfMaterialResource)
@@ -395,7 +394,7 @@ public function unavailability(Request $request) {
             $em->flush();
 
             $materialResourceRepository->remove($materialResource, true);
-        }
+        
 
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }

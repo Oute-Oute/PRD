@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @Route("/human/resource/category")
@@ -31,7 +32,7 @@ class HumanResourceCategoryController extends AbstractController
     /**
      * @Route("/new", name="app_human_resource_category_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
+    public function new(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
             $humanResourceCateg = new HumanResourceCategory();
@@ -39,7 +40,7 @@ class HumanResourceCategoryController extends AbstractController
             $name = $param['name'];
 
             $humanResourceCateg->setCategoryname($name);
-            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($this->getDoctrine());
+            $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
             $humanResourceCategoryRepository->add($humanResourceCateg, true);
 
             return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
@@ -75,12 +76,12 @@ class HumanResourceCategoryController extends AbstractController
     /**
      * @Route("/{id}", name="app_human_resource_category_delete", methods={"POST"})
      */
-    public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
+    public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository,ManagerRegistry $doctrine): Response
     {
-        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($this->getDoctrine());
-        $activitiesHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
+        $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
+        $activitiesHumanResourceRepository = new ActivityHumanResourceRepository($doctrine);
 
-        $em=$this->getDoctrine()->getManager();
+        $em=$doctrine->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);

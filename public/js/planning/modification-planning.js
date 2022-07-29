@@ -412,21 +412,6 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
-function changePlanning() {
-  var header =
-    document.getElementById("displayList").options[
-      document.getElementById("displayList").selectedIndex
-    ].text; //get the type of resources to display in the list
-  headerResources = header; //update the header of the list
-  createCalendar(header); //rerender the calendar with the new type of resources
-  let filter = document.getElementById("filterId"); //get the filter
-  filter.style.display = "none"; //hide the filter
-  while (filter.firstChild) {
-    //while there is something in the filter
-    filter.removeChild(filter.firstChild); //remove the old content
-  }
-}
-
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
 function updateEventsAppointment(modifyEvent) {
   listeHumanResources = JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r', ' '));
@@ -529,25 +514,25 @@ function DisplayAppointmentInformation(eventClicked) {
     //Div to put input in row 
     var divRow = document.createElement('div');
     divRow.setAttribute('style', 'display: flex; flex-direction : column;');
-    div.appendChild(divRow);
+    div.append(divRow);
 
     var successor = document.createElement('label');
     successor.setAttribute('class', 'label-event-solid');
     successor.innerHTML = 'Successeur : ' + listSuccessorsActivitiesPathway[i].nameactivityb;
-    divRow.appendChild(successor);
+    divRow.append(successor);
 
     var inputDelaymin = document.createElement('label');
     inputDelaymin.setAttribute('class', 'label-event-solid');
     inputDelaymin.innerHTML = 'Délai minimum : ' + listSuccessorsActivitiesPathway[i].delaymin + ' min';
-    divRow.appendChild(inputDelaymin);
+    divRow.append(inputDelaymin);
 
     var inputDelaymax = document.createElement('label');
     inputDelaymax.setAttribute('class', 'label-event-solid');
     inputDelaymax.innerHTML = 'Délai maximum : ' + listSuccessorsActivitiesPathway[i].delaymax + ' min';
-    divRow.appendChild(inputDelaymax);
+    divRow.append(inputDelaymax);
 
 
-    document.getElementById('input-container-onWhite-pathway').appendChild(div);
+    document.getElementById('input-container-onWhite-pathway').append(div);
   }
 
 
@@ -643,7 +628,6 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
       hour12: false,
     },
     resourceAreaWidth: "25%",
-    resourceAreaHeaderContent: headerResources,
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
     eventClick: function (event) {
@@ -1134,7 +1118,6 @@ function updateErrorMessages() {
       }
     }
   })
-  console.log(listErrorMessages, calendar.getEvents());
   updatePanelErrorMessages(); //update the panel error messages
 }
 
@@ -1232,7 +1215,7 @@ function getMessageDelay(listScheduledActivities, scheduledActivity) {
   listSuccessors.forEach((successor) => { //browse all successors
     if (successor.idactivitya == scheduledActivity._def.extendedProps.activity) { //if the scheduled activity has a successor
       listScheduledActivities.forEach((scheduledActivityB) => { //browse all events
-        if(scheduledActivityB._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment){
+        if (scheduledActivityB._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment) {
           if (successor.idactivityb == scheduledActivityB._def.extendedProps.activity) { //if the scheduled activity check is a successor of the scheduled activity verified
             //we check the delay between the two scheduled activities
             var duration = (scheduledActivityB.start.getTime() - scheduledActivity.end.getTime()) / (60 * 1000);
@@ -1763,19 +1746,20 @@ function updatePanelErrorMessages() {
       div.append(divRow);
       var img = document.createElement("img");
       img.src = "/img/exclamation-triangle-fill.svg";
+      img.style.height = "32px";
       var text = document.createElement('h3');
       text.innerHTML = 'Rendez-vous non planifiés';
 
       var expandButton = document.createElement('img');
       expandButton.setAttribute('src', '/img/chevron_down.svg');
       expandButton.setAttribute('id', 'expandButton');
-      expandButton.setAttribute('style', 'background:none;height:50%;position:absolute;right:0%;display:none');
+      expandButton.setAttribute('style', 'background:none;height:50%;position:absolute;right:0%; display:none ;cursor: pointer;');
       expandButton.setAttribute('onclick', "reduceNotification(" + div.id + ")");
 
       var reduceButton = document.createElement('img');
       reduceButton.setAttribute('src', '/img/chevron_up.svg');
       reduceButton.setAttribute('id', 'reduceButton');
-      reduceButton.setAttribute('style', 'background:none;height:50%;position:absolute;right:0%;');
+      reduceButton.setAttribute('style', 'background:none;height:50%;position:absolute;right:0%;cursor: pointer;');
       reduceButton.setAttribute('onclick', "reduceNotification(" + div.id + ")");
       divRow.append(img, text, reduceButton, expandButton);
 
@@ -1785,14 +1769,13 @@ function updatePanelErrorMessages() {
         var messageUnscheduledAppointment = document.createElement('earliestAppointmentDate').innerHTML = '-' + oneMessageUnscheduledAppointment;
         divColumn.append(messageUnscheduledAppointment);
       })
-      document.getElementById('lateral-panel-bloc').appendChild(div);
+      document.getElementById('lateral-panel-bloc').append(div);
       //reduceButton
 
 
     }
 
-    for (let i = 0; i < listErrorMessages.listScheduledAppointment.length; i++) {                    //All Appointments of the day
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaa')
+    for (let i = 0; i < listErrorMessages.listScheduledAppointment.length; i++) {                                       //All Appointments of the day
       if (repertoryErrors.repertory.includes(i)) {                      //if the Appointment[i] has an error we have to display it
         var indexAppointment = repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
         var div = document.createElement('div');                      //Creating the div for the Appointment
@@ -1801,23 +1784,23 @@ function updatePanelErrorMessages() {
         div.setAttribute('id', 'notification' + i);
         div.setAttribute('style', 'display: flex; flex-direction : column;');
         var divRow = document.createElement('divRow');
-        divRow.setAttribute('style', 'display: flex; flex-direction : row; position : relative');
+        divRow.setAttribute('style', 'display: flex; flex-direction : row; position : relative; justify-content:space-between;');
         div.append(divRow);
         var img = document.createElement("img");
         img.src = "/img/exclamation-triangle-fill.svg";
+        img.style.height = "32px";
         var text = document.createElement('h3');
         text.innerHTML = listErrorMessages.listScheduledAppointment[i].patientName + ' / ' + listErrorMessages.listScheduledAppointment[i].pathwayName;
-
         var reduceButtonAppointment = document.createElement('img');
         reduceButtonAppointment.setAttribute('src', '/img/chevron_up.svg');
         reduceButtonAppointment.setAttribute('id', 'reduceButtonnotification' + i)
-        reduceButtonAppointment.setAttribute('style', 'background:none;height:40%;position:absolute;right:0%;');
+        reduceButtonAppointment.setAttribute('style', 'background:none;height:24px;margin-left:5%;cursor: pointer;');
         reduceButtonAppointment.setAttribute('onclick', "reduceNotification(" + div.id + ")");
 
         var expandButtonAppointment = document.createElement('img');
         expandButtonAppointment.setAttribute('src', '/img/chevron_down.svg');
         expandButtonAppointment.setAttribute('id', 'expandButtonnotification' + i)
-        expandButtonAppointment.setAttribute('style', 'background:none;height:40%;position:absolute;right:0%;display:none');
+        expandButtonAppointment.setAttribute('style', 'background:none;height:24px;display:none;margin-left:5%;cursor: pointer;');
         expandButtonAppointment.setAttribute('onclick', "reduceNotification(" + div.id + ")");
 
         divRow.append(img, text, reduceButtonAppointment, expandButtonAppointment);
@@ -1983,8 +1966,8 @@ function updatePanelErrorMessages() {
             div.append(space);
           }
         }
+        document.getElementById('lateral-panel-bloc').append(div); //Append all the messages into the lateral-panel-bloc
       }
-      document.getElementById('lateral-panel-bloc').append(div); //Append all the messages into the lateral-panel-bloc
     }
   }
   else {     //No errors
@@ -1994,7 +1977,7 @@ function updatePanelErrorMessages() {
     div.setAttribute('style', 'text-align: center');
     var message = document.createElement('message').innerHTML = "Aucune erreur détectée.";  //Display 'no error' message
     div.append(message);
-    document.getElementById('lateral-panel-bloc').appendChild(div);
+    document.getElementById('lateral-panel-bloc').append(div);
 
     updateColorErrorButton(false);  //Update color of the button                                                    
   }
@@ -2149,36 +2132,8 @@ function updateColorErrorButton(state) {
 
 }
 
-function categoryShow() {
-  var displayButtonStyle = document.getElementById('displayCategory').style;
-  var labelDisplayButtonStyle = document.getElementById('labelDisplayCategory');
-
-  if (resourcesColumns.length == 1) {
-    displayButtonStyle.opacity = 0.7;
-    labelDisplayButtonStyle.textContent = "Cacher Catégories";
-    resourcesColumns = [{
-      headerContent: "Nom", //set the label of the column
-      field: "title", //set the field of the column
-    },
-    {
-      headerContent: "Catégories", //set the label of the column
-      field: "categoriesString", //set the field of the column
-    }]
-
-  }
-  else {
-    displayButtonStyle.opacity = 1;
-    labelDisplayButtonStyle.textContent = "Afficher Catégories";
-    resourcesColumns = [{
-      headerContent: "Nom", //set the label of the column
-      field: "title", //set the field of the column
-    }]
-  }
-  createCalendar(headerResources);
-}
 
 function reduceNotification(childs) {
-  console.log(childs.id)
   if (childs.id == 'notificationunplanned') {
     if (childs.childNodes[1].style.display == '') {
       for (let i = 1; i < childs.childNodes.length; i++) {
