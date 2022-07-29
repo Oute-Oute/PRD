@@ -119,7 +119,6 @@ function initSuccessorsList() {
                 SUCCESSORS[i].idActivityB = 'activity' + j
             }
         }
-        console.log(PATHWAY.successors[i])
         SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
         SUCCESSORS[i].nameActivityB = PATHWAY.successors[i].nameActivityB
 
@@ -1100,7 +1099,7 @@ function fillSuccessorList() {
             inputMax.setAttribute('type', 'number');
             inputMax.setAttribute('min', 0);
             inputMax.setAttribute('step', 1);
-            inputMax.setAttribute('value', 10);
+            inputMax.setAttribute('value', 360);
             inputMax.style.width = "30%"
 
             divMax.appendChild(labelMax);

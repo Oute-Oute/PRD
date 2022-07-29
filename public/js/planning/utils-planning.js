@@ -322,3 +322,34 @@ function zoomChange() {
   newZoom = document.getElementById('zoom').value;
   calendar.setOption('slotDuration', newZoom)
 }
+
+function categoryShow() {
+  var displayButtonStyle = document.getElementById('displayCategory').style;
+  var labelDisplayButtonStyle = document.getElementById('labelDisplayCategory');
+
+  if (resourcesColumns.length == 1) {
+    displayButtonStyle.opacity = 0.7;
+    labelDisplayButtonStyle.textContent = "Cacher Catégories";
+    resourcesColumns = [{
+      headerContent: "Nom", //set the label of the column
+      field: "title", //set the field of the column
+    },
+    {
+      headerContent: "Catégories", //set the label of the column
+      field: "categoriesString", //set the field of the column
+    }]
+    createCalendar(headerResources);
+    calendar.setOption('resourceAreaWidth','25%');
+  }
+  else {
+    displayButtonStyle.opacity = 1;
+    labelDisplayButtonStyle.textContent = "Afficher Catégories";
+    resourcesColumns = [{
+      headerContent: "Nom", //set the label of the column
+      field: "title", //set the field of the column
+    }]
+    createCalendar(headerResources);
+    calendar.setOption('resourceAreaWidth','15%');
+  }
+
+}
