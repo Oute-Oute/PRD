@@ -133,6 +133,7 @@
 	 <script>
 	$( "#autocompleteInputMaterialName" ).autocomplete({
 	source: "/autocompleteMR",
+	minLength: 3,
 	select: function( event, ui ) {
 		filterResource('material', ui.item);
 	}
@@ -140,6 +141,7 @@
 	);
     	$( "#autocompleteInputMaterialNameCategory" ).autocomplete({
 	source: mcrArray,
+	minLength: 3,
 	select: function( event, ui ) {
 		filterMaterialResourceCategory('autocompleteInputMaterialNameCategory', ui.item.value);
 	}
