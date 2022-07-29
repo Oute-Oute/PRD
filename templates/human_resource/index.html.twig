@@ -133,7 +133,20 @@
 
 
 	<script>
-		<<<<<<<HEAD$("#autocompleteInputHumanName").autocomplete({source:"/autocompleteHR",select:function(event,ui){filterResource("human",ui.item);}});$("#autocompleteInputHumanNameCategory").autocomplete({source:hcrArray,select:function(event,ui){filterHumanResourceCategory('autocompleteInputHumanNameCategory',ui.item.value);}});=======$("#autocompleteInputHumanName").autocomplete({source:hrArray,select:function(event,ui){filterHumanResource('autocompleteInputHumanName',ui.item.value);}});$("#autocompleteInputHumanNameCategory").autocomplete({source:hcrArray,select:function(event,ui){filterHumanResourceCategory('autocompleteInputHumanNameCategory',ui.item.value);}});>>>>>>> bef1067d69b1d96be0252f6c1e420264552341ae
+	$( "#autocompleteInputHumanName" ).autocomplete({
+	source: "/autocompleteHR",
+	select: function( event, ui ) {
+		filterResource("human", ui.item);
+	}
+	}
+	);
+    	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
+	source: hcrArray,
+	select: function( event, ui ) {
+		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
+	}
+	}
+	);
 	</script>
 
 {% endblock %}
