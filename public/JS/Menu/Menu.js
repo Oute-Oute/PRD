@@ -60,12 +60,12 @@ function displayMenu(buttonThis) {
         //dashboardNav.style.visibility = 'hidden'
         //dashboardNav.style.opacitiy = '0'
         IS_MENU_DISPLAYED = false;
-        dashboardNav.style.animation = "hideMenu 1s forwards"
+        dashboardNav.style.animation = "hideMenu 0.7s forwards"
 
     } 
     else {
         //dashboardNav.style.animation = 'hideMenu 1s forward';
-        dashboardNav.style.animation = "displayMenu 1s forwards"
+        dashboardNav.style.animation = "displayMenu 0.7s forwards"
         IS_MENU_DISPLAYED = true;
 
     }

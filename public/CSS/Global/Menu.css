@@ -470,6 +470,7 @@ h1,
 #menu {
     display : flex;
     position : absolute;
+
 }
 
   .menu {
@@ -525,30 +526,32 @@ h1,
 
   }
 #dashboard-nav {
-    position: relative;
+    position: absolute;
     z-index: 1;
-    visibility: visible;
     opacity: 1;
-    transition: visibility 0.5s, opacity 5s linear;
 }
 
 @keyframes displayMenu {
     0% {
-        visibility: visible;
+        display : flex;
         opacity: 0;
     }
     100% {
         opacity: 1;
-        visibility: visible;
+        display : flex;
     }
 }
 
 @keyframes hideMenu {
     99% {
-        visibility: visible;
+        display : flex;
+        width : auto;
+        height : auto;
     }
     100% {
         opacity: 0;
-        visibility: hidden;
+        width : 0px;
+        height : 0px;
     }
 }
+
