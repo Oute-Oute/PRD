@@ -130,19 +130,20 @@
 	{{ include ('material_resource/edit_unavailability.html.twig')}}
 
 
-	<script>
-    $("#autocompleteInputMaterialName").autocomplete({
-        source:"/autocompleteMR",
-        select:function(event,ui){
-            filterResource('material',ui.item);
-        }
-    });
-    
-    $("#autocompleteInputMaterialNameCategory").autocomplete({
-        source:mcrArray,
-        select:function(event,ui){
-            filterMaterialResourceCategory('autocompleteInputMaterialNameCategory',ui.item.value);
-        }
-    });
-    <script>
+	 <script>
+	$( "#autocompleteInputMaterialName" ).autocomplete({
+	source: "/autocompleteMR",
+	select: function( event, ui ) {
+		filterResource('material', ui.item);
+	}
+	}
+	);
+    	$( "#autocompleteInputMaterialNameCategory" ).autocomplete({
+	source: mcrArray,
+	select: function( event, ui ) {
+		filterMaterialResourceCategory('autocompleteInputMaterialNameCategory', ui.item.value);
+	}
+	}
+	);
+	</script>
 </script>{% endblock %}
