@@ -1061,7 +1061,8 @@ function updateErrorMessages() {
 
                 //update the data
                 existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
-                  existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
+                existingScheduledActivity.messageAppointmentActivityAlreadyScheduled = getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity);
+                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
                 existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity); //set data for category material resources
@@ -1076,6 +1077,7 @@ function updateErrorMessages() {
                 scheduledActivityName: scheduledActivity._def.title,
 
                 messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
+                messageAppointmentActivityAlreadyScheduled: getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity),
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1105,6 +1107,7 @@ function updateErrorMessages() {
             scheduledActivityName: scheduledActivity._def.title,
 
             messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
+            messageAppointmentActivityAlreadyScheduled: getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity),
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1195,6 +1198,23 @@ function getMessageNotFullyScheduled(scheduledActivity) {
 
 
   return message;
+}
+
+/**
+ * 
+ */
+function getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity){
+  var messages = [];
+
+  listScheduledActivities.forEach((appointmentScheduledActivity) => {
+    if(appointmentScheduledActivity._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment && scheduledActivity._def.publicId != appointmentScheduledActivity._def.publicId){
+      if ((scheduledActivity.start > appointmentScheduledActivity.start && scheduledActivity.start < appointmentScheduledActivity.end) || (scheduledActivity.end > appointmentScheduledActivity.start && scheduledActivity.end < appointmentScheduledActivity.end) || (scheduledActivity.start <= appointmentScheduledActivity.start && scheduledActivity.end >= appointmentScheduledActivity.end)) {
+        messages.push(appointmentScheduledActivity.title + " est déjà programé sur le même créneau.");
+      }
+    }
+  })
+
+  return messages;
 }
 
 /**
@@ -1913,6 +1933,16 @@ function updatePanelErrorMessages() {
               div.append(divColumn);
               var messageNotFullyScheduled = document.createElement('messageNotFullyScheduled').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;
               divColumn.append(messageNotFullyScheduled);
+            }
+
+            //messageAppointmentActivityAlreadyScheduled
+            if (listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageAppointmentActivityAlreadyScheduled != []) {
+              listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageAppointmentActivityAlreadyScheduled.forEach((oneMessageAppointmentActivityAlreadyScheduled) => {
+                var divColumn = document.createElement('divColumn');
+                div.append(divColumn);
+                var messageAppointmentActivityAlreadyScheduled = document.createElement('messageAppointmentActivityAlreadyScheduled').innerHTML = '-' + oneMessageAppointmentActivityAlreadyScheduled;
+                divColumn.append(messageAppointmentActivityAlreadyScheduled);
+              })
             }
 
             //messageDelay
