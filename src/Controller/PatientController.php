@@ -71,10 +71,10 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository): Response
+    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository,ManagerRegistry $doctrine): Response
     {
         //suppression des données associées au patient de la table Appointment
-        $appointmentRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Appointment");
+        $appointmentRepository = $doctrine->getManager()->getRepository("App\Entity\Appointment");
         $appointments = $appointmentRepository->findBy(['patient' => $patient]);
 
         foreach($appointments as $appointment)
@@ -82,13 +82,13 @@ class PatientController extends AbstractController
             $date = $appointment->getDayappointment()->format('Y-m-d');
 
             //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
-            $scheduledActivityRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\ScheduledActivity");
+            $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
             $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
 
             foreach($scheduledActivities as $scheduledActivity)
             {
                 //suppression des données associées au patient de la table MaterialResourceScheduled
-                $materialResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
                 $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
                 foreach($allMaterialResourceScheduled as $materialResourceScheduled)
@@ -98,7 +98,7 @@ class PatientController extends AbstractController
 
 
                 //suppression des données associées au patient de la table HumanResourceScheduled
-                $humanResourceScheduledRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
                 $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
                 foreach($allHumanResourceScheduled as $humanResourceScheduled)

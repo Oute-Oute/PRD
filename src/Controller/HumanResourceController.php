@@ -779,16 +779,16 @@ class HumanResourceController extends AbstractController
         return $resourceArray;
     }
 
-    public function unavailability(Request $request) {
+    public function unavailability(Request $request,ManagerRegistry $doctrine) {
 
         $param = $request->request->all(); 
         $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
         $endTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-end-unavailability'].":00"));
-        $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
+        $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
         $unavailabilities = $unavailabilitiesRepository->findAll();
-        $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
+        $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($doctrine);
         $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findAll();
-        $humanResourcesRepository = new HumanResourceRepository($this->getDoctrine());
+        $humanResourcesRepository = new HumanResourceRepository($doctrine);
         $humanResource = $humanResourcesRepository->findBy(['id' => $param['id-human-resource-unavailability']]);
 
         
@@ -812,8 +812,8 @@ class HumanResourceController extends AbstractController
             if (isset($_POST['idUnavailability'])) {
                 $idUnavailability = $_POST['idUnavailability'];
 
-                $unavailabilitiesRepository = new UnavailabilityRepository($this->getDoctrine());
-                $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
+                $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
+                $unavailabilitiesHumanRepository = new UnavailabilityHumanResourceRepository($doctrine);
                 $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $idUnavailability]);
                 $unavailabilityHumanToDelete = $unavailabilitiesHumanRepository->findBy(['id' => $idHumanAvailability]);
         
