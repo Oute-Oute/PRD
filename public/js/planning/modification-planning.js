@@ -412,21 +412,6 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
-function changePlanning() {
-  var header =
-    document.getElementById("displayList").options[
-      document.getElementById("displayList").selectedIndex
-    ].text; //get the type of resources to display in the list
-  headerResources = header; //update the header of the list
-  createCalendar(header); //rerender the calendar with the new type of resources
-  let filter = document.getElementById("filterId"); //get the filter
-  filter.style.display = "none"; //hide the filter
-  while (filter.firstChild) {
-    //while there is something in the filter
-    filter.removeChild(filter.firstChild); //remove the old content
-  }
-}
-
 //fonction qui permet de tester la mise à jour de la liste des events d'un appointment
 function updateEventsAppointment(modifyEvent) {
   listeHumanResources = JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r', ' '));
@@ -643,7 +628,6 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
       hour12: false,
     },
     resourceAreaWidth: "25%",
-    resourceAreaHeaderContent: headerResources,
 
     //permet d'ouvrir la modal pour la modification d'une activité lorsque l'on click dessus
     eventClick: function (event) {
@@ -2149,33 +2133,6 @@ function updateColorErrorButton(state) {
 
 }
 
-function categoryShow() {
-  var displayButtonStyle = document.getElementById('displayCategory').style;
-  var labelDisplayButtonStyle = document.getElementById('labelDisplayCategory');
-
-  if (resourcesColumns.length == 1) {
-    displayButtonStyle.opacity = 0.7;
-    labelDisplayButtonStyle.textContent = "Cacher Catégories";
-    resourcesColumns = [{
-      headerContent: "Nom", //set the label of the column
-      field: "title", //set the field of the column
-    },
-    {
-      headerContent: "Catégories", //set the label of the column
-      field: "categoriesString", //set the field of the column
-    }]
-
-  }
-  else {
-    displayButtonStyle.opacity = 1;
-    labelDisplayButtonStyle.textContent = "Afficher Catégories";
-    resourcesColumns = [{
-      headerContent: "Nom", //set the label of the column
-      field: "title", //set the field of the column
-    }]
-  }
-  createCalendar(headerResources);
-}
 
 function reduceNotification(childs) {
   console.log(childs.id)
