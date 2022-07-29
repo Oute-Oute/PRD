@@ -76,7 +76,6 @@ function filterShow() {
             case "Ressources Humaines":
               input.onchange = function () {
                 //set the onchange event
-                console.log(allCategories);
                 changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
               };
               if (input.checked == false) {
@@ -204,6 +203,7 @@ function changePlanning() {
     firstCreationFilter=true;
 
   }
+  document.querySelectorAll("#header-type")[0].innerText=headerResources;
 }
 
 /**

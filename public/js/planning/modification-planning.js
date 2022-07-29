@@ -604,12 +604,8 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
     eventMinWidth: 1, //set the minimum width of the event
     resourceAreaColumns: resourcesColumns, //set the type of columns for the resources
 
-    //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
-    headerToolbar: {
-      start: null,
-      center: "title",
-      end: null,
-    },
+    //modifie l'affichage de l'entête du calendar pour ne pas l'afficher
+    headerToolbar: false,
 
     //modifie l'affichage des heures de la journée
     slotLabelFormat: {
@@ -1742,7 +1738,6 @@ function displayPanelErrorMessages() {
 
 function highlightAppointmentOnMouseOver(event){
   var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
   calendar.getEvents().forEach((scheduledActivity) => {
     if(scheduledActivity._def.extendedProps.appointment == appointmentId){
       if(scheduledActivity._def.ui.borderColor != "#ffbf00"){
@@ -1762,7 +1757,6 @@ function highlightAppointmentOnMouseOver(event){
 
 function highlightAppointmentOnMouseOut(event){
   var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
   calendar.getEvents().forEach((scheduledActivity) => {
     if(scheduledActivity._def.extendedProps.appointment == appointmentId){
       if(scheduledActivity._def.ui.borderColor == "#ffbf01"){
@@ -1777,7 +1771,6 @@ function highlightAppointmentOnMouseOut(event){
 
 function highlightAppointmentOnClick(event){
   var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
   calendar.getEvents().forEach((scheduledActivity) => {
     if(scheduledActivity._def.extendedProps.appointment == appointmentId){
       if(scheduledActivity._def.ui.borderColor == "#ffbf00"){
