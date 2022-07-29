@@ -854,7 +854,7 @@ function filterPathway(selected=null){
 
 function showActivitiesPathway() {
     VALIDATE = 0;
-    document.getElementById('title-pathway-activities').innerHTML = "Nouveau parcours";
+    document.getElementById('title-pathway-activities').innerHTML = "Lier les activités";
     drawActivitiesGraph();
     fillSuccessorList();
     drawArrows();
@@ -966,6 +966,7 @@ function drawArrows(){
     for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
+       
         l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
         lines.push(l);
     }
