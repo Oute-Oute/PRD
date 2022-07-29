@@ -138,13 +138,6 @@ function backToConsultation() {
     window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
   }
 }
-
-function zoomChange() {
-  newZoom = document.getElementById('zoom').value;
-  calendar.setOption('slotDuration', newZoom)
-}
-
-
 /**
  * Open the modal to Add a pathway
  */
