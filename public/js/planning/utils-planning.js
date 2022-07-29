@@ -180,6 +180,10 @@ function changeFilter(id, allCategories, type) {
  * @brief This function is called when we want to change the type of the calendar (Patients, Resources...)
  */
 function changePlanning() {
+
+  if (document.getElementById("filterId").style.display != "none") {
+    filterShow(); 
+  }
   var header =
     document.getElementById("displayList").options[
       document.getElementById("displayList").selectedIndex
