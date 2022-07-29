@@ -50,8 +50,6 @@ function alertOnload() {
 document.addEventListener("DOMContentLoaded", function () {
   //Créer le calendar sous les conditions que l'on souhaite
   createCalendar(headerResources);
-  filterShow()
-  filterShow()
 });
 
 function unshowDiv(id) {
