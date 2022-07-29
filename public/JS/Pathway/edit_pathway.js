@@ -248,7 +248,11 @@ function addActivity() {
         alert("La durée de l'activité n'est pas correcte ")
     }
 
+    console.log(RESOURCES_BY_ACTIVITIES)
+    console.log(ACTIVITY_IN_PROGRESS)
+
     if (verif) {
+        // if the activity is open in edit mode
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityduration = document.getElementById('input-duration').value
@@ -265,7 +269,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
                 res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
                 res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
-                res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
+                res.already = false//ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
             }
@@ -278,7 +282,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
                 res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
                 res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
-                res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
+                res.already = false//ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
             }
@@ -921,6 +925,7 @@ function submitPathway() {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
             document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
+            console.log(RESOURCES_BY_ACTIVITIES)
             btnSubmit.click()
         }
     } else {
