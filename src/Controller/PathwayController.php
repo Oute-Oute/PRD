@@ -862,6 +862,10 @@ class PathwayController extends AbstractController
             ];
         }
 
+        if ($activityArray == null){
+            return new JsonResponse((null));
+        }
+
         $test = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
 
         $activity = $test['activity'];
