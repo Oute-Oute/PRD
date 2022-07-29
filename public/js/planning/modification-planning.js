@@ -972,6 +972,7 @@ function clearArray(array) {
  * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
 function undoEvent() {
+  var slotDuration = calendar.getOption('slotDuration');
   if (historyEvents.length != 1) {
     createCalendar(headerResources, 'recreate');
   }
@@ -981,6 +982,7 @@ function undoEvent() {
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
   })
+  calendar.setOption('slotDuration', slotDuration);
   isUpdated = false;
 }
 
