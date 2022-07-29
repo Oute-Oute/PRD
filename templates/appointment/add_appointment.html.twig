@@ -11,8 +11,9 @@
       <div class="modal-header">
         <h2 class="modal-title">Ajouter un rendez-vous</h2>
       </div>
-      <form action="{{ path('AppointmentAdd') }}" method="post" onsubmit="return lookAddAutocompletes()">
+      <form action="{{ path('AppointmentAdd') }}" method="post" onsubmit="return lookAutocompletes('add')">
         <div class="modal-body">
+          <div style="color: red;" id="wrong-add-input" style="visibility:hidden"></div>
           <div class="flex-col">
             <label class="label" for='idpatient'> Patient </label>
             <input type="hidden" id="patientValues" name="patientValues" value={{patientsJSON.content}} />

@@ -490,4 +490,29 @@ public function unavailability(Request $request) {
         }
         return $activityArray;
     }
+
+    public function autocompleteMR(Request $request, MaterialResourceRepository $MRRepository, CategoryOfMaterialResourceRepository $categoryOfMRRepository){
+        $term = strtolower($request->query->get('term'));
+        $MRs = $MRRepository->findAll();
+        $results = array();
+        foreach ($MRs as $MR) {
+            $name = strtolower($MR->getMaterialresourcename());
+            if (strpos($name, $term) !== false ){
+                $categories=$categoryOfMRRepository->findBy(['materialresource' => $MR->getId()]);
+                $categoriesArray=[];
+                foreach($categories as $category){
+                    $categoriesArray[] = [
+                        'category' => $category->getMaterialresourcecategory()->getCategoryname(),
+                    ];
+                }
+                $results[] = [
+                    'id' => $MR->getId(),
+                    'value' => $MR->getMaterialresourcename(),
+                    'categories' => $categoriesArray,
+
+                ];
+            }
+        }
+        return new JsonResponse($results);
+    }
 }

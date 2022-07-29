@@ -10,18 +10,19 @@
 			<div class="modal-header">
 				<h2 class="modal-title">Modifier un rendez-vous</h2>
 			</div>
-			<form action="{{ path('AppointmentEdit') }}" method="post">
+			<form action="{{ path('AppointmentEdit') }}" method="post" onsubmit="return lookAutocompletes('edit')">
 				<div class="modal-body">
+					<div style="color: red;" id="wrong-edit-input" style="visibility:hidden"></div>
 					<div class="flex-col">
 						<input type="hidden" name="idappointment" id="idappointment">
 						<label for='idpatient'>Patient</label>
-						<input type="hidden" id="patient" name="patient" value={{patientsJSON.content}}/>
+						<input type="hidden" id="patient" name="patient" value="{{patientsJSON.content}}"/>
 						<input class="input" type="text" id="autocompletePatientEdit" name="patient" required/>
 					</div>
 					</br>
 					<div class="flex-col">
 						<label class="label" for='idpathway'>Parcours</label>
-						<input type="hidden" id="pathway" name="pathway" value={{pathwaysJSON.content}}/>
+						<input type="hidden" id="pathway" name="pathway" value="{{pathwaysJSON.content}}"/>
 						<input class="input" type="text" id="autocompletePathwayEdit" name="pathway" required/>
 					</div>
 					</br>

@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     TARGETS = JSON.parse(
         document.getElementById('json-targets').value
     )
-    //console.log(TARGETS)
 
     document.getElementById('resource-nb').value = 1
 
@@ -326,14 +325,18 @@ function fillActivityList() {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
             let activity = document.createElement('div')
             activity.setAttribute('class', 'div-activity')
-            activity.style.height = 'auto'
+            activity.style.maxHeight = '150px'
             //activity.setAttribute('disabled', 'disabled')
             let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
+            
+            let divContainerP = document.createElement('div')
+            divContainerP.setAttribute('class', 'container-p')
             let p = document.createElement('p')
             p.style.width = '80%';
             p.innerHTML = str
+            divContainerP.appendChild(p)
 
             let imgDelete = new Image();
             imgDelete.src = '../../img/delete.svg'
@@ -353,14 +356,14 @@ function fillActivityList() {
             imgEdit.style.marginRight = '10px'
 
             let div = document.createElement('div')
+            div.setAttribute('class', 'btns')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
             
            /* pindex = document.createElement('p')
             pindex.innerText = indexActivity
             activity.appendChild(pindex)*/
-
-            activity.appendChild(p)
+            activity.appendChild(divContainerP)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
             indexActivityAvailable++
@@ -879,8 +882,8 @@ function deleteResource(id) {
  * @param {delete} input 
  */
 function preventForTarget(input) {
-    input.value = input.value.replace(",", "");
     input.value = input.value.replace("e", "");
+    input.value = input.value.replace(",", "");
     input.value = input.value.replace(".", "");
 }
 

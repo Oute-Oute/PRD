@@ -176,20 +176,25 @@ function fillActivityList() {
             let str = 'Activité ' + Number(indexActivityAvailable + 1) + ' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' + RESOURCES_BY_ACTIVITIES[indexActivity].activityduration + 'min)'
+            
+            let divContainerP = document.createElement('div')
+            divContainerP.setAttribute('class', 'container-p')
             let p = document.createElement('p')
+            p.style.width = '80%';
             p.innerHTML = str
+            divContainerP.appendChild(p)
 
             let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg'
-            imgDelete.setAttribute('id', 'imgd-' + indexActivity)
+            imgDelete.src = '../../img/delete.svg'
+            imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
 
             let imgEdit = new Image();
-            imgEdit.src = '../img/edit.svg'
-            imgEdit.setAttribute('id', 'imge-' + indexActivity)
+            imgEdit.src = '../../img/edit.svg'
+            imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
             imgEdit.style.width = '20px'
@@ -197,10 +202,11 @@ function fillActivityList() {
             imgEdit.style.marginRight = '10px'
 
             let div = document.createElement('div')
+            div.setAttribute('class', 'btns')
             div.appendChild(imgEdit)
             div.appendChild(imgDelete)
 
-            activity.appendChild(p)
+            activity.appendChild(divContainerP)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
             indexActivityAvailable++

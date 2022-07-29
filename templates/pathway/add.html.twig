@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Pathway/add_pathway.css') }}">
         {#<link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">#}
 {% endblock %}
 
@@ -110,7 +111,7 @@
                             {# Durée de l'activité #}
                             <div class="flex-col">
                                 <label class="label" for='input-name'> Durée de l'activité (min)</label>
-                                <input type="number" id='input-duration' min="0" class="input-activity" placeholder="Ex : 10">
+                                <input oninput="preventForTarget(this)" type="number" id='input-duration' min="0" class="input-activity" placeholder="Ex : 10">
                             </div>
                             {# Liste des ressources de l'activité #}
                             <input disabled id="label" type="text" placeholder="Liste des ressources :"> 
@@ -127,7 +128,7 @@
 
                             <div id="div-add-resources">
                                 <select id="select-resources" title="Choisissez le nom de la ressource" > </select>
-                                <input id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez la quantité de la ressource"> </input>
+                                <input oninput="preventForTarget(this)" id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez la quantité de la ressource"> </input>
                                 <img onclick="addResources()" src="../img/plus.png" title="Ajouter la ressource"> </img>
                             </div>
 

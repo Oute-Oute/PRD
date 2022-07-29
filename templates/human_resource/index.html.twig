@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des ressources{% endblock %}
+{% block title %}Liste des ressources
+{% endblock %}
 
 {% block stylesheets %}
 	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
@@ -40,7 +41,7 @@
 				<button class="btn-add" onclick="showNewHumanModalForm()">
 					Ajouter une nouvelle ressource humaine
 				</button>
-				<div><input type="text" id="autocompleteInputHumanName" onkeyup="filterHumanResource('autocompleteInputHumanName')" placeholder="Rechercher"></div>
+				<div><input type="text" id="autocompleteInputHumanName" onkeyup='displayAll("Human")' placeholder="Rechercher"></div>
 				<table class="table table-striped table-index-users" id='tableHumanResource'>
 					<thead>
 						<tr class='headerHumanResource'>
@@ -49,10 +50,10 @@
 							<th style="width: 30%;">Actions</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="humanTable">
 						{% set indexResource = 0 %}
 						{% for human_resource in human_resources %}
-							<tr>
+							<tr class="original">
 								<td>{{ human_resource.humanresourcename }}</td>
 								<td style="max-width: 10%;">
 									{% for category in human_resource.categories %}
@@ -69,7 +70,7 @@
 								<td>
 									<button class='btn-infos btn-secondary' onclick='showInfosModalHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Informations</a>
 									<button class='btn-add btn-secondary' onclick='showUnavailabilityHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Indisponibilités</a>
-									<button class='btn-edit btn-secondary' onclick='showEditModalForm("{{human_resource.id}}", "{{human_resource.humanresourcename}}", "{{indexResource}}")'>Éditer</a>
+									<button class='btn-edit btn-secondary' onclick='showEditModalForm("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Éditer</a>
 									{{ include('human_resource/delete_resource.html.twig') }}
 								</td>
 							</tr>
@@ -115,10 +116,10 @@
 					</tbody>
 				</table>
 			</div>
-		<div id="paginator">
-            {{knp_pagination_render(human_resources,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
-        </div>
-        </div>
+			<div id="paginator">
+				{{knp_pagination_render(human_resources,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
+			</div>
+		</div>
 	</div>
 
 
@@ -132,18 +133,20 @@
 
 
 	<script>
-		$("#autocompleteInputHumanName").autocomplete({
-source: hrArray,
-select: function (event, ui) {
-filterHumanResource('autocompleteInputHumanName', ui.item.value);
-}
-});
-$("#autocompleteInputHumanNameCategory").autocomplete({
-source: hcrArray,
-select: function (event, ui) {
-filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
-}
-});
+	$( "#autocompleteInputHumanName" ).autocomplete({
+	source: "/autocompleteHR",
+	select: function( event, ui ) {
+		filterResource("human", ui.item);
+	}
+	}
+	);
+    	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
+	source: hcrArray,
+	select: function( event, ui ) {
+		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
+	}
+	}
+	);
 	</script>
 
 {% endblock %}
