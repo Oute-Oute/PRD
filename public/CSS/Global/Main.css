@@ -168,3 +168,6 @@ div#conn-form div#container form {
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
   }
+  .ui-autocomplete-loading {
+    background: white url("../../img/loading16x16.gif") right center no-repeat;
+  }

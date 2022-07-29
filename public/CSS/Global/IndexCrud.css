@@ -86,6 +86,33 @@ li a:hover {
     font-weight: bold;
 }
 
+#main_content li.selected
+{
+ background-color:#71a39c;
+ color:#fff;
+ padding:10px;
+
+}
+
+#main_content li.notselected
+{
+ background-color:#00305d;
+ color:#fff;	
+ padding:10px;
+
+}
+
+#main_content li
+{
+ display:inline;
+ list-style-type:none;
+ background-color:#00305d;
+ border-radius:5px 5px 0px 0px;
+ color:#292A0A;
+ font-weight:bold;
+ cursor:pointer;
+}
+
 
 
 
