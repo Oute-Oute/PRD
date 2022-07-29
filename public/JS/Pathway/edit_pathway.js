@@ -565,22 +565,21 @@ function addResources() {
 
 
             if (index == -1) {
-
                 let resourceName = '';
                 for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
                     if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
                         resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
                     }
                 }
-    
+
                 ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
                 let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
-
-            } else {
+            }
+            else {
                 if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
 
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
@@ -603,12 +602,9 @@ function addResources() {
 
                 }
             }
- 
-
             fillMRCList()
         }
     }
-
 }
 
 /**
@@ -621,23 +617,19 @@ function verifyResourcesDuplicates(id, material) {
     
     // Si material est true
     if (material) {
-
         for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
                 return indexMaterial
             }
         }
-
-    } else {
-
+    }
+    else{
         for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
                 return indexHuman
             }
         }
-
     }
-    
     return -1
 }
 
@@ -686,14 +678,11 @@ function fillHRCList() {
             }
         }
     } 
-
     if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
     }
-
-
 }
 
 
@@ -1089,7 +1078,7 @@ function fillSuccessorList() {
 
             divMin.appendChild(labelMin);
             divMin.appendChild(inputMin);
-            divMin.style.display = "none";
+            divMin.style.display = "block";
 
             let divMax = document.createElement('div')
             divMax.setAttribute('id', 'divMax' + (indexSuccessor))
@@ -1109,17 +1098,16 @@ function fillSuccessorList() {
 
             divMax.appendChild(labelMax);
             divMax.appendChild(inputMax);
-            divMax.style.display = "none";
+            divMax.style.display = "block";
 
-            let divDel = document.createElement('div');
-            divDel.appendChild(imgDelete);
+            let divButton = document.createElement('div');
+            divButton.appendChild(imgDelete);
+            divButton.appendChild(imgDownArrow);
 
-            let divDown = document.createElement('div');
-            divDown.appendChild(imgDownArrow);
+
 
             successor.appendChild(p);
-            successor.appendChild(divDel);
-            successor.appendChild(divDown);
+            successor.appendChild(divButton);
 
             let divSuccessor = document.createElement('div');
             divSuccessor.classList.add("div-successor")

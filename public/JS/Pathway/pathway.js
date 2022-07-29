@@ -1047,7 +1047,7 @@ function fillSuccessorList() {
 
             divMin.appendChild(labelMin);
             divMin.appendChild(inputMin);
-            divMin.style.display = "none";
+            divMin.style.display = "block";
 
             let divMax = document.createElement('div')
             divMax.setAttribute('id', 'divMax' + (indexSuccessor))
@@ -1067,17 +1067,14 @@ function fillSuccessorList() {
 
             divMax.appendChild(labelMax);
             divMax.appendChild(inputMax);
-            divMax.style.display = "none";
+            divMax.style.display = "block";
 
-            let divDel = document.createElement('div');
-            divDel.appendChild(imgDelete);
-
-            let divDown = document.createElement('div');
-            divDown.appendChild(imgDownArrow);
+            let divButton = document.createElement('div')
+            divButton.appendChild(imgDelete)
+            divButton.appendChild(imgDownArrow)
 
             successor.appendChild(p);
-            successor.appendChild(divDel);
-            successor.appendChild(divDown);
+            successor.appendChild(divButton);
 
             let divSuccessor = document.createElement('div');
             divSuccessor.classList.add("div-successor")

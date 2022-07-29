@@ -186,7 +186,7 @@ div#activities-list #list{
 
 /* --- BOTTOM of the page --- */
 div#activities-list-graph {
-    width: 25%;
+    width: 18%;
     box-shadow: 0px 0px 10px lightgrey;
     border-radius: 10px;
 }
