@@ -51,17 +51,14 @@ date = new Date(dateStr);
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("headerResources: " + document.getElementById("typeResources").value);
 if (document.getElementById("typeResources").value != "") {
   headerResources = document.getElementById("typeResources").value; //get the type of resources to display in the list
-  console.log(headerResources);
   headerResources = headerResources; //set the space in the header
   headerResources = headerResources; //set the comma in the header
 } else {
   headerResources = "Patients";
-  console.log(headerResources);
 }
-console.log(headerResources);
+document.querySelectorAll("#header-type")[0].innerText=headerResources;
   createCalendar(headerResources); //create the calendar
 });
 
@@ -83,7 +80,6 @@ function createEvents() {
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
 function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
-  console.log(resourcesToDisplay)
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
@@ -142,8 +138,7 @@ function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
       hour12: false, //set to 24h format
     },
     resourceOrder: "title", //display the resources in the alphabetical order of their names
-    resourceAreaWidth: "25%", //set the width of the resources area
-    resourceAreaHeaderContent: headerResources, //set the title of the resources area
+    resourceAreaWidth: "20%", //set the width of the resources area
     events: events, //set the events
     filterResourcesWithEvents: true,
 
@@ -231,13 +226,10 @@ function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
       break;
     case "Ressources Humaines": //if we want to display by the resources
     if(resourcesToDisplay!=undefined){
-      console.log(resourcesToDisplay);
       var tempArray=resourcesToDisplay
-      console.log(tempArray)
     }
     else{
       var tempArray = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //get the data of the resources
-    console.log(tempArray)
     }
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data

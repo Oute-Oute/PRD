@@ -100,6 +100,7 @@ $('#infos-pathway-modal').on('hidden.bs.modal', function () {
 });
 $("#autocompleteInputPathwayNname").autocomplete({
 source: "/autocompletePathway",
+minLength: 3,
 select: function (event, ui) {
 filterPathway(ui.item);
 }

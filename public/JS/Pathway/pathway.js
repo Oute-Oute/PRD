@@ -60,6 +60,8 @@ function addArray() {
         res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].name
         res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].nb
         res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].available
+        res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].already
+
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
@@ -70,6 +72,8 @@ function addArray() {
         res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].name
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
         res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
+        res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].already
+        
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
 

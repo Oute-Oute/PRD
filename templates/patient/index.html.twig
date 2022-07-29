@@ -69,6 +69,7 @@
 	<script>
 	$( "#autocompleteInputLastname" ).autocomplete({
 	source: "/autocompletePatient",
+	minLength: 3,
 	select: function( event, ui ) {
 		filterPatient(ui.item);
 	}

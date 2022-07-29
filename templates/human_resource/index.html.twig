@@ -135,6 +135,7 @@
 	<script>
 	$( "#autocompleteInputHumanName" ).autocomplete({
 	source: "/autocompleteHR",
+	minLength: 3,
 	select: function( event, ui ) {
 		filterResource("human", ui.item);
 	}
@@ -142,6 +143,7 @@
 	);
     	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
 	source: hcrArray,
+	minLength: 3,
 	select: function( event, ui ) {
 		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
 	}
