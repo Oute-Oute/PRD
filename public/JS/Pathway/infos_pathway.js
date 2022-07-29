@@ -29,20 +29,27 @@ var lines= new Array();
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
-            drawActivities(data);
+            if(data[0] != undefined){
+                drawActivities(data);
+            }
+            else{
+                errorGetActivities();
+            }
         },
-        error: function() {
-            var divContent = document.getElementById('divContent');
-            divContent.innerHTML = "Pas d'activités créées !";
-            divBr = document.getElementById('modal-br');
-            divBr.innerHTML = "";   
-            document.getElementById('load-path').style.visibility = "hidden";
-          }
+        error: function(){errorGetActivities();}
         });
 
     change_tab('activities');
     $('#infos-pathway-modal').modal("show");
   document.getElementById('load-path').style.visibility = "visible";
+}
+
+function errorGetActivities(){
+    var divContent = document.getElementById('divContent');
+    divContent.innerHTML = "Pas d'activités créées !";
+    divBr = document.getElementById('modal-br');
+    divBr.innerHTML = "";   
+    document.getElementById('load-path').style.visibility = "hidden";
 }
 
 function tableAppointment(tableBody, data) {
