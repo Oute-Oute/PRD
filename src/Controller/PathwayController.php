@@ -682,11 +682,19 @@ class PathwayController extends AbstractController
                     $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
                     $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
                     
-                    $successorRepository->add($successor, true);
+                    // Check if the successor already exist in database
+                    // If no, create it; else update the delays
+                    $successorDB = $successorRepository->findOneBy(['activitya' => $activitya, 'activityb' => $activityb]);
+                    if($successorDB != null){
+                        $successorDB->setDelaymin($successors[$indexSuccessor]->delayMin);
+                        $successorDB->setDelaymax($successors[$indexSuccessor]->delayMax);
+                        $em->flush();
+                    }
+                    else{
+                         $successorRepository->add($successor, true);
+                    }
                 }
             }
-         
-            
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
     }
