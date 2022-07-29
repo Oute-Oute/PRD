@@ -73,15 +73,15 @@ class UserController extends AbstractController
         return $this->redirectToRoute('User', [], Response::HTTP_SEE_OTHER);
     }
 
-    public function userDelete(User $user, UserRepository $userRepository): Response
+    public function userDelete(User $user, UserRepository $userRepository,ManagerRegistry $doctrine): Response
     {
-        $modificationRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\Modification");
+        $modificationRepository = $doctrine->getManager()->getRepository("App\Entity\Modification");
         $allModification = $modificationRepository->findBy(['user' => $user]);
 
         foreach ($allModification as $modification) {
             $modificationRepository->remove($modification, true);
         }
-        $userSettingsRepository = $this->getDoctrine()->getManager()->getRepository("App\Entity\UserSettings");
+        $userSettingsRepository = $doctrine->getManager()->getRepository("App\Entity\UserSettings");
         $userSettings = $user->getUsersettings();
         if($userSettings != null){
             $userSettingsRepository->remove($userSettings, true);
