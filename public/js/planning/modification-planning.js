@@ -136,13 +136,6 @@ function backToConsultation() {
     window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
   }
 }
-
-function zoomChange() {
-  newZoom = document.getElementById('zoom').value;
-  calendar.setOption('slotDuration', newZoom)
-}
-
-
 /**
  * Open the modal to Add a pathway
  */
@@ -977,6 +970,7 @@ function clearArray(array) {
  * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
 function undoEvent() {
+  var slotDuration = calendar.getOption('slotDuration');
   if (historyEvents.length != 1) {
     createCalendar(headerResources, 'recreate');
   }
@@ -986,6 +980,7 @@ function undoEvent() {
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
   })
+  calendar.setOption('slotDuration', slotDuration);
   isUpdated = false;
 }
 

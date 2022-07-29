@@ -324,6 +324,7 @@ function Today() {
 function zoomChange() {
   newZoom = document.getElementById('zoom').value;
   calendar.setOption('slotDuration', newZoom)
+  calendar.render()
 }
 
 function categoryShow() {
@@ -343,6 +344,7 @@ function categoryShow() {
     }]
     createCalendar(headerResources);
     calendar.setOption('resourceAreaWidth','25%');
+    calendar.render()
   }
   else {
     displayButtonStyle.opacity = 1;
@@ -353,6 +355,7 @@ function categoryShow() {
     }]
     createCalendar(headerResources);
     calendar.setOption('resourceAreaWidth','15%');
+    calendar.render()
   }
 
 }
