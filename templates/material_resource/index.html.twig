@@ -130,5 +130,19 @@
 	{{ include ('material_resource/edit_unavailability.html.twig')}}
 
 
-	<<<<<<<HEAD<script>$("#autocompleteInputMaterialName").autocomplete({source:"/autocompleteMR",select:function(event,ui){filterResource('material',ui.item);}});$("#autocompleteInputMaterialNameCategory").autocomplete({source:mcrArray,select:function(event,ui){filterMaterialResourceCategory('autocompleteInputMaterialNameCategory',ui.item.value);}});=======<script>$("#autocompleteInputMaterialName").autocomplete({source:mrArray,select:function(event,ui){filterMaterialResource('autocompleteInputMaterialName',ui.item.value);}});$("#autocompleteInputMaterialNameCategory").autocomplete({source:mcrArray,select:function(event,ui){filterMaterialResourceCategory('autocompleteInputMaterialNameCategory',ui.item.value);}});>>>>>>> bef1067d69b1d96be0252f6c1e420264552341ae
+	<script>
+    $("#autocompleteInputMaterialName").autocomplete({
+        source:"/autocompleteMR",
+        select:function(event,ui){
+            filterResource('material',ui.item);
+        }
+    });
+    
+    $("#autocompleteInputMaterialNameCategory").autocomplete({
+        source:mcrArray,
+        select:function(event,ui){
+            filterMaterialResourceCategory('autocompleteInputMaterialNameCategory',ui.item.value);
+        }
+    });
+    <script>
 </script>{% endblock %}
