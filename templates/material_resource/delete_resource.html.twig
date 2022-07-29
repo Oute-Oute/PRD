@@ -1,4 +1,3 @@
 <form method="post" action="{{ path('app_material_resource_delete', {'id': material_resource.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette ressource?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ material_resource.id) }}">
     <button class="btn-delete btn-secondary">Supprimer</button>
 </form> 
