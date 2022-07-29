@@ -106,6 +106,7 @@ class PathwayController extends AbstractController
         $activityMaterialResourceRepo = new ActivityMaterialResourceRepository($this->getDoctrine());
 
         $activitiesArray = array();
+        $successorsArray = array();
         foreach ($activitiesOfPathway as $activity) {
 
             $humanResources = $activityHumanResourceRepo->findBy(['activity' => $activity]);
@@ -140,9 +141,27 @@ class PathwayController extends AbstractController
                 'humanResourceCategories' => $hrArray,
                 'materialResourceCategories' =>$mrArray
             );
+
+            $successorRepo = new SuccessorRepository($this->getDoctrine());
+            $successors = $successorRepo->findBy(["activitya"=>$activity]);
+            foreach($successors as $successor){
+                $nameActivityA = $activityRepo->findOneBy(['id' => $successor->getActivitya()])->getActivityname();
+                $nameActivityB = $activityRepo->findOneBy(['id' => $successor->getActivityb()])->getActivityname();
+                $idActivityA = 'activity' . $successor->getActivitya()->getId();
+                $idActivityB = 'activity' . $successor->getActivityb()->getId();
+                $successorsArray[] = array(
+                    'idActivityA' => $idActivityA,
+                    'idActivityB' => $idActivityB,
+                    'nameActivitya' => $nameActivityA,
+                    'nameActivityb' => $nameActivityB,
+                    'delayMin' => $successor->getDelaymin(),
+                    'delayMax' =>$successor->getDelaymax()
+                );
+            }
         }
         
         $pathwayArray += [ 'activities' => $activitiesArray ];
+        $pathwayArray += [ 'successors' => $successorsArray ];
         /*
         $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
 
@@ -232,7 +251,7 @@ class PathwayController extends AbstractController
 
 
     /**
-     * Redirige vers la page d'ajout d'un parcours
+     * Redirige vers la page d'édition d'un parcours
      * route : "/pathway/edit/{id}"
      */
     public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, int $id): Response
@@ -360,9 +379,6 @@ class PathwayController extends AbstractController
 
             // We handle the link between pathway and activities 
 
-            // We get all the activities
-            $activities = $activityRepository->findAll();
-
             // We get the number of activities and successors
             $nbActivity = count($resourcesByActivities);
             $nbSuccessor = count($successors);
@@ -435,7 +451,7 @@ class PathwayController extends AbstractController
                     }
                 }
                 for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
-                    // Creating of the successor between the 2 activities
+                    // Creation of the successor between the 2 activities
                     $successor = new Successor();
                     
                     $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
@@ -496,7 +512,7 @@ class PathwayController extends AbstractController
             //We get the json which contains the list of the resources by activities
             // then we transform it into a PHP Array
             $resourcesByActivities = json_decode($param['json-resources-by-activities']);
-
+            $successors= json_decode($param['json-successors']);
             
             // First we want to add the pathway to the db :
             
@@ -525,11 +541,9 @@ class PathwayController extends AbstractController
             
             // We handle the links between pathway and ativities
 
-            // We get all the activities
-            $activities = $activityRepository->findAll();
-
             // We get the number of activities
             $nbActivity = count($resourcesByActivities);
+            $nbSuccessor = count($successors);
 
             if ($nbActivity != 0) {
                 
@@ -548,8 +562,8 @@ class PathwayController extends AbstractController
                             $activity->setPathway($pathway);
 
                             $activityRepository->add($activity, true);
-
-                        } else {
+                        }
+                        else {
                             // if the activity already exists
                             $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
 
@@ -645,6 +659,23 @@ class PathwayController extends AbstractController
                         }
                     }
 
+                }
+                for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
+                    // Creating of the successor between the 2 activities
+                    $successor = new Successor();
+                    
+                    $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
+                    $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
+                    
+                    $activitya = $activityRepository->findOneBy(['id' => $idA]);
+                    $activityb = $activityRepository->findOneBy(['id' => $idB]);
+                    $successor->setActivitya($activitya);
+                    $successor->setActivityb($activityb);
+                    
+                    $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
+                    $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
+                    
+                    $successorRepository->add($successor, true);
                 }
             }
          
