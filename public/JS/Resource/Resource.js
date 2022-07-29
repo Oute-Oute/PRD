@@ -275,28 +275,85 @@ function change_tab_human(id)
 // .modal-form             #form-add-activity
 
 
-function filterHumanResource(idInput,selected=null){
-    var trs = document.querySelectorAll('#tableHumanResource tr:not(.headerHumanResource)');
-    if(selected == null){
-        var filter = document.querySelector('#'+idInput).value; 
-        }
-        else{
-            var filter = selected;
-        }
+function filterResource(type,selected=null){
+    console.log(selected);
+    var categoriesStr=[];
+    for (var i=0;i<selected["categories"].length-1;i++){
+        categoriesStr += selected["categories"][i]["category"]+", ";
+    }
+    if(selected["categories"].length>0){
+    categoriesStr += selected["categories"][selected["categories"].length-1]["category"];
+    }
+    console.log(type);
+    var Type=type.charAt(0).toUpperCase()+type.slice(1); //equal to type.capitalize()
+    console.log('test')
+    console.log('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');
+    var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');
+    console.log(trs);
     for(let i=0; i<trs.length; i++){
-        var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[0].outerText;
-        if(hrArray.indexOf(name) == -1){
-            hrArray.push(name);
-            }
-        if(regex.test(name)==false){
             trs[i].style.display='none';
+    }
+    table=document.getElementById(type+'Table');
+    var tr=document.createElement('tr');
+    table.appendChild(tr);
+    var resourceName=document.createElement('td');
+    resourceName.append(selected.value);
+    tr.appendChild(resourceName);
+    var categoriestd=document.createElement('td');
+    categoriestd.append(categoriesStr);
+    tr.appendChild(categoriestd);
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showInfosModal'+Type+'('+selected.id+',"'+selected.value+'")');
+    infos.append('Informations');
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('onclick','showEditModalForm'+Type+'('+selected.id+',"'+selected.value+'")');
+    edit.append('Editer');
+    var unavailabilities=document.createElement('button');
+    unavailabilities.setAttribute('class','btn-add btn-secondary');
+    unavailabilities.setAttribute('onclick','showUnavailability'+Type+'('+selected.id+',"'+selected.value+'")');
+    unavailabilities.append('Indisponibilités');
+    var formDelete=document.createElement('form');
+    formDelete.setAttribute('action',"/"+type+"/resource/"+selected.id);
+    formDelete.setAttribute('style','display:inline');
+    formDelete.setAttribute('method','POST');
+    formDelete.setAttribute('id','formDelete'+selected.id);
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cette ressource ?")');
+    var inputHidden=document.createElement('input');
+    inputHidden.setAttribute('type','hidden');
+    inputHidden.setAttribute('name','pathwayid');
+    inputHidden.setAttribute('value',selected.id);
+    formDelete.appendChild(inputHidden);
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('type','submit');
+    buttons.appendChild(infos);
+    buttons.appendChild(unavailabilities);
+    buttons.appendChild(edit);
+    formDelete.appendChild(deleteButton);
+    buttons.appendChild(formDelete);
+    tr.appendChild(buttons);
+  }
+
+  function displayAll(type) {
+    var trs = document.querySelectorAll('#table'+type+'Resource tr:not(.header'+type+'Resource)');
+    var input = document.getElementById('autocompleteInput'+type+'Name');
+    console.log(input.value)
+    if(input.value == ''){
+    for(let i=0; i<trs.length; i++){
+        console.log(trs[i].className)
+        if(trs[i].style.display == 'none'){
+            trs[i].style.display='table-row';
         }
-        else{
-            trs[i].style.display=''; 
+        else if(trs[i].className != 'original'){
+            trs[i].remove()
         }
     }
-  }
+}
+}
 
   function filterHumanResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
@@ -322,28 +379,7 @@ function filterHumanResource(idInput,selected=null){
     }
   }
 
-  function filterMaterialResource(idInput,selected=null){
-    var trs = document.querySelectorAll('#tableMaterialResource tr:not(.headerMaterialResource)');
-    if(selected == null){
-        var filter = document.querySelector('#'+idInput).value; 
-        }
-        else{
-            var filter = selected;
-        }
-    for(let i=0; i<trs.length; i++){
-        var regex = new RegExp(filter, 'i');   
-        var name=trs[i].cells[0].outerText;
-        if(mrArray.indexOf(name) == -1){
-            mrArray.push(name);
-            }
-        if(regex.test(name)==false){
-            trs[i].style.display='none';
-        }
-        else{
-            trs[i].style.display=''; 
-        }
-    }
-  }
+  
 
   function filterMaterialResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
