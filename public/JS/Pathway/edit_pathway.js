@@ -187,6 +187,7 @@ function addArray() {
     RESOURCES_BY_ACTIVITIES[len].id = Number(-1)
 }
 
+
 /**
  * All to add an activity to the list, thanks to ACTIVITY_IN_PROGRESS
  * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
@@ -230,7 +231,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
                 res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
                 res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
-                res.already = false//ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
+                res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
             }
@@ -243,7 +244,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
                 res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
                 res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
-                res.already = false//ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
+                res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
             }
@@ -511,7 +512,7 @@ function addResources() {
             let resourceId = document.getElementById('select-resources').value 
 
             index = verifyResourcesDuplicates(resourceId, false)
-
+            
             if (index == -1) {
 
                 let resourceName = '';
@@ -526,30 +527,13 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].already = false
 
-            } else {
-                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
 
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
-
-                } else {
-
-                    let resourceName = '';
-                    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-                        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
-                        }
-                    }
-
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-                    let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
-                    
-                }
+            } else {       
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+                
             }
 
            
@@ -624,7 +608,9 @@ function verifyResourcesDuplicates(id, material) {
 
         for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
-                return indexMaterial
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available) {
+                    return indexMaterial
+                }
             }
         }
 
@@ -632,7 +618,9 @@ function verifyResourcesDuplicates(id, material) {
 
         for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
-                return indexHuman
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available) {
+                    return indexHuman
+                }            
             }
         }
 

@@ -580,6 +580,7 @@ class PathwayController extends AbstractController
                             array_push($activitiesIdArray, $activity->getId());
                         }
 
+                        
                         // Add the links activity - human resources 
                         
                         $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
@@ -594,22 +595,25 @@ class PathwayController extends AbstractController
                                 // We check if it hasn't been deleted by the user 
                                 if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->available) {
                                     if (!($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already)) {
-                                        //si il est valable mais qu'il n'était présent : il faut l'ajouter dans la bd
+                                        // If the resources is available but wasnt in the bd before the edition : We need to add it in the db
                                         
-                                        // On crée l'objet ActivityMaterialResource
+                                        // We create the object ActivityMaterialResource
                                         $activityMaterialResource = new ActivityMaterialResource();
                                         $activityMaterialResource->setActivity($activity);
                                         $activityMaterialResource->setMaterialresourcecategory($MRC);
                                         $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                         
-                                        // Puis on l'ajoute dans la bd
+                                        // Then we add it to the db
                                         $AMRRepository->add($activityMaterialResource , true);
+                                    } else {
+                                        $activityMaterialResource = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC]);
+                                        $activityMaterialResource[0]->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                     }
                                 } else {
-                                    //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
+                                    // If it has been removed, we verify if it was in the db before edition
                                     if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already) {
-                                        //il faut le trouver dans la bd et le delete
-                                        $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC, "quantity" => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb]);
+                                        // We need to find it in the db and delete it 
+                                        $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC]);
                                         
                                         $em->remove($linkAMR[0]);
                                         $em->flush();
@@ -624,27 +628,30 @@ class PathwayController extends AbstractController
                         if ($nbHRC != 0) {
                             for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
 
-                                // Premierement on recupere la categorie de la bd
+                                // First we get the category in the db
                                 $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
                                 
-                                /// on verifie si il n'a pas été supprimé par l'utilisateur
+                                // We check if it hasn't been deleted by the user 
                                 if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->available) {
                                     if (!($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already)) {
-                                        //si il est valable mais qu'il n'était présent : il faut l'ajouter dans la bd
+                                        // If the resources is available but wasnt in the bd before the edition : We need to add it in the db
                                         
-                                        // On crée l'objet ActivityHumanResource
+                                        // We create the object ActivityHumanResource
                                         $activityHumanResource = new ActivityHumanResource();
                                         $activityHumanResource->setActivity($activity);
                                         $activityHumanResource->setHumanresourcecategory($HRC);
                                         $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                         
-                                        // Puis on l'ajoute dans la bd
+                                        // Then we add it to the db
                                         $AHRRepository->add($activityHumanResource , true);
+                                    } else {
+                                        $activityHumanResource = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC]);
+                                        $activityHumanResource[0]->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                     }
                                 } else {
-                                    //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
+                                    // If it has been removed, we verify if it was in the db before edition
                                     if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already) {
-                                        //il faut le trouver dans la bd et le delete
+                                        // We need to find it in the db and delete it 
                                         $linkAHR = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC, "quantity" => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb]);
                                         
                                         $em->remove($linkAHR[0]);
