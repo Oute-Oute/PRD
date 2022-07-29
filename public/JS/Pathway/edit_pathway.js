@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initActivity()
     handleHumanButton()
     initActivitiesList()
-    initSuccessorsList()
     fillActivityList()
+    initSuccessorsList()
 
     // calcul de la taille de la liste
     let heightTitle = document.getElementById('name').offsetHeight
@@ -100,16 +100,25 @@ function initActivitiesList() {
         RESOURCES_BY_ACTIVITIES[i].id = PATHWAY.activities[i].id
         RESOURCES_BY_ACTIVITIES[i].activityname = PATHWAY.activities[i].activityname
         RESOURCES_BY_ACTIVITIES[i].activityduration = PATHWAY.activities[i].activityduration
+
+        NB_ACTIVITY++;
     }
 }
 
 function initSuccessorsList() {
     for (let i = 0; i < PATHWAY.successors.length; i++) {
         SUCCESSORS[i] = new Object()
-
-        SUCCESSORS[i].idActivityA = PATHWAY.successors[i].idActivityA
-        SUCCESSORS[i].idActivityB = PATHWAY.successors[i].idActivityB
-
+        for(j = 1; j <= NB_ACTIVITY; j++){
+            divAct = document.getElementById('act' + j)
+            inputs = divAct.getElementsByTagName('input')
+            let idActivity = inputs[0].value
+            if(idActivity == PATHWAY.successors[i].idActivityA){
+                SUCCESSORS[i].idActivityA = 'activity' + j
+            }
+            if(idActivity == PATHWAY.successors[i].idActivityB){
+                SUCCESSORS[i].idActivityB = 'activity' + j
+            }
+        }
         SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
         SUCCESSORS[i].nameActivityB = PATHWAY.successors[i].nameActivityB
 
@@ -118,6 +127,7 @@ function initSuccessorsList() {
 
         NB_SUCCESSOR++;
     }
+    console.log(SUCCESSORS);
 }
 
 /**
@@ -132,55 +142,6 @@ function showTargets() {
  */
 function hideTargets() {
     $('#edit-pathway-modal-targets').modal("hide");
-}
-
-/**
- * Permet d'afficher la fenêtre modale d'informations
- * @param {*} idPathway 
- * @param {*} name 
- */
-function showInfosPathway(idPathway, name) {
-    document.getElementById('pathway').innerHTML = name;
-   
-    var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // We delete what we wrote in the modal form precedently
-
-    $.ajax({
-        type : 'POST',
-        url  : '/ajaxPathway',
-        data : {idPathway: idPathway},
-        dataType : "json",
-        success : function(data){        
-            tableAppointment(tableBody, data);
-        },
-        error: function(data){
-            console.log("error");
-        }
-        });
-    
-    $('#infos-pathway-modal').modal("show");
-}
-
-function tableAppointment(tableBody, data){
-    if(data.length <= 0){
-        var tr = document.createElement('TR');
-        tableBody.appendChild(tr);
-        var td = document.createElement('TD');
-        td.setAttribute('colspan', 5);
-        td.append("Pas de patients prévus pour ce parcours");
-        tr.appendChild(td);
-    }
-    else{
-        for(i = 0; i < data.length; i++){
-            var tr = document.createElement('TR');
-            tableBody.appendChild(tr);
-            var td1 = document.createElement('TD');
-            var td2 = document.createElement('TD');
-            td1.append(data[i]['lastname'] + ' ' + data[i]['firstname']);
-            td2.append(data[i]['date']);
-            tr.appendChild(td1);tr.appendChild(td2);
-        }
-    }
 }
 
 function initActivity() {
@@ -325,8 +286,14 @@ function fillActivityList() {
         if (RESOURCES_BY_ACTIVITIES[indexActivity].available == true) {
             let activity = document.createElement('div')
             activity.setAttribute('class', 'div-activity')
+            activity.setAttribute('id', 'act' + (indexActivity+1))
             activity.style.maxHeight = '150px'
             //activity.setAttribute('disabled', 'disabled')
+
+            let input = document.createElement('input')
+            input.setAttribute('type', 'hidden')
+            input.setAttribute('value', RESOURCES_BY_ACTIVITIES[indexActivity].id)
+
             let str =  'Activité '+Number(indexActivityAvailable+1) +' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' +RESOURCES_BY_ACTIVITIES[indexActivity].activityduration +'min)'
@@ -363,6 +330,7 @@ function fillActivityList() {
            /* pindex = document.createElement('p')
             pindex.innerText = indexActivity
             activity.appendChild(pindex)*/
+            activity.appendChild(input);
             activity.appendChild(divContainerP)
             activity.appendChild(div)
             divActivitiesList.appendChild(activity)
@@ -950,7 +918,7 @@ function drawActivitiesGraph(){
     for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
         if(rba.available){
-            createActivitiesGraph(rba.activityname, rba.id, rba.activityduration);
+            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
         }
     }
 }
@@ -1038,7 +1006,7 @@ function addSuccessor(idA, idB, nameA, nameB) {
     fillSuccessorList();
 }
 
-function drawArrows(){  
+function drawArrows(){ 
     for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
@@ -1131,7 +1099,7 @@ function fillSuccessorList() {
             inputMax.setAttribute('type', 'number');
             inputMax.setAttribute('min', 0);
             inputMax.setAttribute('step', 1);
-            inputMax.setAttribute('value', 10);
+            inputMax.setAttribute('value', 360);
             inputMax.style.width = "30%"
 
             divMax.appendChild(labelMax);
@@ -1242,7 +1210,8 @@ function validateSuccessors(){
 }
 
 function checkSuccessor(){
-    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
+    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error
+    console.log(SUCCESSORS)
     if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
         return 0;
     }
