@@ -690,7 +690,7 @@ class HumanResourceController extends AbstractController
     /**
      * @Route("/{id}", name="app_human_resource_delete", methods={"POST"})
      */
-    public function delete(Request $request, HumanResource $humanResource, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
+    public function delete(HumanResource $humanResource, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
         $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
         $workingHoursRepository = new WorkingHoursRepository($doctrine);
