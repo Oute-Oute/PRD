@@ -469,6 +469,7 @@ h1,
 
 #menu {
     display : flex;
+    position : absolute;
 }
 
   .menu {
