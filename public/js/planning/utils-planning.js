@@ -8,12 +8,13 @@
 
 var humanCategoriesToDisplay = [];
 var materialCategoriesToDisplay = [];
+var firstCreationFilter=true;
 
 /**
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
  */
 function filterShow() {
-  let filter = document.getElementById("filterId");
+  var filter = document.getElementById("filterId");
   if (filter.style.display != "none") {
     //if the filter is already displayed
     filter.style.display = "none"; //hide the filter
@@ -26,35 +27,35 @@ function filterShow() {
     var allCategories = []; //create an array to store the resources to display
     switch (headerResources) {
       case "Ressources Humaines": //if we want to display by the patients
-        var tempArray = JSON.parse(
+        var categoriesArray = JSON.parse(
           document.getElementById("human").value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i]["categories"];
-          for (var j = 0; j < temp.length; j++) {
-            if (allCategories.indexOf(temp[j]["name"]) == -1) {
-              allCategories.push(temp[j]["name"]); //add the resource to the array if it is not already in it
+        for (var i = 0; i < categoriesArray.length; i++) {
+          var categories = categoriesArray[i]["categories"];
+          for (var j = 0; j < categories.length; j++) {
+            if (allCategories.indexOf(categories[j]["name"]) == -1) {
+              allCategories.push(categories[j]["name"]); //add the resource to the array if it is not already in it
             }
           }
         }
         if (humanCategoriesToDisplay.length == 0) {
-          humanCategoriesToDisplay = allCategories;
+          humanCategoriesToDisplay.push(allCategories);
         }
         break;
       case "Ressources Matérielles": //if we want to display by the patients
-        var tempArray = JSON.parse(
+        var categoriesArray = JSON.parse(
           document.getElementById("material").value.replaceAll("3aZt3r", " ")
         ); //get the data of the appointments
-        for (var i = 0; i < tempArray.length; i++) {
-          var temp = tempArray[i]["categories"];
-          for (var j = 0; j < temp.length; j++) {
-            if (allCategories.indexOf(temp[j]["name"]) == -1) {
-              allCategories.push(temp[j]["name"]); //add the resource to the array if it is not already in it
+        for (var i = 0; i < categoriesArray.length; i++) {
+          var categories = categoriesArray[i]["categories"];
+          for (var j = 0; j < categories.length; j++) {
+            if (allCategories.indexOf(categories[j]["name"]) == -1) {
+              allCategories.push(categories[j]["name"]); //add the resource to the array if it is not already in it
             }
           }
         }
         if (materialCategoriesToDisplay.length == 0) {
-          materialCategoriesToDisplay = allCategories;
+          materialCategoriesToDisplay.push(allCategories);
         }
         break;
     }
@@ -75,11 +76,12 @@ function filterShow() {
             case "Ressources Humaines":
               input.onchange = function () {
                 //set the onchange event
+                console.log(allCategories);
                 changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
               };
               if (input.checked == false) {
                 for (var j = 0; j < humanCategoriesToDisplay.length; j++) {
-                  if (input.id == humanCategoriesToDisplay[j]) {
+                  if (input.id == humanCategoriesToDisplay[j]||firstCreationFilter==true) {
                     input.checked = true; //set the checkbox to checked
                     j = calendar.getResources().length - 1; //stop the loop
                   }
@@ -96,7 +98,7 @@ function filterShow() {
               };
               if (input.checked == false) {
                 for (var j = 0; j < materialCategoriesToDisplay.length; j++) {
-                  if (input.id == materialCategoriesToDisplay[j]) {
+                  if (input.id == materialCategoriesToDisplay[j]||firstCreationFilter==true) {
                     input.checked = true; //set the checkbox to checked
                     j = calendar.getResources().length - 1;
                   }
@@ -114,6 +116,7 @@ function filterShow() {
       }
     }
   }
+  
 }
 
 /**
@@ -124,6 +127,7 @@ function changeFilter(id, allCategories, type) {
   var resources = [];
   var categoriesToDisplay = [];
   var resourcesToDisplay = [];
+  firstCreationFilter=false;
 
   switch (type) {
     case "human":
@@ -176,14 +180,16 @@ function changeFilter(id, allCategories, type) {
  * @brief This function is called when we want to change the type of the calendar (Patients, Resources...)
  */
 function changePlanning() {
+
+  if (document.getElementById("filterId").style.display != "none") {
+    filterShow(); 
+  }
   var header =
     document.getElementById("displayList").options[
       document.getElementById("displayList").selectedIndex
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
   createCalendar(header); //rerender the calendar with the new type of resources
-  filterShow()
-  filterShow()
   if (header == "Patients") {
     document.getElementById("filterbutton").disabled = true;
     document.getElementById("filterbutton").style.color = "#666666";
@@ -195,6 +201,7 @@ function changePlanning() {
     document.getElementById("filterbutton").disabled = false;
     document.getElementById("filterbutton").style.color = "";
     document.getElementById("filterbutton").style.backgroundColor = "";
+    firstCreationFilter=true;
 
   }
 }
