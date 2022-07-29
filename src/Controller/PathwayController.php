@@ -147,13 +147,11 @@ class PathwayController extends AbstractController
             foreach($successors as $successor){
                 $nameActivityA = $activityRepo->findOneBy(['id' => $successor->getActivitya()])->getActivityname();
                 $nameActivityB = $activityRepo->findOneBy(['id' => $successor->getActivityb()])->getActivityname();
-                $idActivityA = 'activity' . $successor->getActivitya()->getId();
-                $idActivityB = 'activity' . $successor->getActivityb()->getId();
                 $successorsArray[] = array(
-                    'idActivityA' => $idActivityA,
-                    'idActivityB' => $idActivityB,
-                    'nameActivitya' => $nameActivityA,
-                    'nameActivityb' => $nameActivityB,
+                    'idActivityA' => $successor->getActivitya()->getId(),
+                    'idActivityB' => $successor->getActivityb()->getId(),
+                    'nameActivityA' => $nameActivityA,
+                    'nameActivityB' => $nameActivityB,
                     'delayMin' => $successor->getDelaymin(),
                     'delayMax' =>$successor->getDelaymax()
                 );
@@ -545,6 +543,10 @@ class PathwayController extends AbstractController
             $nbActivity = count($resourcesByActivities);
             $nbSuccessor = count($successors);
 
+            // We create an array to store the activies id in the database after we added them
+            // So we don't have to use the name (which can be the same for different activities)
+            $activitiesIdArray = array();
+
             if ($nbActivity != 0) {
                 
                 $firstActivityAvailableFound = false;
@@ -562,7 +564,10 @@ class PathwayController extends AbstractController
                             $activity->setPathway($pathway);
 
                             $activityRepository->add($activity, true);
-                        }
+                            // Get the last inserted row, i.e the activity we just added
+                            $activity =  $activityRepository->findOneBy(array(),array('id'=>'DESC'),1,0);
+                            array_push($activitiesIdArray, $activity->getId());
+                            }
                         else {
                             // if the activity already exists
                             $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
@@ -571,6 +576,8 @@ class PathwayController extends AbstractController
                             $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
                             $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
                             $em->flush();
+
+                            array_push($activitiesIdArray, $activity->getId());
                         }
 
                         // Add the links activity - human resources 
@@ -667,8 +674,8 @@ class PathwayController extends AbstractController
                     $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
                     $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
                     
-                    $activitya = $activityRepository->findOneBy(['id' => $idA]);
-                    $activityb = $activityRepository->findOneBy(['id' => $idB]);
+                    $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
+                    $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
                     $successor->setActivitya($activitya);
                     $successor->setActivityb($activityb);
                     
