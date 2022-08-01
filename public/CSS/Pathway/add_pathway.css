@@ -83,7 +83,6 @@ div#activities-list #list{
     max-height: 99%;
     position: relative;
     width: 100%;
-    overflow-y: scroll;
 }
 
 .div-activity .container-p p{
