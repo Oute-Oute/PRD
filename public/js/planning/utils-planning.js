@@ -127,6 +127,8 @@ function changeFilter(id, allCategories, type) {
   var categoriesToDisplay = [];
   var resourcesToDisplay = [];
   firstCreationFilter=false;
+  var zoom = document.getElementById('zoom').value;
+
 
   switch (type) {
     case "human":
@@ -171,7 +173,7 @@ function changeFilter(id, allCategories, type) {
       }
     }
   }
-  createCalendar(headerResources, "", resourcesToDisplay);
+  createCalendar(headerResources, "create",zoom, resourcesToDisplay);
 
 }
 
@@ -179,6 +181,7 @@ function changeFilter(id, allCategories, type) {
  * @brief This function is called when we want to change the type of the calendar (Patients, Resources...)
  */
 function changePlanning() {
+  var zoom = document.getElementById('zoom').value;
 
   if (document.getElementById("filterId").style.display != "none") {
     filterShow(); 
@@ -188,7 +191,7 @@ function changePlanning() {
       document.getElementById("displayList").selectedIndex
     ].text; //get the type of resources to display in the list
   headerResources = header; //update the header of the list
-  createCalendar(header); //rerender the calendar with the new type of resources
+  createCalendar(header,'create',zoom); //rerender the calendar with the new type of resources
   if (header == "Patients") {
     document.getElementById("filterbutton").disabled = true;
     document.getElementById("filterbutton").style.color = "#666666";
@@ -327,13 +330,14 @@ function Today() {
 
 function zoomChange() {
   newZoom = document.getElementById('zoom').value;
-  calendar.setOption('slotDuration', newZoom)
+  calendar.setOption('slotDuration', newZoom);
   calendar.render()
 }
 
 function categoryShow() {
   var displayButtonStyle = document.getElementById('displayCategory').style;
   var labelDisplayButtonStyle = document.getElementById('labelDisplayCategory');
+  var zoom = document.getElementById('zoom').value;
 
   if (resourcesColumns.length == 1) {
     displayButtonStyle.opacity = 0.7;
@@ -346,7 +350,7 @@ function categoryShow() {
       headerContent: "Catégories", //set the label of the column
       field: "categoriesString", //set the field of the column
     }]
-    createCalendar(headerResources);
+    createCalendar(headerResources,'create',zoom);
     calendar.setOption('resourceAreaWidth','25%');
     calendar.render()
   }
@@ -357,7 +361,7 @@ function categoryShow() {
       headerContent: "Nom", //set the label of the column
       field: "title", //set the field of the column
     }]
-    createCalendar(headerResources);
+    createCalendar(headerResources,'create',zoom);
     calendar.setOption('resourceAreaWidth','15%');
     calendar.render()
   }

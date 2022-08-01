@@ -543,6 +543,8 @@ class PathwayController extends AbstractController
             $nbActivity = count($resourcesByActivities);
             $nbSuccessor = count($successors);
 
+            $pathwaySuccessors = array();
+
             // We create an array to store the activies id in the database after we added them
             // So we don't have to use the name (which can be the same for different activities)
             $activitiesIdArray = array();
@@ -551,7 +553,10 @@ class PathwayController extends AbstractController
                 
                 $firstActivityAvailableFound = false;
                 for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
-
+                    $activitySuccessors = $successorRepository->findBy(['activitya' => $resourcesByActivities[$indexActivity]->id]);
+                    for($i = 0; $i < count($activitySuccessors); $i++){
+                        $pathwaySuccessors[] = $activitySuccessors[$i];
+                    }
                     if ($resourcesByActivities[$indexActivity]->available) {
                         
                         $activity = new Activity();
@@ -664,13 +669,13 @@ class PathwayController extends AbstractController
                             }
                         }
 
-
                     } else {
                         // if the activity is available = false, it has been deleted but we need to know if it was tin the pathway before the editing
                         // so we verify if it wis in the db
                         if ($resourcesByActivities[$indexActivity]->id != -1) {
+
                             // We get the activity
-                            $activity = $activityRepository->findById($resourcesByActivities[$indexActivity]->id)[0];
+                            $activity = $activityRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->id]);
 
                             // We get all the links between the activity we want to delete and its resources
                             $activityHumanResources = $AHRRepository->findBy(["activity" => $activity]);
@@ -740,43 +745,57 @@ class PathwayController extends AbstractController
                             }
                             $em->flush();       
                 
-                            
+                        
+                            //$activity = $activityRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->id]);
 
-
-                            // then we can delete the activity 
                             $em->remove($activity);
                             $em->flush();
                         }
                     }
-
                 }
-
-                for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
-                    // Creating of the successor between the 2 activities
-                    $successor = new Successor();
-                    
-                    $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
-                    $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
-                    
+            }
+            
+            for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
+                // Creating of the successor between the 2 activities
+                $successor = new Successor();
+                
+                $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
+                $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
+                $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
+                $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
+                $successor->setActivitya($activitya);
+                $successor->setActivityb($activityb);
+                
+                $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
+                $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
+                
+                // Check if the successor already exist in database
+                // If no, create it; else update the delays
+                $successorDB = $successorRepository->findOneBy(['activitya' => $activitya, 'activityb' => $activityb]);
+                if($successorDB != null){
+                    $successorDB->setDelaymin($successors[$indexSuccessor]->delayMin);
+                    $successorDB->setDelaymax($successors[$indexSuccessor]->delayMax);
+                }
+                else{
+                    $pathwaySuccessors[] = $successor;
+                    $successorRepository->add($successor, true);
+                }
+                $em->flush();
+            }
+            for($i = 0; $i < count($pathwaySuccessors); $i++){
+                $succ_found = false;
+                for($j = 0; $j < count($successors); $j++){
+                    $idA = intval(explode("activity", $successors[$j]->idActivityA)[1]);
+                    $idB = intval(explode("activity", $successors[$j]->idActivityB)[1]);
                     $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
                     $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
-                    $successor->setActivitya($activitya);
-                    $successor->setActivityb($activityb);
-                    
-                    $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
-                    $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
-                    
-                    // Check if the successor already exist in database
-                    // If no, create it; else update the delays
-                    $successorDB = $successorRepository->findOneBy(['activitya' => $activitya, 'activityb' => $activityb]);
-                    if($successorDB != null){
-                        $successorDB->setDelaymin($successors[$indexSuccessor]->delayMin);
-                        $successorDB->setDelaymax($successors[$indexSuccessor]->delayMax);
-                        $em->flush();
+                    if($pathwaySuccessors[$i]->getActivitya() == $activitya && $pathwaySuccessors[$i]->getActivityb() == $activityb){
+                        $succ_found = true;
                     }
-                    else{
-                         $successorRepository->add($successor, true);
-                    }
+                }
+                if(!$succ_found){
+                    $em->remove($pathwaySuccessors[$i]);
+                    $em->flush();
                 }
             }
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);

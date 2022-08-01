@@ -1,3 +1,5 @@
+//const { codePointAt } = require("core-js/core/string");
+
 var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
@@ -108,16 +110,21 @@ function initActivitiesList() {
 
 function initSuccessorsList() {
     for (let i = 0; i < PATHWAY.successors.length; i++) {
-        SUCCESSORS[i] = new Object()
         for(j = 1; j <= NB_ACTIVITY; j++){
-            divAct = document.getElementById('act' + j)
-            inputs = divAct.getElementsByTagName('input')
-            let idActivity = inputs[0].value
-            if(idActivity == PATHWAY.successors[i].idActivityA){
-                SUCCESSORS[i].idActivityA = 'activity' + j
+            if(SUCCESSORS[i] === undefined){
+                SUCCESSORS[i] = new Object()
             }
-            if(idActivity == PATHWAY.successors[i].idActivityB){
-                SUCCESSORS[i].idActivityB = 'activity' + j
+            if(RESOURCES_BY_ACTIVITIES[j-1].available){
+                
+                divAct = document.getElementById('act' + j)
+                inputs = divAct.getElementsByTagName('input')
+                let idActivity = inputs[0].value
+                if(idActivity == PATHWAY.successors[i].idActivityA){
+                    SUCCESSORS[i].idActivityA = 'activity' + j
+                }
+                if(idActivity == PATHWAY.successors[i].idActivityB){
+                    SUCCESSORS[i].idActivityB = 'activity' + j
+                }
             }
         }
         SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
@@ -128,7 +135,29 @@ function initSuccessorsList() {
 
         NB_SUCCESSOR++;
     }
-    console.log(SUCCESSORS);
+
+    for(i = 0; i < NB_ACTIVITY; i++){
+        if(!RESOURCES_BY_ACTIVITIES[i].available){
+            let idActivity = "activity" + (i+1);
+            for(var j = SUCCESSORS.length - 1; j >= 0; j--){
+                if(SUCCESSORS[j].idActivityA == idActivity || SUCCESSORS[j].idActivityB == idActivity){
+                    for(k = 0; k < lines.length; k++){
+                        if (lines[k].start == document.getElementById(SUCCESSORS[j].idActivityA) && lines[k].end == document.getElementById(SUCCESSORS[j].idActivityB)){
+                            lines[k].remove();
+                            lines.splice(k, 1);
+                        }
+                    }
+
+                    for(k = 0; k < lines.length; k++){
+                        lines[k].middleLabel="Lien n°" + (k+1);
+                    }
+
+                    NB_SUCCESSOR--;
+                    SUCCESSORS.splice(j, 1);
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -377,7 +406,28 @@ function deleteActivity(id) {
 
     RESOURCES_BY_ACTIVITIES[id].available = false
     //SELECT_ID = SELECT_ID - 1;
+
+    let idActivity = "activity" + (parseInt(id)+1);
+    for(var i = SUCCESSORS.length - 1; i >= 0; i--){
+        if(SUCCESSORS[i].idActivityA == idActivity || SUCCESSORS[i].idActivityB == idActivity){
+            for(j = 0; j < lines.length; j++){
+                if (lines[j].start == document.getElementById(SUCCESSORS[i].idActivityA) && lines[j].end == document.getElementById(SUCCESSORS[i].idActivityB)){
+                    lines[j].remove();
+                    lines.splice(j, 1);
+                }
+            }
+
+            for(j = 0; j < lines.length; j++){
+                lines[j].middleLabel="Lien n°" + (j+1);
+            }
+
+            NB_SUCCESSOR--;
+            SUCCESSORS.splice(i, 1);
+        }
+    }
+
     fillActivityList()
+    fillSuccessorList()
 }
  
 
@@ -891,7 +941,7 @@ function showActivitiesPathway() {
 }
 
 function hideActivitiesPathway(){
-    deleteSuccessors();
+    deleteSuccessors(0);
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
@@ -1154,10 +1204,12 @@ function deleteSuccessor(id) {
     fillSuccessorList();
 }
 
-function deleteSuccessors(){
+function deleteSuccessors(fullReset){
     NB_SUCCESSOR = 0;
     SUCCESSORS = new Array();
-    initSuccessorsList();
+    if(!fullReset){
+        initSuccessorsList();
+    }
     deleteArrows();
     fillSuccessorList();
 }

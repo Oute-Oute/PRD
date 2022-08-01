@@ -1149,7 +1149,7 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    error = checkSuccessor();
+    error = 0;
     switch(error){
         case 0:
             for(i = 0; i < NB_SUCCESSOR; i++){

@@ -208,12 +208,12 @@ function createActivities(height, level, name, idActivity, duration){
 
     divLevel.appendChild(div);
 
-    div.addEventListener('scroll', AnimEvent.add(function() {
+    document.getElementById('infos-pathway-modal').addEventListener('scroll', AnimEvent.add(function() {
         lines.forEach((l) => {
-            if(l.start == div || l.end == div){
-                l.position();
-            }
-          });
+        if(l.start == div || l.end == div){
+            l.position();
+        }
+        }); 
     }), false);
 }
 
