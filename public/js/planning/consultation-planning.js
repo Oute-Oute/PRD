@@ -79,7 +79,7 @@ function createEvents() {
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
-function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
+function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay = undefined) {
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
@@ -112,7 +112,8 @@ function createCalendar(typeResource,useCase,resourcesToDisplay=undefined) {
   calendar = new FullCalendar.Calendar(calendarEl, {
     schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
     initialView: "resourceTimelineDay", //set teh format of the calendar
-    slotDuration: "00:20:00", //set the duration of the slot
+    slotDuration: slotDuration, //set the duration of the slot
+    scrollTimeReset:false, //dont change the view of the calendar
     locale: "fr", //set the language in french
     timeZone: "Europe/Paris", //set the timezone for France
     selectable: false, //set the calendar to be selectable
