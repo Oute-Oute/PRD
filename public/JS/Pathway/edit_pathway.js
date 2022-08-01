@@ -57,11 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fillActivityList()
     initSuccessorsList()
 
-    // calcul de la taille de la liste
-    let heightTitle = document.getElementById('name').offsetHeight
-    let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
-    heightCreationDiv = heightCreationDiv - heightTitle
-    document.getElementById('list').style.height = heightCreationDiv+'px'
+   // On cherche a définir la taille de notre div contenant la liste des activités :
+   let heightTitle = document.getElementById('title-height').offsetHeight
+   let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
+   // 20px pour le padding de 10 en haut et en bas
+   heightCreationDiv = heightCreationDiv - heightTitle - 20
+   document.getElementById('list').style.height = heightCreationDiv + 'px'
 
 })
 

@@ -1,0 +1,47 @@
+
+{# modal window for editing targets in a pathwy #}
+
+<div class="modal" id="add-pathway-modal-targets">
+    <div id="target-pathway" class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header" >
+                <h2 class="modal-title">Objectifs journaliers</h2>
+            </div>
+
+            <div class="modal-body">
+                <p> Choisisez le nombre de fois que le parcours doit être effectué par semaine </p>
+
+
+                <div id="targets-container" class="flex-col"> 
+                    <label class="label" for='name'> Lundi </label>
+                    <input oninput="preventForTarget(this)" name="target-1" type="number" min="0" class="input target" > 
+
+                    <label class="label" for='name'> Mardi </label>
+                    <input oninput="preventForTarget(this)" name="target-2" type="number" min="0" class="input target" > 
+
+                    <label class="label" for='name'> Mercredi </label>
+                    <input oninput="preventForTarget(this)" name="target-3" type="number" min="0" class="input target" > 
+
+                    <label class="label" for='name'> Jeudi </label>
+                    <input oninput="preventForTarget(this)" name="target-4" type="number" min="0" class="input target" > 
+
+                    <label class="label" for='name'> Vendredi </label>
+                    <input oninput="preventForTarget(this)" name="target-5"type="number" min="0" class="input target" >  
+                                    
+                    <label class="label" for='name'> Samedi </label>
+                    <input oninput="preventForTarget(this)" name="target-6" type="number" min="0" class="input target"> 
+
+                    <label class="label" for='name'> Dimanche </label>
+                    <input oninput="preventForTarget(this)" name="target-0" type="number" min="0" class="input target" > 
+                </div>
+            
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-delete btn-secondary" onclick="hideTargets()">Fermer</button>
+            </div>
+
+        </div>
+    </div>
+</div>
