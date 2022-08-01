@@ -892,13 +892,13 @@ class PathwayController extends AbstractController
             }
         }
         $level = 0;
-        while($activitiesSortedByLevel[$level] != null){
+        while(isset($activitiesSortedByLevel[$level]) && $activitiesSortedByLevel[$level] != null){
             for($i = 0; $i < count($activitiesSortedByLevel[$level]); $i++){
                 $listSuccessors = $activitiesSortedByLevel[$level][$i]['successor'];
                 for($j = 0; $j < count($listSuccessors); $j++){
                     $activityToAdd = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$listSuccessors[$j]['idB']]);
                     $activityToAddArray = $this->activityToArray($doctrine, $activityToAdd);
-                    if(count($activitiesSortedByLevel[$level+1]) == 0){
+                    if(!isset($activitiesSortedByLevel[$level+1])){
                         $activitiesSortedByLevel[$level+1][] = $activityToAddArray;
                     }
                     else{

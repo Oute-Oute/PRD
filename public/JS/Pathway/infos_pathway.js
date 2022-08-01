@@ -37,7 +37,9 @@ var lines= new Array();
                 errorGetActivities();
             }
         },
-        error: function(){errorGetActivities();}
+        error: function () {
+            errorGetActivities();
+        }
         });
 
     change_tab('activities');
@@ -222,7 +224,6 @@ function drawArrows(data){
             for(k = 0; k < data[i][j]['successor'].length; k++){
                 start = document.getElementById('activity'+ data[i][j]['id']);
                 end = document.getElementById('activity'+ data[i][j]['successor'][k]['idB']);
-                console.log(data[i][j]['successor'])
                 l = new LeaderLine(start, end, {color: '#0dac2d'});
                 // We store every line to show/hide them when we switch tabs
                 // When you click outside the modal, the line array is reset (see end of index.html.twig) 
