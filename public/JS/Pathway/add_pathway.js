@@ -22,8 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHumanButton()
     fillActivityList()
 
-    let heightTitle = document.getElementById('name').offsetHeight
+    // On cherche a définir la taille de notre div contenant la liste des activités :
+    let heightTitle = document.getElementById('title-height').offsetHeight
     let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
-    heightCreationDiv = heightCreationDiv - heightTitle
+    // 20px pour le padding de 10 en haut et en bas
+    heightCreationDiv = heightCreationDiv - heightTitle - 20
     document.getElementById('list').style.height = heightCreationDiv + 'px'
 })

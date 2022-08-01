@@ -36,7 +36,10 @@ class ConsultationPlanningController extends AbstractController
      * @return JSON File containing the data used by the html and js files.
      */
     public function consultationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
-    {
+    {   
+        $english_months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+        $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
+        
         global $date;
         $date = date(('Y-m-d'));
         if (isset($_GET["date"])) {
@@ -47,6 +50,10 @@ class ConsultationPlanningController extends AbstractController
         if (isset($_GET["headerResources"])) {
             $header = $_GET["headerResources"];
         }
+
+        $dateFormatted=date_create($date);
+        $dateFormatted->format('Y-F-d');
+        $dateStr=str_replace($english_months, $french_months,$dateFormatted->format('d F Y'));
         //Récupération des données ressources de la base de données
         $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
@@ -58,6 +65,7 @@ class ConsultationPlanningController extends AbstractController
             'planning/consultation-planning.html.twig',
             [
                 'currentdate' => $date,
+                'dateFormatted' => $dateStr,
                 'headerResources' => $header,
                 'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
                 'getAppointmentJSON' => $getAppointmentJSON,

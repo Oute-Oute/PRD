@@ -55,11 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fillActivityList()
     initSuccessorsList()
 
-    // calcul de la taille de la liste
-    let heightTitle = document.getElementById('name').offsetHeight
-    let heightCreationDiv =document.getElementById('create-activity-container').offsetHeight
-    heightCreationDiv = heightCreationDiv - heightTitle
-    document.getElementById('list').style.height = heightCreationDiv+'px'
+   // On cherche a définir la taille de notre div contenant la liste des activités :
+   let heightTitle = document.getElementById('title-height').offsetHeight
+   let heightCreationDiv = document.getElementById('create-activity-container').offsetHeight
+   // 20px pour le padding de 10 en haut et en bas
+   heightCreationDiv = heightCreationDiv - heightTitle - 20
+   document.getElementById('list').style.height = heightCreationDiv + 'px'
 
 })
 
@@ -187,6 +188,7 @@ function addArray() {
     RESOURCES_BY_ACTIVITIES[len].id = Number(-1)
 }
 
+
 /**
  * All to add an activity to the list, thanks to ACTIVITY_IN_PROGRESS
  * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
@@ -230,7 +232,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
                 res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
                 res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
-                res.already = false//ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
+                res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
             }
@@ -243,7 +245,7 @@ function addActivity() {
                 res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
                 res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
                 res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
-                res.already = false//ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
+                res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
         
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
             }
@@ -511,7 +513,7 @@ function addResources() {
             let resourceId = document.getElementById('select-resources').value 
 
             index = verifyResourcesDuplicates(resourceId, false)
-
+            
             if (index == -1) {
 
                 let resourceName = '';
@@ -526,30 +528,13 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].already = false
 
-            } else {
-                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
 
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
-
-                } else {
-
-                    let resourceName = '';
-                    for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
-                        if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
-                            resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
-                        }
-                    }
-
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
-                    let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
-                    
-                }
+            } else {       
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+                
             }
 
            
@@ -565,22 +550,21 @@ function addResources() {
 
 
             if (index == -1) {
-
                 let resourceName = '';
                 for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
                     if (MATERIAL_RESOURCE_CATEGORIES[indexMRC].id == resourceId) {
                         resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
                     }
                 }
-    
+
                 ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
                 let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
-
-            } else {
+            }
+            else {
                 if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
 
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
@@ -603,12 +587,9 @@ function addResources() {
 
                 }
             }
- 
-
             fillMRCList()
         }
     }
-
 }
 
 /**
@@ -621,23 +602,23 @@ function verifyResourcesDuplicates(id, material) {
     
     // Si material est true
     if (material) {
-
         for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
-                return indexMaterial
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available) {
+                    return indexMaterial
+                }
             }
         }
-
-    } else {
-
+    }
+    else{
         for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
-                return indexHuman
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available) {
+                    return indexHuman
+                }            
             }
         }
-
     }
-    
     return -1
 }
 
@@ -686,14 +667,11 @@ function fillHRCList() {
             }
         }
     } 
-
     if (availableResourceCount == 0) {
         var li = document.createElement('li');
         li.innerText = 'Aucune ressource humaine pour le moment !'
         ul.appendChild(li)
     }
-
-
 }
 
 
@@ -1089,7 +1067,7 @@ function fillSuccessorList() {
 
             divMin.appendChild(labelMin);
             divMin.appendChild(inputMin);
-            divMin.style.display = "none";
+            divMin.style.display = "block";
 
             let divMax = document.createElement('div')
             divMax.setAttribute('id', 'divMax' + (indexSuccessor))
@@ -1109,17 +1087,16 @@ function fillSuccessorList() {
 
             divMax.appendChild(labelMax);
             divMax.appendChild(inputMax);
-            divMax.style.display = "none";
+            divMax.style.display = "block";
 
-            let divDel = document.createElement('div');
-            divDel.appendChild(imgDelete);
+            let divButton = document.createElement('div');
+            divButton.appendChild(imgDelete);
+            divButton.appendChild(imgDownArrow);
 
-            let divDown = document.createElement('div');
-            divDown.appendChild(imgDownArrow);
+
 
             successor.appendChild(p);
-            successor.appendChild(divDel);
-            successor.appendChild(divDown);
+            successor.appendChild(divButton);
 
             let divSuccessor = document.createElement('div');
             divSuccessor.classList.add("div-successor")
@@ -1192,7 +1169,8 @@ function deleteArrows(){
 }
 
 function validateSuccessors(){
-    error = checkSuccessor();
+    error = 0;
+    //error = checkSuccessor();
     switch(error){
         case 0:
             for(i = 0; i < NB_SUCCESSOR; i++){

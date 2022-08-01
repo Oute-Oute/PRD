@@ -1,15 +1,26 @@
 const mobileScreen = window.matchMedia("(max-width: 990px )");
-var IS_MENU_DISPLAYED = true;
+var IS_MENU_DISPLAYED = false;
 
 /**
  * Function call at the loading of the pages
  * Allow to apply a different color in a button in the menu
  */
 //$(document).ready(function () {
+    window.addEventListener('click', function(e){   
+        dashboardNav = document.getElementById('dashboard-nav')
+        menuButtonContainer = document.getElementById('menu-button-container')
+        menuButton = document.getElementById('menu-button')
+        if (!document.getElementById('dashboard-nav').contains(e.target) && !menuButtonContainer.contains(e.target) && IS_MENU_DISPLAYED == true){
+            IS_MENU_DISPLAYED = false
+            dashboardNav.style.animation = "hideMenu 0.7s forwards"
+            menuButton.setAttribute('class', 'menu-button');
+            menuButton.setAttribute('aria-expanded', 'false');
+        } 
+      });
 window.addEventListener('DOMContentLoaded', () => {   
     var path = window.location.pathname;
     var page = path.split("/").pop();
-    
+
 
 
 
@@ -58,13 +69,13 @@ function displayMenu(buttonThis) {
     buttonThis.classList.toggle('opened');
     buttonThis.setAttribute('aria-expanded', buttonThis.classList.contains('opened'));
     dashboardNav = document.getElementById('dashboard-nav');
-    if(IS_MENU_DISPLAYED) {
-        IS_MENU_DISPLAYED = false;
+    if(!IS_MENU_DISPLAYED) {
+        IS_MENU_DISPLAYED = true;
         dashboardNav.style.animation = "displayMenu 0.7s forwards"
     } 
     else {
         dashboardNav.style.animation = "hideMenu 0.7s forwards"
-        IS_MENU_DISPLAYED = true;
+        IS_MENU_DISPLAYED = false;
     }
 }
 

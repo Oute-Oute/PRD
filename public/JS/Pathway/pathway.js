@@ -60,6 +60,8 @@ function addArray() {
         res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].name
         res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].nb
         res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].available
+        res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHR].already
+
         RESOURCES_BY_ACTIVITIES[len].humanResourceCategories.push(res)
     }
 
@@ -70,6 +72,8 @@ function addArray() {
         res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].name
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
         res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
+        res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].already
+        
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
 
@@ -1047,7 +1051,7 @@ function fillSuccessorList() {
 
             divMin.appendChild(labelMin);
             divMin.appendChild(inputMin);
-            divMin.style.display = "none";
+            divMin.style.display = "block";
 
             let divMax = document.createElement('div')
             divMax.setAttribute('id', 'divMax' + (indexSuccessor))
@@ -1067,17 +1071,14 @@ function fillSuccessorList() {
 
             divMax.appendChild(labelMax);
             divMax.appendChild(inputMax);
-            divMax.style.display = "none";
+            divMax.style.display = "block";
 
-            let divDel = document.createElement('div');
-            divDel.appendChild(imgDelete);
-
-            let divDown = document.createElement('div');
-            divDown.appendChild(imgDownArrow);
+            let divButton = document.createElement('div')
+            divButton.appendChild(imgDelete)
+            divButton.appendChild(imgDownArrow)
 
             successor.appendChild(p);
-            successor.appendChild(divDel);
-            successor.appendChild(divDown);
+            successor.appendChild(divButton);
 
             let divSuccessor = document.createElement('div');
             divSuccessor.classList.add("div-successor")

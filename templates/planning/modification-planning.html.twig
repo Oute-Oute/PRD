@@ -238,21 +238,27 @@
 					<input type="hidden" id='list-resource' name="list-resource"/>
 				</form>
 			</div>
-			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
-			<option value="02:00:00">Zoom : 12,5%</option>
-			<option value="01:00:00">Zoom : 25%</option>
-			<option value="00:40:00">Zoom : 50%</option>
-			<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
-			<option value="00:10:00">Zoom : 200%</option>
-			<option value="00:05:00">Zoom : 400%</option>
-			<option value="00:02:30">Zoom : 800%</option>
-		</select>
 		</div>
 	</div>
 	  
-	<div
-		id="calendar-container" class="calendar-container">
-	
+	<div id="calendar-container" class="calendar-container">
+		<table class="header-ressource">
+			<tr>
+				<td id="header-type" class="header-td">Ressources Humaines</td>
+				<td class="header-td">{{ dateFormatted }}</td>
+				<td class="header-td">
+					<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
+						<option value="02:00:00">Zoom : 12,5%</option>
+						<option value="01:00:00">Zoom : 25%</option>
+						<option value="00:40:00">Zoom : 50%</option>
+						<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
+						<option value="00:10:00">Zoom : 200%</option>
+						<option value="00:05:00">Zoom : 400%</option>
+						<option value="00:02:30">Zoom : 800%</option>
+					</select>
+				</td>
+			</tr>
+		</table>
 		
 
 		<!-- affichage du calendar -->

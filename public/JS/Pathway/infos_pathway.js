@@ -29,6 +29,7 @@ var lines= new Array();
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
+            console.log(data);
             if(data[0] != undefined){
                 drawActivities(data);
             }
@@ -36,7 +37,9 @@ var lines= new Array();
                 errorGetActivities();
             }
         },
-        error: function(){errorGetActivities();}
+        error: function () {
+            errorGetActivities();
+        }
         });
 
     change_tab('activities');
@@ -97,41 +100,29 @@ function change_tab(id) {
 }
 
 function drawActivities(data){
-    console.log(data);
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    maxLevel = 0;
     arrayActivityByLevel = Array();
-    
-    // get the max level, used to cut the div vertically
-    for(i = 0; i < data.length; i++){
-        if(maxLevel < data[i]['level']){
-            maxLevel = data[i]['level'];
+ 
+    /*for(i = 0; i < data.length; i++){
+        for(j = 0; j < data[i].length; j++){
+            arrayActivityByLevel[i].push(data[i][j]['name'], j, data[i][j]['duration']);
         }
-    }
-
-    // for each level, get all the activities from it
-    for(i = 0; i < maxLevel; i++){
-        arrayActivityByLevel[i] = [0]; // initialize
-    }    
-    for(i = 0; i < data.length; i++){
-        arrayActivityByLevel[data[i]['level']-1][0]++;
-        arrayActivityByLevel[data[i]['level']-1].push(data[i]['activity']['name'], i, data[i]['activity']['duration']);
-    }
+    }*/
 
     // get the maximum of activities within one level, 
     // used to print some br to have enough space to draw the graph
     maxActivityByLevel = 0;
-    for(i = 0; i < arrayActivityByLevel.length; i++){
-        if(maxActivityByLevel < arrayActivityByLevel[i][0]){
-            maxActivityByLevel = arrayActivityByLevel[i][0];
-        }
+    for(i = 0; i < data.length; i++){
+        if (maxActivityByLevel < data[i].length){
+            maxActivityByLevel = data[i].length;
+        }       
     }
 
     var divBr= document.getElementById('modal-br');
     divBr.innerHTML = ""; // reset the previous br to prevent infinite growth of the modal
-    for(i = 0; i < maxActivityByLevel*3; i++){
+    for(i = 0; i < 3; i++){
         var br = document.createElement("br");
         divBr.appendChild(br);
     }
@@ -140,12 +131,12 @@ function drawActivities(data){
     const style = document.createElement('style');
     style.innerHTML = `
         .block {
-            flex-basis:` + Math.round(100/maxLevel) + `%;
+            flex-basis:` + Math.round(100/data.length) + `%;
         }
         `;
     document.head.appendChild(style);
 
-    for(i = 0; i < maxLevel; i++){
+    for(i = 0; i < data.length; i++){
         var div = document.createElement('DIV');
         div.classList.add("block", "wrapper");
         div.style.flexDirection = "column";
@@ -159,12 +150,13 @@ function drawActivities(data){
         If there are 2 activities, one is translated by 2% and the other by 125%
         Ect...
     */
-    for(i=0; i < arrayActivityByLevel.length; i++){
-        nbActivity = arrayActivityByLevel[i][0];
+    for(i=0; i < data.length; i++){
+        nbActivity = data[i].length;
         switch(nbActivity){
+            // function createActivities(height, level, name, idActivity, duration){
             case 1:
                 height = 100/(nbActivity*2);
-                createActivities(height, i+1, arrayActivityByLevel[i][1], arrayActivityByLevel[i][2], arrayActivityByLevel[i][3]);
+                createActivities(height, i+1, data[i][0]['name'], data[i][0]['id'], data[i][0]['duration']);
             break;
             default:
                 for(j = 0; j < nbActivity; j++){
@@ -187,7 +179,7 @@ function drawActivities(data){
                             height = 50/nbActivity;
                         }
                     }
-                    createActivities(height, i+1, arrayActivityByLevel[i][j*3+1], arrayActivityByLevel[i][j*3+2], arrayActivityByLevel[i][j*3+3]);
+                    createActivities(height, i+1, data[i][j]['name'], data[i][j]['id'], data[i][j]['duration']);
                 }
             break;
         }
@@ -202,7 +194,7 @@ function createActivities(height, level, name, idActivity, duration){
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
     div.classList.add("pathway-div-activity");
-    div.style.transform = 'translate(0%, -' + height + '%)';
+    div.style.transform = 'translate(0%, -' + 100 + '%)';
 
     var divHeader = document.createElement('div');
     divHeader.classList.add("pathway-div-activity-header");
@@ -215,18 +207,29 @@ function createActivities(height, level, name, idActivity, duration){
     div.appendChild(divHeader); div.appendChild(p);
 
     divLevel.appendChild(div);
+
+    div.addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.position();
+            }
+          });
+    }), false);
 }
 
 function drawArrows(data){
     lines = new Array();
     for(i = 0; i < data.length; i++){
-        for(j = 0; j < data[i]['successorsIndex'].length; j++){
-            start = document.getElementById('activity'+ i);
-            end = document.getElementById('activity'+ data[i]['successorsIndex'][j]);
-            l = new LeaderLine(start, end, {color: '#0dac2d'});
-            // We store every line to show/hide them when we switch tabs
-            // When you click outside the modal, the line array is reset (see end of index.html.twig) 
-            lines.push(l);
+        for(j = 0; j < data[i].length; j++){
+            for(k = 0; k < data[i][j]['successor'].length; k++){
+                start = document.getElementById('activity'+ data[i][j]['id']);
+                end = document.getElementById('activity'+ data[i][j]['successor'][k]['idB']);
+                l = new LeaderLine(start, end, {color: '#0dac2d'});
+                // We store every line to show/hide them when we switch tabs
+                // When you click outside the modal, the line array is reset (see end of index.html.twig) 
+                lines.push(l);
+            }
+            
         }
     }
 }

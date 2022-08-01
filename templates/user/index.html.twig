@@ -98,6 +98,7 @@
 		<script>
 			$("#autocompleteInputUserNname").autocomplete({
 				source: autocompleteArray,
+				minLength: 3,
 				select: function (event, ui) {
 				filterUser('autocompleteInputUserNname', ui.item.value);
 				}

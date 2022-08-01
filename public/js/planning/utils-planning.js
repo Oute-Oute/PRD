@@ -206,6 +206,7 @@ function changePlanning() {
     firstCreationFilter=true;
 
   }
+  document.querySelectorAll("#header-type")[0].innerText=headerResources;
 }
 
 /**
