@@ -540,7 +540,7 @@ function displayModalModifyEvent() {
   $("#modify-planning-modal").modal("show"); //open the window
 }
 
-function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
+function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -587,10 +587,11 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
     resourceOrder: 'type, title',
     //initialise la vue en colonne par ressource par jour en horaire française
     initialView: "resourceTimelineDay",
-    slotDuration: "00:20:00",
+    slotDuration: slotDuration,
     locale: "fr",
     timeZone: "Europe/Paris",
-    //stickyFooterScrollbar: true,
+
+    scrollTimeReset:false,
     height: $(window).height() * 0.75,
 
     //permet de modifier les events dans le calendar
@@ -971,8 +972,12 @@ function clearArray(array) {
  */
 function undoEvent() {
   var slotDuration = calendar.getOption('slotDuration');
+  var scrollTime=calendar.getOption('scrollTime'); 
+  var zoom = document.getElementById('zoom').value;
+
+  console.log(scrollTime); 
   if (historyEvents.length != 1) {
-    createCalendar(headerResources, 'recreate');
+    createCalendar(headerResources, 'recreate',zoom);
   }
   calendar.getEvents().forEach((currentEvent) => {
     currentEvent._def.ui.textColor = "#fff";
@@ -980,7 +985,6 @@ function undoEvent() {
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
   })
-  calendar.setOption('slotDuration', slotDuration);
   isUpdated = false;
 }
 
