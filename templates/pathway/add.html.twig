@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/Pathway/add_pathway.css') }}">
+        <link rel="stylesheet" href="{{ asset('CSS/Pathway/target_modal.css') }}">
         {#<link rel="stylesheet" href="{{ asset('CSS/bootstrap/bootstrap.min.css') }}">#}
 {% endblock %}
 
@@ -50,49 +51,7 @@
                     <button type="button" id="btn-show-targets" onclick="showTargets()"> Objectifs journaliers  </button>
                 </div>
 
-                <div class="modal" id="add-pathway-modal-targets">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <h2 class="modal-title">Objectifs journaliers</h2>
-                            </div>
-
-                            <div class="modal-body">
-                                <div id="target" class="flex-col"> 
-                                    <label class="label" for='name'> Lundi </label>
-                                    <input oninput="preventForTarget(this)" name="target-1" type="number" min="0" class="input target" > 
-
-                                    <label class="label" for='name'> Mardi </label>
-                                    <input oninput="preventForTarget(this)" name="target-2" type="number" min="0" class="input target" > 
-
-                                    <label class="label" for='name'> Mercredi </label>
-                                    <input oninput="preventForTarget(this)" name="target-3" type="number" min="0" class="input target" > 
-
-                                    <label class="label" for='name'> Jeudi </label>
-                                    <input oninput="preventForTarget(this)" name="target-4" type="number" min="0" class="input target" > 
-
-                                    <label class="label" for='name'> Vendredi </label>
-                                    <input oninput="preventForTarget(this)" name="target-5"type="number" min="0" class="input target" >  
-                                                    
-                                    <label class="label" for='name'> Samedi </label>
-                                    <input oninput="preventForTarget(this)" name="target-6" type="number" min="0" class="input target"> 
-
-                                    <label class="label" for='name'> Dimanche </label>
-                                    <input oninput="preventForTarget(this)" name="target-0" type="number" min="0" class="input target" > 
-                                </div>
-                            
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn-delete btn-secondary" onclick="hideTargets()">Fermer</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-
+                {% include 'Pathway/target_modal.html.twig' %}
 
             </div>
 
@@ -138,7 +97,7 @@
                     <div id="container-btn-add-activity" class="flex-row" style=""> 
                     <!--  style="display:none;"  -->
                         <button style="display:none;"  type="button" id="btn-cancel-activity"  class="btn-delete btn-secondary" onclick="cancelEditActivity()"> <b> Annuler </b></button>
-                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="addActivity()"> <b> Ajouter une activité > </b> </button> 
+                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="addActivity()"> <b> Ajouter une activité  </b> </button> 
                         <button style="display:none;"  type="button" id="btn-confirm-activity"  class="btn-delete btn-secondary" onclick="confirmEditActivity()"> <b> Valider les modifications </b></button>
                     </div>
 
@@ -146,7 +105,7 @@
 
                 <!-- partie droite - permet de lister les activités -->
                 <div id="activities-list">
-                    <div style="display:flex">
+                    <div id="title-height" style="display:flex">
                         <h4 class="title"> <label id="name" class="label" for='name'> Liste des activités </label>    </h4> 
                         <button type="button" id="btn-show-activities" class="btn-valide btn-secondary" onclick="showActivitiesPathway()">Graphique</button> 
                     </div>
