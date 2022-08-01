@@ -556,8 +556,10 @@ class PathwayController extends AbstractController
                         
                         $activity = new Activity();
 
-                        // We verify if the activity already exists (if its id if lesser than -1)
+                        // We verify if the activity already exists (if its id if equal to -1)
                         if ($resourcesByActivities[$indexActivity]->id == -1) {
+                            //If the activity doesnt exists :
+
                             // Création de l'activité
                             $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
                             $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
@@ -569,7 +571,8 @@ class PathwayController extends AbstractController
                             array_push($activitiesIdArray, $activity->getId());
                             }
                         else {
-                            // if the activity already exists
+                            // if the activity already exists :
+
                             $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
 
                             // Set the activity
@@ -663,17 +666,91 @@ class PathwayController extends AbstractController
 
 
                     } else {
-                        // if the activity is available = false
-                        // on doit verifier si elle existe dans la bd pour la supprimer 
+                        // if the activity is available = false, it has been deleted but we need to know if it was tin the pathway before the editing
+                        // so we verify if it wis in the db
                         if ($resourcesByActivities[$indexActivity]->id != -1) {
-
+                            // We get the activity
                             $activity = $activityRepository->findById($resourcesByActivities[$indexActivity]->id)[0];
+
+                            // We get all the links between the activity we want to delete and its resources
+                            $activityHumanResources = $AHRRepository->findBy(["activity" => $activity]);
+                            $activityMaterialResources = $AMRRepository->findBy(["activity" => $activity]);
+
+                            foreach ($activityHumanResources as $activityHumanResource) {
+                                $AHRRepository->remove($activityHumanResource, true);
+                            }
+
+                            foreach ($activityMaterialResources as $activityMaterialResource) {
+                                $AMRRepository->remove($activityMaterialResource, true);
+                            }
+
+                            // deletion of the appointements
+                            $appointmentRepository = new AppointmentRepository($this->getDoctrine());
+                            $appointmentsInPathway = $appointmentRepository->findBy(['pathway' => $pathway]);
+
+                            $doctrine = $this->getDoctrine();
+
+                            foreach ($appointmentsInPathway as $appointment) {
+
+                                // We get all the activities associated with the appointment
+                                $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
+                                $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+                                foreach ($scheduledActivities as $scheduledActivity) {
+                                    $date = $appointment->getDayappointment()->format('Y-m-d');
+
+                                    // Deletion of the data associated with the appointment in the table MaterialResourceScheduled
+                                    $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                                    $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                                    foreach ($allMaterialResourceScheduled as $materialResourceScheduled) {
+                                        $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+                                    }
+
+
+                                    //suppression des données associées au rendez-vous de la table HumanResourceScheduled
+                                    $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                                    $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                                    foreach ($allHumanResourceScheduled as $humanResourceScheduled) {
+                                        $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+                                    }
+
+
+                                    //suppression des données associées au rendez-vous de la table ScheduledActivity
+                                    $scheduledActivityRepository->remove($scheduledActivity, true);
+                                }
+
+                                // deletion of the appointment
+                                $appointmentRepository->remove($appointment, true);
+
+                            }
+                            //$scheduledActivity = new ScheduledActivity($this->getDotrine());
+                            
+                            //We delete the successors 
+                           
+                            $successorsa = $successorRepository->findBy(['activitya' => $activity]);
+                            for ($indexSuccessora = 0; $indexSuccessora < count($successorsa); $indexSuccessora++) {
+                                $em->remove($successorsa[$indexSuccessora]);
+                            }
+            
+                            $successorsb = $successorRepository->findBy(['activityb' => $activity]);
+                            for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
+                                $em->remove($successorsa[$indexSuccessorb]);
+                            }
+                            $em->flush();       
+                
+                            
+
+
+                            // then we can delete the activity 
                             $em->remove($activity);
                             $em->flush();
                         }
                     }
 
                 }
+
                 for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
                     // Creating of the successor between the 2 activities
                     $successor = new Successor();
@@ -814,7 +891,7 @@ class PathwayController extends AbstractController
 
                 $activityHumanResources = $activityHumanResourceRepository->findBy(['activity' => $activitiesInPathway[$indexActivity]]);
                 for ($indexAHR = 0; $indexAHR < count($activityHumanResources); $indexAHR++) {
-                    echo 'on supprime'.$indexAHR;
+                    //echo 'on supprime'.$indexAHR;
                     $em->remove($activityHumanResources[$indexAHR]);
                 }
 

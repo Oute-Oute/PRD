@@ -378,7 +378,6 @@ function addResources() {
     console.log(document.getElementById('resource-nb').value)
 
     if (document.getElementById('resource-nb').value == '') {
-        console.log('oui')
         verif = false
         alert("La quantité de la ressource n'est pas correcte")
     }

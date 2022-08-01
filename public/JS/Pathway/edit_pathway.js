@@ -563,13 +563,15 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].already = false
+
             }
             else {
-                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+                //if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
 
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
 
-                } else {
+               /* } else {
 
                     let resourceName = '';
                     for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
@@ -585,7 +587,7 @@ function addResources() {
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
 
-                }
+                }*/
             }
             fillMRCList()
         }
@@ -871,7 +873,6 @@ function submitPathway() {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
             document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
-            console.log(RESOURCES_BY_ACTIVITIES)
             btnSubmit.click()
         }
     } else {
