@@ -95,7 +95,7 @@ div#activities-list #list{
 /* btns for edit / remove an activity from the list */ 
 .div-activity .btns {
     position: absolute;
-    right: 10%;
+    right: 25px;
 }
 
 /* Modification resource in an activity in a pathway */

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Appointment;
+use App\Entity\Pathway;
 use App\Repository\AppointmentRepository;
+use App\Repository\PathwayRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -342,4 +344,29 @@ class AppointmentController extends AbstractController
             ];
         return new JsonResponse($data);
     }
+
+    /**
+     * Allow to GET the appointments list of the activity in the parameter (activity id)
+     */
+    public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id) {
+        $pathway = $doctrine->getRepository("App\Entity\Pathway")->findBy(["id" => $id]);
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(["pathway" => $pathway]);
+        
+        $appointmentsJSON = [];
+
+        foreach ($appointments as $appointment) {
+            $data[] =
+            [
+                "appointment_id" => $appointment->getId(),
+                "appointment_day" => $appointment->getDayappointment(),
+                "patient_firstname" => $appointment->getPatient()->getFirstname(),
+                "patient_lastname" => $appointment->getPatient()->getLastname(),
+            ];  
+        }
+
+        return new JsonResponse($data);
+
+    }
+
 }
+

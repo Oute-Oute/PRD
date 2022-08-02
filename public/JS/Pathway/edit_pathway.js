@@ -1,6 +1,5 @@
 //const { codePointAt } = require("core-js/core/string");
 
-var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
@@ -26,7 +25,6 @@ var VALIDATE = 0;
  * Call at the loading of the add pathway page
  */
 document.addEventListener('DOMContentLoaded', () => {
-    SELECT_ID = 0;
 
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-human-resource-categories").value
@@ -164,14 +162,14 @@ function initSuccessorsList() {
  * Allow to show the modal for the target
  */
 function showTargets() {
-    $('#edit-pathway-modal-targets').modal("show");
+    $('#pathway-modal-targets').modal("show");
 }
 
 /**
  * Allow to hide the modal for the target
  */
 function hideTargets() {
-    $('#edit-pathway-modal-targets').modal("hide");
+    $('#pathway-modal-targets').modal("hide");
 }
 
 function initActivity() {
@@ -182,6 +180,9 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
+/**
+ * push a copy of the ACTIVITY_IN_PROGRESS array into ACTIVITY_IN_PROGRESS
+ */
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
@@ -390,22 +391,15 @@ function fillActivityList() {
  */
 function deleteActivity(id) {
 
-    // We got the index of the div to delete  
+    // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     id = getId(id)
-    
-    // On peut donc recuperer la div
-    /*let divToDelete = document.getElementById('div-activity-'+id)
-    // puis la supprimer
-    let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.removeChild(divToDelete)*/
     
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
-    //SELECT_ID = SELECT_ID - 1;
 
     let idActivity = "activity" + (parseInt(id)+1);
     for(var i = SUCCESSORS.length - 1; i >= 0; i--){
@@ -582,7 +576,25 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].already = false
 
 
-            } else {       
+            } else {    
+                
+                console.log("sdsdsdsd")
+
+                // request to get the appointments list of the activity
+                $.ajax({
+                    type: 'GET',
+                    url: '/activity/'+index+'/appointments',
+                    //data: { 'index': index },
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("success")
+                        console.log(data)
+                    },
+                    error: function () {
+                        console.log("error");
+                    },
+                });
+
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
                 
             }
@@ -642,6 +654,31 @@ function addResources() {
             fillMRCList()
         }
     }
+}
+
+var app
+function setAppointmentsList(data) {
+    app = data
+}
+function oui() {
+    console.log("sdsdsdsd")
+
+    var index = 8
+
+    // request to get the appointments list of the activity
+    $.ajax({
+        type: 'GET',
+        url: '/activity/'+index+'/appointments',
+        dataType: "json",
+        success: function (data) {
+            setAppointmentsList(data)
+        },
+        error: function () {
+            console.log("error");
+        },
+    });
+
+console.log(app)
 }
 
 /**
