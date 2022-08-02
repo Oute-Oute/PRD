@@ -27,12 +27,10 @@ class AppointmentController extends AbstractController
             $date = str_replace('T12:00:00', '', $date);
         }
 
-        $currentDateTime = new \DateTime($date);
-        $currentAppointment=$appointmentRepository->findBy(["dayappointment" => $currentDateTime]); 
         $currentAppointment=$paginator->paginate(
-            $currentAppointment, 
+            $appointmentRepository->findAppointmentByDate($date), 
             $request->query->getInt('page',1),
-            8
+            10
         ); 
         $patientsJSON = $this->getPatientsJSON($doctrine);
         $pathwaysJSON = $this->getPathwaysJSON($doctrine);

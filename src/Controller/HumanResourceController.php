@@ -58,7 +58,7 @@ class HumanResourceController extends AbstractController
         $categoryOfHumanResources = $categoryOfHumanResourceRepository->findAll();
         
         $humanResources = array();
-        foreach($humanResourceRepository->findAll() as $humanResource){
+        foreach($humanResourceRepository->findBy(array(), array('humanresourcename' => 'ASC')) as $humanResource){
             $categories = array();
             foreach($categoryOfHumanResources as $categoryOfHumanResource){
                 if($categoryOfHumanResource->getHumanresource()->getId() == $humanResource->getId()){

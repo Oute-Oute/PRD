@@ -18,10 +18,7 @@ div#container {
   margin-top: 2.5%;
 }
 
-#container-top-right {
-  display: flex;
-  flex-direction: column;
-}
+
 
 .form-control {
   border-radius: 50px;
@@ -35,7 +32,7 @@ div#container {
   display: block;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
   position: relative;
 
@@ -127,9 +124,8 @@ a:hover{
 }
 
 .datepicker{
-  width: 25%;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
   display: inline-block;
   
 }
@@ -263,13 +259,40 @@ a:hover{
 }
 
 .header-ressource{
-  display:flex; 
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  width: 75%;
   margin-top: 5px;
   margin-bottom: 5px;
-  width: 100%;
   font-size: 1.75em;
   font-family: 'Nunito', sans-serif;
+}
+.header-ressource-consultation{
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.75em;
+  font-family: 'Nunito', sans-serif;
+  z-index:0;
+}
+
+.top{
+  display: flex;
+  flex-direction: row;
+}
+
+.top-left{
+  width:50%
+}
+
+.top-right{
+  display: flex;
+  flex-direction: column;
+  position: absolute; 
+  right:0%;
+  margin-right: 5%;
+  z-index:1;
+}
+
+.header-td-date{
+  left: 50%;
+  position: absolute;
+  text-align: center;
 }
