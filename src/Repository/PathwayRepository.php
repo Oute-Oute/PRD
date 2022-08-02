@@ -39,20 +39,16 @@ class PathwayRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Pathway[] Returns an array of Pathway objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Pathway[] Returns an array of Pathway objects
+    */
+   public function findAllPathway(): array
+   {
+       return $this->createQueryBuilder('p')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?Pathway
 //    {

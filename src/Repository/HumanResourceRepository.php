@@ -39,20 +39,17 @@ class HumanResourceRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return HumanResource[] Returns an array of HumanResource objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('h.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return HumanResource[] Returns an array of HumanResource objects
+    */
+   public function findAllHumanResources(): array
+   {
+       return $this->createQueryBuilder('h')
+       ->orderBy('h.id', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?HumanResource
 //    {
