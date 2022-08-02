@@ -240,9 +240,6 @@ function addActivity() {
         alert("La durée de l'activité n'est pas correcte ")
     }
 
-    console.log(RESOURCES_BY_ACTIVITIES)
-    console.log(ACTIVITY_IN_PROGRESS)
-
     if (verif) {
         // if the activity is open in edit mode
         if (IS_EDIT_MODE) {
