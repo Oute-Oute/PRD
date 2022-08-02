@@ -18,10 +18,7 @@ div#container {
   margin-top: 2.5%;
 }
 
-#container-top-right {
-  display: flex;
-  flex-direction: column;
-}
+
 
 .form-control {
   border-radius: 50px;
@@ -263,13 +260,33 @@ a:hover{
 }
 
 .header-ressource{
-  display:flex; 
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  width: 75%;
   margin-top: 5px;
   margin-bottom: 5px;
-  width: 100%;
   font-size: 1.75em;
   font-family: 'Nunito', sans-serif;
+}
+.header-ressource-consultation{
+  width: 125%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.75em;
+  font-family: 'Nunito', sans-serif;
+}
+
+.top{
+  display: flex;
+  flex-direction: row;
+}
+
+.top-left{
+  width:50%
+}
+
+.top-right{
+  display: flex;
+  flex-direction: column;
+  position: absolute; 
+  right:0%;
+  margin-right: 5%;
 }
