@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Patient;
 use App\Repository\PatientRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ class PatientController extends AbstractController
     {
         $patients=$this->getAllPatient($patientRepository); 
         $patients=$paginator->paginate(
-            $patients, 
+            $patientRepository->findAllPatient(), 
             $request->query->getInt('page',1),
             8
         ); 
