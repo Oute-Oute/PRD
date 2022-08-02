@@ -32,7 +32,7 @@ div#container {
   display: block;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
   position: relative;
 
@@ -124,9 +124,8 @@ a:hover{
 }
 
 .datepicker{
-  width: 25%;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
   display: inline-block;
   
 }
@@ -267,11 +266,11 @@ a:hover{
   font-family: 'Nunito', sans-serif;
 }
 .header-ressource-consultation{
-  width: 125%;
   margin-top: 5px;
   margin-bottom: 5px;
   font-size: 1.75em;
   font-family: 'Nunito', sans-serif;
+  z-index:0;
 }
 
 .top{
@@ -289,4 +288,11 @@ a:hover{
   position: absolute; 
   right:0%;
   margin-right: 5%;
+  z-index:1;
+}
+
+.header-td-date{
+  left: 50%;
+  position: absolute;
+  text-align: center;
 }
