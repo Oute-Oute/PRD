@@ -74,7 +74,7 @@ div#activities-list #list{
     justify-content: space-between;
     align-items: center;
     padding: 0px 5px;
-    min-height: 50x;
+    min-height: 50px;
     height: 50px;
     max-height: 150px;
     position: relative;
@@ -84,6 +84,7 @@ div#activities-list #list{
     max-height: 99%;
     position: relative;
     width: 100%;
+    overflow-y: auto;
 }
 /* text of the activity */
 .div-activity .container-p p{
