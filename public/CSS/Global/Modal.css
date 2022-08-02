@@ -264,6 +264,7 @@ ul.ui-autocomplete {
     font-weight: bold;
     text-align: center;
     padding-top: 5px;
+    pointer-events: none;
   }
 
   .pathway-div-activity-graph{
@@ -278,6 +279,10 @@ ul.ui-autocomplete {
     resize: both;
   }
 
+  .pathway-div-activity-graph > p{
+    pointer-events: none;
+  }
+
   .wrapper-graph {
     flex-wrap: wrap;
     height: 100%;
@@ -287,7 +292,7 @@ ul.ui-autocomplete {
   }
 
   #modal-body-graph{
-    height:400px;
+    height:600px;
     display:flex;
     justify-content: space-between;
     flex-direction: row;
