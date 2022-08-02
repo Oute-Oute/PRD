@@ -45,7 +45,7 @@ class PatientRepository extends ServiceEntityRepository
    public function findAllPatient(): array
    {
        return $this->createQueryBuilder('p')
-           ->orderBy('p.id', 'ASC')
+           ->orderBy('p.lastname', 'ASC')
            ->getQuery()
            ->getResult()
        ;
