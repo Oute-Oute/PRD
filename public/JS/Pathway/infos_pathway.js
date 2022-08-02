@@ -29,7 +29,6 @@ var lines= new Array();
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
-            console.log(data);
             if(data[0] != undefined){
                 drawActivities(data);
             }

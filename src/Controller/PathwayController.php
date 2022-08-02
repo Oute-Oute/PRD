@@ -892,6 +892,7 @@ class PathwayController extends AbstractController
         }
 
         $data = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
+        $data = $this->checkDuplicate($data);
         return new JsonResponse($data);
     }
 
@@ -935,6 +936,23 @@ class PathwayController extends AbstractController
             $level++;
         }
         return $activitiesSortedByLevel;
+    }
+
+    public function checkDuplicate($activities){
+        for($level = 0; $level < count($activities); $level++){
+            foreach($activities[$level] as $activity){
+                foreach($activity['successor'] as $successor){
+                    for($i = 0; $i <= $level; $i++){
+                        for($j = count($activities[$i])-1; $j >= 0; $j--){
+                            if($successor['idB'] ==  $activities[$i][$j]['id']){
+                                array_splice($activities[$i], $j, 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $activities; 
     }
 
     public function activityToArray(ManagerRegistry $doctrine, $activity){
