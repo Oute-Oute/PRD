@@ -574,7 +574,7 @@ class PathwayController extends AbstractController
                             // Get the last inserted row, i.e the activity we just added
                             $activity =  $activityRepository->findOneBy(array(),array('id'=>'DESC'),1,0);
                             array_push($activitiesIdArray, $activity->getId());
-                            }
+                        }
                         else {
                             // if the activity already exists :
 
@@ -676,6 +676,7 @@ class PathwayController extends AbstractController
 
                             // We get the activity
                             $activity = $activityRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->id]);
+                            array_push($activitiesIdArray, $activity->getId());
 
                             // We get all the links between the activity we want to delete and its resources
                             $activityHumanResources = $AHRRepository->findBy(["activity" => $activity]);
@@ -740,8 +741,8 @@ class PathwayController extends AbstractController
                             }
             
                             $successorsb = $successorRepository->findBy(['activityb' => $activity]);
-                            for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
-                                $em->remove($successorsa[$indexSuccessorb]);
+                            for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsb); $indexSuccessorb++) {
+                                $em->remove($successorsb[$indexSuccessorb]);
                             }
                             $em->flush();       
                 
@@ -782,7 +783,7 @@ class PathwayController extends AbstractController
                 }
                 $em->flush();
             }
-            for($i = 0; $i < count($pathwaySuccessors); $i++){
+            /*for($i = 0; $i < count($pathwaySuccessors); $i++){
                 $succ_found = false;
                 for($j = 0; $j < count($successors); $j++){
                     $idA = intval(explode("activity", $successors[$j]->idActivityA)[1]);
@@ -797,7 +798,7 @@ class PathwayController extends AbstractController
                     $em->remove($pathwaySuccessors[$i]);
                     $em->flush();
                 }
-            }
+            }*/
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
         }
     }
