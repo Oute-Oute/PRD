@@ -19,7 +19,7 @@ class PatientController extends AbstractController
     {
         $patients=$this->getAllPatient($patientRepository); 
         $patients=$paginator->paginate(
-            $patientRepository->findAllPatient(), 
+            $patientRepository->findAllPatient(),
             $request->query->getInt('page',1),
             8
         ); 

@@ -45,6 +45,7 @@ class PathwayRepository extends ServiceEntityRepository
    public function findAllPathway(): array
    {
        return $this->createQueryBuilder('p')
+           ->orderBy('p.pathwayname', 'ASC')
            ->getQuery()
            ->getResult()
        ;
