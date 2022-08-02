@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 20px pour le padding de 10 en haut et en bas
     heightCreationDiv = heightCreationDiv - heightTitle - 20
     document.getElementById('list').style.height = heightCreationDiv + 'px'
-
 })
 
 /**
@@ -975,6 +974,10 @@ function createActivitiesGraph(name, idActivity, duration) {
         containment: "#divContent",
     });
 
+    document.getElementById('edit-pathway-modal-activities').addEventListener('click', function(e){
+        console.log(e.target);
+    });
+
     div.addEventListener('mousemove', AnimEvent.add(function () {
         lines.forEach((l) => {
             if (l.start == div || l.end == div) {
@@ -1027,6 +1030,21 @@ function createActivitiesGraph(name, idActivity, duration) {
             ID_ACTIVITY_PREDECESSOR = div.id;
             NAME_ACTIVITY_PREDECESSOR = name;
         }
+    });
+
+    div.addEventListener('mouseenter', (e) => {
+        //hideArrows();
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.color = 'red';
+            }
+        }); 
+    });
+      
+    div.addEventListener('mouseleave', (e) => {
+        lines.forEach((l) => {
+            l.color = '#0dac2d';
+        }); 
     });
 }
 
@@ -1153,6 +1171,24 @@ function fillSuccessorList() {
         divSuccessor.appendChild(divMax);
 
         divSuccessorsList.appendChild(divSuccessor);
+
+        divSuccessor.addEventListener('mouseenter', (e) => {
+            start = document.getElementById(SUCCESSORS[indexSuccessor].idActivityA)
+            end = document.getElementById(SUCCESSORS[indexSuccessor].idActivityB)
+            lines.forEach((l) => {
+                if(l.start == start && l.end == end){
+                    l.color = 'red';
+                    l.size = l.size*2;
+                }
+            }); 
+        });
+          
+        divSuccessor.addEventListener('mouseleave', (e) => {
+            lines.forEach((l) => {
+                l.color = '#0dac2d';
+                l.size = 4;
+            }); 
+        });
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
@@ -1170,13 +1206,28 @@ function showDelay(id) {
         divMin.style.display = "block";
         divMax.style.display = "block";
         document.getElementById('succ_imgdown-' + id).src = '/img/chevron_up.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délai'
+        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délais'
     }
     else {
         divMin.style.display = "none";
         divMax.style.display = "none";
         document.getElementById('succ_imgdown-' + id).src = '/img/chevron_down.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délai'
+        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délais'
+    }
+}
+
+function showDelays() {
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        showDelay(i);
+    }
+    delayButton = document.getElementById('succ_imgdown')
+    if(delayButton.src.includes('/img/chevron_down.svg')){
+        delayButton.src = '/img/chevron_up.svg'
+        delayButton.title = 'Cacher tous les délais'
+    }
+    else{
+        delayButton.src = '/img/chevron_down.svg'
+        delayButton.title = 'Montrer tous les délais'
     }
 }
 
@@ -1221,62 +1272,48 @@ function deleteArrows() {
     lines = new Array();
 }
 
-function validateSuccessors() {
-    error = 0;
-    //error = checkSuccessor();
-    switch (error) {
+function validateSuccessors(){
+    error = checkSuccessor();
+    switch(error){
         case 0:
-            for (i = 0; i < NB_SUCCESSOR; i++) {
-                inputMin = document.getElementById("delayMinInput" + (i + 1));
-                inputMax = document.getElementById("delayMaxInput" + (i + 1));
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                inputMin = document.getElementById("delayMinInput" + (i+1));
+                inputMax = document.getElementById("delayMaxInput" + (i+1));
                 SUCCESSORS[i].delayMin = inputMin.value;
                 SUCCESSORS[i].delayMax = inputMax.value;
             }
             deleteArrows();
             VALIDATE = 1;
             $('#edit-pathway-modal-activities').modal("hide");
-            break;
+        break;
         case 1:
-            alert("Il reste des activités non liées !");
-            break;
-        case 2:
             alert("Vous avez formé une boucle ! Veuillez laisser une activité de départ sans lien entrant.")
-            break;
+        break;
     }
 }
 
-function checkSuccessor() {
-    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error
-    console.log(SUCCESSORS)
-    if (NB_ACTIVITY == 1 || NB_ACTIVITY == 0) {
+function checkSuccessor(){
+    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
+    if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
         return 0;
     }
     var predecessor;
     var loop = true;
-    for (i = 0; i < NB_ACTIVITY; i++) {
-        var link = true;
+    for(i = 0; i < NB_ACTIVITY; i++){
         predecessor = false;
-        for (j = 0; j < NB_SUCCESSOR; j++) {
-            // Check if 
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname ||
-                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname) {
-                link = false;
-            }
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname) {
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
                 predecessor = true;
             }
         }
-        if (link) {
-            return 1;
-        }
-        if (!predecessor) {
+        if(!predecessor){
             loop = false;
         }
     }
-    if (loop) {
-        return 2;
+    if(loop){
+        return 1;
     }
-    else {
-        return 0;
+    else{
+        return 0;  
     }
 }
