@@ -34,14 +34,14 @@ function initActivity() {
  * Allow to show the modal for the target
  */
 function showTargets() {
-    $('#add-pathway-modal-targets').modal("show");
+    $('#pathway-modal-targets').modal("show");
 }
 
 /**
  * Allow to hide the modal for the target
  */
 function hideTargets() {
-    $('#add-pathway-modal-targets').modal("hide");
+    $('#pathway-modal-targets').modal("hide");
 }
 
 
@@ -395,10 +395,11 @@ function addResources() {
             let resourceId = document.getElementById('select-resources').value
 
             index = verifyResourcesDuplicates(resourceId, false)
-            console.log(index)
 
+            // We verify if the activity we want to delete was already in the pathway 
             if (index == -1) {
-
+                // not already in the pathway :
+                
                 let resourceName = '';
                 for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
                     if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
@@ -414,11 +415,13 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
 
             } else {
-                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
+                // already in the pathway :
 
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+                //if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
 
-                } else {
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+
+                /*} else {
 
                     let resourceName = '';
                     for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
@@ -434,7 +437,9 @@ function addResources() {
                     ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
                     ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
                     
-                }
+                }*/
+
+                
             }
 
             fillHRCList()
@@ -465,11 +470,11 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
 
             } else {
-                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+                //if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
 
-                    ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
 
-                } else {
+                /*} else {
 
                     let resourceName = '';
                     for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
@@ -485,7 +490,7 @@ function addResources() {
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
 
-                }
+                }*/
             }
 
             fillMRCList()
@@ -505,18 +510,19 @@ function verifyResourcesDuplicates(id, material) {
     
     // Si material est true
     if (material) {
-
         for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
-                return indexMaterial
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available) {
+                    return indexMaterial
+                }
             }
         }
-
     } else {
-
         for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
-                return indexHuman
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available) {
+                    return indexHuman
+                }
             }
         }
 

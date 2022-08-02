@@ -29,7 +29,7 @@
 		<input type="hidden" name="reloadTime" id="reloadTime" value='{{setting.getReloadtime}}'>
 	{% endfor %}
 	<div class="all-container" id="all">
-		<h1>Consultation du Planning</h1>
+		<h1>Consultation du Planning du</h1>
 		<div class="top">
 			<div class='top-left'>
 				{% if app.user != null %}
@@ -80,10 +80,11 @@
 				</select>
 			</div>
 		</div>
+
 	<div id="calendar-container" class="calendar-container">
 		<table class="header-ressource-consultation">
 			<td id="header-type" class="header-td">Ressources Humaines</td>
-			<td>{{ dateFormatted }}</td>
+			<td class="header-td-date">{{ dateFormatted }}</td>
 		</table>
 
 		<div id='calendar'></div>

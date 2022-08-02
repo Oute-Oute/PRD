@@ -286,3 +286,8 @@ AutocompleteMR:
   path: /autocompleteMR
   controller: App\Controller\MaterialResourceController::autocompleteMR
   methods: [GET]
+
+GetAppointmentsFromActivityId:
+  path: /activity/{id}/appointments
+  controller: App\Controller\AppointmentController::GetAppointmentByActivityId
+  methods: [GET]
