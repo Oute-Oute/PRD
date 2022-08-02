@@ -226,11 +226,10 @@ class PathwayController extends AbstractController
         //$materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
         //$materialResources = $materialResourceRepo->findAll();
 
-        $pathways = $pathwayRepository->findAll();
         $pathways=$paginator->paginate(
-            $pathways, 
+            $pathwayRepository->findAllPathway(), 
             $request->query->getInt('page',1),
-            8
+            10
         ); 
         $nbPathway = count($pathways);
 
