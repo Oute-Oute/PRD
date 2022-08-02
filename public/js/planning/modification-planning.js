@@ -540,7 +540,7 @@ function displayModalModifyEvent() {
   $("#modify-planning-modal").modal("show"); //open the window
 }
 
-function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay = undefined) {
+function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -591,7 +591,7 @@ function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay =
     locale: "fr",
     timeZone: "Europe/Paris",
 
-    scrollTimeReset:false,
+    scrollTimeReset: false,
     height: $(window).height() * 0.75,
 
     //permet de modifier les events dans le calendar
@@ -968,12 +968,12 @@ function clearArray(array) {
  */
 function undoEvent() {
   var slotDuration = calendar.getOption('slotDuration');
-  var scrollTime=calendar.getOption('scrollTime'); 
+  var scrollTime = calendar.getOption('scrollTime');
   var zoom = document.getElementById('zoom').value;
 
-  console.log(scrollTime); 
+  console.log(scrollTime);
   if (historyEvents.length != 1) {
-    createCalendar(headerResources, 'recreate',zoom);
+    createCalendar(headerResources, 'recreate', zoom);
   }
   calendar.getEvents().forEach((currentEvent) => {
     currentEvent._def.ui.textColor = "#fff";
@@ -1741,7 +1741,7 @@ function displayPanelErrorMessages() {
 }
 
 function highlightAppointmentOnMouseOver(event) {
-  console.log(event.id, "over")
+
   var appointmentId = event.id.split("nt")[2];
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
@@ -1761,7 +1761,7 @@ function highlightAppointmentOnMouseOver(event) {
 }
 
 function highlightAppointmentOnMouseOut(event) {
-  console.log(event.id, "out")
+
   var appointmentId = event.id.split("nt")[2];
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
@@ -1776,7 +1776,8 @@ function highlightAppointmentOnMouseOut(event) {
 }
 
 function highlightAppointmentOnClick(event) {
-  console.log(event.id, 'click')
+
+
   var appointmentId = event.id.split("nt")[2];
 
   calendar.getEvents().forEach((scheduledActivity) => {
