@@ -95,7 +95,7 @@ div#activities-list #list{
 /* btns for edit / remove an activity from the list */ 
 .div-activity .btns {
     position: absolute;
-    right: 10%;
+    right: 25px;
 }
 
 /* Modification resource in an activity in a pathway */
@@ -188,11 +188,12 @@ div#activities-list-graph {
     width: 18%;
     box-shadow: 0px 0px 10px lightgrey;
     border-radius: 10px;
+    height: 100%;
 }
 
 div#activities-list-graph #list-graph{
     display: flex;
     flex-direction: column;
     overflow-y:scroll;
-    max-height: 250px;
+    max-height: 80%;
 }

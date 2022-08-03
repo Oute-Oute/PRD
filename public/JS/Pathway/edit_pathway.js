@@ -1,6 +1,5 @@
 //const { codePointAt } = require("core-js/core/string");
 
-var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 
 
@@ -26,7 +25,6 @@ var VALIDATE = 0;
  * Call at the loading of the add pathway page
  */
 document.addEventListener('DOMContentLoaded', () => {
-    SELECT_ID = 0;
 
     HUMAN_RESOURCE_CATEGORIES = JSON.parse(
         document.getElementById("json-human-resource-categories").value
@@ -63,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 20px pour le padding de 10 en haut et en bas
     heightCreationDiv = heightCreationDiv - heightTitle - 20
     document.getElementById('list').style.height = heightCreationDiv + 'px'
-
 })
 
 /**
@@ -164,14 +161,14 @@ function initSuccessorsList() {
  * Allow to show the modal for the target
  */
 function showTargets() {
-    $('#edit-pathway-modal-targets').modal("show");
+    $('#pathway-modal-targets').modal("show");
 }
 
 /**
  * Allow to hide the modal for the target
  */
 function hideTargets() {
-    $('#edit-pathway-modal-targets').modal("hide");
+    $('#pathway-modal-targets').modal("hide");
 }
 
 function initActivity() {
@@ -182,6 +179,9 @@ function initActivity() {
     ACTIVITY_IN_PROGRESS.btnHM = 'human'
 }
 
+/**
+ * push a copy of the ACTIVITY_IN_PROGRESS array into ACTIVITY_IN_PROGRESS
+ */
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
 
@@ -387,22 +387,15 @@ function fillActivityList() {
  */
 function deleteActivity(id) {
 
-    // We got the index of the div to delete  
+    // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     id = getId(id)
-
-    // On peut donc recuperer la div
-    /*let divToDelete = document.getElementById('div-activity-'+id)
-    // puis la supprimer
-    let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.removeChild(divToDelete)*/
-
+    
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
-    //SELECT_ID = SELECT_ID - 1;
 
     let idActivity = "activity" + (parseInt(id) + 1);
     for (var i = SUCCESSORS.length - 1; i >= 0; i--) {
@@ -579,7 +572,25 @@ function addResources() {
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].already = false
 
 
-            } else {
+            } else {    
+                // PRENDRE LA METHODE DANS LA FONCTION oui()
+                console.log("sdsdsdsd")
+
+                // request to get the appointments list of the activity
+                $.ajax({
+                    type: 'GET',
+                    url: '/activity/'+index+'/appointments',
+                    //data: { 'index': index },
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("success")
+                        console.log(data)
+                    },
+                    error: function () {
+                        console.log("error");
+                    },
+                });
+
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
 
             }
@@ -639,6 +650,31 @@ function addResources() {
             fillMRCList()
         }
     }
+}
+
+var app
+function setAppointmentsList(data) {
+    app = data
+}
+function oui() {
+    console.log("sdsdsdsd")
+
+    var index = 8
+
+    // request to get the appointments list of the activity
+    $.ajax({
+        type: 'GET',
+        url: '/activity/'+index+'/appointments',
+        dataType: "json",
+        success: function (data) {
+            setAppointmentsList(data)
+        },
+        error: function () {
+            console.log("error");
+        },
+    });
+
+console.log(app)
 }
 
 /**
@@ -975,6 +1011,10 @@ function createActivitiesGraph(name, idActivity, duration) {
         containment: "#divContent",
     });
 
+    document.getElementById('edit-pathway-modal-activities').addEventListener('click', function(e){
+        console.log(e.target);
+    });
+
     div.addEventListener('mousemove', AnimEvent.add(function () {
         lines.forEach((l) => {
             if (l.start == div || l.end == div) {
@@ -1027,6 +1067,21 @@ function createActivitiesGraph(name, idActivity, duration) {
             ID_ACTIVITY_PREDECESSOR = div.id;
             NAME_ACTIVITY_PREDECESSOR = name;
         }
+    });
+
+    div.addEventListener('mouseenter', (e) => {
+        //hideArrows();
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.color = 'red';
+            }
+        }); 
+    });
+      
+    div.addEventListener('mouseleave', (e) => {
+        lines.forEach((l) => {
+            l.color = '#0dac2d';
+        }); 
     });
 }
 
@@ -1153,6 +1208,24 @@ function fillSuccessorList() {
         divSuccessor.appendChild(divMax);
 
         divSuccessorsList.appendChild(divSuccessor);
+
+        divSuccessor.addEventListener('mouseenter', (e) => {
+            start = document.getElementById(SUCCESSORS[indexSuccessor].idActivityA)
+            end = document.getElementById(SUCCESSORS[indexSuccessor].idActivityB)
+            lines.forEach((l) => {
+                if(l.start == start && l.end == end){
+                    l.color = 'red';
+                    l.size = l.size*2;
+                }
+            }); 
+        });
+          
+        divSuccessor.addEventListener('mouseleave', (e) => {
+            lines.forEach((l) => {
+                l.color = '#0dac2d';
+                l.size = 4;
+            }); 
+        });
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
@@ -1170,13 +1243,28 @@ function showDelay(id) {
         divMin.style.display = "block";
         divMax.style.display = "block";
         document.getElementById('succ_imgdown-' + id).src = '/img/chevron_up.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délai'
+        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délais'
     }
     else {
         divMin.style.display = "none";
         divMax.style.display = "none";
         document.getElementById('succ_imgdown-' + id).src = '/img/chevron_down.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délai'
+        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délais'
+    }
+}
+
+function showDelays() {
+    for(i = 0; i < NB_SUCCESSOR; i++){
+        showDelay(i);
+    }
+    delayButton = document.getElementById('succ_imgdown')
+    if(delayButton.src.includes('/img/chevron_down.svg')){
+        delayButton.src = '/img/chevron_up.svg'
+        delayButton.title = 'Cacher tous les délais'
+    }
+    else{
+        delayButton.src = '/img/chevron_down.svg'
+        delayButton.title = 'Montrer tous les délais'
     }
 }
 
@@ -1221,62 +1309,48 @@ function deleteArrows() {
     lines = new Array();
 }
 
-function validateSuccessors() {
-    error = 0;
-    //error = checkSuccessor();
-    switch (error) {
+function validateSuccessors(){
+    error = checkSuccessor();
+    switch(error){
         case 0:
-            for (i = 0; i < NB_SUCCESSOR; i++) {
-                inputMin = document.getElementById("delayMinInput" + (i + 1));
-                inputMax = document.getElementById("delayMaxInput" + (i + 1));
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                inputMin = document.getElementById("delayMinInput" + (i+1));
+                inputMax = document.getElementById("delayMaxInput" + (i+1));
                 SUCCESSORS[i].delayMin = inputMin.value;
                 SUCCESSORS[i].delayMax = inputMax.value;
             }
             deleteArrows();
             VALIDATE = 1;
             $('#edit-pathway-modal-activities').modal("hide");
-            break;
+        break;
         case 1:
-            alert("Il reste des activités non liées !");
-            break;
-        case 2:
             alert("Vous avez formé une boucle ! Veuillez laisser une activité de départ sans lien entrant.")
-            break;
+        break;
     }
 }
 
-function checkSuccessor() {
-    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error
-    console.log(SUCCESSORS)
-    if (NB_ACTIVITY == 1 || NB_ACTIVITY == 0) {
+function checkSuccessor(){
+    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
+    if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
         return 0;
     }
     var predecessor;
     var loop = true;
-    for (i = 0; i < NB_ACTIVITY; i++) {
-        var link = true;
+    for(i = 0; i < NB_ACTIVITY; i++){
         predecessor = false;
-        for (j = 0; j < NB_SUCCESSOR; j++) {
-            // Check if 
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname ||
-                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname) {
-                link = false;
-            }
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname) {
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
                 predecessor = true;
             }
         }
-        if (link) {
-            return 1;
-        }
-        if (!predecessor) {
+        if(!predecessor){
             loop = false;
         }
     }
-    if (loop) {
-        return 2;
+    if(loop){
+        return 1;
     }
-    else {
-        return 0;
+    else{
+        return 0;  
     }
 }

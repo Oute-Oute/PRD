@@ -14,13 +14,10 @@ var IS_EDIT_MODE = false
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
-var NB_SUCCESSOR = 0;
-var ACTIVITY_POSITION = new Array();
+var NB_SUCCESSOR= 0;
 var SUCCESSORS = new Array();
-var lines = new Array();
+var lines= new Array(); 
 var VALIDATE = 0;
-
-
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -34,14 +31,14 @@ function initActivity() {
  * Allow to show the modal for the target
  */
 function showTargets() {
-    $('#add-pathway-modal-targets').modal("show");
+    $('#pathway-modal-targets').modal("show");
 }
 
 /**
  * Allow to hide the modal for the target
  */
 function hideTargets() {
-    $('#add-pathway-modal-targets').modal("hide");
+    $('#pathway-modal-targets').modal("hide");
 }
 
 
@@ -73,7 +70,7 @@ function addArray() {
         res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].nb
         res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].available
         res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMR].already
-
+        
         RESOURCES_BY_ACTIVITIES[len].materialResourceCategories.push(res)
     }
 
@@ -110,31 +107,31 @@ function addActivity() {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].available = ACTIVITY_IN_PROGRESS.available
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].btnHM = 'human'
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].id = ACTIVITY_IN_PROGRESS.id
-
+        
             //ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
             let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories = new Array()
-            for (let indexHuman = 0; indexHuman < len; indexHuman++) {
+            for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
                 let res = new Object()
                 res.id = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id
                 res.name = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].name
                 res.nb = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].nb
                 res.available = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available
                 res.already = ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].already
-
+        
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].humanResourceCategories.push(res)
             }
 
             len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories = new Array()
-            for (let indexMaterial = 0; indexMaterial < len; indexMaterial++) {
+            for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
                 let res = new Object()
                 res.id = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id
                 res.name = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].name
                 res.nb = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].nb
                 res.available = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available
                 res.already = ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].already
-
+        
                 RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].materialResourceCategories.push(res)
             }
             fillActivityList()
@@ -180,7 +177,7 @@ function fillActivityList() {
             let str = 'Activité ' + Number(indexActivityAvailable + 1) + ' : '
             str += RESOURCES_BY_ACTIVITIES[indexActivity].activityname
             str += ' (' + RESOURCES_BY_ACTIVITIES[indexActivity].activityduration + 'min)'
-
+            
             let divContainerP = document.createElement('div')
             divContainerP.setAttribute('class', 'container-p')
             let p = document.createElement('p')
@@ -190,7 +187,7 @@ function fillActivityList() {
 
             let imgDelete = new Image();
             imgDelete.src = '../../img/delete.svg'
-            imgDelete.setAttribute('id', 'imgd-' + indexActivity)
+            imgDelete.setAttribute('id','imgd-'+indexActivity)
             imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
@@ -198,7 +195,7 @@ function fillActivityList() {
 
             let imgEdit = new Image();
             imgEdit.src = '../../img/edit.svg'
-            imgEdit.setAttribute('id', 'imge-' + indexActivity)
+            imgEdit.setAttribute('id','imge-'+indexActivity)
             imgEdit.setAttribute('onclick', 'editActivity(this.id)')
             imgEdit.setAttribute('title', 'Édition de l\'activité')
             imgEdit.style.width = '20px'
@@ -217,15 +214,12 @@ function fillActivityList() {
         }
     }
 
-
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
         noactivity.innerHTML = "Aucune activité pour le moment !"
-        noactivity.style.marginLeft = "10px"
+        noactivity.style.marginLeft ="10px"
         divActivitiesList.appendChild(noactivity)
     }
-
-
 }
 
 /**
@@ -239,18 +233,18 @@ function deleteActivity(id) {
 
     // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
     deleteArrows();
-    for (i = 0; i < NB_SUCCESSOR; i++) {
+    for(i = 0; i < NB_SUCCESSOR; i++){
         idA = SUCCESSORS[i].idActivityA;
         idB = SUCCESSORS[i].idActivityB;
         idDivActivity = parseInt(id) + 1;
         activityname = 'activity' + idDivActivity;
         console.log('a : ', idA, 'b ; ', idB, 'name : ', activityname)
-        if (activityname == idA || activityname == idB) {
+        if(activityname == idA || activityname == idB){
             SUCCESSORS.splice(i, 1);
             NB_SUCCESSOR--;
         }
     }
-
+    
     // On peut donc recuperer la div
     /*let divToDelete = document.getElementById('div-activity-'+id)
     // puis la supprimer
@@ -289,7 +283,7 @@ function editActivity(id) {
 
     ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
     let len = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories.length
-    for (let indexHuman = 0; indexHuman < len; indexHuman++) {
+    for (let indexHuman = 0; indexHuman < len;  indexHuman++) {
         let res = new Object()
         res.id = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].id
         res.name = RESOURCES_BY_ACTIVITIES[id].humanResourceCategories[indexHuman].name
@@ -300,9 +294,9 @@ function editActivity(id) {
         ACTIVITY_IN_PROGRESS.humanResourceCategories.push(res)
     }
 
-    ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
+    ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array() 
     len = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories.length
-    for (let indexMaterial = 0; indexMaterial < len; indexMaterial++) {
+    for (let indexMaterial = 0; indexMaterial < len;  indexMaterial++) {
         let res = new Object()
         res.id = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].id
         res.name = RESOURCES_BY_ACTIVITIES[id].materialResourceCategories[indexMaterial].name
@@ -372,7 +366,7 @@ function getId(str) {
  *  Action performed when the '+' button is pressed to add a resource to an activity 
  */
 function addResources() {
-
+    
     // On verifie que le champs quantité est bien rempli 
     let verif = true
     console.log(document.getElementById('resource-nb').value)
@@ -395,30 +389,33 @@ function addResources() {
             let resourceId = document.getElementById('select-resources').value
 
             index = verifyResourcesDuplicates(resourceId, false)
-            console.log(index)
 
+            // We verify if the activity we want to delete was already in the pathway 
             if (index == -1) {
-
+                // not already in the pathway :
+                
                 let resourceName = '';
                 for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
                     if (HUMAN_RESOURCE_CATEGORIES[indexHRC].id == resourceId) {
                         resourceName = HUMAN_RESOURCE_CATEGORIES[indexHRC].categoryname
                     }
                 }
-
+    
                 ACTIVITY_IN_PROGRESS.humanResourceCategories.push(new Object())
                 let len = ACTIVITY_IN_PROGRESS.humanResourceCategories.length
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
 
             } else {
-                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
+                // already in the pathway :
 
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+                //if (ACTIVITY_IN_PROGRESS.humanResourceCategories[index].available) {
 
-                } else {
+                ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
+
+                /*} else {
 
                     let resourceName = '';
                     for (let indexHRC = 0; indexHRC < HUMAN_RESOURCE_CATEGORIES.length; indexHRC++) {
@@ -432,9 +429,11 @@ function addResources() {
                     ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].id = resourceId
                     ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].name = resourceName
                     ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].nb = resourceNb
-                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true
+                    ACTIVITY_IN_PROGRESS.humanResourceCategories[len - 1].available = true 
+                    
+                }*/
 
-                }
+                
             }
 
             fillHRCList()
@@ -456,20 +455,20 @@ function addResources() {
                         resourceName = MATERIAL_RESOURCE_CATEGORIES[indexMRC].categoryname
                     }
                 }
-
+    
                 ACTIVITY_IN_PROGRESS.materialResourceCategories.push(new Object())
                 let len = ACTIVITY_IN_PROGRESS.materialResourceCategories.length
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
                 ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
-                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
 
             } else {
-                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
+                //if (ACTIVITY_IN_PROGRESS.materialResourceCategories[index].available) {
 
-                    ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
+                ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.materialResourceCategories[index].nb) + Number(resourceNb)
 
-                } else {
+                /*} else {
 
                     let resourceName = '';
                     for (let indexMRC = 0; indexMRC < MATERIAL_RESOURCE_CATEGORIES.length; indexMRC++) {
@@ -483,9 +482,9 @@ function addResources() {
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].id = resourceId
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].name = resourceName
                     ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].nb = resourceNb
-                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true
+                    ACTIVITY_IN_PROGRESS.materialResourceCategories[len - 1].available = true 
 
-                }
+                }*/
             }
 
             fillMRCList()
@@ -502,26 +501,27 @@ function addResources() {
  * @param {*} material 
  */
 function verifyResourcesDuplicates(id, material) {
-
+    
     // Si material est true
     if (material) {
-
         for (let indexMaterial = 0; indexMaterial < ACTIVITY_IN_PROGRESS.materialResourceCategories.length; indexMaterial++) {
             if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].id == id) {
-                return indexMaterial
+                if (ACTIVITY_IN_PROGRESS.materialResourceCategories[indexMaterial].available) {
+                    return indexMaterial
+                }
             }
         }
-
     } else {
-
         for (let indexHuman = 0; indexHuman < ACTIVITY_IN_PROGRESS.humanResourceCategories.length; indexHuman++) {
             if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].id == id) {
-                return indexHuman
+                if (ACTIVITY_IN_PROGRESS.humanResourceCategories[indexHuman].available) {
+                    return indexHuman
+                }
             }
         }
 
     }
-
+    
     return -1
 }
 
@@ -744,7 +744,7 @@ function deleteResource(id) {
  * @param {delete} input 
  */
 function preventForTarget(input) {
-
+ 
     input.value = input.value.replace("e", "");
     input.value = input.value.replace(".", "");
     input.value = input.value.replace(",", "");
@@ -756,10 +756,10 @@ function preventForTarget(input) {
 function isTargetCorrect() {
     errorInferiorToZero = false
     let targets = document.getElementsByClassName('target')
-    for (let i = 0; (i < targets.length) && (!errorInferiorToZero); i++) {
+    for (let i = 0 ; (i < targets.length) && (!errorInferiorToZero) ; i++) {
         if (Number(targets[i].value) < 0) {
             return false
-        }
+        }  
     }
     return true
 }
@@ -779,12 +779,12 @@ function submitPathway() {
         verif = false
         alert("Le nom du parcours ne peut pas être vide")
     }
-    else if (VALIDATE == 0) {
+    else if(VALIDATE == 0){
         verif = false;
-        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique.");
+        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique puis sur Valider.");
     }
 
-    if (isTargetCorrect()) {
+    if (isTargetCorrect())  {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
             document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
@@ -796,103 +796,122 @@ function submitPathway() {
 
 }
 
-function filterPathway(selected = null) {
+function filterPathway(selected=null){
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
-    for (let i = 0; i < trs.length; i++) {
-        trs[i].style.display = 'none';
+    for(let i=0; i<trs.length; i++){
+            trs[i].style.display='none';
     }
-    table = document.getElementById('pathwayTable');
-    var tr = document.createElement('tr');
+    table=document.getElementById('pathwayTable');
+    var tr=document.createElement('tr');
     table.appendChild(tr);
-    var pathwayName = document.createElement('td');
+    var pathwayName=document.createElement('td');
     pathwayName.append(selected.value);
     tr.appendChild(pathwayName);
-    var buttons = document.createElement('td');
-    var infos = document.createElement('button');
-    infos.setAttribute('class', 'btn-infos btn-secondary');
-    infos.setAttribute('onclick', 'showInfosPathway(' + selected.id + ',"' + selected.value + '")');
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showInfosPathway('+selected.id+',"'+selected.value+'")');
     infos.append('Informations');
-    var formEdit = document.createElement('form');
-    formEdit.setAttribute('action', '/pathway/edit/' + selected.id);
-    formEdit.setAttribute('style', 'display:inline');
-    formEdit.setAttribute('method', 'GET');
-    formEdit.setAttribute('id', 'formEdit' + selected.id);
-    var edit = document.createElement('button');
-    edit.setAttribute('class', 'btn-edit btn-secondary');
-    edit.setAttribute('type', 'submit');
+    var formEdit=document.createElement('form');
+    formEdit.setAttribute('action','/pathway/edit/'+selected.id);
+    formEdit.setAttribute('style','display:inline');
+    formEdit.setAttribute('method','GET');
+    formEdit.setAttribute('id','formEdit'+selected.id);
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('type','submit');
     edit.append('Editer');
     formEdit.appendChild(edit);
-    var formDelete = document.createElement('form');
-    formDelete.setAttribute('action', "/pathway/delete");
-    formDelete.setAttribute('style', 'display:inline');
-    formDelete.setAttribute('method', 'POST');
-    formDelete.setAttribute('id', 'formDelete' + selected.id);
-    formDelete.setAttribute('onsubmit', 'return confirm("Voulez-vous vraiment supprimer ce parours ?")');
-    var inputHidden = document.createElement('input');
-    inputHidden.setAttribute('type', 'hidden');
-    inputHidden.setAttribute('name', 'pathwayid');
-    inputHidden.setAttribute('value', selected.id);
+    var formDelete=document.createElement('form');
+    formDelete.setAttribute('action',"/pathway/delete");
+    formDelete.setAttribute('style','display:inline');
+    formDelete.setAttribute('method','POST');
+    formDelete.setAttribute('id','formDelete'+selected.id);
+    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce parours ?")');
+    var inputHidden=document.createElement('input');
+    inputHidden.setAttribute('type','hidden');
+    inputHidden.setAttribute('name','pathwayid');
+    inputHidden.setAttribute('value',selected.id);
     formDelete.appendChild(inputHidden);
-    var deleteButton = document.createElement('button');
-    deleteButton.setAttribute('class', 'btn-delete btn-secondary');
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
     deleteButton.append('Supprimer');
-    deleteButton.setAttribute('type', 'submit');
+    deleteButton.setAttribute('type','submit');
     buttons.appendChild(infos);
     buttons.appendChild(formEdit);
     formDelete.appendChild(deleteButton);
     buttons.appendChild(formDelete);
     tr.appendChild(buttons);
-}
+  }
 
 function displayAll() {
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var input = document.getElementById('autocompleteInputPathwayNname');
     console.log(input.value)
-    if (input.value == '') {
-        for (let i = 0; i < trs.length; i++) {
+    if(input.value == ''){
+        for(let i=0; i<trs.length; i++){
             console.log(trs[i].className)
-            if (trs[i].style.display == 'none') {
-                trs[i].style.display = 'table-row';
+            if(trs[i].style.display == 'none'){
+                trs[i].style.display='table-row';
             }
-            else if (trs[i].className != 'original') {
+            else if(trs[i].className != 'original'){
                 trs[i].remove()
             }
         }
     }
 }
 
+/**
+ * Init a modal and open it
+ * Called via the button "Graphique"
+ */
 function showActivitiesPathway() {
     VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Lier les activités";
     drawActivitiesGraph();
     fillSuccessorList();
     drawArrows();
-
+    
     $('#edit-pathway-modal-activities').modal("show");
 }
 
-function hideActivitiesPathway() {
+/**
+ * Delete the successors and hide the modal
+ * Called when the user clicks outside the modal or on the "Annuler" button
+ */
+function hideActivitiesPathway(){
     deleteSuccessors();
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
-function drawActivitiesGraph() {
+/**
+ * Create a div for each activity in RESOURCES_BY_ACTIVITIES
+ * More informations about the div in createActivitiesGraph() function
+ */
+function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
-    for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+    for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
         rba = RESOURCES_BY_ACTIVITIES[i];
-        if (rba.available) {
-            createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+        if(rba.available){
+            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
         }
     }
 }
 
-function createActivitiesGraph(name, idActivity, duration) {
+/**
+ * Create a draggable div with the activity parameters
+ * @param {name of the activity} name
+ * @param {index of the activity in RESOURCES_BY_ACTIVITIES, not the activity id in database} idActivity
+ * @param {duration of the activity} activity
+ * Each activity is linked with event listeners to create links via double click on them
+ */
+function createActivitiesGraph(name, idActivity, duration){
     var divContent = document.getElementById('divContent');
 
     var div = document.createElement('DIV');
-    div.setAttribute('id', 'activity' + idActivity);
+    div.setAttribute('id', 'activity'+ idActivity);
     div.classList.add("pathway-div-activity-graph");
 
     var divHeader = document.createElement('div');
@@ -901,86 +920,118 @@ function createActivitiesGraph(name, idActivity, duration) {
 
     var p = document.createElement('p');
     p.style.fontSize = '80%';
-    p.innerHTML = "durée : " + duration + "min";
+    p.innerHTML = "durée : " + duration + "min"; 
 
     div.appendChild(divHeader); div.appendChild(p);
     divContent.appendChild(div);
-
+    
     $(".pathway-div-activity-graph").draggable({
         containment: "#divContent",
     });
 
-    div.addEventListener('mousemove', AnimEvent.add(function () {
+    // If the activity is dragged, update the line position
+    // The AnimEvent library is here to optimize, because mousemove is fired hundreds or thousands times
+    div.addEventListener('mousemove', AnimEvent.add(function() {  
         lines.forEach((l) => {
-            if (l.start == div || l.end == div) {
+            if(l.start == div || l.end == div){
                 l.position();
             }
-        });
+          });
     }), false);
 
-    div.addEventListener('scroll', AnimEvent.add(function () {
+    // If the modal is scrolled, update all line positions
+    div.addEventListener('scroll', AnimEvent.add(function() {
         lines.forEach((l) => {
-            if (l.start == div || l.end == div) {
+            if(l.start == div || l.end == div){
                 l.position();
             }
-        });
+          });
     }), false);
 
-
+    /**
+     * On the first double click event, the id and name of the clicked activty is stored
+     * On the second one, a link is created except if :
+     * - This is the same activity 
+     * - The link already exists
+     * - The opposite link already exists 
+     * In all cases, the stored variables are reset
+     */
     div.addEventListener('dblclick', function (e) {
-        if (ID_ACTIVITY_PREDECESSOR != -1) {
+        if(ID_ACTIVITY_PREDECESSOR != -1){
             errorLine = false;
-            if (ID_ACTIVITY_PREDECESSOR == div.id) {
+            if(ID_ACTIVITY_PREDECESSOR == div.id){
                 errorLine = true;
                 alert("Vous ne pouvez pas lier une activité à elle-même !");
             }
             start = document.getElementById(ID_ACTIVITY_PREDECESSOR);
             end = document.getElementById(div.id);
-            for (i = 0; i < NB_SUCCESSOR; i++) {
-                if (SUCCESSORS[i].idActivityA == start.id && SUCCESSORS[i].idActivityB == end.id) {
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                if(SUCCESSORS[i].idActivityA == start.id && SUCCESSORS[i].idActivityB == end.id){
                     alert('Ce lien est déjà créé !')
                     errorLine = true;
                 }
-                if (SUCCESSORS[i].idActivityA == end.id && SUCCESSORS[i].idActivityB == start.id) {
+                if(SUCCESSORS[i].idActivityA == end.id && SUCCESSORS[i].idActivityB == start.id){
                     alert("Un lien existe déjà dans l'autre sens, veuillez le supprimer avant d'en ajouter un autre.")
                     errorLine = true;
                 }
             }
-            if (!errorLine) {
-                l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR + 1) });
+            if(!errorLine){
+                l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR+1)});
 
                 lines.push(l);
-                addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
+                addArraySuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
                 ID_ACTIVITY_PREDECESSOR = -1;
             }
-            else {
+            else{
                 ID_ACTIVITY_PREDECESSOR = -1;
                 NAME_ACTIVITY_PREDECESSOR = '';
             }
         }
-        else {
+        else{
             ID_ACTIVITY_PREDECESSOR = div.id;
             NAME_ACTIVITY_PREDECESSOR = name;
         }
     });
+
+    // mouseenter and mouseleave events are here to hide links that are not connected with the hovered activity
+    div.addEventListener('mouseenter', () => {
+        lines.forEach((l) => {
+            if(l.start == div || l.end == div){
+                l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
+            }
+            else{
+                l.hide('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]})
+            }
+        }); 
+    });
+      
+    div.addEventListener('mouseleave', () => {
+        lines.forEach((l) => {
+            l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
+        }); 
+    });
 }
 
-function addSuccessor(idA, idB, nameA, nameB) {
-    addArraySuccessor(idA, idB, nameA, nameB);
-    NB_SUCCESSOR++;
-    fillSuccessorList();
-}
-
-function drawArrows() {
-    for (i = 0; i < NB_SUCCESSOR; i++) {
+/**
+ * For each stored successors, draws the line between activityA and activityB
+ */
+function drawArrows(){  
+    for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
-
-        l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (i + 1) });
+       
+        l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
         lines.push(l);
     }
 }
 
+/**
+ * Fill the SUCCESSORS array and update the list on the right
+ * @param {id of the div containing activityA (activity1, activity12,...)} idA 
+ * @param {id of the div containing activityB (activity2, activity13,...)} idB 
+ * @param {name of activityA} nameA 
+ * @param {name of activityB} nameB 
+ */
 function addArraySuccessor(idA, idB, nameA, nameB) {
     let len = SUCCESSORS.length
 
@@ -993,11 +1044,15 @@ function addArraySuccessor(idA, idB, nameA, nameB) {
 
     SUCCESSORS[len].delayMin = 0;
     SUCCESSORS[len].delayMax = 10;
+
+    NB_SUCCESSOR++;
+    fillSuccessorList();
 }
 
-/* remplit la liste des successeurs (sur la droite) */
+/**
+ * Fill the list of successors/links on the right of the modal
+ */
 function fillSuccessorList() {
-
     let divSuccessorsList = document.getElementById('list-graph')
     divSuccessorsList.innerHTML = ''
 
@@ -1012,23 +1067,23 @@ function fillSuccessorList() {
         idB.setAttribute('type', 'hidden');
         idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
         successor.appendChild(idA); successor.appendChild(idB);
-        let str = "Lien n°" + (indexSuccessor + 1);
+        let str = "Lien n°" + (indexSuccessor+1);
         let p = document.createElement('p')
         p.innerHTML = str
 
         let imgDelete = new Image();
         imgDelete.src = '../img/delete.svg';
         imgDelete.setAttribute('id', 'succ_imgd-' + indexSuccessor);
-        imgDelete.setAttribute('onclick', 'deleteSuccessor(this.id)');
+        imgDelete.setAttribute('onclick', 'deleteSuccessor('+ indexSuccessor + ')');
         imgDelete.setAttribute('title', 'Supprimer le lien');
         imgDelete.style.width = '20px';
         imgDelete.style.cursor = 'pointer';
 
         let imgDownArrow = new Image();
-        imgDownArrow.src = '../img/chevron_up.svg';
+        imgDownArrow.src = '../img/down-arrow.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
-        imgDownArrow.setAttribute('onclick', 'showDelay(' + indexSuccessor + ')');
-        imgDownArrow.setAttribute('title', 'Cacher les délais');
+        imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
+        imgDownArrow.setAttribute('title', 'Montrer les délais');
         imgDownArrow.style.width = '20px';
         imgDownArrow.style.cursor = 'pointer';
 
@@ -1041,7 +1096,7 @@ function fillSuccessorList() {
         labelMin.style.width = "70%";
 
         let inputMin = document.createElement('input');
-        inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor + 1));
+        inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
         inputMin.setAttribute('type', 'number');
         inputMin.setAttribute('min', 0);
         inputMin.setAttribute('step', 1);
@@ -1061,11 +1116,11 @@ function fillSuccessorList() {
         labelMax.style.width = "70%"
 
         let inputMax = document.createElement('input');
-        inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor + 1));
+        inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
         inputMax.setAttribute('type', 'number');
         inputMax.setAttribute('min', 0);
         inputMax.setAttribute('step', 1);
-        inputMax.setAttribute('value', 10);
+        inputMax.setAttribute('value', 360);
         inputMax.style.width = "30%"
 
         divMax.appendChild(labelMax);
@@ -1087,132 +1142,150 @@ function fillSuccessorList() {
         divSuccessor.appendChild(divMax);
 
         divSuccessorsList.appendChild(divSuccessor);
+
+        // mouseenter and mouseleave events are here to highlight the arrow corresponding to the hovered successor
+        divSuccessor.addEventListener('mouseenter', () => {
+            start = document.getElementById(SUCCESSORS[indexSuccessor].idActivityA)
+            end = document.getElementById(SUCCESSORS[indexSuccessor].idActivityB)
+            lines.forEach((l) => {
+                if(l.start == start && l.end == end){
+                    l.color = 'red';
+                    l.size = l.size*2;
+                }
+            }); 
+        });
+            
+        divSuccessor.addEventListener('mouseleave', () => {
+            lines.forEach((l) => {
+                l.color = '#0dac2d';
+                l.size = 4;
+            }); 
+        });
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
         nosuccessor.innerHTML = "Aucun lien pour le moment !";
-        nosuccessor.style.marginLeft = "10px";
+        nosuccessor.style.marginLeft ="10px";
         divSuccessorsList.appendChild(nosuccessor);
     }
 }
 
-function showDelay(id) {
+/**
+ * Show or hide the successor delays
+ * @param {Index of the successor in SUCCESSORS array} id
+ * called by the down arrow and up arrow buttons
+ */
+function showDelay(id){
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
 
-
-    if (divMin.style.display == "none" || divMax.style.display == "none") {
+    if(divMin.style.display == "none" || divMax.style.display == "none"){
         divMin.style.display = "block";
         divMax.style.display = "block";
-
-        document.getElementById('succ_imgdown-' + id).src = '../img/chevron_up.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délai'
-
-
-
     }
-    else {
+    else{
         divMin.style.display = "none";
         divMax.style.display = "none";
-        document.getElementById('succ_imgdown-' + id).src = '../img/chevron_down.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délai'
-
-
     }
 }
 
+/**
+ * Delete the given successor, and update the list
+ * @param {Index of the successor in SUCCESSORS array} id 
+ */
 function deleteSuccessor(id) {
-    id = getId(id);
     let divSuccessor = document.getElementById('link-' + id);
     let inputs = divSuccessor.getElementsByTagName('input');
 
-    for (i = 0; i < lines.length; i++) {
+    for(i = 0; i < lines.length; i++){
         idA = inputs[0].value;
         idB = inputs[1].value;
-        if (lines[i].start == document.getElementById(idA) && lines[i].end == document.getElementById(idB)) {
+        if (lines[i].start == document.getElementById(idA) && lines[i].end == document.getElementById(idB)){
             lines[i].remove();
             lines.splice(i, 1);
         }
     }
 
-    for (i = 0; i < lines.length; i++) {
-        lines[i].middleLabel = "Lien n°" + (i + 1);
+    for(i = 0; i < lines.length; i++){
+        lines[i].middleLabel="Lien n°" + (i+1);
     }
 
     NB_SUCCESSOR--;
     SUCCESSORS.splice(id, 1);
-
+    
     fillSuccessorList();
 }
 
-function deleteSuccessors() {
+/**
+ * Delete all successors and arrows
+ */
+function deleteSuccessors(){
     NB_SUCCESSOR = 0;
     SUCCESSORS = new Array()
     deleteArrows();
     fillSuccessorList();
 }
 
-function deleteArrows() {
+/**
+ * Delete all links
+ */
+function deleteArrows(){
     for (var l of lines) {
         l.remove();
     }
     lines = new Array();
 }
 
-function validateSuccessors() {
-    error = 0;
-    switch (error) {
+/**
+ * Check if the successors are correct (no loop for example)
+ * If so, close the successors modal
+ * else, display an error while the problem is not fixed
+ */
+function validateSuccessors(){
+    error = checkSuccessor();
+    switch(error){
         case 0:
-            for (i = 0; i < NB_SUCCESSOR; i++) {
-                inputMin = document.getElementById("delayMinInput" + (i + 1));
-                inputMax = document.getElementById("delayMaxInput" + (i + 1));
+            for(i = 0; i < NB_SUCCESSOR; i++){
+                inputMin = document.getElementById("delayMinInput" + (i+1));
+                inputMax = document.getElementById("delayMaxInput" + (i+1));
                 SUCCESSORS[i].delayMin = inputMin.value;
                 SUCCESSORS[i].delayMax = inputMax.value;
             }
             deleteArrows();
-            VALIDATE = 1;
+            VALIDATE = 1; // This variable prevents the call to hidden.bs.modal event that deletes all successors when the modal is closed
             $('#edit-pathway-modal-activities').modal("hide");
-            break;
+        break;
         case 1:
-            alert("Il reste des activités non liées !");
-            break;
-        case 2:
             alert("Vous avez formé une boucle ! Veuillez laisser une activité de départ sans lien entrant.")
-            break;
+        break;
     }
 }
 
-function checkSuccessor() {
-    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
-    if (NB_ACTIVITY == 1 || NB_ACTIVITY == 0) {
+/**
+ * Check some conditions about the successors
+ * @returns 0 if everything is ok, else some int that will be used in a switch to display specific error 
+ */
+function checkSuccessor(){
+    if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
         return 0;
     }
     var predecessor;
     var loop = true;
-    for (i = 0; i < NB_ACTIVITY; i++) {
-        var link = true;
+    for(i = 0; i < NB_ACTIVITY; i++){
         predecessor = false;
-        for (j = 0; j < NB_SUCCESSOR; j++) {
-            // Check if 
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname ||
-                SUCCESSORS[j].nameActivityB == RESOURCES_BY_ACTIVITIES[i].activityname) {
-                link = false;
-            }
-            if (SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname) {
+        for(j = 0; j < NB_SUCCESSOR; j++){
+            if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
                 predecessor = true;
             }
         }
-        if (link) {
-            return 1;
-        }
-        if (!predecessor) {
+        if(!predecessor){
             loop = false;
         }
     }
-    if (loop) {
-        return 2;
+    if(loop){
+        return 1;
     }
-    else {
-        return 0;
+    else{
+        return 0;  
     }
 }
