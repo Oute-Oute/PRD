@@ -528,9 +528,12 @@ function autoAddPathway(){
       console.log(categoryOfHumanResource);
       for(let j=0; j<categoryHumanResources.length; j++){
         let countResources=0; 
+        var nbResourceOfcategory=countOccurencesInArray(categoryHumanResources[j].id,categoryOfHumanResource); 
+        var counterNbResourceOfCategory=0; 
         for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents(); 
-          var slotAlreadyScheduled=false; 
+          var slotAlreadyScheduled=false;
+          var endTime=activitiesA[i].activity.duration * 60000;
           if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){ 
             if(countResources<categoryHumanResources[j].quantity){
                if(allEvents.length>0){
@@ -545,8 +548,13 @@ function autoAddPathway(){
                 }
                 else{
                   PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000); 
-                  j--;
-                  break;  
+                  if(counterNbResourceOfCategory<nbResourceOfcategory){
+                    counterNbResourceOfCategory++; 
+                  }
+                  else{
+                    j--;
+                    break;  
+                  }
                 }
 
               }
@@ -2593,4 +2601,14 @@ function reduceNotification(childs) {
   }
 
 
+}
+
+function countOccurencesInArray(val,array){
+  let counter=0; 
+  for(let i=0; i<array.length; i++){
+    if(array[i].idcategory==val){
+      counter++; 
+    }
+  }
+  return counter; 
 }
