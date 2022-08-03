@@ -13,7 +13,8 @@ var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / edit
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
-var SCHEDULED_APPOINTMENTS // list of all the appointments which are scheduled using the pathway 
+var DELETING_ACTIVITY = new Object() // list of all the appointments which are scheduled using the pathway 
+var SCHEDULED_APPOINTMENTS
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
@@ -342,7 +343,7 @@ function fillActivityList() {
             let imgDelete = new Image();
             imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id', 'imgd-' + indexActivity)
-            imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
+            imgDelete.setAttribute('onclick', 'requestDeleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
@@ -408,8 +409,9 @@ return $.ajax({
  */
 async function verifyScheduledAppointments(idPathway) {
     try {
-        const scheduledAppointments = await getScheduledAppointments(idPathway)
-        if (scheduledAppointments.length > 0) {
+        SCHEDULED_APPOINTMENTS = await getScheduledAppointments(idPathway)
+        console.log(SCHEDULED_APPOINTMENTS)
+        if (SCHEDULED_APPOINTMENTS.length > 0) {
             showScheduledAppointmentsModal()
             return true
         } else {
@@ -426,30 +428,69 @@ async function verifyScheduledAppointments(idPathway) {
  */
 function showScheduledAppointmentsModal() {
     $('#pathway-modal-scheduled-appointments').modal('show');
+    let body = document.getElementById('scheduled-appointments-body')
+    
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < SCHEDULED_APPOINTMENTS.length; indexScheduledAppointment++) {
+        console.log(SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day)
+        let p = document.createElement('p')
+
+        lastname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_firstname
+        firstname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_lastname
+        day = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[2]
+        month = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[1]
+        year = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[0]
+        p.innerHTML = lastname +' '+ firstname + ' - '+day +'/'+ month+'/' + year
+        body.appendChild(p)
+
+/*
+        "appointment_id" => $appointment->getId(),
+        "appointment_day" => $appointment->getDayappointment(),
+        "patient_firstname" => $appointment->getPatient()->getFirstname(),
+        "patient_lastname" => $appointment->getPatient()->getLastname(),*/
+
+    }
+}   
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+ function cancelScheduledAppointmentsDeletion() {
+    $('#pathway-modal-scheduled-appointments').modal('hide');
 }
 
 /**
  * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
  */
- function closeScheduledAppointmentsModal() {
+ function confirmScheduledAppointmentsDeletion() {
     $('#pathway-modal-scheduled-appointments').modal('hide');
+    deleteActivity()
 }
+
+
 
 /**
  * Allow to remove an activity in the list 
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
-function deleteActivity(id) {
+function requestDeleteActivity(id) {
 
     console.log("delete activity")
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
-    id = getId(id)
+    activityIndex = getId(id)
 
-    console.log(PATHWAY.id)
-    //getScheduledAppointmentsList()
-    verifyScheduledAppointments(PATHWAY.id);
-    
+    if (verifyScheduledAppointments(PATHWAY.id)) {
+        DELETING_ACTIVITY.activityIndex = activityIndex
+    } 
+}
+
+/**
+ * 
+ * @param {index of the activity we want to delete in the RESOURCES_BY_ACTIVITIES array} id 
+ */
+function deleteActivity(id) {
+    id = DELETING_ACTIVITY.activityIndex
+
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -478,7 +519,6 @@ function deleteActivity(id) {
     fillActivityList()
     fillSuccessorList()
 }
-
 
 /**
  * Allow to edit an activity  
