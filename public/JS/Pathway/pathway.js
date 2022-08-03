@@ -15,12 +15,9 @@ var IS_EDIT_MODE = false
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
 var NB_SUCCESSOR= 0;
-var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
-var lines= new Array();
+var lines= new Array(); 
 var VALIDATE = 0;
-
-
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -217,15 +214,12 @@ function fillActivityList() {
         }
     }
 
-
     if (indexActivityAvailable == 0) {
         let noactivity = document.createElement('p')
         noactivity.innerHTML = "Aucune activité pour le moment !"
         noactivity.style.marginLeft ="10px"
         divActivitiesList.appendChild(noactivity)
     }
-
-
 }
 
 /**
@@ -787,7 +781,7 @@ function submitPathway() {
     }
     else if(VALIDATE == 0){
         verif = false;
-        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique.");
+        alert("Il n'y a pas de liens créés entre vos activités ! Veuillez cliquer sur le bouton Graphique puis sur Valider.");
     }
 
     if (isTargetCorrect())  {
@@ -850,23 +844,27 @@ function filterPathway(selected=null){
     tr.appendChild(buttons);
   }
 
-  function displayAll() {
+function displayAll() {
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var input = document.getElementById('autocompleteInputPathwayNname');
     console.log(input.value)
     if(input.value == ''){
-    for(let i=0; i<trs.length; i++){
-        console.log(trs[i].className)
-        if(trs[i].style.display == 'none'){
-            trs[i].style.display='table-row';
-        }
-        else if(trs[i].className != 'original'){
-            trs[i].remove()
+        for(let i=0; i<trs.length; i++){
+            console.log(trs[i].className)
+            if(trs[i].style.display == 'none'){
+                trs[i].style.display='table-row';
+            }
+            else if(trs[i].className != 'original'){
+                trs[i].remove()
+            }
         }
     }
 }
-}
 
+/**
+ * Init a modal and open it
+ * Called via the button "Graphique"
+ */
 function showActivitiesPathway() {
     VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Lier les activités";
@@ -877,11 +875,19 @@ function showActivitiesPathway() {
     $('#edit-pathway-modal-activities').modal("show");
 }
 
+/**
+ * Delete the successors and hide the modal
+ * Called when the user clicks outside the modal or on the "Annuler" button
+ */
 function hideActivitiesPathway(){
     deleteSuccessors();
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
+/**
+ * Create a div for each activity in RESOURCES_BY_ACTIVITIES
+ * More informations about the div in createActivitiesGraph() function
+ */
 function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
@@ -894,6 +900,13 @@ function drawActivitiesGraph(){
     }
 }
 
+/**
+ * Create a draggable div with the activity parameters
+ * @param {name of the activity} name
+ * @param {index of the activity in RESOURCES_BY_ACTIVITIES, not the activity id in database} idActivity
+ * @param {duration of the activity} activity
+ * Each activity is linked with event listeners to create links via double click on them
+ */
 function createActivitiesGraph(name, idActivity, duration){
     var divContent = document.getElementById('divContent');
 
@@ -914,9 +927,11 @@ function createActivitiesGraph(name, idActivity, duration){
     
     $(".pathway-div-activity-graph").draggable({
         containment: "#divContent",
-      });
+    });
 
-    div.addEventListener('mousemove', AnimEvent.add(function() {
+    // If the activity is dragged, update the line position
+    // The AnimEvent library is here to optimize, because mousemove is fired hundreds or thousands times
+    div.addEventListener('mousemove', AnimEvent.add(function() {  
         lines.forEach((l) => {
             if(l.start == div || l.end == div){
                 l.position();
@@ -924,6 +939,7 @@ function createActivitiesGraph(name, idActivity, duration){
           });
     }), false);
 
+    // If the modal is scrolled, update all line positions
     div.addEventListener('scroll', AnimEvent.add(function() {
         lines.forEach((l) => {
             if(l.start == div || l.end == div){
@@ -932,7 +948,14 @@ function createActivitiesGraph(name, idActivity, duration){
           });
     }), false);
 
-
+    /**
+     * On the first double click event, the id and name of the clicked activty is stored
+     * On the second one, a link is created except if :
+     * - This is the same activity 
+     * - The link already exists
+     * - The opposite link already exists 
+     * In all cases, the stored variables are reset
+     */
     div.addEventListener('dblclick', function (e) {
         if(ID_ACTIVITY_PREDECESSOR != -1){
             errorLine = false;
@@ -956,7 +979,7 @@ function createActivitiesGraph(name, idActivity, duration){
                 l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR+1)});
 
                 lines.push(l);
-                addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
+                addArraySuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
                 ID_ACTIVITY_PREDECESSOR = -1;
             }
             else{
@@ -970,8 +993,8 @@ function createActivitiesGraph(name, idActivity, duration){
         }
     });
 
-    div.addEventListener('mouseenter', (e) => {
-        //hideArrows();
+    // mouseenter and mouseleave events are here to hide links that are not connected with the hovered activity
+    div.addEventListener('mouseenter', () => {
         lines.forEach((l) => {
             if(l.start == div || l.end == div){
                 l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
@@ -982,19 +1005,16 @@ function createActivitiesGraph(name, idActivity, duration){
         }); 
     });
       
-    div.addEventListener('mouseleave', (e) => {
+    div.addEventListener('mouseleave', () => {
         lines.forEach((l) => {
             l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
         }); 
     });
 }
 
-function addSuccessor(idA, idB, nameA, nameB) {
-    addArraySuccessor(idA, idB, nameA, nameB);
-    NB_SUCCESSOR++;
-    fillSuccessorList();
-}
-
+/**
+ * For each stored successors, draws the line between activityA and activityB
+ */
 function drawArrows(){  
     for(i = 0; i < NB_SUCCESSOR; i++){
         start = document.getElementById(SUCCESSORS[i].idActivityA);
@@ -1005,6 +1025,13 @@ function drawArrows(){
     }
 }
 
+/**
+ * Fill the SUCCESSORS array and update the list on the right
+ * @param {id of the div containing activityA (activity1, activity12,...)} idA 
+ * @param {id of the div containing activityB (activity2, activity13,...)} idB 
+ * @param {name of activityA} nameA 
+ * @param {name of activityB} nameB 
+ */
 function addArraySuccessor(idA, idB, nameA, nameB) {
     let len = SUCCESSORS.length
 
@@ -1017,118 +1044,123 @@ function addArraySuccessor(idA, idB, nameA, nameB) {
 
     SUCCESSORS[len].delayMin = 0;
     SUCCESSORS[len].delayMax = 10;
+
+    NB_SUCCESSOR++;
+    fillSuccessorList();
 }
 
-/* remplit la liste des successeurs (sur la droite) */
+/**
+ * Fill the list of successors/links on the right of the modal
+ */
 function fillSuccessorList() {
-
     let divSuccessorsList = document.getElementById('list-graph')
     divSuccessorsList.innerHTML = ''
 
     for (let indexSuccessor = 0; indexSuccessor < SUCCESSORS.length; indexSuccessor++) {
-            let successor = document.createElement('div')
-            successor.setAttribute('class', 'div-activity')
-            successor.setAttribute('id', 'link-' + indexSuccessor);
-            let idA = document.createElement('input');
-            idA.setAttribute('type', 'hidden');
-            idA.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityA);
-            let idB = document.createElement('input');
-            idB.setAttribute('type', 'hidden');
-            idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
-            successor.appendChild(idA); successor.appendChild(idB);
-            let str = "Lien n°" + (indexSuccessor+1);
-            let p = document.createElement('p')
-            p.innerHTML = str
+        let successor = document.createElement('div')
+        successor.setAttribute('class', 'div-activity')
+        successor.setAttribute('id', 'link-' + indexSuccessor);
+        let idA = document.createElement('input');
+        idA.setAttribute('type', 'hidden');
+        idA.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityA);
+        let idB = document.createElement('input');
+        idB.setAttribute('type', 'hidden');
+        idB.setAttribute('value', SUCCESSORS[indexSuccessor].idActivityB);
+        successor.appendChild(idA); successor.appendChild(idB);
+        let str = "Lien n°" + (indexSuccessor+1);
+        let p = document.createElement('p')
+        p.innerHTML = str
 
-            let imgDelete = new Image();
-            imgDelete.src = '../img/delete.svg';
-            imgDelete.setAttribute('id', 'succ_imgd-' + indexSuccessor);
-            imgDelete.setAttribute('onclick', 'deleteSuccessor(this.id)');
-            imgDelete.setAttribute('title', 'Supprimer le lien');
-            imgDelete.style.width = '20px';
-            imgDelete.style.cursor = 'pointer';
+        let imgDelete = new Image();
+        imgDelete.src = '../img/delete.svg';
+        imgDelete.setAttribute('id', 'succ_imgd-' + indexSuccessor);
+        imgDelete.setAttribute('onclick', 'deleteSuccessor('+ indexSuccessor + ')');
+        imgDelete.setAttribute('title', 'Supprimer le lien');
+        imgDelete.style.width = '20px';
+        imgDelete.style.cursor = 'pointer';
 
-            let imgDownArrow = new Image();
-            imgDownArrow.src = '../img/down-arrow.svg';
-            imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
-            imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
-            imgDownArrow.setAttribute('title', 'Montrer les délais');
-            imgDownArrow.style.width = '20px';
-            imgDownArrow.style.cursor = 'pointer';
+        let imgDownArrow = new Image();
+        imgDownArrow.src = '../img/down-arrow.svg';
+        imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
+        imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
+        imgDownArrow.setAttribute('title', 'Montrer les délais');
+        imgDownArrow.style.width = '20px';
+        imgDownArrow.style.cursor = 'pointer';
 
-            let divMin = document.createElement('div')
-            divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+        let divMin = document.createElement('div')
+        divMin.setAttribute('id', 'divMin' + (indexSuccessor))
 
-            let labelMin = document.createElement('label');
-            labelMin.classList.add("label");
-            labelMin.innerHTML = "Délai min (minutes) : ";
-            labelMin.style.width = "70%";
+        let labelMin = document.createElement('label');
+        labelMin.classList.add("label");
+        labelMin.innerHTML = "Délai min (minutes) : ";
+        labelMin.style.width = "70%";
 
-            let inputMin = document.createElement('input');
-            inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
-            inputMin.setAttribute('type', 'number');
-            inputMin.setAttribute('min', 0);
-            inputMin.setAttribute('step', 1);
-            inputMin.setAttribute('value', 0);
-            inputMin.style.width = "30%";
+        let inputMin = document.createElement('input');
+        inputMin.setAttribute('id', 'delayMinInput' + (indexSuccessor+1));
+        inputMin.setAttribute('type', 'number');
+        inputMin.setAttribute('min', 0);
+        inputMin.setAttribute('step', 1);
+        inputMin.setAttribute('value', 0);
+        inputMin.style.width = "30%";
 
-            divMin.appendChild(labelMin);
-            divMin.appendChild(inputMin);
-            divMin.style.display = "block";
+        divMin.appendChild(labelMin);
+        divMin.appendChild(inputMin);
+        divMin.style.display = "block";
 
-            let divMax = document.createElement('div')
-            divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+        let divMax = document.createElement('div')
+        divMax.setAttribute('id', 'divMax' + (indexSuccessor))
 
-            let labelMax = document.createElement('label');
-            labelMax.classList.add("label");
-            labelMax.innerHTML = "Délai max (minutes) : ";
-            labelMax.style.width = "70%"
+        let labelMax = document.createElement('label');
+        labelMax.classList.add("label");
+        labelMax.innerHTML = "Délai max (minutes) : ";
+        labelMax.style.width = "70%"
 
-            let inputMax = document.createElement('input');
-            inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
-            inputMax.setAttribute('type', 'number');
-            inputMax.setAttribute('min', 0);
-            inputMax.setAttribute('step', 1);
-            inputMax.setAttribute('value', 10);
-            inputMax.style.width = "30%"
+        let inputMax = document.createElement('input');
+        inputMax.setAttribute('id', 'delayMaxInput' + (indexSuccessor+1));
+        inputMax.setAttribute('type', 'number');
+        inputMax.setAttribute('min', 0);
+        inputMax.setAttribute('step', 1);
+        inputMax.setAttribute('value', 360);
+        inputMax.style.width = "30%"
 
-            divMax.appendChild(labelMax);
-            divMax.appendChild(inputMax);
-            divMax.style.display = "block";
+        divMax.appendChild(labelMax);
+        divMax.appendChild(inputMax);
+        divMax.style.display = "block";
 
-            let divButton = document.createElement('div')
-            divButton.appendChild(imgDelete)
-            divButton.appendChild(imgDownArrow)
+        let divButton = document.createElement('div')
+        divButton.appendChild(imgDelete)
+        divButton.appendChild(imgDownArrow)
 
-            successor.appendChild(p);
-            successor.appendChild(divButton);
+        successor.appendChild(p);
+        successor.appendChild(divButton);
 
-            let divSuccessor = document.createElement('div');
-            divSuccessor.classList.add("div-successor")
+        let divSuccessor = document.createElement('div');
+        divSuccessor.classList.add("div-successor")
 
-            divSuccessor.appendChild(successor);
-            divSuccessor.appendChild(divMin);
-            divSuccessor.appendChild(divMax);
+        divSuccessor.appendChild(successor);
+        divSuccessor.appendChild(divMin);
+        divSuccessor.appendChild(divMax);
 
-            divSuccessorsList.appendChild(divSuccessor);
+        divSuccessorsList.appendChild(divSuccessor);
 
-            divSuccessor.addEventListener('mouseenter', (e) => {
-                start = document.getElementById(SUCCESSORS[indexSuccessor].idActivityA)
-                end = document.getElementById(SUCCESSORS[indexSuccessor].idActivityB)
-                lines.forEach((l) => {
-                    if(l.start == start && l.end == end){
-                        l.color = 'red';
-                        l.size = l.size*2;
-                    }
-                }); 
-            });
-              
-            divSuccessor.addEventListener('mouseleave', (e) => {
-                lines.forEach((l) => {
-                    l.color = '#0dac2d';
-                    l.size = 4;
-                }); 
-            });
+        // mouseenter and mouseleave events are here to highlight the arrow corresponding to the hovered successor
+        divSuccessor.addEventListener('mouseenter', () => {
+            start = document.getElementById(SUCCESSORS[indexSuccessor].idActivityA)
+            end = document.getElementById(SUCCESSORS[indexSuccessor].idActivityB)
+            lines.forEach((l) => {
+                if(l.start == start && l.end == end){
+                    l.color = 'red';
+                    l.size = l.size*2;
+                }
+            }); 
+        });
+            
+        divSuccessor.addEventListener('mouseleave', () => {
+            lines.forEach((l) => {
+                l.color = '#0dac2d';
+                l.size = 4;
+            }); 
+        });
     }
     if (SUCCESSORS.length == 0) {
         let nosuccessor = document.createElement('p');
@@ -1138,6 +1170,11 @@ function fillSuccessorList() {
     }
 }
 
+/**
+ * Show or hide the successor delays
+ * @param {Index of the successor in SUCCESSORS array} id
+ * called by the down arrow and up arrow buttons
+ */
 function showDelay(id){
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
@@ -1152,8 +1189,11 @@ function showDelay(id){
     }
 }
 
+/**
+ * Delete the given successor, and update the list
+ * @param {Index of the successor in SUCCESSORS array} id 
+ */
 function deleteSuccessor(id) {
-    id = getId(id);
     let divSuccessor = document.getElementById('link-' + id);
     let inputs = divSuccessor.getElementsByTagName('input');
 
@@ -1176,6 +1216,9 @@ function deleteSuccessor(id) {
     fillSuccessorList();
 }
 
+/**
+ * Delete all successors and arrows
+ */
 function deleteSuccessors(){
     NB_SUCCESSOR = 0;
     SUCCESSORS = new Array()
@@ -1183,6 +1226,9 @@ function deleteSuccessors(){
     fillSuccessorList();
 }
 
+/**
+ * Delete all links
+ */
 function deleteArrows(){
     for (var l of lines) {
         l.remove();
@@ -1190,6 +1236,11 @@ function deleteArrows(){
     lines = new Array();
 }
 
+/**
+ * Check if the successors are correct (no loop for example)
+ * If so, close the successors modal
+ * else, display an error while the problem is not fixed
+ */
 function validateSuccessors(){
     error = checkSuccessor();
     switch(error){
@@ -1201,7 +1252,7 @@ function validateSuccessors(){
                 SUCCESSORS[i].delayMax = inputMax.value;
             }
             deleteArrows();
-            VALIDATE = 1;
+            VALIDATE = 1; // This variable prevents the call to hidden.bs.modal event that deletes all successors when the modal is closed
             $('#edit-pathway-modal-activities').modal("hide");
         break;
         case 1:
@@ -1210,8 +1261,11 @@ function validateSuccessors(){
     }
 }
 
+/**
+ * Check some conditions about the successors
+ * @returns 0 if everything is ok, else some int that will be used in a switch to display specific error 
+ */
 function checkSuccessor(){
-    // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
     if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){
         return 0;
     }
