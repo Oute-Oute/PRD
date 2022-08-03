@@ -71,13 +71,13 @@ div#activities-list #list{
     background-color: #fff;
     border: 1px solid lightgray;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 0px 5px;
     min-height: 50px;
     height: 50px;
     max-height: 150px;
     position: relative;
+    font-size: 115%;
 }
 
 .div-activity .container-p {

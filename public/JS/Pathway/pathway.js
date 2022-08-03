@@ -1080,7 +1080,7 @@ function fillSuccessorList() {
         imgDelete.style.cursor = 'pointer';
 
         let imgDownArrow = new Image();
-        imgDownArrow.src = '../img/down-arrow.svg';
+        imgDownArrow.src = '../img/chevron_down.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
         imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
         imgDownArrow.setAttribute('title', 'Montrer les délais');
@@ -1171,21 +1171,56 @@ function fillSuccessorList() {
 }
 
 /**
- * Show or hide the successor delays
+ * Show the successor delays
  * @param {Index of the successor in SUCCESSORS array} id
- * called by the down arrow and up arrow buttons
+ * called by the down arrow
  */
-function showDelay(id){
+ function showDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
 
-    if(divMin.style.display == "none" || divMax.style.display == "none"){
-        divMin.style.display = "block";
-        divMax.style.display = "block";
+    divMin.style.display = "block";
+    divMax.style.display = "block";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_up.svg'
+    button.title = 'Cacher les délais'
+    button.setAttribute('onclick', 'hideDelay(' + id + ')');
+}
+
+/**
+ * Hide the successor delays
+ * @param {Index of the successor in SUCCESSORS array} id
+ * called by the up arrow
+ */
+function hideDelay(id) {
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    divMin.style.display = "none";
+    divMax.style.display = "none";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_down.svg'
+    button.title = 'Montrer les délais'
+    button.setAttribute('onclick', 'showDelay(' + id + ')');
+}
+
+function showDelays() {
+    delayButton = document.getElementById('succ_imgdown')
+    if(delayButton.src.includes('/img/chevron_down.svg')){
+        delayButton.src = '/img/chevron_up.svg'
+        delayButton.title = 'Cacher tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            showDelay(i);
+        }
     }
     else{
-        divMin.style.display = "none";
-        divMax.style.display = "none";
+        delayButton.src = '/img/chevron_down.svg'
+        delayButton.title = 'Montrer tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            hideDelay(i);
+        }
     }
 }
 
