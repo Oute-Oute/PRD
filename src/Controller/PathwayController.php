@@ -899,8 +899,8 @@ class PathwayController extends AbstractController
                 }
 
                 $successorsb = $successorRepository->findBy(['activityb' => $activitiesInPathway[$indexActivity]]);
-                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
-                    $em->remove($successorsa[$indexSuccessorb]);
+                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsb); $indexSuccessorb++) {
+                    $em->remove($successorsb[$indexSuccessorb]);
                 }
                 $em->flush();
 
