@@ -530,13 +530,14 @@ function autoAddPathway(){
           for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
             if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){
               var allEvents=calendar.getEvents(); 
-              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){
-               // for(let oneEventIterator; oneEventIterator<allEvents[eventsIterator].length; oneEventIterator++){
-                //}
+              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){  
+                if(allEvents[eventsIterator]._def_resourceIds.includes(categoryHumanResources[j].id)==true){
+                  console.log('bouv=cele : '+allEvents[eventsIterator]); 
+                }
               }
             }
           }
-      }
+        }
       console.log(calendar.getEvents()); 
       var categoryMaterialResources = [];
 
@@ -971,6 +972,7 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         currentEvent.setEnd(currentEvent.end);
       })
       isUpdated = false;
+      console.log(calendar.getEvents()); 
     },
   });
   switch (typeResource) {
