@@ -1189,7 +1189,7 @@ function RessourcesAllocated(event) {
     return "#339d39";
   }
   else {
-    return "rgba(173, 11, 11, 0.753)";
+    return "#841919";
   }
 }
 
@@ -2006,8 +2006,8 @@ function highlightAppointmentOnMouseOver(event) {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
       if (scheduledActivity._def.ui.borderColor != "#ff0000" && scheduledActivity._def.ui.borderColor != "#006400") {
         scheduledActivity._def.ui.textColor = "#212529";
-        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
-          scheduledActivity._def.ui.backgroundColor = "#c37785";
+        if (RessourcesAllocated(scheduledActivity) == "#841919") {
+          scheduledActivity._def.ui.backgroundColor = "#ff6a78";
           scheduledActivity._def.ui.borderColor = "#ff0001";
         }
         else {
@@ -2053,7 +2053,7 @@ function highlightAppointmentOnClick(event) {
       }
       else {
         scheduledActivity._def.ui.textColor = "#212529";
-        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
+        if (RessourcesAllocated(scheduledActivity) == "#841919") {
           scheduledActivity._def.ui.borderColor = "#ff0000";
         }
         else {
