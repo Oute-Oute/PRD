@@ -527,18 +527,45 @@ function autoAddPathway(){
       var humanResources=[]; 
       console.log(categoryOfHumanResource);
       for(let j=0; j<categoryHumanResources.length; j++){
-          for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
-            if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){
-              var allEvents=calendar.getEvents(); 
-              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){  
-                if(allEvents[eventsIterator]._def_resourceIds.includes(categoryHumanResources[j].id)==true){
-                  console.log('bouv=cele : '+allEvents[eventsIterator]); 
+        let countResources=0; 
+        var nbResourceOfcategory=countOccurencesInArray(categoryHumanResources[j].id,categoryOfHumanResource); 
+        var counterNbResourceOfCategory=0; 
+        for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
+          var allEvents=calendar.getEvents(); 
+          var slotAlreadyScheduled=false;
+          var endTime=activitiesA[i].activity.duration * 60000;
+          if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){ 
+            if(countResources<categoryHumanResources[j].quantity){
+               if(allEvents.length>0){
+                for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
+                  if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=PathwayBeginDate.getTime() && allEvents[allEventsIterator].end.getTime()>=PathwayBeginDate.getTime()){
+                    slotAlreadyScheduled=true; 
+                  }
                 }
+                if(slotAlreadyScheduled==false){
+                  humanResources.push(categoryOfHumanResource[categoryOfHumanResourceIt].idresource); 
+                  countResources++; 
+                }
+                else{
+                  PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000); 
+                  if(counterNbResourceOfCategory<nbResourceOfcategory){
+                    counterNbResourceOfCategory++; 
+                  }
+                  else{
+                    j--;
+                    break;  
+                  }
+                }
+
+              }
+              else{
+                humanResources.push(categoryOfHumanResource[categoryOfHumanResourceIt].idresource); 
+                countResources++; 
               }
             }
           }
         }
-      console.log(calendar.getEvents()); 
+      }
       var categoryMaterialResources = [];
 
       for (let j = 0; j < listeActivityMaterialResource.length; j++) {
@@ -552,7 +579,9 @@ function autoAddPathway(){
         }
       }
 
-
+      for(let j=0; j<humanResources.length; j++){
+        activityResourcesArray.push(humanResources[j]); 
+      }
 
       //counting for the ids of events
       countAddEvent++;
@@ -569,12 +598,13 @@ function autoAddPathway(){
         appointment: appointment.id,
         activity: activitiesA[i].activity.id,
         type: "activity",
-        humanResources: [],
+        humanResources: humanResources,
         materialResources: [],
         pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
         categoryMaterialResource: categoryMaterialResources,
         categoryHumanResource: categoryHumanResources,
       });
+      console.log(event); 
     }
 
     var successorsActivitiesA = [];
@@ -972,7 +1002,6 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         currentEvent.setEnd(currentEvent.end);
       })
       isUpdated = false;
-      console.log(calendar.getEvents()); 
     },
   });
   switch (typeResource) {
@@ -1191,7 +1220,7 @@ function RessourcesAllocated(event) {
     return "#339d39";
   }
   else {
-    return "rgba(173, 11, 11, 0.753)";
+    return "#841919";
   }
 }
 
@@ -1233,7 +1262,6 @@ function undoEvent() {
   var scrollTime = calendar.getOption('scrollTime');
   var zoom = document.getElementById('zoom').value;
 
-  console.log(scrollTime);
   if (historyEvents.length != 1) {
     createCalendar(headerResources, 'recreate', zoom);
   }
@@ -2008,8 +2036,8 @@ function highlightAppointmentOnMouseOver(event) {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
       if (scheduledActivity._def.ui.borderColor != "#ff0000" && scheduledActivity._def.ui.borderColor != "#006400") {
         scheduledActivity._def.ui.textColor = "#212529";
-        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
-          scheduledActivity._def.ui.backgroundColor = "#c37785";
+        if (RessourcesAllocated(scheduledActivity) == "#841919") {
+          scheduledActivity._def.ui.backgroundColor = "#ff6a78";
           scheduledActivity._def.ui.borderColor = "#ff0001";
         }
         else {
@@ -2055,7 +2083,7 @@ function highlightAppointmentOnClick(event) {
       }
       else {
         scheduledActivity._def.ui.textColor = "#212529";
-        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
+        if (RessourcesAllocated(scheduledActivity) == "#841919") {
           scheduledActivity._def.ui.borderColor = "#ff0000";
         }
         else {
@@ -2573,4 +2601,14 @@ function reduceNotification(childs) {
   }
 
 
+}
+
+function countOccurencesInArray(val,array){
+  let counter=0; 
+  for(let i=0; i<array.length; i++){
+    if(array[i].idcategory==val){
+      counter++; 
+    }
+  }
+  return counter; 
 }

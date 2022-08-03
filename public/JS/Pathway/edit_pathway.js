@@ -1075,10 +1075,6 @@ function createActivitiesGraph(name, idActivity, duration) {
         containment: "#divContent",
     });
 
-    document.getElementById('edit-pathway-modal-activities').addEventListener('click', function(e){
-        console.log(e.target);
-    });
-
     div.addEventListener('mousemove', AnimEvent.add(function () {
         lines.forEach((l) => {
             if (l.start == div || l.end == div) {
@@ -1197,6 +1193,7 @@ function fillSuccessorList() {
         successor.appendChild(idA); successor.appendChild(idB);
         let str = "Lien n°" + (indexSuccessor + 1);
         let p = document.createElement('p')
+        p.style.transform = "translate(0px, 5px)";
         p.innerHTML = str
 
         let imgDelete = new Image();
@@ -1210,13 +1207,15 @@ function fillSuccessorList() {
         let imgDownArrow = new Image();
         imgDownArrow.src = '../../img/chevron_up.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
-        imgDownArrow.setAttribute('onclick', 'showDelay(' + indexSuccessor + ')');
+        imgDownArrow.setAttribute('onclick', 'hideDelay(' + indexSuccessor + ')');
         imgDownArrow.setAttribute('title', 'Cacher les délais');
         imgDownArrow.style.width = '20px';
         imgDownArrow.style.cursor = 'pointer';
 
         let divMin = document.createElement('div')
         divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+        divMin.style.display = 'flex';
+        divMin.style.justifyContent = 'space-around';
 
         let labelMin = document.createElement('label');
         labelMin.classList.add("label");
@@ -1229,7 +1228,7 @@ function fillSuccessorList() {
         inputMin.setAttribute('min', 0);
         inputMin.setAttribute('step', 1);
         inputMin.setAttribute('value', 0);
-        inputMin.style.width = "30%";
+        inputMin.style.width = "20%";
 
         divMin.appendChild(labelMin);
         divMin.appendChild(inputMin);
@@ -1237,6 +1236,9 @@ function fillSuccessorList() {
 
         let divMax = document.createElement('div')
         divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+        divMax.style.display = 'flex';
+        divMax.style.justifyContent = 'space-around';
+        divMax.style.marginBottom = "5px";
 
         let labelMax = document.createElement('label');
         labelMax.classList.add("label");
@@ -1249,7 +1251,7 @@ function fillSuccessorList() {
         inputMax.setAttribute('min', 0);
         inputMax.setAttribute('step', 1);
         inputMax.setAttribute('value', 360);
-        inputMax.style.width = "30%"
+        inputMax.style.width = "20%"
 
         divMax.appendChild(labelMax);
         divMax.appendChild(inputMax);
@@ -1303,32 +1305,43 @@ function showDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
 
-    if (divMin.style.display == "none" || divMax.style.display == "none") {
-        divMin.style.display = "block";
-        divMax.style.display = "block";
-        document.getElementById('succ_imgdown-' + id).src = '/img/chevron_up.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délais'
-    }
-    else {
-        divMin.style.display = "none";
-        divMax.style.display = "none";
-        document.getElementById('succ_imgdown-' + id).src = '/img/chevron_down.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délais'
-    }
+    divMin.style.display = "block";
+    divMax.style.display = "block";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_up.svg'
+    button.title = 'Cacher les délais'
+    button.setAttribute('onclick', 'hideDelay(' + id + ')');
+}
+
+function hideDelay(id) {
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    divMin.style.display = "none";
+    divMax.style.display = "none";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_down.svg'
+    button.title = 'Montrer les délais'
+    button.setAttribute('onclick', 'showDelay(' + id + ')');
 }
 
 function showDelays() {
-    for(i = 0; i < NB_SUCCESSOR; i++){
-        showDelay(i);
-    }
     delayButton = document.getElementById('succ_imgdown')
     if(delayButton.src.includes('/img/chevron_down.svg')){
         delayButton.src = '/img/chevron_up.svg'
         delayButton.title = 'Cacher tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            showDelay(i);
+        }
     }
     else{
         delayButton.src = '/img/chevron_down.svg'
         delayButton.title = 'Montrer tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            hideDelay(i);
+        }
     }
 }
 
