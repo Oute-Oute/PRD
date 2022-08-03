@@ -231,32 +231,35 @@ function deleteActivity(id) {
     // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
-    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
-    deleteArrows();
-    for(i = 0; i < NB_SUCCESSOR; i++){
-        idA = SUCCESSORS[i].idActivityA;
-        idB = SUCCESSORS[i].idActivityB;
-        idDivActivity = parseInt(id) + 1;
-        activityname = 'activity' + idDivActivity;
-        console.log('a : ', idA, 'b ; ', idB, 'name : ', activityname)
-        if(activityname == idA || activityname == idB){
-            SUCCESSORS.splice(i, 1);
-            NB_SUCCESSOR--;
-        }
-    }
-    
-    // On peut donc recuperer la div
-    /*let divToDelete = document.getElementById('div-activity-'+id)
-    // puis la supprimer
-    let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.removeChild(divToDelete)*/
-
-    // On actusalise l'input qui contient le nb d'activité
+    // On actualise l'input qui contient le nb d'activité
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
+    
+    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
+    let idActivity = "activity" + (parseInt(id) + 1);
+    for (var i = SUCCESSORS.length - 1; i >= 0; i--) {
+        // reverse loop because of array_splice() 
+        if (SUCCESSORS[i].idActivityA == idActivity || SUCCESSORS[i].idActivityB == idActivity) {
+            for (j = 0; j < lines.length; j++) {
+                if (lines[j].start == document.getElementById(SUCCESSORS[i].idActivityA) && lines[j].end == document.getElementById(SUCCESSORS[i].idActivityB)) {
+                    lines[j].remove();
+                    lines.splice(j, 1);
+                }
+            }
+
+            for (j = 0; j < lines.length; j++) {
+                lines[j].middleLabel = "Lien n°" + (j + 1);
+            }
+
+            NB_SUCCESSOR--;
+            SUCCESSORS.splice(i, 1);
+        }
+    }
+
     fillActivityList()
+    fillSuccessorList()
 }
 
 
@@ -993,21 +996,18 @@ function createActivitiesGraph(name, idActivity, duration){
         }
     });
 
-    // mouseenter and mouseleave events are here to hide links that are not connected with the hovered activity
+    // mouseenter and mouseleave events are here to change color of links that are connected with the hovered activity
     div.addEventListener('mouseenter', () => {
         lines.forEach((l) => {
             if(l.start == div || l.end == div){
-                l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
-            }
-            else{
-                l.hide('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]})
+                l.color = 'red';
             }
         }); 
     });
       
     div.addEventListener('mouseleave', () => {
         lines.forEach((l) => {
-            l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
+            l.color = '#0dac2d';
         }); 
     });
 }
