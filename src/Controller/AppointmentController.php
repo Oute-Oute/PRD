@@ -344,27 +344,25 @@ class AppointmentController extends AbstractController
     }
 
     /**
-     * Allow to GET the appointments list of the activity in the parameter (activity id)
+     * Return the appointments list who are scheduled and use the pathway in the parameter (pathway id id)
      */
     public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id) {
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findBy(["id" => $id]);
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(["pathway" => $pathway]);
         
-        $appointmentsJSON = [];
-
         foreach ($appointments as $appointment) {
-            $data[] =
-            [
-                "appointment_id" => $appointment->getId(),
-                "appointment_day" => $appointment->getDayappointment(),
-                "patient_firstname" => $appointment->getPatient()->getFirstname(),
-                "patient_lastname" => $appointment->getPatient()->getLastname(),
-            ];  
+            // We only add the appointments who are scheduled
+            if ($appointment->isScheduled() == true) {
+                $data[] =
+                [
+                    "appointment_id" => $appointment->getId(),
+                    "appointment_day" => $appointment->getDayappointment(),
+                    "patient_firstname" => $appointment->getPatient()->getFirstname(),
+                    "patient_lastname" => $appointment->getPatient()->getLastname(),
+                ]; 
+            }
         }
-
         return new JsonResponse($data);
-
     }
-
 }
 
