@@ -1129,6 +1129,7 @@ function fillSuccessorList() {
         successor.appendChild(idA); successor.appendChild(idB);
         let str = "Lien n°" + (indexSuccessor + 1);
         let p = document.createElement('p')
+        p.style.transform = "translate(0px, 5px)";
         p.innerHTML = str
 
         let imgDelete = new Image();
@@ -1149,6 +1150,8 @@ function fillSuccessorList() {
 
         let divMin = document.createElement('div')
         divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+        divMin.style.display = 'flex';
+        divMin.style.justifyContent = 'space-around';
 
         let labelMin = document.createElement('label');
         labelMin.classList.add("label");
@@ -1161,7 +1164,7 @@ function fillSuccessorList() {
         inputMin.setAttribute('min', 0);
         inputMin.setAttribute('step', 1);
         inputMin.setAttribute('value', 0);
-        inputMin.style.width = "30%";
+        inputMin.style.width = "20%";
 
         divMin.appendChild(labelMin);
         divMin.appendChild(inputMin);
@@ -1169,6 +1172,9 @@ function fillSuccessorList() {
 
         let divMax = document.createElement('div')
         divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+        divMax.style.display = 'flex';
+        divMax.style.justifyContent = 'space-around';
+        divMax.style.marginBottom = "5px";
 
         let labelMax = document.createElement('label');
         labelMax.classList.add("label");
@@ -1181,7 +1187,7 @@ function fillSuccessorList() {
         inputMax.setAttribute('min', 0);
         inputMax.setAttribute('step', 1);
         inputMax.setAttribute('value', 360);
-        inputMax.style.width = "30%"
+        inputMax.style.width = "20%"
 
         divMax.appendChild(labelMax);
         divMax.appendChild(inputMax);
