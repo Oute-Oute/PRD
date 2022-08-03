@@ -690,9 +690,9 @@ class PathwayController extends AbstractController
 
                             // deletion of the appointements
                             $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
-                            $appointmentsInPathway = $appointmentRepository->findBy(['pathway' => $pathway]);
+                            $appointmentsScheduled = $appointmentRepository->findBy(['pathway' => $pathway, "scheduled" => true]);
 
-                            foreach ($appointmentsInPathway as $appointment) {
+                            foreach ($appointmentsScheduled as $appointment) {
 
                                 // We get all the activities associated with the appointment
                                 $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
