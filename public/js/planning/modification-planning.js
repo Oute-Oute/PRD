@@ -139,7 +139,7 @@ function backToConsultation() {
 /**
  * Open the modal to Add a pathway
  */
-function addEvent() {
+function displayAddPathway() {
   let listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
@@ -180,7 +180,7 @@ function addEvent() {
  * This function is called when clicking on the button 'Valider' into Add Modal. 
  * Add All the Activities from a choosen appointment in the Calendar
  */
-function AddEventValider() {
+function addPathway() {
   //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
@@ -436,6 +436,264 @@ function updateEventsAppointment(modifyEvent) {
   updateErrorMessages();
 }
 
+function autoAddPathway(){
+      //Get databases informations to add the activities appointment on the calendar
+  var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
+  var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
+  var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
+  var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var appointmentid = document.getElementById("select-appointment").value;
+  var categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll('3aZt3r','')); 
+
+  //Get the appointment choosed by user and the place of the appointment in the listAppointment
+  var appointment;
+  for (let i = 0; i < listeAppointments.length; i++) {
+    if (listeAppointments[i]["id"] == appointmentid) {
+      appointment = listeAppointments[i];
+      listeAppointments[i].scheduled = true;
+    }
+  }
+
+  document.getElementById("listeAppointments").value =
+    JSON.stringify(listeAppointments);
+
+  //Date of the begining of the pathway 
+  var PathwayBeginTime = document.getElementById("timeBegin").value;
+  var PathwayBeginDate = new Date(
+    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
+    2 * 60 * 60000
+  );
+
+
+  //Get activities of the pathway
+  var activitiesInPathwayAppointment = [];
+  for (let i = 0; i < listeActivities.length; i++) {
+    if (
+      "pathway-" + listeActivities[i]["idPathway"] ==
+      appointment["idPathway"][0].id
+    ) {
+      activitiesInPathwayAppointment.push(listeActivities[i]);
+    }
+  }
+
+  //Get all actiity b in the successors to find the ids of firsts activities in pathway
+  var successorsActivitybIdList = [];
+  for (let i = 0; i < listeSuccessors.length; i++) {
+    successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
+  }
+
+  //get the first activities of the pathway with ids 
+  var firstActivitiesPathway = [];
+  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
+    if (
+      successorsActivitybIdList.includes(activitiesInPathwayAppointment[i].id) == false) {
+      firstActivitiesPathway.push(activitiesInPathwayAppointment[i]);
+    }
+  }
+
+  var activitiesA = [];
+  //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
+  var allActivtiesA = [];
+  for (let i = 0; i < firstActivitiesPathway.length; i++) {
+    let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
+    activitiesA.push(activityA);
+    allActivtiesA.push(firstActivitiesPathway[i].id);
+  }
+  do {
+
+    //Creating Activities in FullCalendar
+    for (let i = 0; i < activitiesA.length; i++) {
+     
+      var activityResourcesArray = [];
+      var humanAlreadyScheduled = [];
+      var materialAlreadyScheduled = [];
+      //Find for all Activities of the pathway, the number of Humanresources to define. 
+      var categoryHumanResources = [];
+
+      for (let j = 0; j < listeActivitHumanResource.length; j++) {
+        if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryHumanResourceJSON.length; k++) {
+            if (listeActivitHumanResource[j].humanResourceCategoryId == categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j]) == false) {
+              humanAlreadyScheduled.push(listeActivitHumanResource[j]);
+              categoryHumanResources.push({ id: listeActivitHumanResource[j].humanResourceCategoryId, quantity: listeActivitHumanResource[j].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
+            }
+          }
+        }
+      }
+
+      var humanResources=[]; 
+      console.log(categoryOfHumanResource);
+      for(let j=0; j<categoryHumanResources.length; j++){
+          for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
+            if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){
+              var allEvents=calendar.getEvents(); 
+              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){
+               // for(let oneEventIterator; oneEventIterator<allEvents[eventsIterator].length; oneEventIterator++){
+                //}
+              }
+            }
+          }
+      }
+      console.log(calendar.getEvents()); 
+      var categoryMaterialResources = [];
+
+      for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+        if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryMaterialResourceJSON.length; k++) {
+            if (listeActivityMaterialResource[j].materialResourceCategoryId == categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j]) == false) {
+              materialAlreadyScheduled.push(listeActivityMaterialResource[j]);
+              categoryMaterialResources.push({ id: listeActivityMaterialResource[j].materialResourceCategoryId, quantity: listeActivityMaterialResource[j].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
+            }
+          }
+        }
+      }
+
+
+
+      //counting for the ids of events
+      countAddEvent++;
+
+      //Add one event in the Calendar
+      var event = calendar.addEvent({
+        id: "new" + countAddEvent,
+        description: "",
+        resourceIds: activityResourcesArray,
+        title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
+        start: PathwayBeginDate.getTime() + activitiesA[i].delaymin * 60000,
+        end: PathwayBeginDate.getTime() + activitiesA[i].activity.duration * 60000,
+        patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
+        appointment: appointment.id,
+        activity: activitiesA[i].activity.id,
+        type: "activity",
+        humanResources: [],
+        materialResources: [],
+        pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+        categoryMaterialResource: categoryMaterialResources,
+        categoryHumanResource: categoryHumanResources,
+      });
+    }
+
+    var successorsActivitiesA = [];
+    //On reset le tableau successorsActivitiesA
+    for (let i = successorsActivitiesA.length - 1; i > 0; i--) {
+      successorsActivitiesA.splice(i);
+    }
+    //Get each Activities B for each Activities A 
+
+    for (let i = 0; i < activitiesA.length; i++) {
+      for (let j = 0; j < listeSuccessors.length; j++) {
+        if (activitiesA[i].activity.id == listeSuccessors[j].idactivitya) {
+          let successor = { delaymin: listeSuccessors[j].delaymin, activityB: listeSuccessors[j].idactivityb };
+          successorsActivitiesA.push(successor);
+        }
+      }
+    }
+
+    //Keeping for each différent activityB in successorsActivitiesA the biggest delaymin
+    for (let i = 0; i < successorsActivitiesA.length; i++) {
+      for (let j = 0; j < successorsActivitiesA.length; j++) {
+        if (successorsActivitiesA[i].activityB == successorsActivitiesA[j].activityB && i != j) {
+          if (successorsActivitiesA[i].delaymin < successorsActivitiesA[j].delaymin) {
+            successorsActivitiesA.splice(i);
+          }
+          else {
+            successorsActivitiesA.splice(j);
+          }
+        }
+      }
+    }
+
+    //Put SuccessorsActivitiesA in ActivitiesA
+    //Get the longestActivity for all ActivityA.
+    var biggestDuration = 0;
+    for (let i = 0; i < activitiesA.length; i++) {
+      if (biggestDuration < activitiesA[i].activity.duration) {
+        biggestDuration = activitiesA[i].activity.duration;
+      }
+    }
+    //Deleting All activities A
+    for (let i = activitiesA.length - 1; i >= 0; i--) {
+      activitiesA.splice(i);
+    }
+
+    //Put activitiesA into AllActivitiesA and ActivitiesB in ActivitiesA
+    for (let i = 0; i < successorsActivitiesA.length; i++) {
+      for (let j = 0; j < listeActivities.length; j++) {
+        if (successorsActivitiesA[i].activityB == listeActivities[j].id) {
+          for (let k = 0; k < allActivtiesA.length; k++) {
+            if (allActivtiesA.includes(listeActivities[j].id) == false) {
+              let activityA = { activity: listeActivities[j], delaymin: successorsActivitiesA[i].delaymin }
+              activitiesA.push(activityA);
+              allActivtiesA.push(listeActivities[j].id);
+            }
+          }
+        }
+      }
+    }
+    let biggestdelay = 0;
+    for (let i = 0; i < activitiesA.length; i++) {
+      if (activitiesA[i].delaymin > biggestdelay) {
+        biggestdelay = activitiesA[i].delaymin;
+      }
+    }
+    PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
+
+  } while (successorsActivitiesA.length != 0);
+  verifyHistoryPush(historyEvents, appointmentid);
+  calendar.render();
+
+  $("#add-planning-modal").modal("toggle");
+  updateErrorMessages();
+
+  calendar.getEvents().forEach((currentEvent) => {
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+    currentEvent.setEnd(currentEvent.end);
+  })
+  isUpdated = false;
+}
+
+function showSelectDate() {
+  let selectContainerDate = document.getElementById("select-container-date");
+  selectContainerDate.style.display = "block";
+}
+
+//fonction qui permet de tester la mise à jour de la liste des events d'un appointment
+function updateEventsAppointment(modifyEvent) {
+  listeHumanResources = JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r', ' '));
+  listeMaterialResources = JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r', ' '));
+  //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
+  clearArray(modifyEvent._def.extendedProps.humanResources);
+  clearArray(modifyEvent._def.extendedProps.materialResources)
+  for (let i = 0; i < modifyEvent._def.resourceIds.length; i++) {
+    if (modifyEvent._def.resourceIds[i] != 'h-default' && modifyEvent._def.resourceIds[i] != 'm-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i]) == false) {
+      for (let j = 0; j < listeHumanResources.length; j++) {
+        if (listeHumanResources[j].id == modifyEvent._def.resourceIds[i]) {
+          var humanArray = { id: modifyEvent._def.resourceIds[i], title: listeHumanResources[j].title }
+          modifyEvent._def.extendedProps.humanResources.push(humanArray);
+        }
+      }
+      for (let j = 0; j < listeMaterialResources.length; j++) {
+        if (listeMaterialResources[j].id == modifyEvent._def.resourceIds[i]) {
+          var materialArray = { id: modifyEvent._def.resourceIds[i], title: listeMaterialResources[j].title }
+          modifyEvent._def.extendedProps.materialResources.push(materialArray);
+        }
+      }
+    }
+  }
+
+  let listResource = [];
+  modifyEvent._def.resourceIds.forEach((resource) => {
+    listResource.push(resource)
+  })
+
+  verifyHistoryPush(historyEvents, -1);
+  updateErrorMessages();
+}
+
 function DisplayAppointmentInformation(eventClicked) {
   $("#modify-planning-modal").modal('hide');
   eventClicked = JSON.parse(eventClicked);
@@ -535,6 +793,8 @@ function DisplayAppointmentInformation(eventClicked) {
 
   $("#display-appointment-modal").modal("show"); //open the window
 }
+
+
 
 function displayModalModifyEvent() {
   $("#modify-planning-modal").modal("show"); //open the window
