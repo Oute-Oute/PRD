@@ -164,7 +164,8 @@
 
 					<div class="modal-footer">
 						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
-						<button type="submit" class="btn-valide btn-secondary" onclick="AddEventValider()">Valider</button>
+						<button type="submit" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
+						<button type="submit" class="btn-valide btn secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
 					</div>
 				</div>
 			</form>
@@ -198,7 +199,7 @@
 		<div
 			class="CRUD-div">
 			<!-- bouton d'ajout d'un rendez-vous dans le planning -->
-			<button type="button" class="btn-calendar-edit" onclick="addEvent()">Ajouter</button>
+			<button type="button" class="btn-calendar-edit" onclick="displayAddPathway()">Ajouter</button>
 
 			<!-- filtre de l'affichage par catégorie -->
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
