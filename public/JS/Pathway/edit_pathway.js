@@ -13,6 +13,8 @@ var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / edit
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
+var SCHEDULED_APPOINTMENTS // list of all the appointments which are scheduled using the pathway 
+
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
 var NB_SUCCESSOR = 0;
@@ -381,15 +383,72 @@ function fillActivityList() {
 
 }
 
+
+
+
+
+function getScheduledAppointments(index) {
+// request to get the appointments list of the activity
+return $.ajax({
+    type: 'GET',
+    url: '/activity/'+index+'/appointments',
+    dataType: "json",
+    /*success: function (data) {
+        console.log(data)
+        setAppointmentsList(data)
+    },
+    error: function () {
+        console.log("Server Error, when trying to get the scheduled appointments lists of the pathway");
+    },*/
+});
+}
+
+/**
+ * Verify if there is some appointments scheduled for the pathway 
+ */
+async function verifyScheduledAppointments(idPathway) {
+    try {
+        const scheduledAppointments = await getScheduledAppointments(idPathway)
+        if (scheduledAppointments.length > 0) {
+            showScheduledAppointmentsModal()
+            return true
+        } else {
+            return false
+        }
+    } catch(err) {
+        console.log(err);
+        return false
+    }
+}
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+function showScheduledAppointmentsModal() {
+    $('#pathway-modal-scheduled-appointments').modal('show');
+}
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+ function closeScheduledAppointmentsModal() {
+    $('#pathway-modal-scheduled-appointments').modal('hide');
+}
+
 /**
  * Allow to remove an activity in the list 
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
 function deleteActivity(id) {
 
+    console.log("delete activity")
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     id = getId(id)
+
+    console.log(PATHWAY.id)
+    //getScheduledAppointmentsList()
+    verifyScheduledAppointments(PATHWAY.id);
     
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
@@ -573,23 +632,7 @@ function addResources() {
 
 
             } else {    
-                // PRENDRE LA METHODE DANS LA FONCTION oui()
-                console.log("sdsdsdsd")
 
-                // request to get the appointments list of the activity
-                $.ajax({
-                    type: 'GET',
-                    url: '/activity/'+index+'/appointments',
-                    //data: { 'index': index },
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("success")
-                        console.log(data)
-                    },
-                    error: function () {
-                        console.log("error");
-                    },
-                });
 
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
 
@@ -652,30 +695,11 @@ function addResources() {
     }
 }
 
-var app
-function setAppointmentsList(data) {
-    app = data
-}
-function oui() {
-    console.log("sdsdsdsd")
 
-    var index = 8
 
-    // request to get the appointments list of the activity
-    $.ajax({
-        type: 'GET',
-        url: '/activity/'+index+'/appointments',
-        dataType: "json",
-        success: function (data) {
-            setAppointmentsList(data)
-        },
-        error: function () {
-            console.log("error");
-        },
-    });
 
-console.log(app)
-}
+  
+  
 
 /**
  * Takes an id in parameter and verify if the resource id already in the list of the activity.
