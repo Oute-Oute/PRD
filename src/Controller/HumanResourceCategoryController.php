@@ -15,10 +15,22 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @file        HumanResourceCategoryController.php
+ * @brief       Contains the functions that allow to handle the human resource categories
+ * @details     Allows to create, read, update, delete every human resource categories
+ * @date        2022
+ */
+
+/**
  * @Route("/human/resource/category")
  */
 class HumanResourceCategoryController extends AbstractController
 {
+
+    /**
+      * Allows to list every human resource categories in the database
+     */
+
     /**
      * @Route("/", name="app_human_resource_category_index", methods={"GET"})
      */
@@ -28,6 +40,12 @@ class HumanResourceCategoryController extends AbstractController
             'human_resource_categories' => $humanResourceCategoryRepository->findAll(),
         ]);
     }
+
+    
+
+    /**
+      * Allows to create a new human resource category in the database
+     */
 
     /**
      * @Route("/new", name="app_human_resource_category_new", methods={"GET", "POST"})
@@ -47,6 +65,12 @@ class HumanResourceCategoryController extends AbstractController
         }
     }
 
+    
+
+    /**
+      * Allows to show data of a specific human resource category
+     */
+
     /**
      * @Route("/{id}", name="app_human_resource_category_show", methods={"GET"})
      */
@@ -56,6 +80,12 @@ class HumanResourceCategoryController extends AbstractController
             'human_resource_category' => $humanResourceCategory,
         ]);
     }
+
+    
+
+    /**
+      * Allows to edit a human resource category that is already in the database
+     */
 
     /**
      * @Route("/{id}/edit", name="app_human_resource_category_edit", methods={"GET", "POST"})
@@ -73,6 +103,12 @@ class HumanResourceCategoryController extends AbstractController
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 
+    
+
+    /**
+      * Allows to delete a human resource category from the database
+     */
+
     /**
      * @Route("/{id}", name="app_human_resource_category_delete", methods={"POST"})
      */
@@ -82,11 +118,13 @@ class HumanResourceCategoryController extends AbstractController
         $activitiesHumanResourceRepository = new ActivityHumanResourceRepository($doctrine);
 
         $em=$doctrine->getManager();
+        //delete the links between resources that are linked to this deleted category
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
 
+        //delete the links between an activity and the category that is deleted
         $activitiesHumanResource = $activitiesHumanResourceRepository->findBy(['humanresourcecategory' => $humanResourceCategory]);
         for ($indexActivitiesHumanResource = 0; $indexActivitiesHumanResource < count($activitiesHumanResource); $indexActivitiesHumanResource++){
         $em->remove($activitiesHumanResource[$indexActivitiesHumanResource]);
