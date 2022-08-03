@@ -26,11 +26,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
+
+/**
+ * @file        HumanResourceController.php
+ * @brief       Contains the functions that allow to handle the human resources
+ * @details     Allows to create, read, update, delete every human resources
+ * @date        2022
+ */
+
 /**
  * @Route("/human/resource")
  */
 class HumanResourceController extends AbstractController
 {
+
+    /**
+      * Allows to list every human resources in the database
+     */
+
     /**
      * @Route("/", name="app_human_resource_index", methods={"GET"})
      */
@@ -41,8 +54,11 @@ class HumanResourceController extends AbstractController
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
         $humanResourceCategories = $humanResourceCategoryRepository->findAll();
 
+        //get working hours of human resources
         $workingHours = $this->listWorkingHoursJSON($doctrine);
+        //get unavaibilities of human resources
         $unavailabilities = $this->listUnavailabilitiesHumanJSON($doctrine);
+        //get links of human resources with their categories
         $categoriesByHumanResources = $this->listCategoriesByHumanResourcesJSON($doctrine);
         return $this->render('human_resource/index.html.twig', [
             'human_resources' => $humanResources,
@@ -53,6 +69,9 @@ class HumanResourceController extends AbstractController
         ]); 
     }
 
+    /**
+      * Allows to list every human resources with a pagination included, to not display every resources at the same time
+     */
     public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
         $categoryOfHumanResources = $categoryOfHumanResourceRepository->findAll();
@@ -75,6 +94,7 @@ class HumanResourceController extends AbstractController
                 'categories' => $categories
             ];
         }
+        //pagination
         $humanResources=$paginator->paginate(
             $humanResources, 
             $request->query->getInt('page',1),
@@ -84,7 +104,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     * Allows to create a JSON object from a list of working hours of human resources
      */
     public function listWorkingHoursJSON(ManagerRegistry $doctrine)
     {
@@ -102,13 +122,13 @@ class HumanResourceController extends AbstractController
                 );
             }
         }
-        //Conversion des données ressources en json
+        //Converting data into a JSON object
         $workingHoursArrayJson = new JsonResponse($workingHoursArray);
         return $workingHoursArrayJson;    
     }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     * Allows to create a JSON object from a list of unavailibilities of human resources
      */
     public function listUnavailabilitiesHumanJSON(ManagerRegistry $doctrine)
     {
@@ -137,6 +157,7 @@ class HumanResourceController extends AbstractController
                 );
             }
         }
+        //Filtering unavailabilities since we don't need every of them
         $unavailabilitiesFiltered = array();
         foreach ($unavailabilitiesArray as $unavailability) {
             foreach($unavailabilitiesHuman as $unavailabilityHuman) {
@@ -152,18 +173,14 @@ class HumanResourceController extends AbstractController
             }
         }
     
-
-
-
-
-        //Conversion des données ressources en json
+        //Converting data into a JSON object
         $unavailabilitiesFilteredJson = new JsonResponse($unavailabilitiesFiltered);
         return $unavailabilitiesFilteredJson;    
     }
 
 
-        /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+    /**
+     * Allows to create a JSON object from a list of categories links with human resources
      */
     public function listCategoriesByHumanResourcesJSON(ManagerRegistry $doctrine)
     {
@@ -179,14 +196,16 @@ class HumanResourceController extends AbstractController
                 );
             }
         }
-        //Conversion des données ressources en json
+        //Converting data into a JSON object
         $categoriesByHumanResourcesArrayJson = new JsonResponse($categoriesByHumanResourcesArray);
         return $categoriesByHumanResourcesArrayJson;    
     }
 
    
 
-    
+    /**
+      * Allows to create a new human resource in the database
+     */
 
     /**
      * @Route("/new", name="app_human_resource_new", methods={"GET", "POST"})
@@ -195,8 +214,10 @@ class HumanResourceController extends AbstractController
     {
         if ($request->getMethod() === 'POST') {
             $humanResource = new HumanResource();
-            $param = $request->request->all();            
+            $param = $request->request->all();  
+            //name          
             $name = $param['resourcename'];
+            //working hours
             $monday = array();
             $tuesday = array();
             $wednesday = array();
@@ -216,16 +237,16 @@ class HumanResourceController extends AbstractController
             $humanResourceRepository->add($humanResource, true);
             $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
 
-            // On récupère toutes les catégories
+            //We get all categories from the database
             $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
             $categories = $categoryOfHumanResourceRepository->findAll(); 
 
-            // On récupère les working hours
+            //We get all working hours
             $workingHoursRepository = new WorkingHoursRepository($doctrine);
             
-            // On récupère le nombre de catégories
+            //We get the number of category linked to the new human resource
             $nbCategory = $param['nbCategory'];
-            //$activityArray = array();
+            //filling working hours
             for($j = 0; $j <= 6; $j++) {
                 switch ($j) {
                     case 0:
@@ -315,6 +336,7 @@ class HumanResourceController extends AbstractController
                         break;
                 }
             }
+            //creating links between categories and the resource
             for($i = 0; $i < $nbCategory; $i++)
             {
                 $linkCategRes = new CategoryOfHumanResource();      
@@ -327,6 +349,11 @@ class HumanResourceController extends AbstractController
         }
     }
 
+
+    /**
+      * Allows to show data of a specific human resource in the database
+     */
+
     /**
      * @Route("/{id}", name="app_human_resource_show", methods={"GET"})
      */
@@ -338,21 +365,24 @@ class HumanResourceController extends AbstractController
     }
 
     /**
+      * Allows to edit a human resource that is already in the database
+     */
+
+    /**
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request,ManagerRegistry $doctrine) 
     { 
-        // Méthode POST pour ajouter un circuit
         if ($request->getMethod() === 'POST' ) {
 
-            // On recupere toutes les données de la requete
+            //We get all data and parameters of the request
             $param = $request->request->all();
 
-            // On récupère l'objet parcours que l'on souhaite modifier grace a son id
+            //We get the human resource object that we want to edit
             $humanResourceRepository = new HumanResourceRepository($doctrine);
             $humanResource = $humanResourceRepository->findById($param['id'])[0];
             $humanResource->setHumanResourceName($param['resourcename']);
-            //$pathway->setAvailable(true);
+            //working hours treatment
             $monday = array();
             $tuesday = array();
             $wednesday = array();
@@ -367,18 +397,17 @@ class HumanResourceController extends AbstractController
             array_push($friday, $param['friday-begin-edit'].':00', $param['friday-end-edit'].':00');
             array_push($saturday, $param['saturday-begin-edit'].':00', $param['saturday-end-edit'].':00');
             array_push($sunday, $param['sunday-begin-edit'].':00', $param['sunday-end-edit'].':00');
-            // On ajoute le parcours a la bd
+            //We add the human resource to the database
             $humanResourceRepository->add($humanResource, true);
             
-            // On s'occupe ensuite ds liens entre le parcours et les activités :
 
-            // On récupère toutes les activités
+            //We get all links of categories between resources
             $categOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
             $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
             $categOfHumanResource = $categOfHumanResourceRepository->findAll();
             $humanResourcesCategories = $humanResourceCategoryRepository->findAll();
 
-            // On récupère les working hours
+            //We get all working hours
             $workingHoursRepository = new WorkingHoursRepository($doctrine);
 
             // On supprime toutes les activités et leurs successor
@@ -390,8 +419,9 @@ class HumanResourceController extends AbstractController
             $em->flush();
         
 
-            // On récupère le nombre de catégories
+            //We get the number of categories now linked to the edited human resource
             $nbCategories = $param['nbcategory'];
+            //Editing working hours
             for($j = 0; $j <= 6; $j++) {
                 switch ($j) {
                     case 0:
@@ -653,27 +683,15 @@ class HumanResourceController extends AbstractController
             }
                 
 
-            //$activityArray = array();
             if ($nbCategories != 0) {
-                /* $categOf_old = new CategoryOfHumanResource();      
-                
-                $categOf_old->setHumanresource($param["name-activity-0"]);
-                $categOf_old->setHumanresourcecategory($param[ "duration-activity-0"]);
 
-                $categOfHumanResourceRepository->add($categOf_old, true); */
-
+                //Adding links between resource and their categories
                 for($i = 0; $i < $nbCategories; $i++)
                 {
                     $categOf = new CategoryOfHumanResource();
                     $categOf->setHumanresource($humanResource);
                     $categOf->setHumanresourcecategory($humanResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
-                    //dd($categOf);
                     $categOfHumanResourceRepository->add($categOf, true);
-                    //dd($categOfHumanResourceRepository->findAll());
-                   //}
-
-                  //  $categOf_old = $categOfHumanResourceRepository->findById($humanResource->getId())[0];
-
                 }
             }
             
@@ -682,10 +700,9 @@ class HumanResourceController extends AbstractController
         }
     }
 
-    
-    
-
-
+    /**
+      * Allows to delete a human resource that is already in the database
+     */
 
     /**
      * @Route("/{id}", name="app_human_resource_delete", methods={"POST"})
@@ -698,18 +715,20 @@ class HumanResourceController extends AbstractController
         $unavailabilitiesRepository = new UnavailabilityRepository($doctrine);
         $scheduledHumanResourcesRepository = new HumanResourceScheduledRepository($doctrine);
 
-
+        //Deleting links between categories and the deleted resource
         $em=$doctrine->getManager();
         $categsOfResources = $categOfHumanResourceRepository->findBy(['humanresource' => $humanResource]);
         for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
             $em->remove($categsOfResources[$indexCategOf]);
         }
         
+        //Deleting the working hours of the deleted resource
         $workingHours = $workingHoursRepository->findBy(['humanresource' => $humanResource]);
         for($indexWorkingHour = 0; $indexWorkingHour < count($workingHours); $indexWorkingHour++) {
             $em->remove($workingHours[$indexWorkingHour]);
         }
 
+        //Deleting the unavailabilities of the deleted resource
         $unavailabilitiesHuman = $unavailabilitiesHumanRepository->findBy(['humanresource' => $humanResource]);
         for ($indexUnavailabilityHuman = 0; $indexUnavailabilityHuman < count($unavailabilitiesHuman); $indexUnavailabilityHuman++){
             $unavailabilityToDelete = $unavailabilitiesRepository->findBy(['id' => $unavailabilitiesHuman[$indexUnavailabilityHuman]->getUnavailability()->getId()]);
@@ -717,12 +736,14 @@ class HumanResourceController extends AbstractController
             $em->remove($unavailabilitiesHuman[$indexUnavailabilityHuman]);
         }
         
+        //Deleting the scheduled things of the deleted resource
         $scheduledHumanResources = $scheduledHumanResourcesRepository->findBy(['humanresource' => $humanResource]);
         for ($indexScheduledHumanResource = 0; $indexScheduledHumanResource < count($scheduledHumanResources); $indexScheduledHumanResource++){
             $em->remove($scheduledHumanResources[$indexScheduledHumanResource]);
         }    
 
         $em->flush();
+        //Deleting the basic object human resource
         $humanResourceRepository->remove($humanResource, true);
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
 
@@ -778,7 +799,9 @@ class HumanResourceController extends AbstractController
         }
         return $resourceArray;
     }
-
+    /**
+      * Allows to create an unavailability linked to a human resource that is already in the database
+     */
     public function unavailability(Request $request,ManagerRegistry $doctrine) {
 
         $param = $request->request->all(); 
@@ -803,7 +826,9 @@ class HumanResourceController extends AbstractController
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 
-
+    /**
+      * Allows to delete an unavailability linked to a human resource that is already in the database
+     */
     public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
     {
         if (isset($_POST['idHumanAvailability'])) {

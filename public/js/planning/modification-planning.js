@@ -530,13 +530,14 @@ function autoAddPathway(){
           for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
             if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){
               var allEvents=calendar.getEvents(); 
-              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){
-               // for(let oneEventIterator; oneEventIterator<allEvents[eventsIterator].length; oneEventIterator++){
-                //}
+              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){  
+                if(allEvents[eventsIterator]._def_resourceIds.includes(categoryHumanResources[j].id)==true){
+                  console.log('bouv=cele : '+allEvents[eventsIterator]); 
+                }
               }
             }
           }
-      }
+        }
       console.log(calendar.getEvents()); 
       var categoryMaterialResources = [];
 
@@ -971,6 +972,7 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         currentEvent.setEnd(currentEvent.end);
       })
       isUpdated = false;
+      console.log(calendar.getEvents()); 
     },
   });
   switch (typeResource) {
@@ -1186,7 +1188,7 @@ function RessourcesAllocated(event) {
     return "#ff0000";
   }
   if (isFullyScheduled(event)) {
-    return "#20c997";
+    return "#339d39";
   }
   else {
     return "rgba(173, 11, 11, 0.753)";
@@ -2004,15 +2006,16 @@ function highlightAppointmentOnMouseOver(event) {
   var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
-      if (scheduledActivity._def.ui.borderColor != "#ffbf00") {
+      if (scheduledActivity._def.ui.borderColor != "#ff0000" && scheduledActivity._def.ui.borderColor != "#006400") {
         scheduledActivity._def.ui.textColor = "#212529";
         if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
-          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+          scheduledActivity._def.ui.backgroundColor = "#c37785";
+          scheduledActivity._def.ui.borderColor = "#ff0001";
         }
         else {
-          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+          scheduledActivity._def.ui.backgroundColor = "#81f989";
+          scheduledActivity._def.ui.borderColor = "#006401";
         }
-        scheduledActivity._def.ui.borderColor = "#ffbf01";
       }
       scheduledActivity.setEnd(scheduledActivity.end);
     }
@@ -2024,7 +2027,7 @@ function highlightAppointmentOnMouseOut(event) {
   var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
-      if (scheduledActivity._def.ui.borderColor == "#ffbf01") {
+      if (scheduledActivity._def.ui.borderColor == "#ff0001" || scheduledActivity._def.ui.borderColor == "#006401") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
@@ -2045,7 +2048,7 @@ function highlightAppointmentOnClick(event) {
 
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
-      if (scheduledActivity._def.ui.borderColor == "#ffbf00") {
+      if (scheduledActivity._def.ui.borderColor == "#ff0000" || scheduledActivity._def.ui.borderColor == "#006400") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
@@ -2053,16 +2056,15 @@ function highlightAppointmentOnClick(event) {
       else {
         scheduledActivity._def.ui.textColor = "#212529";
         if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
-          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+          scheduledActivity._def.ui.borderColor = "#ff0000";
         }
         else {
-          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+          scheduledActivity._def.ui.borderColor = "#006400";
         }
-        scheduledActivity._def.ui.borderColor = "#ffbf00";
       }
     }
     else {
-      if (scheduledActivity._def.ui.borderColor == "#ffbf00") {
+      if (scheduledActivity._def.ui.borderColor == "#ff0000" || scheduledActivity._def.ui.borderColor == "#006400") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
