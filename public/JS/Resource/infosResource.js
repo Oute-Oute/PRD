@@ -1,3 +1,5 @@
+const { forEach } = require("core-js/core/array");
+
 /**
  * Permet d'afficher la fenêtre modale d'informations
  */
@@ -14,7 +16,7 @@ function showInfosModalHuman(idHumanResource, resourceName) {
   getAjaxHumanResources(idHumanResource, date, tableBody);
   createCalendarResource("humanresource");
   getWorkingHours(idHumanResource);
-  change_tab_human_infos("planning");
+  change_tab_human_infos("planning-infos");
   $("#infos-human-resource-modal").modal("show");
   document.getElementById("load-large").style.visibility = "visible";
   document.getElementById("empty-planning").style.visibility = "hidden";
@@ -245,9 +247,12 @@ function getWorkingHours(id) {
 }
 
 function change_tab_human_infos(id) {
-  document.getElementById("planning").className = "notselected";
-  document.getElementById("workinghours").className = "notselected";
-  document.getElementById("categoriesbyresource").className = "notselected";
+  liHeader = document.getElementsByClassName("li-header");
+  selectedDivs = liHeader[0].getElementsByClassName("selected");
+  for(i = 0; i < selectedDivs.length; i++){
+    selectedDivs[i].className="notselected";
+  }
+
   document.getElementById(id).className = "selected";
 
   let planning = document.getElementById("human-resource-planning");
@@ -255,7 +260,7 @@ function change_tab_human_infos(id) {
   let categories = document.getElementById("human-resource-categories");
 
   switch (id) {
-    case "planning":
+    case "planning-infos":
       planning.style.display = "block";
       workinghours.style.display = "none";
       categories.style.display = "none";

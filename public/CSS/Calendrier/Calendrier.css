@@ -18,10 +18,7 @@ div#container {
   margin-top: 2.5%;
 }
 
-#container-top-right {
-  display: flex;
-  flex-direction: column;
-}
+
 
 .form-control {
   border-radius: 50px;
@@ -35,7 +32,7 @@ div#container {
   display: block;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
   position: relative;
 
@@ -71,8 +68,6 @@ a:hover{
 
 .calendar-container, .all-container{
   width: 100%;
-  padding-right: 50px;
-  padding-left: 50px;
   margin-right: auto;
   margin-left: auto;
   display: block;
@@ -83,7 +78,9 @@ a:hover{
   z-index:0;
 }
 .all-container{
-  padding: 30px;
+  padding: 30px;  
+  padding-right: 50px;
+  padding-left: 50px;
 }
 
 .btn-calendar-edit{
@@ -127,9 +124,8 @@ a:hover{
 }
 
 .datepicker{
-  width: 25%;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
   display: inline-block;
   
 }
@@ -260,4 +256,43 @@ a:hover{
   max-height: 75%;
   box-shadow:rgba(149, 157, 165, 0.5) 0px 8px 24px; ;
   margin-bottom: 20px;
+}
+
+.header-ressource{
+  width: 75%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.75em;
+  font-family: 'Nunito', sans-serif;
+}
+.header-ressource-consultation{
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.75em;
+  font-family: 'Nunito', sans-serif;
+  z-index:0;
+}
+
+.top{
+  display: flex;
+  flex-direction: row;
+}
+
+.top-left{
+  width:50%
+}
+
+.top-right{
+  display: flex;
+  flex-direction: column;
+  position: absolute; 
+  right:0%;
+  margin-right: 5%;
+  z-index:1;
+}
+
+.header-td-date{
+  left: 50%;
+  position: absolute;
+  text-align: center;
 }

@@ -164,7 +164,8 @@
 
 					<div class="modal-footer">
 						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
-						<button type="submit" class="btn-valide btn-secondary" onclick="AddEventValider()">Valider</button>
+						<button type="submit" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
+						<button type="submit" class="btn-valide btn secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
 					</div>
 				</div>
 			</form>
@@ -193,12 +194,12 @@
 <div class="all-container" style="display: flex; flex-direction: row;">
 <div style="width:100%;">
 
-	<h1>Modification du Planning du {{ currentdate|date("d/m/Y") }}</h1>
+	<h1>Modification du Planning</h1>
 	<div id="container-top">
 		<div
 			class="CRUD-div">
 			<!-- bouton d'ajout d'un rendez-vous dans le planning -->
-			<button type="button" class="btn-calendar-edit" onclick="addEvent()">Ajouter</button>
+			<button type="button" class="btn-calendar-edit" onclick="displayAddPathway()">Ajouter</button>
 
 			<!-- filtre de l'affichage par catégorie -->
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
@@ -238,21 +239,27 @@
 					<input type="hidden" id='list-resource' name="list-resource"/>
 				</form>
 			</div>
+			<div >
 			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
-			<option value="02:00:00">Zoom : 12,5%</option>
-			<option value="01:00:00">Zoom : 25%</option>
-			<option value="00:40:00">Zoom : 50%</option>
-			<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
-			<option value="00:10:00">Zoom : 200%</option>
-			<option value="00:05:00">Zoom : 400%</option>
-			<option value="00:02:30">Zoom : 800%</option>
-		</select>
+				<option value="02:00:00">Zoom : 12,5%</option>
+				<option value="01:00:00">Zoom : 25%</option>
+				<option value="00:40:00">Zoom : 50%</option>
+				<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
+				<option value="00:10:00">Zoom : 200%</option>
+				<option value="00:05:00">Zoom : 400%</option>
+				<option value="00:02:30">Zoom : 800%</option>
+			</select>
 		</div>
+		</div>
+		
 	</div>
 	  
-	<div
-		id="calendar-container" class="calendar-container">
-	
+	<div id="calendar-container" class="calendar-container">
+		<table class="header-ressource">
+			<td id="header-type" class="header-td">Ressources Humaines</td>
+		<td>{{ dateFormatted }}</td>
+		</table>
+		
 		
 
 		<!-- affichage du calendar -->

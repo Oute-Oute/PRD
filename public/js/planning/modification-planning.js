@@ -139,7 +139,7 @@ function backToConsultation() {
 /**
  * Open the modal to Add a pathway
  */
-function addEvent() {
+function displayAddPathway() {
   let listeAppointments = JSON.parse(
     document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
   );
@@ -180,7 +180,7 @@ function addEvent() {
  * This function is called when clicking on the button 'Valider' into Add Modal. 
  * Add All the Activities from a choosen appointment in the Calendar
  */
-function AddEventValider() {
+function addPathway() {
   //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
@@ -436,6 +436,264 @@ function updateEventsAppointment(modifyEvent) {
   updateErrorMessages();
 }
 
+function autoAddPathway(){
+      //Get databases informations to add the activities appointment on the calendar
+  var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
+  var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
+  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
+  var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
+  var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
+  var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var appointmentid = document.getElementById("select-appointment").value;
+  var categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll('3aZt3r','')); 
+
+  //Get the appointment choosed by user and the place of the appointment in the listAppointment
+  var appointment;
+  for (let i = 0; i < listeAppointments.length; i++) {
+    if (listeAppointments[i]["id"] == appointmentid) {
+      appointment = listeAppointments[i];
+      listeAppointments[i].scheduled = true;
+    }
+  }
+
+  document.getElementById("listeAppointments").value =
+    JSON.stringify(listeAppointments);
+
+  //Date of the begining of the pathway 
+  var PathwayBeginTime = document.getElementById("timeBegin").value;
+  var PathwayBeginDate = new Date(
+    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +
+    2 * 60 * 60000
+  );
+
+
+  //Get activities of the pathway
+  var activitiesInPathwayAppointment = [];
+  for (let i = 0; i < listeActivities.length; i++) {
+    if (
+      "pathway-" + listeActivities[i]["idPathway"] ==
+      appointment["idPathway"][0].id
+    ) {
+      activitiesInPathwayAppointment.push(listeActivities[i]);
+    }
+  }
+
+  //Get all actiity b in the successors to find the ids of firsts activities in pathway
+  var successorsActivitybIdList = [];
+  for (let i = 0; i < listeSuccessors.length; i++) {
+    successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
+  }
+
+  //get the first activities of the pathway with ids 
+  var firstActivitiesPathway = [];
+  for (let i = 0; i < activitiesInPathwayAppointment.length; i++) {
+    if (
+      successorsActivitybIdList.includes(activitiesInPathwayAppointment[i].id) == false) {
+      firstActivitiesPathway.push(activitiesInPathwayAppointment[i]);
+    }
+  }
+
+  var activitiesA = [];
+  //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
+  var allActivtiesA = [];
+  for (let i = 0; i < firstActivitiesPathway.length; i++) {
+    let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
+    activitiesA.push(activityA);
+    allActivtiesA.push(firstActivitiesPathway[i].id);
+  }
+  do {
+
+    //Creating Activities in FullCalendar
+    for (let i = 0; i < activitiesA.length; i++) {
+     
+      var activityResourcesArray = [];
+      var humanAlreadyScheduled = [];
+      var materialAlreadyScheduled = [];
+      //Find for all Activities of the pathway, the number of Humanresources to define. 
+      var categoryHumanResources = [];
+
+      for (let j = 0; j < listeActivitHumanResource.length; j++) {
+        if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryHumanResourceJSON.length; k++) {
+            if (listeActivitHumanResource[j].humanResourceCategoryId == categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j]) == false) {
+              humanAlreadyScheduled.push(listeActivitHumanResource[j]);
+              categoryHumanResources.push({ id: listeActivitHumanResource[j].humanResourceCategoryId, quantity: listeActivitHumanResource[j].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
+            }
+          }
+        }
+      }
+
+      var humanResources=[]; 
+      console.log(categoryOfHumanResource);
+      for(let j=0; j<categoryHumanResources.length; j++){
+          for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
+            if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){
+              var allEvents=calendar.getEvents(); 
+              for(let eventsIterator; eventsIterator<allEvents.length; eventsIterator++){
+               // for(let oneEventIterator; oneEventIterator<allEvents[eventsIterator].length; oneEventIterator++){
+                //}
+              }
+            }
+          }
+      }
+      console.log(calendar.getEvents()); 
+      var categoryMaterialResources = [];
+
+      for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+        if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryMaterialResourceJSON.length; k++) {
+            if (listeActivityMaterialResource[j].materialResourceCategoryId == categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j]) == false) {
+              materialAlreadyScheduled.push(listeActivityMaterialResource[j]);
+              categoryMaterialResources.push({ id: listeActivityMaterialResource[j].materialResourceCategoryId, quantity: listeActivityMaterialResource[j].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
+            }
+          }
+        }
+      }
+
+
+
+      //counting for the ids of events
+      countAddEvent++;
+
+      //Add one event in the Calendar
+      var event = calendar.addEvent({
+        id: "new" + countAddEvent,
+        description: "",
+        resourceIds: activityResourcesArray,
+        title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
+        start: PathwayBeginDate.getTime() + activitiesA[i].delaymin * 60000,
+        end: PathwayBeginDate.getTime() + activitiesA[i].activity.duration * 60000,
+        patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
+        appointment: appointment.id,
+        activity: activitiesA[i].activity.id,
+        type: "activity",
+        humanResources: [],
+        materialResources: [],
+        pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+        categoryMaterialResource: categoryMaterialResources,
+        categoryHumanResource: categoryHumanResources,
+      });
+    }
+
+    var successorsActivitiesA = [];
+    //On reset le tableau successorsActivitiesA
+    for (let i = successorsActivitiesA.length - 1; i > 0; i--) {
+      successorsActivitiesA.splice(i);
+    }
+    //Get each Activities B for each Activities A 
+
+    for (let i = 0; i < activitiesA.length; i++) {
+      for (let j = 0; j < listeSuccessors.length; j++) {
+        if (activitiesA[i].activity.id == listeSuccessors[j].idactivitya) {
+          let successor = { delaymin: listeSuccessors[j].delaymin, activityB: listeSuccessors[j].idactivityb };
+          successorsActivitiesA.push(successor);
+        }
+      }
+    }
+
+    //Keeping for each différent activityB in successorsActivitiesA the biggest delaymin
+    for (let i = 0; i < successorsActivitiesA.length; i++) {
+      for (let j = 0; j < successorsActivitiesA.length; j++) {
+        if (successorsActivitiesA[i].activityB == successorsActivitiesA[j].activityB && i != j) {
+          if (successorsActivitiesA[i].delaymin < successorsActivitiesA[j].delaymin) {
+            successorsActivitiesA.splice(i);
+          }
+          else {
+            successorsActivitiesA.splice(j);
+          }
+        }
+      }
+    }
+
+    //Put SuccessorsActivitiesA in ActivitiesA
+    //Get the longestActivity for all ActivityA.
+    var biggestDuration = 0;
+    for (let i = 0; i < activitiesA.length; i++) {
+      if (biggestDuration < activitiesA[i].activity.duration) {
+        biggestDuration = activitiesA[i].activity.duration;
+      }
+    }
+    //Deleting All activities A
+    for (let i = activitiesA.length - 1; i >= 0; i--) {
+      activitiesA.splice(i);
+    }
+
+    //Put activitiesA into AllActivitiesA and ActivitiesB in ActivitiesA
+    for (let i = 0; i < successorsActivitiesA.length; i++) {
+      for (let j = 0; j < listeActivities.length; j++) {
+        if (successorsActivitiesA[i].activityB == listeActivities[j].id) {
+          for (let k = 0; k < allActivtiesA.length; k++) {
+            if (allActivtiesA.includes(listeActivities[j].id) == false) {
+              let activityA = { activity: listeActivities[j], delaymin: successorsActivitiesA[i].delaymin }
+              activitiesA.push(activityA);
+              allActivtiesA.push(listeActivities[j].id);
+            }
+          }
+        }
+      }
+    }
+    let biggestdelay = 0;
+    for (let i = 0; i < activitiesA.length; i++) {
+      if (activitiesA[i].delaymin > biggestdelay) {
+        biggestdelay = activitiesA[i].delaymin;
+      }
+    }
+    PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
+
+  } while (successorsActivitiesA.length != 0);
+  verifyHistoryPush(historyEvents, appointmentid);
+  calendar.render();
+
+  $("#add-planning-modal").modal("toggle");
+  updateErrorMessages();
+
+  calendar.getEvents().forEach((currentEvent) => {
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+    currentEvent.setEnd(currentEvent.end);
+  })
+  isUpdated = false;
+}
+
+function showSelectDate() {
+  let selectContainerDate = document.getElementById("select-container-date");
+  selectContainerDate.style.display = "block";
+}
+
+//fonction qui permet de tester la mise à jour de la liste des events d'un appointment
+function updateEventsAppointment(modifyEvent) {
+  listeHumanResources = JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r', ' '));
+  listeMaterialResources = JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r', ' '));
+  //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
+  clearArray(modifyEvent._def.extendedProps.humanResources);
+  clearArray(modifyEvent._def.extendedProps.materialResources)
+  for (let i = 0; i < modifyEvent._def.resourceIds.length; i++) {
+    if (modifyEvent._def.resourceIds[i] != 'h-default' && modifyEvent._def.resourceIds[i] != 'm-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i]) == false) {
+      for (let j = 0; j < listeHumanResources.length; j++) {
+        if (listeHumanResources[j].id == modifyEvent._def.resourceIds[i]) {
+          var humanArray = { id: modifyEvent._def.resourceIds[i], title: listeHumanResources[j].title }
+          modifyEvent._def.extendedProps.humanResources.push(humanArray);
+        }
+      }
+      for (let j = 0; j < listeMaterialResources.length; j++) {
+        if (listeMaterialResources[j].id == modifyEvent._def.resourceIds[i]) {
+          var materialArray = { id: modifyEvent._def.resourceIds[i], title: listeMaterialResources[j].title }
+          modifyEvent._def.extendedProps.materialResources.push(materialArray);
+        }
+      }
+    }
+  }
+
+  let listResource = [];
+  modifyEvent._def.resourceIds.forEach((resource) => {
+    listResource.push(resource)
+  })
+
+  verifyHistoryPush(historyEvents, -1);
+  updateErrorMessages();
+}
+
 function DisplayAppointmentInformation(eventClicked) {
   $("#modify-planning-modal").modal('hide');
   eventClicked = JSON.parse(eventClicked);
@@ -536,11 +794,13 @@ function DisplayAppointmentInformation(eventClicked) {
   $("#display-appointment-modal").modal("show"); //open the window
 }
 
+
+
 function displayModalModifyEvent() {
   $("#modify-planning-modal").modal("show"); //open the window
 }
 
-function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
+function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
   var calendarEl = document.getElementById("calendar");
   var first;
@@ -587,10 +847,11 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
     resourceOrder: 'type, title',
     //initialise la vue en colonne par ressource par jour en horaire française
     initialView: "resourceTimelineDay",
-    slotDuration: "00:20:00",
+    slotDuration: slotDuration,
     locale: "fr",
     timeZone: "Europe/Paris",
-    //stickyFooterScrollbar: true,
+
+    scrollTimeReset: false,
     height: $(window).height() * 0.75,
 
     //permet de modifier les events dans le calendar
@@ -604,12 +865,8 @@ function createCalendar(typeResource, useCase, resourcesToDisplay = undefined) {
     eventMinWidth: 1, //set the minimum width of the event
     resourceAreaColumns: resourcesColumns, //set the type of columns for the resources
 
-    //modifie l'affichage de l'entête du calendar pour ne laisser que la date du jour
-    headerToolbar: {
-      start: null,
-      center: "title",
-      end: null,
-    },
+    //modifie l'affichage de l'entête du calendar pour ne pas l'afficher
+    headerToolbar: false,
 
     //modifie l'affichage des heures de la journée
     slotLabelFormat: {
@@ -929,7 +1186,7 @@ function RessourcesAllocated(event) {
     return "#ff0000";
   }
   if (isFullyScheduled(event)) {
-    return "#20c997";
+    return "#339d39";
   }
   else {
     return "rgba(173, 11, 11, 0.753)";
@@ -971,8 +1228,12 @@ function clearArray(array) {
  */
 function undoEvent() {
   var slotDuration = calendar.getOption('slotDuration');
+  var scrollTime = calendar.getOption('scrollTime');
+  var zoom = document.getElementById('zoom').value;
+
+  console.log(scrollTime);
   if (historyEvents.length != 1) {
-    createCalendar(headerResources, 'recreate');
+    createCalendar(headerResources, 'recreate', zoom);
   }
   calendar.getEvents().forEach((currentEvent) => {
     currentEvent._def.ui.textColor = "#fff";
@@ -980,7 +1241,6 @@ function undoEvent() {
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
   })
-  calendar.setOption('slotDuration', slotDuration);
   isUpdated = false;
 }
 
@@ -1061,7 +1321,8 @@ function updateErrorMessages() {
 
                 //update the data
                 existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
-                  existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
+                  existingScheduledActivity.messageAppointmentActivityAlreadyScheduled = getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity);
+                existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                 existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                 existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
                 existingScheduledActivity.listCategoryMaterialResources = getListCategoryMaterialResources(scheduledActivity); //set data for category material resources
@@ -1076,6 +1337,7 @@ function updateErrorMessages() {
                 scheduledActivityName: scheduledActivity._def.title,
 
                 messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
+                messageAppointmentActivityAlreadyScheduled: getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity),
                 messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay 
                 listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
                 listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1105,6 +1367,7 @@ function updateErrorMessages() {
             scheduledActivityName: scheduledActivity._def.title,
 
             messageNotFullyScheduled: getMessageNotFullyScheduled(scheduledActivity), //add error message for not fully scheduled
+            messageAppointmentActivityAlreadyScheduled: getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity),
             messageDelay: getMessageDelay(listScheduledActivities, scheduledActivity), //add error message for delay
             listCategoryHumanResources: getListCategoryHumanResources(scheduledActivity), //add data for category human resources
             listHumanResources: getListHumanResources(scheduledActivity), //add data for human resource
@@ -1195,6 +1458,23 @@ function getMessageNotFullyScheduled(scheduledActivity) {
 
 
   return message;
+}
+
+/**
+ * 
+ */
+function getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity) {
+  var messages = [];
+
+  listScheduledActivities.forEach((appointmentScheduledActivity) => {
+    if (appointmentScheduledActivity._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment && scheduledActivity._def.publicId != appointmentScheduledActivity._def.publicId) {
+      if ((scheduledActivity.start > appointmentScheduledActivity.start && scheduledActivity.start < appointmentScheduledActivity.end) || (scheduledActivity.end > appointmentScheduledActivity.start && scheduledActivity.end < appointmentScheduledActivity.end) || (scheduledActivity.start <= appointmentScheduledActivity.start && scheduledActivity.end >= appointmentScheduledActivity.end)) {
+        messages.push(appointmentScheduledActivity.title + " est déjà programé sur le même créneau.");
+      }
+    }
+  })
+
+  return messages;
 }
 
 /**
@@ -1720,32 +2000,32 @@ function displayPanelErrorMessages() {
 
 }
 
-function highlightAppointmentOnMouseOver(event){
-  var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
+function highlightAppointmentOnMouseOver(event) {
+  var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
-      if(scheduledActivity._def.ui.borderColor != "#ffbf00"){
+    if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
+      if (scheduledActivity._def.ui.borderColor != "#ff0000" && scheduledActivity._def.ui.borderColor != "#006400") {
         scheduledActivity._def.ui.textColor = "#212529";
-        if(RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)"){
-          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
+          scheduledActivity._def.ui.backgroundColor = "#c37785";
+          scheduledActivity._def.ui.borderColor = "#ff0001";
         }
         else {
-          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+          scheduledActivity._def.ui.backgroundColor = "#81f989";
+          scheduledActivity._def.ui.borderColor = "#006401";
         }
-        scheduledActivity._def.ui.borderColor = "#ffbf01";
       }
       scheduledActivity.setEnd(scheduledActivity.end);
     }
   })
 }
 
-function highlightAppointmentOnMouseOut(event){
-  var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
+function highlightAppointmentOnMouseOut(event) {
+
+  var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
-      if(scheduledActivity._def.ui.borderColor == "#ffbf01"){
+    if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
+      if (scheduledActivity._def.ui.borderColor == "#ff0001" || scheduledActivity._def.ui.borderColor == "#006401") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
@@ -1755,29 +2035,34 @@ function highlightAppointmentOnMouseOut(event){
   })
 }
 
-function highlightAppointmentOnClick(event){
-  var appointmentId = event.id.split("-")[1];
-  console.log(event.id, appointmentId)
+function highlightAppointmentOnClick(event) {
+  var appointmentId;
+  if(event.parentElement.id.substring(0, 11) == "appointment"){
+    appointmentId = event.parentElement.id.substring(11);
+  }
+  else if(event.parentElement.parentElement.id.substring(0, 11) == "appointment"){
+    appointmentId = event.parentElement.parentElement.id.substring(11);
+  }
+
   calendar.getEvents().forEach((scheduledActivity) => {
-    if(scheduledActivity._def.extendedProps.appointment == appointmentId){
-      if(scheduledActivity._def.ui.borderColor == "#ffbf00"){
+    if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
+      if (scheduledActivity._def.ui.borderColor == "#ff0000" || scheduledActivity._def.ui.borderColor == "#006400") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
       }
-      else{
+      else {
         scheduledActivity._def.ui.textColor = "#212529";
-        if(RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)"){
-          scheduledActivity._def.ui.backgroundColor = "#ff7d80";
+        if (RessourcesAllocated(scheduledActivity) == "rgba(173, 11, 11, 0.753)") {
+          scheduledActivity._def.ui.borderColor = "#ff0000";
         }
         else {
-          scheduledActivity._def.ui.backgroundColor = "#6ff7cf";
+          scheduledActivity._def.ui.borderColor = "#006400";
         }
-        scheduledActivity._def.ui.borderColor = "#ffbf00";
       }
     }
     else {
-      if(scheduledActivity._def.ui.borderColor == "#ffbf00"){
+      if (scheduledActivity._def.ui.borderColor == "#ff0000" || scheduledActivity._def.ui.borderColor == "#006400") {
         scheduledActivity._def.ui.textColor = "#fff";
         scheduledActivity._def.ui.borderColor = RessourcesAllocated(scheduledActivity);
         scheduledActivity._def.ui.backgroundColor = RessourcesAllocated(scheduledActivity);
@@ -1845,28 +2130,37 @@ function updatePanelErrorMessages() {
         var div = document.createElement('div');                      //Creating the div for the Appointment
         div.setAttribute('class', 'alert alert-warning');
         div.setAttribute('role', 'alert');
-        div.setAttribute('id', 'appointment-' + listErrorMessages.listScheduledAppointment[i].appointmentId);
-        div.setAttribute('onmouseover', 'highlightAppointmentOnMouseOver(this)');
-        div.setAttribute('onmouseout', 'highlightAppointmentOnMouseOut(this)');
-        div.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
-        div.setAttribute('style', 'display: flex; flex-direction : column; cursor: pointer;');
+        div.setAttribute('id', 'appointment' + listErrorMessages.listScheduledAppointment[i].appointmentId);
+
+        div.setAttribute('style', 'display: flex; flex-direction : column;');
         var divRow = document.createElement('divRow');
         divRow.setAttribute('style', 'display: flex; flex-direction : row; position : relative; justify-content:space-between;');
         div.append(divRow);
         var img = document.createElement("img");
         img.src = "/img/exclamation-triangle-fill.svg";
         img.style.height = "32px";
+        img.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        img.setAttribute('style', ' cursor: pointer;');
         var text = document.createElement('h3');
+
+        //A implenter uniquement sur h3
+        div.setAttribute('onmouseover', 'highlightAppointmentOnMouseOver(this)');
+        div.setAttribute('onmouseout', 'highlightAppointmentOnMouseOut(this)');
+        text.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        text.setAttribute('style', ' cursor: pointer;');
         text.innerHTML = listErrorMessages.listScheduledAppointment[i].patientName + ' / ' + listErrorMessages.listScheduledAppointment[i].pathwayName;
+
+        //button for hidding the information
         var reduceButtonAppointment = document.createElement('img');
         reduceButtonAppointment.setAttribute('src', '/img/chevron_up.svg');
-        reduceButtonAppointment.setAttribute('id', 'reduceButtonnotification' + i)
+        reduceButtonAppointment.setAttribute('id', 'reduceButton' + div.id)
         reduceButtonAppointment.setAttribute('style', 'background:none;height:24px;margin-left:5%;cursor: pointer;');
         reduceButtonAppointment.setAttribute('onclick', "reduceNotification(" + div.id + ")");
 
+        //button for displaying the information
         var expandButtonAppointment = document.createElement('img');
         expandButtonAppointment.setAttribute('src', '/img/chevron_down.svg');
-        expandButtonAppointment.setAttribute('id', 'expandButtonnotification' + i)
+        expandButtonAppointment.setAttribute('id', 'expandButton' + div.id)
         expandButtonAppointment.setAttribute('style', 'background:none;height:24px;display:none;margin-left:5%;cursor: pointer;');
         expandButtonAppointment.setAttribute('onclick', "reduceNotification(" + div.id + ")");
 
@@ -1879,6 +2173,8 @@ function updatePanelErrorMessages() {
             div.append(divColumn);
             var messageEarliestAppointmentTime = document.createElement('earliestAppointmentDate').innerHTML = '-' + messageEarliest;
             divColumn.append(messageEarliestAppointmentTime);
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             var space = document.createElement('space');
             space.innerHTML = '</br>';
             div.append(space);
@@ -1892,6 +2188,8 @@ function updatePanelErrorMessages() {
             div.append(divColumn);
             var messageLatestAppointmentTime = document.createElement('messageLatestAppointmentTime').innerHTML = '-' + messageLatest;
             divColumn.append(messageLatestAppointmentTime);
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             var space = document.createElement('space');
             space.innerHTML = '</br>';
             div.append(space);
@@ -1903,6 +2201,8 @@ function updatePanelErrorMessages() {
           if (repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)) {          //Testing if there are errors on this Activity
             var divColumn = document.createElement('divColumn');
             divColumn.setAttribute('style', 'font-weight: bolder;')
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             div.append(divColumn);
             var nameSA = listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityName + ' : ';        //Display Activity Name 
             divColumn.append(nameSA);
@@ -1912,7 +2212,21 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageNotFullyScheduled = document.createElement('messageNotFullyScheduled').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageNotFullyScheduled);
+            }
+
+            //messageAppointmentActivityAlreadyScheduled
+            if (listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageAppointmentActivityAlreadyScheduled != []) {
+              listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageAppointmentActivityAlreadyScheduled.forEach((oneMessageAppointmentActivityAlreadyScheduled) => {
+                var divColumn = document.createElement('divColumn');
+                div.append(divColumn);
+                var messageAppointmentActivityAlreadyScheduled = document.createElement('messageAppointmentActivityAlreadyScheduled').innerHTML = '-' + oneMessageAppointmentActivityAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
+                divColumn.append(messageAppointmentActivityAlreadyScheduled);
+              })
             }
 
             //messageDelay
@@ -1921,6 +2235,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageDelay = document.createElement('messageDelay').innerHTML = '-' + oneMessageDelay;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageDelay);
               })
             }
@@ -1936,6 +2252,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageCategoryQuantity = document.createElement('messageCategoryQuantity').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageCategoryQuantity);
             }
 
@@ -1944,6 +2262,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageWrongCategory = document.createElement('messageWrongCategory').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageWrongCategory);
             }
           }
@@ -1957,6 +2277,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageWorkingHours = document.createElement('messageWorkingHours').innerHTML = '-' + oneMessageWorkingHours;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageWorkingHours);
               })
             }
@@ -1968,6 +2290,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageUnavailability = document.createElement('messageUnavailability').innerHTML = '-' + oneMessageUnavailability;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageUnavailability);
               })
             }
@@ -1978,6 +2302,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageAlreadyScheduled = document.createElement('messageAlreadyScheduled').innerHTML = '-' + oneMessageAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageAlreadyScheduled);
               })
             }
@@ -1991,6 +2317,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageCategoryQuantity = document.createElement('messageCategoryQuantity').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageCategoryQuantity);
             }
 
@@ -1999,6 +2327,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageWrongCategory = document.createElement('messageWrongCategory').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageWrongCategory);
             }
           }
@@ -2012,6 +2342,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageUnavailability = document.createElement('messageUnavailability').innerHTML = '-' + oneMessageUnavailability;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageUnavailability);
               })
             }
@@ -2022,6 +2354,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageAlreadyScheduled = document.createElement('messageAlreadyScheduled').innerHTML = '-' + oneMessageAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageAlreadyScheduled);
               })
             }
@@ -2218,6 +2552,7 @@ function reduceNotification(childs) {
     }
   }
   else {
+
     if (childs.childNodes[1].style.display == '') {
       for (let i = 1; i < childs.childNodes.length; i++) {
         childs.childNodes[i].style.display = 'none';

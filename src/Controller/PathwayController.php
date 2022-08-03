@@ -23,6 +23,7 @@ use App\Repository\UnavailabilityHumanResourceRepository;
 use App\Form\PathwayType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,9 +46,9 @@ class PathwayController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
-    public function listHumanResourcesJSON()
+    public function listHumanResourcesJSON(ManagerRegistry $doctrine)
     {
-        $humanResourceCategoryRepo = new HumanResourceCategoryRepository($this->getDoctrine());
+        $humanResourceCategoryRepo = $doctrine->getRepository("App\Entity\HumanResourceCategory");
         $humanResourceCategories = $humanResourceCategoryRepo->findAll();
         $humanResourceCategoriesArray = array();
 
@@ -67,9 +68,9 @@ class PathwayController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
      */
-    public function listMaterialResourcesJSON()
+    public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
-        $materialResourceCategoryRepo = new MaterialResourceCategoryRepository($this->getDoctrine());
+        $materialResourceCategoryRepo = $doctrine->getRepository("App\Entity\MaterialResourceCategory");
         $materialResourceCategories = $materialResourceCategoryRepo->findAll();
         $materialResourceCategoriesArray = array();
 
@@ -91,9 +92,9 @@ class PathwayController extends AbstractController
     /**
      * Permet de créer un objet json a partir d'une entité de type pathway
      */
-    public function pathwayJSON(Pathway $pathway)
+    public function pathwayJSON(Pathway $pathway, ManagerRegistry $doctrine)
     {
-        $activityRepo = new ActivityRepository($this->getDoctrine());
+        $activityRepo = $doctrine->getRepository("App\Entity\Activity");
         $activitiesOfPathway = $activityRepo->findBy(['pathway' => $pathway]);
         
         //$pathwayArray = array();
@@ -102,8 +103,8 @@ class PathwayController extends AbstractController
             'pathwayname' => $pathway->getPathwayname()
         );
         
-        $activityHumanResourceRepo = new ActivityHumanResourceRepository($this->getDoctrine());
-        $activityMaterialResourceRepo = new ActivityMaterialResourceRepository($this->getDoctrine());
+        $activityHumanResourceRepo = $doctrine->getRepository("App\Entity\ActivityHumanResource");
+        $activityMaterialResourceRepo = $doctrine->getRepository("App\Entity\ActivityMaterialResource");
 
         $activitiesArray = array();
         $successorsArray = array();
@@ -142,7 +143,7 @@ class PathwayController extends AbstractController
                 'materialResourceCategories' =>$mrArray
             );
 
-            $successorRepo = new SuccessorRepository($this->getDoctrine());
+            $successorRepo = $doctrine->getRepository("App\Entity\Successor");
             $successors = $successorRepo->findBy(["activitya"=>$activity]);
             foreach($successors as $successor){
                 $nameActivityA = $activityRepo->findOneBy(['id' => $successor->getActivitya()])->getActivityname();
@@ -184,9 +185,9 @@ class PathwayController extends AbstractController
     /**
      * Permet de créer un objet json contenant les targets d'un pathway
      */
-    public function listTargetsJSON($pathway)
+    public function listTargetsJSON($pathway, ManagerRegistry $doctrine)
     {
-        $targetRepository = new TargetRepository($this->getDoctrine());
+        $targetRepository = $doctrine->getRepository("App\Entity\Target");
 
         $targets = $targetRepository->findBy(["pathway" => $pathway]);
 
@@ -220,16 +221,15 @@ class PathwayController extends AbstractController
         //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
         //$humanResources = $humanResourceRepo->findAll();
         // dd($humanResources);
-        $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
-        $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+        $humanResourceCategoriesJson = $this->listHumanResourcesJSON($doctrine);
+        $materialResourceCategoriesJson = $this->listMaterialResourcesJSON($doctrine);
         //$materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
         //$materialResources = $materialResourceRepo->findAll();
 
-        $pathways = $pathwayRepository->findAll();
         $pathways=$paginator->paginate(
-            $pathways, 
+            $pathwayRepository->findAllPathway(), 
             $request->query->getInt('page',1),
-            8
+            10
         ); 
         $nbPathway = count($pathways);
 
@@ -252,24 +252,24 @@ class PathwayController extends AbstractController
      * Redirige vers la page d'édition d'un parcours
      * route : "/pathway/edit/{id}"
      */
-    public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, int $id): Response
+    public function pathwayEditPage(Request $request, PathwayRepository $pathwayRepository, ManagerRegistry $doctrine, int $id): Response
     {
 
         // Méthode GET pour aller vers la page d'ajout d'un parcours 
         if ($request->getMethod() === 'GET' ) {
 
-            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $activityRepository = $doctrine->getRepository("App\Entity\Activity");
 
-            $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
-            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+            $humanResourceCategoriesJson = $this->listHumanResourcesJSON($doctrine);
+            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON($doctrine);
 
             $pathway = $pathwayRepository->findBy(['id' => $id]);
-            $pathwayJson = $this->pathwayJSON($pathway[0]);
+            $pathwayJson = $this->pathwayJSON($pathway[0], $doctrine);
             //dd($pathwayJson);
 
             $activitiesByPathways = $activityRepository->findBy(['pathway' => $pathway]);
 
-            $targetsJson = $this->listTargetsJSON($pathway);            
+            $targetsJson = $this->listTargetsJSON($pathway, $doctrine);            
 
             return $this->render('pathway/edit.html.twig', [
                 'pathway' => $pathway,
@@ -287,19 +287,19 @@ class PathwayController extends AbstractController
      * Redirige vers la page d'ajout d'un parcours
      * route : "/pathway/add"
      */
-    public function pathwayAddPage(Request $request, PathwayRepository $pathwayRepository): Response
+    public function pathwayAddPage(Request $request, PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
     {
 
         // Méthode GET pour aller vers la page d'ajout d'un parcours 
         if ($request->getMethod() === 'GET' ) {
 
-            $activityRepository = new ActivityRepository($this->getDoctrine());
+            $activityRepository = $doctrine->getRepository("App\Entity\Activity");
 
             //$humanResourceRepo = new HumanResourceRepository($this->getDoctrine());
             //$humanResources = $humanResourceRepo->findAll();
             // dd($humanResources);
-            $humanResourceCategoriesJson = $this->listHumanResourcesJSON();
-            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON();
+            $humanResourceCategoriesJson = $this->listHumanResourcesJSON($doctrine);
+            $materialResourceCategoriesJson = $this->listMaterialResourcesJSON($doctrine);
             //$materialResourceRepo = new MaterialResourceRepository($this->getDoctrine());
             //$materialResources = $materialResourceRepo->findAll();
     
@@ -332,22 +332,20 @@ class PathwayController extends AbstractController
      * 
      * route : "/pathway/add"
      */
-    public function pathwayAdd(Request $request, PathwayRepository $pathwayRepository): Response
+    public function pathwayAdd(Request $request, PathwayRepository $pathwayRepository, ManagerRegistry $doctrine): Response
     {
 
         // POST method to add a pathway 
         if ($request->getMethod() === 'POST' ) {
             
             // Create all the repository 
-            $activityRepository = new ActivityRepository($this->getDoctrine());
-            $successorRepository = new SuccessorRepository($this->getDoctrine());
-            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
-            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
-            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
-            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
-            $targetRepository = new TargetRepository($this->getDoctrine());
-            //$targetRepository = $doctrine->getManager()->getRepository("App\Entity\Target");
+            $activityRepository = $doctrine->getRepository("App\Entity\Activity");
+            $successorRepository = $doctrine->getRepository("App\Entity\Successor");
+            $AHRRepository = $doctrine->getRepository("App\Entity\ActivityHumanResource");
+            $AMRRepository = $doctrine->getRepository("App\Entity\ActivityMaterialResource");
+            $HRCRepository = $doctrine->getRepository("App\Entity\HumanResourceCategory");
+            $MRCRepository = $doctrine->getRepository("App\Entity\MaterialResourceCategory");
+            $targetRepository = $doctrine->getRepository("App\Entity\Target");
 
 
             // We get all the datas from the request
@@ -408,7 +406,7 @@ class PathwayController extends AbstractController
 
                                 if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->available) {
                                     // First we get the category in the db
-                                    $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                    $HRC = $HRCRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id]);
                                                                                             
                                     // The we create the object ActivityMaterialResource
                                     $activityHumanResource = new ActivityHumanResource();
@@ -433,7 +431,7 @@ class PathwayController extends AbstractController
                                 if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->available) {
 
                                     // first we get the category of the db
-                                    $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                    $MRC = $MRCRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id]);
                                     
                                     // We create the object ActivityMaterialResource
                                     $activityMaterialResource = new ActivityMaterialResource();
@@ -486,23 +484,23 @@ class PathwayController extends AbstractController
     /**
      * Editing pathway method
      */
-    public function pathwayEdit(Request $request): Response
+    public function pathwayEdit(Request $request, ManagerRegistry $doctrine): Response
     {
         
         // POST method to edit a pathway
         if ($request->getMethod() === 'POST' ) {
             
-            $em=$this->getDoctrine()->getManager();
+            $em= $doctrine->getManager();
 
             // Create all the repository 
-            $pathwayRepository = new PathwayRepository($this->getDoctrine());
-            $activityRepository = new ActivityRepository($this->getDoctrine());
-            $successorRepository = new SuccessorRepository($this->getDoctrine());
-            $AHRRepository = new ActivityHumanResourceRepository($this->getDoctrine());
-            $AMRRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-            $HRCRepository = new HumanResourceCategoryRepository($this->getDoctrine());
-            $MRCRepository = new MaterialResourceCategoryRepository($this->getDoctrine());
-            $targetRepository = new TargetRepository($this->getDoctrine());
+            $pathwayRepository = $doctrine->getRepository("App\Entity\Pathway");
+            $activityRepository = $doctrine->getRepository("App\Entity\Activity");
+            $successorRepository = $doctrine->getRepository("App\Entity\Successor");
+            $AHRRepository = $doctrine->getRepository("App\Entity\ActivityHumanResource");
+            $AMRRepository = $doctrine->getRepository("App\Entity\ActivityMaterialResource");
+            $HRCRepository = $doctrine->getRepository("App\Entity\HumanResourceCategory");
+            $MRCRepository = $doctrine->getRepository("App\Entity\MaterialResourceCategory");
+            $targetRepository = $doctrine->getRepository("App\Entity\Target");
 
             // We get all the data from the request
             $param = $request->request->all();
@@ -543,6 +541,8 @@ class PathwayController extends AbstractController
             $nbActivity = count($resourcesByActivities);
             $nbSuccessor = count($successors);
 
+            $pathwaySuccessors = array();
+
             // We create an array to store the activies id in the database after we added them
             // So we don't have to use the name (which can be the same for different activities)
             $activitiesIdArray = array();
@@ -551,13 +551,18 @@ class PathwayController extends AbstractController
                 
                 $firstActivityAvailableFound = false;
                 for ($indexActivity = 0; $indexActivity < $nbActivity; $indexActivity++) {
-
+                    $activitySuccessors = $successorRepository->findBy(['activitya' => $resourcesByActivities[$indexActivity]->id]);
+                    for($i = 0; $i < count($activitySuccessors); $i++){
+                        $pathwaySuccessors[] = $activitySuccessors[$i];
+                    }
                     if ($resourcesByActivities[$indexActivity]->available) {
                         
                         $activity = new Activity();
 
-                        // We verify if the activity already exists (if its id if lesser than -1)
+                        // We verify if the activity already exists (if its id if equal to -1)
                         if ($resourcesByActivities[$indexActivity]->id == -1) {
+                            //If the activity doesnt exists :
+
                             // Création de l'activité
                             $activity->setActivityname($resourcesByActivities[$indexActivity]->activityname);
                             $activity->setDuration(intval($resourcesByActivities[$indexActivity]->activityduration));
@@ -567,9 +572,10 @@ class PathwayController extends AbstractController
                             // Get the last inserted row, i.e the activity we just added
                             $activity =  $activityRepository->findOneBy(array(),array('id'=>'DESC'),1,0);
                             array_push($activitiesIdArray, $activity->getId());
-                            }
+                        }
                         else {
-                            // if the activity already exists
+                            // if the activity already exists :
+
                             $activity =  $activityRepository->findBy(['id' => $resourcesByActivities[$indexActivity]->id])[0];
 
                             // Set the activity
@@ -580,6 +586,7 @@ class PathwayController extends AbstractController
                             array_push($activitiesIdArray, $activity->getId());
                         }
 
+                        
                         // Add the links activity - human resources 
                         
                         $nbMRC = count($resourcesByActivities[$indexActivity]->materialResourceCategories);
@@ -588,28 +595,31 @@ class PathwayController extends AbstractController
                             for ($indexMRC = 0; $indexMRC < $nbMRC; $indexMRC++) {
 
                                 // First we get the category in the db
-                                $MRC = $MRCRepository->findById($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id)[0];
+                                $MRC = $MRCRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->id]);
                                 
 
                                 // We check if it hasn't been deleted by the user 
                                 if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->available) {
                                     if (!($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already)) {
-                                        //si il est valable mais qu'il n'était présent : il faut l'ajouter dans la bd
+                                        // If the resources is available but wasnt in the bd before the edition : We need to add it in the db
                                         
-                                        // On crée l'objet ActivityMaterialResource
+                                        // We create the object ActivityMaterialResource
                                         $activityMaterialResource = new ActivityMaterialResource();
                                         $activityMaterialResource->setActivity($activity);
                                         $activityMaterialResource->setMaterialresourcecategory($MRC);
                                         $activityMaterialResource->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                         
-                                        // Puis on l'ajoute dans la bd
+                                        // Then we add it to the db
                                         $AMRRepository->add($activityMaterialResource , true);
+                                    } else {
+                                        $activityMaterialResource = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC]);
+                                        $activityMaterialResource[0]->setQuantity(intval($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb));
                                     }
                                 } else {
-                                    //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
+                                    // If it has been removed, we verify if it was in the db before edition
                                     if ($resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->already) {
-                                        //il faut le trouver dans la bd et le delete
-                                        $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC, "quantity" => $resourcesByActivities[$indexActivity]->materialResourceCategories[$indexMRC]->nb]);
+                                        // We need to find it in the db and delete it 
+                                        $linkAMR = $AMRRepository->findBy(["activity" => $activity, "materialresourcecategory" => $MRC]);
                                         
                                         $em->remove($linkAMR[0]);
                                         $em->flush();
@@ -624,27 +634,30 @@ class PathwayController extends AbstractController
                         if ($nbHRC != 0) {
                             for ($indexHRC = 0; $indexHRC < $nbHRC; $indexHRC++) {
 
-                                // Premierement on recupere la categorie de la bd
-                                $HRC = $HRCRepository->findById($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id)[0];
+                                // First we get the category in the db
+                                $HRC = $HRCRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->id]);
                                 
-                                /// on verifie si il n'a pas été supprimé par l'utilisateur
+                                // We check if it hasn't been deleted by the user 
                                 if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->available) {
                                     if (!($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already)) {
-                                        //si il est valable mais qu'il n'était présent : il faut l'ajouter dans la bd
+                                        // If the resources is available but wasnt in the bd before the edition : We need to add it in the db
                                         
-                                        // On crée l'objet ActivityHumanResource
+                                        // We create the object ActivityHumanResource
                                         $activityHumanResource = new ActivityHumanResource();
                                         $activityHumanResource->setActivity($activity);
                                         $activityHumanResource->setHumanresourcecategory($HRC);
                                         $activityHumanResource->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                         
-                                        // Puis on l'ajoute dans la bd
+                                        // Then we add it to the db
                                         $AHRRepository->add($activityHumanResource , true);
+                                    } else {
+                                        $activityHumanResource = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC]);
+                                        $activityHumanResource[0]->setQuantity(intval($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb));
                                     }
                                 } else {
-                                    //si il a été supprimé, on verifie si il était déjà présent dans l'activité avant l'édition
+                                    // If it has been removed, we verify if it was in the db before edition
                                     if ($resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->already) {
-                                        //il faut le trouver dans la bd et le delete
+                                        // We need to find it in the db and delete it 
                                         $linkAHR = $AHRRepository->findBy(["activity" => $activity, "humanresourcecategory" => $HRC, "quantity" => $resourcesByActivities[$indexActivity]->humanResourceCategories[$indexHRC]->nb]);
                                         
                                         $em->remove($linkAHR[0]);
@@ -654,45 +667,132 @@ class PathwayController extends AbstractController
                             }
                         }
 
-
                     } else {
-                        // if the activity is available = false
-                        // on doit verifier si elle existe dans la bd pour la supprimer 
+                        // if the activity is available = false, it has been deleted but we need to know if it was tin the pathway before the editing
+                        // so we verify if it wis in the db
                         if ($resourcesByActivities[$indexActivity]->id != -1) {
 
-                            $activity = $activityRepository->findById($resourcesByActivities[$indexActivity]->id)[0];
+                            // We get the activity
+                            $activity = $activityRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->id]);
+                            array_push($activitiesIdArray, $activity->getId());
+
+                            // We get all the links between the activity we want to delete and its resources
+                            $activityHumanResources = $AHRRepository->findBy(["activity" => $activity]);
+                            $activityMaterialResources = $AMRRepository->findBy(["activity" => $activity]);
+
+                            foreach ($activityHumanResources as $activityHumanResource) {
+                                $AHRRepository->remove($activityHumanResource, true);
+                            }
+
+                            foreach ($activityMaterialResources as $activityMaterialResource) {
+                                $AMRRepository->remove($activityMaterialResource, true);
+                            }
+
+                            // deletion of the appointements
+                            $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
+                            $appointmentsInPathway = $appointmentRepository->findBy(['pathway' => $pathway]);
+
+                            foreach ($appointmentsInPathway as $appointment) {
+
+                                // We get all the activities associated with the appointment
+                                $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
+                                $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+                                foreach ($scheduledActivities as $scheduledActivity) {
+                                    $date = $appointment->getDayappointment()->format('Y-m-d');
+
+                                    // Deletion of the data associated with the appointment in the table MaterialResourceScheduled
+                                    $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                                    $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                                    foreach ($allMaterialResourceScheduled as $materialResourceScheduled) {
+                                        $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+                                    }
+
+
+                                    //suppression des données associées au rendez-vous de la table HumanResourceScheduled
+                                    $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                                    $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                                    foreach ($allHumanResourceScheduled as $humanResourceScheduled) {
+                                        $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+                                    }
+
+
+                                    //suppression des données associées au rendez-vous de la table ScheduledActivity
+                                    $scheduledActivityRepository->remove($scheduledActivity, true);
+                                }
+
+                                // deletion of the appointment
+                                $appointmentRepository->remove($appointment, true);
+
+                            }
+                            //$scheduledActivity = new ScheduledActivity($this->getDotrine());
+                            
+                            //We delete the successors 
+                           
+                            $successorsa = $successorRepository->findBy(['activitya' => $activity]);
+                            for ($indexSuccessora = 0; $indexSuccessora < count($successorsa); $indexSuccessora++) {
+                                $em->remove($successorsa[$indexSuccessora]);
+                            }
+            
+                            $successorsb = $successorRepository->findBy(['activityb' => $activity]);
+                            for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsb); $indexSuccessorb++) {
+                                $em->remove($successorsb[$indexSuccessorb]);
+                            }
+                            $em->flush();       
+                
+                        
+                            //$activity = $activityRepository->findOneBy(['id' => $resourcesByActivities[$indexActivity]->id]);
+
                             $em->remove($activity);
                             $em->flush();
                         }
                     }
-
                 }
-                for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
-                    // Creating of the successor between the 2 activities
-                    $successor = new Successor();
-                    
-                    $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
-                    $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
-                    
+            }
+            
+            for($indexSuccessor = 0; $indexSuccessor < $nbSuccessor; $indexSuccessor++){
+                // Creating of the successor between the 2 activities
+                $successor = new Successor();
+
+                $idA = intval(explode("activity", $successors[$indexSuccessor]->idActivityA)[1]);
+                $idB = intval(explode("activity", $successors[$indexSuccessor]->idActivityB)[1]);
+                $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
+                $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
+                $successor->setActivitya($activitya);
+                $successor->setActivityb($activityb);
+                
+                $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
+                $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
+                
+                // Check if the successor already exist in database
+                // If no, create it; else update the delays
+                $successorDB = $successorRepository->findOneBy(['activitya' => $activitya, 'activityb' => $activityb]);
+                if($successorDB != null){
+                    $successorDB->setDelaymin($successors[$indexSuccessor]->delayMin);
+                    $successorDB->setDelaymax($successors[$indexSuccessor]->delayMax);
+                }
+                else{
+                    $pathwaySuccessors[] = $successor;
+                    $successorRepository->add($successor, true);
+                }
+                $em->flush();
+            }
+            for($i = 0; $i < count($pathwaySuccessors); $i++){
+                $succ_found = false;
+                for($j = 0; $j < count($successors); $j++){
+                    $idA = intval(explode("activity", $successors[$j]->idActivityA)[1]);
+                    $idB = intval(explode("activity", $successors[$j]->idActivityB)[1]);
                     $activitya = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idA-1]]);
                     $activityb = $activityRepository->findOneBy(['id' => $activitiesIdArray[$idB-1]]);
-                    $successor->setActivitya($activitya);
-                    $successor->setActivityb($activityb);
-                    
-                    $successor->setDelaymin($successors[$indexSuccessor]->delayMin);
-                    $successor->setDelaymax($successors[$indexSuccessor]->delayMax);
-                    
-                    // Check if the successor already exist in database
-                    // If no, create it; else update the delays
-                    $successorDB = $successorRepository->findOneBy(['activitya' => $activitya, 'activityb' => $activityb]);
-                    if($successorDB != null){
-                        $successorDB->setDelaymin($successors[$indexSuccessor]->delayMin);
-                        $successorDB->setDelaymax($successors[$indexSuccessor]->delayMax);
-                        $em->flush();
+                    if($pathwaySuccessors[$i]->getActivitya() == $activitya && $pathwaySuccessors[$i]->getActivityb() == $activityb){
+                        $succ_found = true;
                     }
-                    else{
-                         $successorRepository->add($successor, true);
-                    }
+                }
+                if(!$succ_found){
+                    $em->remove($pathwaySuccessors[$i]);
+                    $em->flush();
                 }
             }
             return $this->redirectToRoute('Pathways', [], Response::HTTP_SEE_OTHER);
@@ -700,7 +800,7 @@ class PathwayController extends AbstractController
     }
 
 
-    public function pathwayDelete(Request $request): Response
+    public function pathwayDelete(Request $request, ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
             
@@ -721,30 +821,29 @@ class PathwayController extends AbstractController
                 Pathway
             */
 
-            $em = $this->getDoctrine()->getManager();
+            $em =$doctrine->getManager();
 
-            $activityRepository = new ActivityRepository($this->getDoctrine());
-            $pathwayRepository = new PathwayRepository($this->getDoctrine());
-            $successorRepository = new SuccessorRepository($this->getDoctrine());
-            $appointmentRepository = new AppointmentRepository($this->getDoctrine());
+            $activityRepository = $doctrine->getRepository("App\Entity\Activity");
+            $pathwayRepository = $doctrine->getRepository("App\Entity\Pathway");
+            $successorRepository = $doctrine->getRepository("App\Entity\Successor");
+            $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
 
-            $activityHumanResourceRepository = new ActivityHumanResourceRepository($this->getDoctrine());
-            $activityMaterialResourceRepository = new ActivityMaterialResourceRepository($this->getDoctrine());
-            $unavailabilityMaterialResourceRepository = new UnavailabilityMaterialResourceRepository($this->getDoctrine());
-            $unavailabilityHumanResourceRepository = new UnavailabilityHumanResourceRepository($this->getDoctrine());
+            $activityHumanResourceRepository = $doctrine->getRepository("App\Entity\ActivityHumanResource");
+            $activityMaterialResourceRepository = $doctrine->getRepository("App\Entity\ActivityMaterialResource");
+            $unavailabilityMaterialResourceRepository = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource");
+            $unavailabilityHumanResourceRepository = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource");
             
             // We get all the data from the resuest
             $param = $request->request->all();
 
             // Get the pathway we want to delete
-            $pathway = $pathwayRepository->findById($param['pathwayid'])[0];
+            $pathway = $pathwayRepository->findOneBy(['id' => $param['pathwayid']]);
 
 
             // --------- DELETION OF THE APPOINTMENTS --------- //
 
             $appointmentsInPathway = $appointmentRepository->findBy(['pathway' => $pathway]);
 
-            $doctrine = $this->getDoctrine();
 
             foreach ($appointmentsInPathway as $appointment) {
 
@@ -800,14 +899,14 @@ class PathwayController extends AbstractController
                 }
 
                 $successorsb = $successorRepository->findBy(['activityb' => $activitiesInPathway[$indexActivity]]);
-                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsa); $indexSuccessorb++) {
-                    $em->remove($successorsa[$indexSuccessorb]);
+                for ($indexSuccessorb = 0; $indexSuccessorb < count($successorsb); $indexSuccessorb++) {
+                    $em->remove($successorsb[$indexSuccessorb]);
                 }
                 $em->flush();
 
                 $activityHumanResources = $activityHumanResourceRepository->findBy(['activity' => $activitiesInPathway[$indexActivity]]);
                 for ($indexAHR = 0; $indexAHR < count($activityHumanResources); $indexAHR++) {
-                    echo 'on supprime'.$indexAHR;
+                    //echo 'on supprime'.$indexAHR;
                     $em->remove($activityHumanResources[$indexAHR]);
                 }
 
@@ -867,6 +966,7 @@ class PathwayController extends AbstractController
         }
 
         $data = $this->sortActivities($activityArray, $arraySuccessor, $doctrine);
+        $data = $this->checkDuplicate($data);
         return new JsonResponse($data);
     }
 
@@ -885,13 +985,13 @@ class PathwayController extends AbstractController
             }
         }
         $level = 0;
-        while($activitiesSortedByLevel[$level] != null){
+        while(isset($activitiesSortedByLevel[$level]) && $activitiesSortedByLevel[$level] != null){
             for($i = 0; $i < count($activitiesSortedByLevel[$level]); $i++){
                 $listSuccessors = $activitiesSortedByLevel[$level][$i]['successor'];
                 for($j = 0; $j < count($listSuccessors); $j++){
                     $activityToAdd = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$listSuccessors[$j]['idB']]);
                     $activityToAddArray = $this->activityToArray($doctrine, $activityToAdd);
-                    if(count($activitiesSortedByLevel[$level+1]) == 0){
+                    if(!isset($activitiesSortedByLevel[$level+1])){
                         $activitiesSortedByLevel[$level+1][] = $activityToAddArray;
                     }
                     else{
@@ -910,6 +1010,23 @@ class PathwayController extends AbstractController
             $level++;
         }
         return $activitiesSortedByLevel;
+    }
+
+    public function checkDuplicate($activities){
+        for($level = 0; $level < count($activities); $level++){
+            foreach($activities[$level] as $activity){
+                foreach($activity['successor'] as $successor){
+                    for($i = 0; $i <= $level; $i++){
+                        for($j = count($activities[$i])-1; $j >= 0; $j--){
+                            if($successor['idB'] ==  $activities[$i][$j]['id']){
+                                array_splice($activities[$i], $j, 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $activities; 
     }
 
     public function activityToArray(ManagerRegistry $doctrine, $activity){

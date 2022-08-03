@@ -39,18 +39,17 @@ class AppointmentRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Appointment[] Returns an array of Appointment objects
-//     */
-    /*public function findAppointmentByDate($date)
+   /**
+    * @return Appointment[] Returns an array of Appointment objects
+    */
+    public function findAppointmentByDate($date)
     {
-        $qb= $this->createQueryBuilder('a'); 
-        $qb->select('a'); 
-        $qb->where('a.dayappointment=:date')
-             ->setParameter('date',$date);
-             $query=$qb->getQuery()->getResult(); 
-             return $query;
-    } */
+        $qb= $this->createQueryBuilder('a')
+        ->where('a.dayappointment= :date')
+        ->setParameter('date',$date);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
 
 //    public function findOneBySomeField($value): ?Appointment
 //    {

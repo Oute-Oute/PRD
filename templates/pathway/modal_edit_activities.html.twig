@@ -1,5 +1,5 @@
 <div class="modal" id="edit-pathway-modal-activities">
-    <div class="modal-dialog" style="max-height:800px; max-width:1000px;">
+    <div class="modal-dialog" style="max-height:800px; max-width:95%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 id='title-pathway-activities'></h1>
@@ -9,11 +9,12 @@
                 <div id='divContent' class="wrapper-graph">
                 </div>
                 <div id="activities-list-graph">
-                    <div style="display:flex">
-                        <h5 class="title"><label id="name" class="label" for='name'> Liste des liens </label></h5> 
+                    <div style="padding-left: 5px; display: flex;">
+                        <h5 class="title"><label id="name" class="label" for='name'> Liste des liens </label></h5>
+                        <img src="/img/chevron_up.svg" id="succ_imgdown" onclick="showDelays()" title="Cacher tous les délais" style="width: 20px;cursor: pointer;margin-left: 20px;">
                     </div>
                     <div id="list-graph"></div>
-                    <button type="button" id="btn-delete-successors" class="btn-delete btn-secondary" onclick="deleteSuccessors()">Tout supprimer</button>
+                    <button type="button" id="btn-delete-successors" class="btn-delete btn-secondary" onclick="deleteSuccessors(1)">Tout supprimer</button>
                 </div>
             </div>
             <div class="modal-footer">

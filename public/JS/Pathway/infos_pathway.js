@@ -29,7 +29,6 @@ var lines= new Array();
         data: { idPathway: idPathway },
         dataType: "json",
         success: function (data) {
-            console.log(data);
             if(data[0] != undefined){
                 drawActivities(data);
             }
@@ -37,7 +36,9 @@ var lines= new Array();
                 errorGetActivities();
             }
         },
-        error: function(){errorGetActivities();}
+        error: function () {
+            errorGetActivities();
+        }
         });
 
     change_tab('activities');
@@ -206,13 +207,31 @@ function createActivities(height, level, name, idActivity, duration){
 
     divLevel.appendChild(div);
 
-    div.addEventListener('scroll', AnimEvent.add(function() {
+    document.getElementById('infos-pathway-modal').addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+        if(l.start == div || l.end == div){
+            l.position();
+        }
+        }); 
+    }), false);
+
+    div.addEventListener('mouseenter', (e) => {
+        //hideArrows();
         lines.forEach((l) => {
             if(l.start == div || l.end == div){
-                l.position();
+                l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
             }
-          });
-    }), false);
+            else{
+                l.hide('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]})
+            }
+        }); 
+    });
+      
+    div.addEventListener('mouseleave', (e) => {
+        lines.forEach((l) => {
+            l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
+        }); 
+    });
 }
 
 function drawArrows(data){
@@ -222,8 +241,7 @@ function drawArrows(data){
             for(k = 0; k < data[i][j]['successor'].length; k++){
                 start = document.getElementById('activity'+ data[i][j]['id']);
                 end = document.getElementById('activity'+ data[i][j]['successor'][k]['idB']);
-                console.log(data[i][j]['successor'])
-                l = new LeaderLine(start, end, {color: '#0dac2d'});
+                l = new LeaderLine(start, end, {color: '#0dac2d', startSocket: 'right', endSocket: 'left'});
                 // We store every line to show/hide them when we switch tabs
                 // When you click outside the modal, the line array is reset (see end of index.html.twig) 
                 lines.push(l);

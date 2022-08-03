@@ -1,0 +1,10 @@
+
+/* Modal window */
+#target-pathway {
+    width: 400px;
+}
+
+/* Body of the modal window */
+#target-pathway #targets-container {
+    padding: 10px 70px;
+}

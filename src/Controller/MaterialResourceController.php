@@ -106,7 +106,7 @@ class MaterialResourceController extends AbstractController
         $categoryOfMaterialResources = $categoryOfMaterialResourceRepository->findAll();
         
         $materialResources = array();
-        foreach($materialResourceRepository->findAll() as $materialResource){
+        foreach($materialResourceRepository->findBy(array(), array('materialresourcename' => 'ASC')) as $materialResource){
             $categories = array();
             foreach($categoryOfMaterialResources as $categoryOfMaterialResource){
                 if($categoryOfMaterialResource->getMaterialresource()->getId() == $materialResource->getId()){

@@ -252,6 +252,11 @@ ul.ui-autocomplete {
     padding: 5px 5px 5px 5px;
     border: solid;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+    margin: 15px 0px;
+  }
+
+  .pathway-div-activity:hover{
+    background-color: #e5e5e5;
   }
 
   .pathway-div-activity-header{
@@ -259,6 +264,7 @@ ul.ui-autocomplete {
     font-weight: bold;
     text-align: center;
     padding-top: 5px;
+    pointer-events: none;
   }
 
   .pathway-div-activity-graph{
@@ -273,16 +279,20 @@ ul.ui-autocomplete {
     resize: both;
   }
 
+  .pathway-div-activity-graph > p{
+    pointer-events: none;
+  }
+
   .wrapper-graph {
     flex-wrap: wrap;
     height: 100%;
-    width: 70%;
+    width: 81%;
     box-shadow: 0px 0px 10px lightgrey;
     border-radius: 10px;
   }
 
   #modal-body-graph{
-    height:400px;
+    height:600px;
     display:flex;
     justify-content: space-between;
     flex-direction: row;
