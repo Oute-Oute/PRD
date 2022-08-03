@@ -1741,8 +1741,7 @@ function displayPanelErrorMessages() {
 }
 
 function highlightAppointmentOnMouseOver(event) {
-
-  var appointmentId = event.id.split("nt")[2];
+  var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
       if (scheduledActivity._def.ui.borderColor != "#ffbf00") {
@@ -1762,7 +1761,7 @@ function highlightAppointmentOnMouseOver(event) {
 
 function highlightAppointmentOnMouseOut(event) {
 
-  var appointmentId = event.id.split("nt")[2];
+  var appointmentId = event.id.substring(11);
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
       if (scheduledActivity._def.ui.borderColor == "#ffbf01") {
@@ -1776,9 +1775,13 @@ function highlightAppointmentOnMouseOut(event) {
 }
 
 function highlightAppointmentOnClick(event) {
-
-
-  var appointmentId = event.id.split("nt")[2];
+  var appointmentId;
+  if(event.parentElement.id.substring(0, 11) == "appointment"){
+    appointmentId = event.parentElement.id.substring(11);
+  }
+  else if(event.parentElement.parentElement.id.substring(0, 11) == "appointment"){
+    appointmentId = event.parentElement.parentElement.id.substring(11);
+  }
 
   calendar.getEvents().forEach((scheduledActivity) => {
     if (scheduledActivity._def.extendedProps.appointment == appointmentId) {
@@ -1869,19 +1872,22 @@ function updatePanelErrorMessages() {
         div.setAttribute('role', 'alert');
         div.setAttribute('id', 'appointment' + listErrorMessages.listScheduledAppointment[i].appointmentId);
 
-        div.setAttribute('style', 'display: flex; flex-direction : column; cursor: pointer;');
+        div.setAttribute('style', 'display: flex; flex-direction : column;');
         var divRow = document.createElement('divRow');
         divRow.setAttribute('style', 'display: flex; flex-direction : row; position : relative; justify-content:space-between;');
         div.append(divRow);
         var img = document.createElement("img");
         img.src = "/img/exclamation-triangle-fill.svg";
         img.style.height = "32px";
+        img.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        img.setAttribute('style', ' cursor: pointer;');
         var text = document.createElement('h3');
 
         //A implenter uniquement sur h3
         div.setAttribute('onmouseover', 'highlightAppointmentOnMouseOver(this)');
         div.setAttribute('onmouseout', 'highlightAppointmentOnMouseOut(this)');
-        div.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        text.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+        text.setAttribute('style', ' cursor: pointer;');
         text.innerHTML = listErrorMessages.listScheduledAppointment[i].patientName + ' / ' + listErrorMessages.listScheduledAppointment[i].pathwayName;
 
         //button for hidding the information
@@ -1907,6 +1913,8 @@ function updatePanelErrorMessages() {
             div.append(divColumn);
             var messageEarliestAppointmentTime = document.createElement('earliestAppointmentDate').innerHTML = '-' + messageEarliest;
             divColumn.append(messageEarliestAppointmentTime);
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             var space = document.createElement('space');
             space.innerHTML = '</br>';
             div.append(space);
@@ -1920,6 +1928,8 @@ function updatePanelErrorMessages() {
             div.append(divColumn);
             var messageLatestAppointmentTime = document.createElement('messageLatestAppointmentTime').innerHTML = '-' + messageLatest;
             divColumn.append(messageLatestAppointmentTime);
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             var space = document.createElement('space');
             space.innerHTML = '</br>';
             div.append(space);
@@ -1931,6 +1941,8 @@ function updatePanelErrorMessages() {
           if (repertoryErrors.repertoryAppointmentSAError[indexAppointment].repertorySA.includes(listeSAiterator)) {          //Testing if there are errors on this Activity
             var divColumn = document.createElement('divColumn');
             divColumn.setAttribute('style', 'font-weight: bolder;')
+            divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+            divColumn.setAttribute('style', ' cursor: pointer;');
             div.append(divColumn);
             var nameSA = listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].scheduledActivityName + ' : ';        //Display Activity Name 
             divColumn.append(nameSA);
@@ -1940,6 +1952,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageNotFullyScheduled = document.createElement('messageNotFullyScheduled').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageNotFullyScheduled);
             }
 
@@ -1949,6 +1963,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageAppointmentActivityAlreadyScheduled = document.createElement('messageAppointmentActivityAlreadyScheduled').innerHTML = '-' + oneMessageAppointmentActivityAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageAppointmentActivityAlreadyScheduled);
               })
             }
@@ -1959,6 +1975,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageDelay = document.createElement('messageDelay').innerHTML = '-' + oneMessageDelay;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageDelay);
               })
             }
@@ -1974,6 +1992,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageCategoryQuantity = document.createElement('messageCategoryQuantity').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageCategoryQuantity;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageCategoryQuantity);
             }
 
@@ -1982,6 +2002,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageWrongCategory = document.createElement('messageWrongCategory').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryHumanResources[listCategoryHumanResourcesItorator].messageWrongCategory;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageWrongCategory);
             }
           }
@@ -1995,6 +2017,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageWorkingHours = document.createElement('messageWorkingHours').innerHTML = '-' + oneMessageWorkingHours;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageWorkingHours);
               })
             }
@@ -2006,6 +2030,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageUnavailability = document.createElement('messageUnavailability').innerHTML = '-' + oneMessageUnavailability;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageUnavailability);
               })
             }
@@ -2016,6 +2042,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageAlreadyScheduled = document.createElement('messageAlreadyScheduled').innerHTML = '-' + oneMessageAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageAlreadyScheduled);
               })
             }
@@ -2029,6 +2057,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageCategoryQuantity = document.createElement('messageCategoryQuantity').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageCategoryQuantity;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageCategoryQuantity);
             }
 
@@ -2037,6 +2067,8 @@ function updatePanelErrorMessages() {
               var divColumn = document.createElement('divColumn');
               div.append(divColumn);
               var messageWrongCategory = document.createElement('messageWrongCategory').innerHTML = '-' + listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].listCategoryMaterialResources[listCategoryMaterialResourcesItorator].messageWrongCategory;
+              divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+              divColumn.setAttribute('style', ' cursor: pointer;');
               divColumn.append(messageWrongCategory);
             }
           }
@@ -2050,6 +2082,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageUnavailability = document.createElement('messageUnavailability').innerHTML = '-' + oneMessageUnavailability;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageUnavailability);
               })
             }
@@ -2060,6 +2094,8 @@ function updatePanelErrorMessages() {
                 var divColumn = document.createElement('divColumn');
                 div.append(divColumn);
                 var messageAlreadyScheduled = document.createElement('messageAlreadyScheduled').innerHTML = '-' + oneMessageAlreadyScheduled;
+                divColumn.setAttribute('onclick', 'highlightAppointmentOnClick(this)');
+                divColumn.setAttribute('style', ' cursor: pointer;');
                 divColumn.append(messageAlreadyScheduled);
               })
             }
