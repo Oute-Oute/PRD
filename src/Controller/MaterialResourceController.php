@@ -24,11 +24,24 @@ use App\Repository\UnavailabilityMaterialResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
+
+/**
+ * @file        MaterialResourceController.php
+ * @brief       Contains the functions that allow to handle the material resources
+ * @details     Allows to create, read, update, delete every material resources
+ * @date        2022
+ */
+
 /**
  * @Route("/material/resource")
  */
 class MaterialResourceController extends AbstractController
 {
+
+    /**
+      * Allows to list every material resources in the database
+     */
+
     /**
      * @Route("/", name="app_material_resource_index", methods={"GET"})
      */
@@ -44,8 +57,11 @@ class MaterialResourceController extends AbstractController
         $nbMaterialResourceCategory = count($materialResourceCategories);
         $nbCategBy = count($categOfMaterialResource);
         $categoriesByResources = array();
+        //categories by resources in JSON object
         $categoriesByMaterialResources = $this->listCategoriesByMaterialResourcesJSON($doctrine);
+        //unavailabilities of material resources in JSON object
         $unavailabilities = $this->listUnavailabilitiesMaterialJSON($doctrine);
+        //Listing of categories by resources
         for($indexResource = 0; $indexResource < $nbMaterialResource; $indexResource++) {
                 $listCategOf = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResources[$indexResource]]);
             
@@ -59,7 +75,7 @@ class MaterialResourceController extends AbstractController
                 }
                 array_push($categoriesByResources, $categoriesByResource);
         }
-
+        //Listing of resources by categories
         $resourcesByCategories = array();
         for($indexCategory = 0; $indexCategory< $nbMaterialResourceCategory; $indexCategory++) {
             $listMaterialOf = $categOfMaterialResourceRepository->findBy(['materialresourcecategory' => $materialResourceCategories[$indexCategory]]);
@@ -81,6 +97,10 @@ class MaterialResourceController extends AbstractController
         ]); 
     }
 
+
+    /**
+      * Allows to list every material resources in the database with the pagination to not display everything at the same time
+     */
     public function listMaterialResources(MaterialResourceRepository $materialResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $categoryOfMaterialResources = $categoryOfMaterialResourceRepository->findAll();
@@ -103,6 +123,7 @@ class MaterialResourceController extends AbstractController
                 'categories' => $categories
             ];
         }
+        //pagination
         $materialResources=$paginator->paginate(
             $materialResources, 
             $request->query->getInt('page',1),
@@ -112,7 +133,7 @@ class MaterialResourceController extends AbstractController
     }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     * Allows to create a JSON object from a list of unavailabilities of human resources
      */
     public function listUnavailabilitiesMaterialJSON(ManagerRegistry $doctrine)
     {
@@ -141,6 +162,7 @@ class MaterialResourceController extends AbstractController
                 );
             }
         }
+        //Filtering the list of unavailabilities
         $unavailabilitiesFiltered = array();
         foreach ($unavailabilitiesArray as $unavailability) {
             foreach($unavailabilitiesMaterial as $unavailabilityMaterial) {
@@ -160,11 +182,15 @@ class MaterialResourceController extends AbstractController
 
 
 
-        //Conversion des données ressources en json
+        //Converting data into a JSON object
         $unavailabilitiesFilteredJson = new JsonResponse($unavailabilitiesFiltered);
         return $unavailabilitiesFilteredJson;    
     }
 
+   /**
+     * Allows to create a new material resource in the dabatase
+     */
+    
     /**
      * @Route("/new", name="app_material_resource_new", methods={"GET", "POST"})
      */
@@ -180,17 +206,13 @@ class MaterialResourceController extends AbstractController
             $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
 
 
-            // On récupère toutes les catégories
+            //We get all categories
             $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
             $categories = $categoryOfMaterialResourceRepository->findAll();            
 
-            // On récupère le nombre de catégories
+            //We get the number of categories linked to the new resource
             $nbCategory = $param['nbCategory'];
-
-
-            //$activityArray = array();
-
-
+            //Adding links to categories
             for($i = 0; $i < $nbCategory; $i++)
             {
                 $linkCategRes = new CategoryOfMaterialResource();      
@@ -203,7 +225,12 @@ class MaterialResourceController extends AbstractController
         }
     
 }
-public function unavailability(Request $request,ManagerRegistry $doctrine) {
+
+    /**
+     * Allows to create a new unavailability linked to a specific material resource
+     */
+
+    public function unavailability(Request $request,ManagerRegistry $doctrine) {
 
     $param = $request->request->all(); 
     $startTime = DateTime::createFromFormat('Y-m-d H:i:s', str_replace('T',' ',$param['datetime-begin-unavailability'].":00"));
@@ -229,7 +256,7 @@ public function unavailability(Request $request,ManagerRegistry $doctrine) {
 }
 
     /**
-     * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
+     * Allows to create a JSON object from a list of categories of material resources
      */
     public function listCategoriesByMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
@@ -250,36 +277,34 @@ public function unavailability(Request $request,ManagerRegistry $doctrine) {
         return $categoriesByMaterialResourcesArrayJson;    
     }
 
-
+    /**
+     * Allows to edit a material resource that is already in the database
+     */
 
     /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request,ManagerRegistry $doctrine)
     {
-       // Méthode POST pour ajouter un circuit
        if ($request->getMethod() === 'POST' ) {
             
-        // On recupere toutes les données de la requete
+        //We get all parameters
         $param = $request->request->all();
-        // On récupère l'objet parcours que l'on souhaite modifier grace a son id
+        //We get the resource that we want to edit
         $materialResourceRepository = new MaterialResourceRepository($doctrine);
         $materialResource = $materialResourceRepository->findById($param['id'])[0];
         $materialResource->setMaterialResourceName($param['resourcename']);
-        //$pathway->setAvailable(true);
 
-        // On ajoute le parcours a la bd
+        //We add the resource to the database
         $materialResourceRepository->add($materialResource, true);
 
-        // On s'occupe ensuite ds liens entre le parcours et les activités :
-
-        // On récupère toutes les activités
+        //We get all the links between resources and categories
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
         $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
         $materialResourcesCategories = $materialResourceCategoryRepository->findAll();
 
-        // On supprime toutes les activités et leurs successor
+        //We delete links between resources and categories if needed
         $em=$doctrine->getManager();
         $categsOfResources = $categOfMaterialResourceRepository->findBy(['materialresource' => $materialResource]);
             for ($indexCategOf = 0; $indexCategOf < count($categsOfResources); $indexCategOf++) {
@@ -288,17 +313,10 @@ public function unavailability(Request $request,ManagerRegistry $doctrine) {
             $em->flush();
         }
 
-        // On récupère le nombre de catégories
+        //We get the number of categories now linked to the resource
         $nbCategories = $param['nbcategory'];
 
-        //$activityArray = array();
         if ($nbCategories != 0) {
-            /* $categOf_old = new CategoryOfHumanResource();      
-            
-            $categOf_old->setHumanresource($param["name-activity-0"]);
-            $categOf_old->setHumanresourcecategory($param[ "duration-activity-0"]);
-
-            $categOfHumanResourceRepository->add($categOf_old, true); */
 
             for($i = 0; $i < $nbCategories; $i++)
             {
@@ -306,19 +324,16 @@ public function unavailability(Request $request,ManagerRegistry $doctrine) {
                 $categOf = new CategoryOfMaterialResource();
                 $categOf->setMaterialresource($materialResource);
                 $categOf->setMaterialresourcecategory($materialResourceCategoryRepository->findById($param['id-category-'.$i])[0]);
-                //dd($categOf);
                 $categOfMaterialResourceRepository->add($categOf, true);
-                //dd($categOfHumanResourceRepository->findAll());
-               //}
-
-              //  $categOf_old = $categOfHumanResourceRepository->findById($humanResource->getId())[0];
 
             }
         }
         
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
-
+    /**
+     * Allows to delete an unavailability linked to a resource that is already in the database
+     */
     public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
     {
         if (isset($_POST['idMaterialAvailability'])) {
@@ -342,6 +357,11 @@ public function unavailability(Request $request,ManagerRegistry $doctrine) {
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
 
     }
+
+    /**
+     * Allows to delete a material resource that is already in the database
+     */
+
     /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
