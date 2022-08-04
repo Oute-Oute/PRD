@@ -350,6 +350,7 @@ class AppointmentController extends AbstractController
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findBy(["id" => $id]);
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(["pathway" => $pathway]);
         
+        $data = [];
         foreach ($appointments as $appointment) {
             // We only add the appointments who are scheduled
             if ($appointment->isScheduled() == true) {

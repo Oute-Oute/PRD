@@ -18,6 +18,7 @@ var NB_SUCCESSOR= 0;
 var SUCCESSORS = new Array();
 var lines= new Array(); 
 var VALIDATE = 0;
+var ARROWS_HIDDEN = 0;
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -999,8 +1000,13 @@ function createActivitiesGraph(name, idActivity, duration){
     // mouseenter and mouseleave events are here to change color of links that are connected with the hovered activity
     div.addEventListener('mouseenter', () => {
         lines.forEach((l) => {
-            if(l.start == div || l.end == div){
+            if(l.start == div){
+                l.show();
                 l.color = 'red';
+            }
+            if(l.end == div){
+                l.show();
+                l.color = 'blue';
             }
         }); 
     });
@@ -1008,6 +1014,9 @@ function createActivitiesGraph(name, idActivity, duration){
     div.addEventListener('mouseleave', () => {
         lines.forEach((l) => {
             l.color = '#0dac2d';
+            if(ARROWS_HIDDEN){
+                l.hide();
+            }
         }); 
     });
 }
@@ -1023,6 +1032,22 @@ function drawArrows(){
         l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
         lines.push(l);
     }
+}
+
+function showArrows(){
+    ARROWS_HIDDEN = 0;
+    lines.forEach((l) => {
+        l.show('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
+}
+
+function hideArrows(){
+    ARROWS_HIDDEN = 1;
+    lines.forEach((l) => {
+        l.hide('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "showArrows()");
 }
 
 /**
@@ -1151,6 +1176,7 @@ function fillSuccessorList() {
                 if(l.start == start && l.end == end){
                     l.color = 'red';
                     l.size = l.size*2;
+                    l.show();
                 }
             }); 
         });
@@ -1159,6 +1185,9 @@ function fillSuccessorList() {
             lines.forEach((l) => {
                 l.color = '#0dac2d';
                 l.size = 4;
+                if(ARROWS_HIDDEN){
+                    l.hide();
+                }
             }); 
         });
     }

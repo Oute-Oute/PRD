@@ -7,8 +7,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+
+
 class SecurityController extends AbstractController
 {
+
+    /**
+      * Allows to make checks when a user is trying to authenticate on the website
+     */
+
     /**
      * @Route("/", name="app_login")
      */
@@ -26,6 +33,11 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
+
+    /**
+      * Allows to log out a logged user and delete his session
+     */
+
     /**
      * @Route("/logout", name="app_logout")
      */
@@ -35,6 +47,11 @@ class SecurityController extends AbstractController
 
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
+
+    /**
+      * A classic function that redirects to the login page
+     */
 
     public function redirection($user): Response
     {

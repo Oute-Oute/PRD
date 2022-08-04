@@ -34,6 +34,8 @@
         <!-- inputs to send json or value to server without displaying them -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
         <input type="hidden" id="json-successors" name="json-successors" >
+        <input type="hidden" id="are-appointments-deleted" name="are-appointments-deleted" >
+
         <input style="display:none;" name="nbactivity" id="nbactivity">
 
         <div id="pathway-form">
@@ -94,7 +96,7 @@
                     <div id="container-btn-add-activity" class="flex-row" style=""> 
                     <!--  style="display:none;"  -->
                         <button style="display:none;"  type="button" id="btn-cancel-activity"  class="btn-delete btn-secondary" onclick="cancelEditActivity()"> <b> Annuler </b></button>
-                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="addActivity()"> <b> Ajouter une activité  </b> </button> 
+                        <button type="button" id="btn-add-activity" class="btn-delete btn-secondary" onclick="requestAddActivity()"> <b> Ajouter une activité  </b> </button> 
                         <button style="display:none;"  type="button" id="btn-confirm-activity"  class="btn-delete btn-secondary" onclick="confirmEditActivity()"> <b> Valider les modifications </b></button>
                     </div>
 

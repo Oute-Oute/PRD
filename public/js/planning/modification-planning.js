@@ -121,10 +121,12 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
+  console.log(document.getElementById("listeAppointments").value);
   document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
   document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
   document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
   document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
+  document.getElementById("scheduled-appointments").value = document.getElementById("listeAppointments").value;
   isUpdated = true;
 }
 
@@ -200,6 +202,7 @@ function addPathway() {
       listeAppointments[i].scheduled = true;
     }
   }
+  console.log(listeAppointments)
 
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);

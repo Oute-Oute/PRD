@@ -535,6 +535,51 @@ class PathwayController extends AbstractController
                 }
             }
             
+
+
+            // DELETION OF THE SCHEDULED APPOINTMENTS     
+            if ($param["are-appointments-deleted"]) {
+                // deletion of the appointements
+                $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
+                $appointmentsScheduled = $appointmentRepository->findBy(['pathway' => $pathway, "scheduled" => true]);
+
+                foreach ($appointmentsScheduled as $appointment) {
+
+                    // We get all the activities associated with the appointment
+                    $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
+                    $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
+
+                    foreach ($scheduledActivities as $scheduledActivity) {
+                        $date = $appointment->getDayappointment()->format('Y-m-d');
+
+                        // Deletion of the data associated with the appointment in the table MaterialResourceScheduled
+                        $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+                        $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                        foreach ($allMaterialResourceScheduled as $materialResourceScheduled) {
+                            $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
+                        }
+
+
+                        //suppression des données associées au rendez-vous de la table HumanResourceScheduled
+                        $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+                        $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                        foreach ($allHumanResourceScheduled as $humanResourceScheduled) {
+                            $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
+                        }
+
+
+                        //suppression des données associées au rendez-vous de la table ScheduledActivity
+                        $scheduledActivityRepository->remove($scheduledActivity, true);
+                    }
+
+                    // deletion of the appointment
+                    $appointmentRepository->remove($appointment, true);
+
+                }
+            }
+
             // We handle the links between pathway and ativities
 
             // We get the number of activities
@@ -668,8 +713,8 @@ class PathwayController extends AbstractController
                         }
 
                     } else {
-                        // if the activity is available = false, it has been deleted but we need to know if it was tin the pathway before the editing
-                        // so we verify if it wis in the db
+                        // if the activity is available = false, it has been deleted but we need to know if it was in the pathway before the editing
+                        // so we verify if it is in the db
                         if ($resourcesByActivities[$indexActivity]->id != -1) {
 
                             // We get the activity
@@ -688,45 +733,7 @@ class PathwayController extends AbstractController
                                 $AMRRepository->remove($activityMaterialResource, true);
                             }
 
-                            // deletion of the appointements
-                            $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
-                            $appointmentsScheduled = $appointmentRepository->findBy(['pathway' => $pathway, "scheduled" => true]);
-
-                            foreach ($appointmentsScheduled as $appointment) {
-
-                                // We get all the activities associated with the appointment
-                                $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
-                                $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
-
-                                foreach ($scheduledActivities as $scheduledActivity) {
-                                    $date = $appointment->getDayappointment()->format('Y-m-d');
-
-                                    // Deletion of the data associated with the appointment in the table MaterialResourceScheduled
-                                    $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
-                                    $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
-
-                                    foreach ($allMaterialResourceScheduled as $materialResourceScheduled) {
-                                        $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
-                                    }
-
-
-                                    //suppression des données associées au rendez-vous de la table HumanResourceScheduled
-                                    $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
-                                    $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
-
-                                    foreach ($allHumanResourceScheduled as $humanResourceScheduled) {
-                                        $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
-                                    }
-
-
-                                    //suppression des données associées au rendez-vous de la table ScheduledActivity
-                                    $scheduledActivityRepository->remove($scheduledActivity, true);
-                                }
-
-                                // deletion of the appointment
-                                $appointmentRepository->remove($appointment, true);
-
-                            }
+                        
                             //$scheduledActivity = new ScheduledActivity($this->getDotrine());
                             
                             //We delete the successors 
