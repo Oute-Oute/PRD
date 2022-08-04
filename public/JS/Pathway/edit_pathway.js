@@ -3,18 +3,18 @@
 var NB_ACTIVITY = 0;
 
 
-var HUMAN_RESOURCE_CATEGORIES // list of humans resources categories
-var MATERIAL_RESOURCE_CATEGORIES // list of materials resources categories
-var TARGETS // list of targets of the pathway we want to edit
+var HUMAN_RESOURCE_CATEGORIES               // list of humans resources categories
+var MATERIAL_RESOURCE_CATEGORIES            // list of materials resources categories
+var TARGETS                                 // list of targets of the pathway we want to edit
 var RESOURCES_BY_ACTIVITIES = new Array()
-var PATHWAY // Contain all the data of a pathway to edit
+var PATHWAY                                 // Contain all the data of a pathway to edit
 
-var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / editing process 
+var ACTIVITY_IN_PROGRESS                    // allow to store an activity after the creating / editing process 
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
 
-var DELETING_ACTIVITY = new Object() // list of all the appointments which are scheduled using the pathway 
-var SCHEDULED_APPOINTMENTS
+var PATHWAY_APPOINTMENTS = new Object()        
+PATHWAY_APPOINTMENTS.areAppointmentsDeleted = false
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
@@ -80,7 +80,9 @@ function initTargets() {
     }
 }
 
-
+/**
+ * initialize the list of activities 
+ */
 function initActivitiesList() {
     for (let i = 0; i < PATHWAY.activities.length; i++) {
         RESOURCES_BY_ACTIVITIES[i] = new Object()
@@ -107,6 +109,7 @@ function initActivitiesList() {
         NB_ACTIVITY++;
     }
 }
+
 
 function initSuccessorsList() {
     for (let i = 0; i < PATHWAY.successors.length; i++) {
@@ -222,10 +225,9 @@ function addArray() {
 
 
 /**
- * All to add an activity to the list, thanks to ACTIVITY_IN_PROGRESS
- * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
+ * 
  */
-function addActivity() {
+ function requestAddActivity() {
 
     let verif = true
 
@@ -244,6 +246,24 @@ function addActivity() {
     }
 
     if (verif) {
+
+        PATHWAY_APPOINTMENTS.modification = "add"
+
+        if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
+            addActivity()
+        } else {
+            if (verifyScheduledAppointments(PATHWAY.id)) {
+            }
+        }
+    }
+}
+
+/**
+ * All to add an activity to the list, thanks to ACTIVITY_IN_PROGRESS
+ * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
+ */
+function addActivity() {
+
         // if the activity is open in edit mode
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
@@ -299,12 +319,7 @@ function addActivity() {
             handleHumanButton()
         }
         fillActivityList()
-        return 1
 
-    } else {
-        // error message
-        return 0
-    }
 }
 
 /**
@@ -389,19 +404,12 @@ function fillActivityList() {
 
 
 function getScheduledAppointments(index) {
-// request to get the appointments list of the activity
-return $.ajax({
-    type: 'GET',
-    url: '/activity/'+index+'/appointments',
-    dataType: "json",
-    /*success: function (data) {
-        console.log(data)
-        setAppointmentsList(data)
-    },
-    error: function () {
-        console.log("Server Error, when trying to get the scheduled appointments lists of the pathway");
-    },*/
-});
+    // request to get the appointments list of the activity
+    return $.ajax({
+        type: 'GET',
+        url: '/activity/'+index+'/appointments',
+        dataType: "json",
+    });
 }
 
 /**
@@ -409,9 +417,8 @@ return $.ajax({
  */
 async function verifyScheduledAppointments(idPathway) {
     try {
-        SCHEDULED_APPOINTMENTS = await getScheduledAppointments(idPathway)
-        console.log(SCHEDULED_APPOINTMENTS)
-        if (SCHEDULED_APPOINTMENTS.length > 0) {
+        PATHWAY_APPOINTMENTS.scheduledAppointments = await getScheduledAppointments(idPathway)
+        if (PATHWAY_APPOINTMENTS.scheduledAppointments.length > 0) {
             showScheduledAppointmentsModal()
             return true
         } else {
@@ -424,72 +431,89 @@ async function verifyScheduledAppointments(idPathway) {
 }
 
 /**
- * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ * Display the modal pop-up to inform the user that he will removed some scheduled appointments 
  */
 function showScheduledAppointmentsModal() {
+    if (PATHWAY_APPOINTMENTS.modification == "delete") {
+        document.getElementById("modal-title").innerText = "Confirmation de la suppression"
+        document.getElementById("modal-subtitle").innerText = "En supprimant cette activité, vous allez déprogrammer les rendez-vous suivants :"
+    } else {
+        document.getElementById("modal-title").innerText = "Confirmation de l'ajout"
+        document.getElementById("modal-subtitle").innerText = "En ajoutant cette activité, vous allez déprogrammer les rendez-vous suivants :"
+    }
+
+
     $('#pathway-modal-scheduled-appointments').modal('show');
     let body = document.getElementById('scheduled-appointments-body')
     
-    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < SCHEDULED_APPOINTMENTS.length; indexScheduledAppointment++) {
-        console.log(SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day)
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < PATHWAY_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
+        console.log(PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day)
         let p = document.createElement('p')
 
-        lastname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_firstname
-        firstname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_lastname
-        day = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[2]
-        month = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[1]
-        year = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[0]
+        lastname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_firstname
+        firstname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_lastname
+        day = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[2]
+        month = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[1]
+        year = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[0]
         p.innerHTML = lastname +' '+ firstname + ' - '+day +'/'+ month+'/' + year
         body.appendChild(p)
-
-/*
-        "appointment_id" => $appointment->getId(),
-        "appointment_day" => $appointment->getDayappointment(),
-        "patient_firstname" => $appointment->getPatient()->getFirstname(),
-        "patient_lastname" => $appointment->getPatient()->getLastname(),*/
 
     }
 }   
 
 /**
- * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ * Action performed when the user cancel the deletion of the activity, so the popup is hided
  */
  function cancelScheduledAppointmentsDeletion() {
     $('#pathway-modal-scheduled-appointments').modal('hide');
 }
 
 /**
- * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ * Action performed when the user confirm the deletion of the activity, so the popup is hided
+ * and the scheduled appointments will be deleted 
  */
  function confirmScheduledAppointmentsDeletion() {
+    PATHWAY_APPOINTMENTS.areAppointmentsDeleted = true
     $('#pathway-modal-scheduled-appointments').modal('hide');
-    deleteActivity()
+    
+    if (PATHWAY_APPOINTMENTS.modification == "add") {
+        addActivity()
+    } else {
+        deleteActivity()
+    }
+    
 }
 
-
-
 /**
- * Allow to remove an activity in the list 
+ * Allow to request (by a popup) for removing an activity in the list 
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
 function requestDeleteActivity(id) {
+    console.log(PATHWAY_APPOINTMENTS)
 
-    console.log("delete activity")
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     activityIndex = getId(id)
 
-    if (verifyScheduledAppointments(PATHWAY.id)) {
-        DELETING_ACTIVITY.activityIndex = activityIndex
-    } 
+    PATHWAY_APPOINTMENTS.modification = "delete"
+
+
+    if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
+        PATHWAY_APPOINTMENTS.indexActivityToDelete = activityIndex
+        deleteActivity()
+    } else {
+        if (verifyScheduledAppointments(PATHWAY.id)) {
+            PATHWAY_APPOINTMENTS.indexActivityToDelete  = activityIndex
+        }
+    }
 }
 
 /**
  * 
  * @param {index of the activity we want to delete in the RESOURCES_BY_ACTIVITIES array} id 
  */
-function deleteActivity(id) {
-    id = DELETING_ACTIVITY.activityIndex
+function deleteActivity() {
+    id = PATHWAY_APPOINTMENTS.indexActivityToDelete
 
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
@@ -596,7 +620,7 @@ function cancelEditActivity() {
  */
 function confirmEditActivity() {
 
-    let res = addActivity()
+    let res = requestAddActivity()
     if (res) {
         initActivity()
         document.getElementById('btn-cancel-activity').style.display = 'none'
@@ -627,6 +651,7 @@ function getId(str) {
 
 
 
+
 /**
  *  Action performed when the '+' button is pressed to add a resource to an activity 
  */
@@ -642,8 +667,6 @@ function addResources() {
         verif = false
         alert("La quantité de la ressource ne peut pas être inférieure à 1")
     }
-
-
 
     if (verif) {
         // ! Si le bouton human est activé !
