@@ -13,13 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 
-/**
- * @file        PatientController.php
- * @brief       Contains the functions that allow to handle the patients
- * @details     Allows to create, read, update, delete every patients
- * @date        2022
- */
-
 class PatientController extends AbstractController
 {
 

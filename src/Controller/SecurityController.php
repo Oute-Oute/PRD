@@ -8,11 +8,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
-/**
- * @file        SecurityController.php
- * @brief       Contains the functions that handle the connection and session things
- * @date        2022
- */
 
 class SecurityController extends AbstractController
 {

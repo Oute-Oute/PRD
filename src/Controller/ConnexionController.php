@@ -7,17 +7,9 @@ use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @file        ConnexionController.php
- * @brief       Contains the functions that handle the connection
- * @date        2022
- */
-
 class ConnexionController extends AbstractController
 {
-    /**
-      * Allows to display the connection page
-     */
+    // GET + 1er affichage page
     public function afficherPage()
     {
         $noError = '';
@@ -28,9 +20,7 @@ class ConnexionController extends AbstractController
         ]);
     }
 
-    /**
-      * Allows to check the data when a user is trying to connect on the website
-     */
+    // POST 
     public function connexionPost(Request $request, ManagerRegistry $doctrine)
     {
         $userRepository = new UserRepository($doctrine);

@@ -10,11 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 
 
-/**
- * @file        SettingsController.php
- * @brief       Contains the functions that handle the settings
- * @date        2022
- */
 
 class SettingsController extends AbstractController
 {

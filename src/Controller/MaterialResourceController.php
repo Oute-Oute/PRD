@@ -25,13 +25,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 /**
- * @file        MaterialResourceController.php
- * @brief       Contains the functions that allow to handle the material resources
- * @details     Allows to create, read, update, delete every material resources
- * @date        2022
- */
-
-/**
  * @Route("/material/resource")
  */
 class MaterialResourceController extends AbstractController

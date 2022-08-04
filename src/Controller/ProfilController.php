@@ -10,11 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;   
 
-/**
- * @file        ProfilController.php
- * @brief       Contains the functions that handle the profile
- * @date        2022
- */
+
 
 class ProfilController extends AbstractController
 {

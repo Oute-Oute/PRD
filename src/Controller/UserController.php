@@ -14,11 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-/**
- * @file        UserController.php
- * @brief       Contains the functions that handle the users in the database
- * @date        2022
- */
 
 class UserController extends AbstractController
 {
