@@ -1,0 +1,26 @@
+
+{# modal window for listing the appointments who are scheduled for the pathway #}
+
+<div class="modal" id="pathway-modal-scheduled-appointments">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header" id="scheduled-appointments-header">
+                <h3 class="modal-title">Confirmation de la suppression</h3>
+                <div> <p> En supprimant cette activité, vous allez déprogrammer les rendez-vous suivants :</p> </div>
+
+            </div>
+
+            <div class="modal-body" id="scheduled-appointments-body">
+               
+            
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-valide btn-secondary" onclick="confirmScheduledAppointmentsDeletion()">Confirmer</button>
+                <button type="button" class="btn-delete btn-secondary" onclick="cancelScheduledAppointmentsDeletion()">Annuler</button>
+            </div>
+
+        </div>
+    </div>
+</div>

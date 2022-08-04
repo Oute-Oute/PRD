@@ -18,6 +18,7 @@ var NB_SUCCESSOR= 0;
 var SUCCESSORS = new Array();
 var lines= new Array(); 
 var VALIDATE = 0;
+var ARROWS_HIDDEN = 0;
 
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
@@ -231,32 +232,35 @@ function deleteActivity(id) {
     // Pour cela on recupere que les caracteres après le '-' : (img-1 ou (img-10)
     id = getId(id)
 
-    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
-    deleteArrows();
-    for(i = 0; i < NB_SUCCESSOR; i++){
-        idA = SUCCESSORS[i].idActivityA;
-        idB = SUCCESSORS[i].idActivityB;
-        idDivActivity = parseInt(id) + 1;
-        activityname = 'activity' + idDivActivity;
-        console.log('a : ', idA, 'b ; ', idB, 'name : ', activityname)
-        if(activityname == idA || activityname == idB){
-            SUCCESSORS.splice(i, 1);
-            NB_SUCCESSOR--;
-        }
-    }
-    
-    // On peut donc recuperer la div
-    /*let divToDelete = document.getElementById('div-activity-'+id)
-    // puis la supprimer
-    let divAddActivity = document.getElementsByClassName('activities-container')[0]
-    divAddActivity.removeChild(divToDelete)*/
-
-    // On actusalise l'input qui contient le nb d'activité
+    // On actualise l'input qui contient le nb d'activité
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
+    
+    // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
+    let idActivity = "activity" + (parseInt(id) + 1);
+    for (var i = SUCCESSORS.length - 1; i >= 0; i--) {
+        // reverse loop because of array_splice() 
+        if (SUCCESSORS[i].idActivityA == idActivity || SUCCESSORS[i].idActivityB == idActivity) {
+            for (j = 0; j < lines.length; j++) {
+                if (lines[j].start == document.getElementById(SUCCESSORS[i].idActivityA) && lines[j].end == document.getElementById(SUCCESSORS[i].idActivityB)) {
+                    lines[j].remove();
+                    lines.splice(j, 1);
+                }
+            }
+
+            for (j = 0; j < lines.length; j++) {
+                lines[j].middleLabel = "Lien n°" + (j + 1);
+            }
+
+            NB_SUCCESSOR--;
+            SUCCESSORS.splice(i, 1);
+        }
+    }
+
     fillActivityList()
+    fillSuccessorList()
 }
 
 
@@ -993,21 +997,26 @@ function createActivitiesGraph(name, idActivity, duration){
         }
     });
 
-    // mouseenter and mouseleave events are here to hide links that are not connected with the hovered activity
+    // mouseenter and mouseleave events are here to change color of links that are connected with the hovered activity
     div.addEventListener('mouseenter', () => {
         lines.forEach((l) => {
-            if(l.start == div || l.end == div){
-                l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
+            if(l.start == div){
+                l.show();
+                l.color = 'red';
             }
-            else{
-                l.hide('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]})
+            if(l.end == div){
+                l.show();
+                l.color = 'blue';
             }
         }); 
     });
       
     div.addEventListener('mouseleave', () => {
         lines.forEach((l) => {
-            l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
+            l.color = '#0dac2d';
+            if(ARROWS_HIDDEN){
+                l.hide();
+            }
         }); 
     });
 }
@@ -1023,6 +1032,22 @@ function drawArrows(){
         l = new LeaderLine(start, end, {color: '#0dac2d', middleLabel: "Lien n°" + (i+1)});
         lines.push(l);
     }
+}
+
+function showArrows(){
+    ARROWS_HIDDEN = 0;
+    lines.forEach((l) => {
+        l.show('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
+}
+
+function hideArrows(){
+    ARROWS_HIDDEN = 1;
+    lines.forEach((l) => {
+        l.hide('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "showArrows()");
 }
 
 /**
@@ -1080,7 +1105,7 @@ function fillSuccessorList() {
         imgDelete.style.cursor = 'pointer';
 
         let imgDownArrow = new Image();
-        imgDownArrow.src = '../img/down-arrow.svg';
+        imgDownArrow.src = '../img/chevron_down.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
         imgDownArrow.setAttribute('onclick', 'showDelay('+indexSuccessor+')');
         imgDownArrow.setAttribute('title', 'Montrer les délais');
@@ -1151,6 +1176,7 @@ function fillSuccessorList() {
                 if(l.start == start && l.end == end){
                     l.color = 'red';
                     l.size = l.size*2;
+                    l.show();
                 }
             }); 
         });
@@ -1159,6 +1185,9 @@ function fillSuccessorList() {
             lines.forEach((l) => {
                 l.color = '#0dac2d';
                 l.size = 4;
+                if(ARROWS_HIDDEN){
+                    l.hide();
+                }
             }); 
         });
     }
@@ -1171,21 +1200,56 @@ function fillSuccessorList() {
 }
 
 /**
- * Show or hide the successor delays
+ * Show the successor delays
  * @param {Index of the successor in SUCCESSORS array} id
- * called by the down arrow and up arrow buttons
+ * called by the down arrow
  */
-function showDelay(id){
+ function showDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
 
-    if(divMin.style.display == "none" || divMax.style.display == "none"){
-        divMin.style.display = "block";
-        divMax.style.display = "block";
+    divMin.style.display = "block";
+    divMax.style.display = "block";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_up.svg'
+    button.title = 'Cacher les délais'
+    button.setAttribute('onclick', 'hideDelay(' + id + ')');
+}
+
+/**
+ * Hide the successor delays
+ * @param {Index of the successor in SUCCESSORS array} id
+ * called by the up arrow
+ */
+function hideDelay(id) {
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    divMin.style.display = "none";
+    divMax.style.display = "none";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_down.svg'
+    button.title = 'Montrer les délais'
+    button.setAttribute('onclick', 'showDelay(' + id + ')');
+}
+
+function showDelays() {
+    delayButton = document.getElementById('succ_imgdown')
+    if(delayButton.src.includes('/img/chevron_down.svg')){
+        delayButton.src = '/img/chevron_up.svg'
+        delayButton.title = 'Cacher tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            showDelay(i);
+        }
     }
     else{
-        divMin.style.display = "none";
-        divMax.style.display = "none";
+        delayButton.src = '/img/chevron_down.svg'
+        delayButton.title = 'Montrer tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            hideDelay(i);
+        }
     }
 }
 

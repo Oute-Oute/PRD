@@ -1,5 +1,7 @@
 //const { codePointAt } = require("core-js/core/string");
 
+//const { forEach } = require("core-js/core/array");
+
 var NB_ACTIVITY = 0;
 
 
@@ -12,6 +14,9 @@ var PATHWAY // Contain all the data of a pathway to edit
 var ACTIVITY_IN_PROGRESS // allow to store an activity after the creating / editing process 
 var ID_EDITED_ACTIVITY
 var IS_EDIT_MODE = false
+
+var DELETING_ACTIVITY = new Object() // list of all the appointments which are scheduled using the pathway 
+var SCHEDULED_APPOINTMENTS
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
@@ -340,7 +345,7 @@ function fillActivityList() {
             let imgDelete = new Image();
             imgDelete.src = '../../img/delete.svg'
             imgDelete.setAttribute('id', 'imgd-' + indexActivity)
-            imgDelete.setAttribute('onclick', 'deleteActivity(this.id)')
+            imgDelete.setAttribute('onclick', 'requestDeleteActivity(this.id)')
             imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
             imgDelete.style.width = '20px'
             imgDelete.style.cursor = 'pointer'
@@ -381,16 +386,113 @@ function fillActivityList() {
 
 }
 
+
+
+
+
+function getScheduledAppointments(index) {
+// request to get the appointments list of the activity
+return $.ajax({
+    type: 'GET',
+    url: '/activity/'+index+'/appointments',
+    dataType: "json",
+    /*success: function (data) {
+        console.log(data)
+        setAppointmentsList(data)
+    },
+    error: function () {
+        console.log("Server Error, when trying to get the scheduled appointments lists of the pathway");
+    },*/
+});
+}
+
+/**
+ * Verify if there is some appointments scheduled for the pathway 
+ */
+async function verifyScheduledAppointments(idPathway) {
+    try {
+        SCHEDULED_APPOINTMENTS = await getScheduledAppointments(idPathway)
+        console.log(SCHEDULED_APPOINTMENTS)
+        if (SCHEDULED_APPOINTMENTS.length > 0) {
+            showScheduledAppointmentsModal()
+            return true
+        } else {
+            return false
+        }
+    } catch(err) {
+        console.log(err);
+        return false
+    }
+}
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+function showScheduledAppointmentsModal() {
+    $('#pathway-modal-scheduled-appointments').modal('show');
+    let body = document.getElementById('scheduled-appointments-body')
+    
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < SCHEDULED_APPOINTMENTS.length; indexScheduledAppointment++) {
+        console.log(SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day)
+        let p = document.createElement('p')
+
+        lastname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_firstname
+        firstname = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].patient_lastname
+        day = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[2]
+        month = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[1]
+        year = SCHEDULED_APPOINTMENTS[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[0]
+        p.innerHTML = lastname +' '+ firstname + ' - '+day +'/'+ month+'/' + year
+        body.appendChild(p)
+
+/*
+        "appointment_id" => $appointment->getId(),
+        "appointment_day" => $appointment->getDayappointment(),
+        "patient_firstname" => $appointment->getPatient()->getFirstname(),
+        "patient_lastname" => $appointment->getPatient()->getLastname(),*/
+
+    }
+}   
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+ function cancelScheduledAppointmentsDeletion() {
+    $('#pathway-modal-scheduled-appointments').modal('hide');
+}
+
+/**
+ * Affiche la fenetre pour prevenir l'utilisateur qu'il va déprogrammer des rendez vous
+ */
+ function confirmScheduledAppointmentsDeletion() {
+    $('#pathway-modal-scheduled-appointments').modal('hide');
+    deleteActivity()
+}
+
+
+
 /**
  * Allow to remove an activity in the list 
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
-function deleteActivity(id) {
+function requestDeleteActivity(id) {
 
+    console.log("delete activity")
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
-    id = getId(id)
-    
+    activityIndex = getId(id)
+
+    if (verifyScheduledAppointments(PATHWAY.id)) {
+        DELETING_ACTIVITY.activityIndex = activityIndex
+    } 
+}
+
+/**
+ * 
+ * @param {index of the activity we want to delete in the RESOURCES_BY_ACTIVITIES array} id 
+ */
+function deleteActivity(id) {
+    id = DELETING_ACTIVITY.activityIndex
+
     // We update the input which contain the number of activity 
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -419,7 +521,6 @@ function deleteActivity(id) {
     fillActivityList()
     fillSuccessorList()
 }
-
 
 /**
  * Allow to edit an activity  
@@ -573,23 +674,7 @@ function addResources() {
 
 
             } else {    
-                // PRENDRE LA METHODE DANS LA FONCTION oui()
-                console.log("sdsdsdsd")
 
-                // request to get the appointments list of the activity
-                $.ajax({
-                    type: 'GET',
-                    url: '/activity/'+index+'/appointments',
-                    //data: { 'index': index },
-                    dataType: "json",
-                    success: function (data) {
-                        console.log("success")
-                        console.log(data)
-                    },
-                    error: function () {
-                        console.log("error");
-                    },
-                });
 
                 ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb = Number(ACTIVITY_IN_PROGRESS.humanResourceCategories[index].nb) + Number(resourceNb)
 
@@ -652,30 +737,11 @@ function addResources() {
     }
 }
 
-var app
-function setAppointmentsList(data) {
-    app = data
-}
-function oui() {
-    console.log("sdsdsdsd")
 
-    var index = 8
 
-    // request to get the appointments list of the activity
-    $.ajax({
-        type: 'GET',
-        url: '/activity/'+index+'/appointments',
-        dataType: "json",
-        success: function (data) {
-            setAppointmentsList(data)
-        },
-        error: function () {
-            console.log("error");
-        },
-    });
 
-console.log(app)
-}
+  
+  
 
 /**
  * Takes an id in parameter and verify if the resource id already in the list of the activity.
@@ -974,17 +1040,28 @@ function showActivitiesPathway() {
 
 function hideActivitiesPathway() {
     deleteSuccessors(0);
+    var divContent = document.getElementById('divContent');
+    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+    for(i = 0; i < activities.length; i++){
+        activities[i].style.display = 'none';
+    }
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
 function drawActivitiesGraph() {
     var divContent = document.getElementById('divContent');
-    divContent.innerHTML = ""; // reset the content
-
-    for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-        rba = RESOURCES_BY_ACTIVITIES[i];
-        if (rba.available) {
-            createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+    if(!divContent.innerHTML.includes("div")){
+        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+            rba = RESOURCES_BY_ACTIVITIES[i];
+            if (rba.available) {
+                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+            }
+        }
+    }
+    else{
+        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            activities[i].style.display = 'block';
         }
     }
 }
@@ -1009,10 +1086,6 @@ function createActivitiesGraph(name, idActivity, duration) {
 
     $(".pathway-div-activity-graph").draggable({
         containment: "#divContent",
-    });
-
-    document.getElementById('edit-pathway-modal-activities').addEventListener('click', function(e){
-        console.log(e.target);
     });
 
     div.addEventListener('mousemove', AnimEvent.add(function () {
@@ -1070,10 +1143,12 @@ function createActivitiesGraph(name, idActivity, duration) {
     });
 
     div.addEventListener('mouseenter', (e) => {
-        //hideArrows();
         lines.forEach((l) => {
-            if(l.start == div || l.end == div){
+            if(l.start == div){
                 l.color = 'red';
+            }
+            if(l.end == div){
+                l.color = 'blue';
             }
         }); 
     });
@@ -1095,9 +1170,23 @@ function drawArrows() {
     for (i = 0; i < NB_SUCCESSOR; i++) {
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
-        l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (i + 1) });
+        l = new LeaderLine(start, end, {middleLabel: "Lien n°" + (i + 1)});
         lines.push(l);
     }
+}
+
+function showArrows(){
+    lines.forEach((l) => {
+        l.show('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
+}
+
+function hideArrows(){
+    lines.forEach((l) => {
+        l.hide('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "showArrows()");
 }
 
 function addArraySuccessor(idA, idB, nameA, nameB) {
@@ -1133,6 +1222,7 @@ function fillSuccessorList() {
         successor.appendChild(idA); successor.appendChild(idB);
         let str = "Lien n°" + (indexSuccessor + 1);
         let p = document.createElement('p')
+        p.style.transform = "translate(0px, 5px)";
         p.innerHTML = str
 
         let imgDelete = new Image();
@@ -1146,13 +1236,15 @@ function fillSuccessorList() {
         let imgDownArrow = new Image();
         imgDownArrow.src = '../../img/chevron_up.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
-        imgDownArrow.setAttribute('onclick', 'showDelay(' + indexSuccessor + ')');
+        imgDownArrow.setAttribute('onclick', 'hideDelay(' + indexSuccessor + ')');
         imgDownArrow.setAttribute('title', 'Cacher les délais');
         imgDownArrow.style.width = '20px';
         imgDownArrow.style.cursor = 'pointer';
 
         let divMin = document.createElement('div')
         divMin.setAttribute('id', 'divMin' + (indexSuccessor))
+        divMin.style.display = 'flex';
+        divMin.style.justifyContent = 'space-around';
 
         let labelMin = document.createElement('label');
         labelMin.classList.add("label");
@@ -1165,7 +1257,7 @@ function fillSuccessorList() {
         inputMin.setAttribute('min', 0);
         inputMin.setAttribute('step', 1);
         inputMin.setAttribute('value', 0);
-        inputMin.style.width = "30%";
+        inputMin.style.width = "20%";
 
         divMin.appendChild(labelMin);
         divMin.appendChild(inputMin);
@@ -1173,6 +1265,9 @@ function fillSuccessorList() {
 
         let divMax = document.createElement('div')
         divMax.setAttribute('id', 'divMax' + (indexSuccessor))
+        divMax.style.display = 'flex';
+        divMax.style.justifyContent = 'space-around';
+        divMax.style.marginBottom = "5px";
 
         let labelMax = document.createElement('label');
         labelMax.classList.add("label");
@@ -1185,7 +1280,7 @@ function fillSuccessorList() {
         inputMax.setAttribute('min', 0);
         inputMax.setAttribute('step', 1);
         inputMax.setAttribute('value', 360);
-        inputMax.style.width = "30%"
+        inputMax.style.width = "20%"
 
         divMax.appendChild(labelMax);
         divMax.appendChild(inputMax);
@@ -1239,32 +1334,43 @@ function showDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
 
-    if (divMin.style.display == "none" || divMax.style.display == "none") {
-        divMin.style.display = "block";
-        divMax.style.display = "block";
-        document.getElementById('succ_imgdown-' + id).src = '/img/chevron_up.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Cacher les délais'
-    }
-    else {
-        divMin.style.display = "none";
-        divMax.style.display = "none";
-        document.getElementById('succ_imgdown-' + id).src = '/img/chevron_down.svg'
-        document.getElementById('succ_imgdown-' + id).title = 'Montrer les délais'
-    }
+    divMin.style.display = "block";
+    divMax.style.display = "block";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_up.svg'
+    button.title = 'Cacher les délais'
+    button.setAttribute('onclick', 'hideDelay(' + id + ')');
+}
+
+function hideDelay(id) {
+    divMin = document.getElementById('divMin' + id);
+    divMax = document.getElementById('divMax' + id);
+
+    divMin.style.display = "none";
+    divMax.style.display = "none";
+
+    button = document.getElementById('succ_imgdown-' + id);
+    button.src = '/img/chevron_down.svg'
+    button.title = 'Montrer les délais'
+    button.setAttribute('onclick', 'showDelay(' + id + ')');
 }
 
 function showDelays() {
-    for(i = 0; i < NB_SUCCESSOR; i++){
-        showDelay(i);
-    }
     delayButton = document.getElementById('succ_imgdown')
     if(delayButton.src.includes('/img/chevron_down.svg')){
         delayButton.src = '/img/chevron_up.svg'
         delayButton.title = 'Cacher tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            showDelay(i);
+        }
     }
     else{
         delayButton.src = '/img/chevron_down.svg'
         delayButton.title = 'Montrer tous les délais'
+        for(i = 0; i < NB_SUCCESSOR; i++){
+            hideDelay(i);
+        }
     }
 }
 

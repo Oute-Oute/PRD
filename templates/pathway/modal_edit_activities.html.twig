@@ -3,13 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 id='title-pathway-activities'></h1>
-                Pour créer un lien, double-cliquez sur une activité puis sur une autre
+                <button onclick="hideArrows()" class="btn-infos btn-secondary" id="btn-show-arrows">Montrer/cacher les liens</button>
+                <p>Pour créer un lien, double-cliquez sur une activité puis sur une autre</p>
             </div>
             <div class="modal-body" id="modal-body-graph">
                 <div id='divContent' class="wrapper-graph">
                 </div>
                 <div id="activities-list-graph">
-                    <div style="padding-left: 5px; display: flex;">
+                    <div style="display: flex; justify-content: space-evenly; padding: 0px 15px;">
                         <h5 class="title"><label id="name" class="label" for='name'> Liste des liens </label></h5>
                         <img src="/img/chevron_up.svg" id="succ_imgdown" onclick="showDelays()" title="Cacher tous les délais" style="width: 20px;cursor: pointer;margin-left: 20px;">
                     </div>
