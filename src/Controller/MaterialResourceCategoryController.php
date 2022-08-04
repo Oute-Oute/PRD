@@ -14,8 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-
-
 /**
  * @file        MaterialResourceCategoryController.php
  * @brief       Contains the functions that allow to handle the material resource categories

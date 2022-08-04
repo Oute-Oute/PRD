@@ -9,16 +9,28 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 
+
+/**
+ * @file        SettingsController.php
+ * @brief       Contains the functions that handle the settings
+ * @date        2022
+ */
+
 class SettingsController extends AbstractController
 {
+    /**
+      * Allows to display current settings
+     */
     public function settingsGet(SettingsRepository $settingRepository): Response
     {
-        //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('settings/settings.html.twig', [
             'settings' => $settingRepository->findAll()
         ]);
     }
 
+    /**
+      * Allows to edit the current settings
+     */
     public function settingsEdit(Request $request, SettingsRepository $settingRepository, EntityManagerInterface $entityManager): Response
     {
         $idAlert = $request->request->get("idAlert");
@@ -40,6 +52,10 @@ class SettingsController extends AbstractController
         return $this->redirectToRoute('Settings', [], Response::HTTP_SEE_OTHER);
     }
 
+
+    /**
+      * Allows to set settings to default values
+     */
     public function settingsAddDefault(EntityManagerInterface $entityManager): Response
     {
         $settings = new Settings();
