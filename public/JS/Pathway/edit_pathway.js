@@ -1,5 +1,7 @@
 //const { codePointAt } = require("core-js/core/string");
 
+//const { forEach } = require("core-js/core/array");
+
 var NB_ACTIVITY = 0;
 
 
@@ -998,17 +1000,28 @@ function showActivitiesPathway() {
 
 function hideActivitiesPathway() {
     deleteSuccessors(0);
+    var divContent = document.getElementById('divContent');
+    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+    for(i = 0; i < activities.length; i++){
+        activities[i].style.display = 'none';
+    }
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
 function drawActivitiesGraph() {
     var divContent = document.getElementById('divContent');
-    divContent.innerHTML = ""; // reset the content
-
-    for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-        rba = RESOURCES_BY_ACTIVITIES[i];
-        if (rba.available) {
-            createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+    if(!divContent.innerHTML.includes("div")){
+        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+            rba = RESOURCES_BY_ACTIVITIES[i];
+            if (rba.available) {
+                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+            }
+        }
+    }
+    else{
+        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            activities[i].style.display = 'block';
         }
     }
 }
@@ -1090,10 +1103,12 @@ function createActivitiesGraph(name, idActivity, duration) {
     });
 
     div.addEventListener('mouseenter', (e) => {
-        //hideArrows();
         lines.forEach((l) => {
-            if(l.start == div || l.end == div){
+            if(l.start == div){
                 l.color = 'red';
+            }
+            if(l.end == div){
+                l.color = 'blue';
             }
         }); 
     });
@@ -1115,9 +1130,23 @@ function drawArrows() {
     for (i = 0; i < NB_SUCCESSOR; i++) {
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
-        l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (i + 1) });
+        l = new LeaderLine(start, end, {middleLabel: "Lien n°" + (i + 1)});
         lines.push(l);
     }
+}
+
+function showArrows(){
+    lines.forEach((l) => {
+        l.show('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
+}
+
+function hideArrows(){
+    lines.forEach((l) => {
+        l.hide('draw');
+    });
+    document.getElementById("btn-show-arrows").setAttribute("onclick", "showArrows()");
 }
 
 function addArraySuccessor(idA, idB, nameA, nameB) {
