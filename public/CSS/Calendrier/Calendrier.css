@@ -296,3 +296,8 @@ a:hover{
   position: absolute;
   text-align: center;
 }
+#alert-scheduled-tomorrow{
+  width:100%;
+  text-align:center;
+  display:none;
+}

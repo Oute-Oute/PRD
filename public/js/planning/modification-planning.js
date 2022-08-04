@@ -502,11 +502,13 @@ function autoAddPathway(){
     activitiesA.push(activityA);
     allActivtiesA.push(firstActivitiesPathway[i].id);
   }
+
+  var eventScheduledTomorrow=false; 
+
   do {
 
     //Creating Activities in FullCalendar
     for (let i = 0; i < activitiesA.length; i++) {
-     
       var activityResourcesArray = [];
       var humanAlreadyScheduled = [];
       var materialAlreadyScheduled = [];
@@ -603,7 +605,6 @@ function autoAddPathway(){
         categoryMaterialResource: categoryMaterialResources,
         categoryHumanResource: categoryHumanResources,
       });
-      console.log(event); 
     }
 
     var successorsActivitiesA = [];
@@ -670,12 +671,14 @@ function autoAddPathway(){
       }
     }
     PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
+    console.log(PathwayBeginDate.getDate().toString(),currentDateStr.substring(8,10))
+    if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
+      eventScheduledTomorrow=true; 
+    }
 
   } while (successorsActivitiesA.length != 0);
   verifyHistoryPush(historyEvents, appointmentid);
   calendar.render();
-
-  $("#add-planning-modal").modal("toggle");
   updateErrorMessages();
 
   calendar.getEvents().forEach((currentEvent) => {
@@ -684,6 +687,16 @@ function autoAddPathway(){
     currentEvent.setEnd(currentEvent.end);
   })
   isUpdated = false;
+  console.log(eventScheduledTomorrow);
+  if(eventScheduledTomorrow==true){
+    console.log(document.getElementById('alert-scheduled-tomorrow').s);
+    document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
+    undoEvent(); 
+  }
+  else{
+    document.getElementById('alert-scheduled-tomorrow').style.display='none';
+    $("#add-planning-modal").modal("toggle");
+  }
 }
 
 function showSelectDate() {
@@ -1256,9 +1269,7 @@ function clearArray(array) {
 /**
  * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
-function undoEvent() {
-  var slotDuration = calendar.getOption('slotDuration');
-  var scrollTime = calendar.getOption('scrollTime');
+function undoEvent() {;
   var zoom = document.getElementById('zoom').value;
 
   if (historyEvents.length != 1) {
