@@ -13,8 +13,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 
+/**
+ * @file        PatientController.php
+ * @brief       Contains the functions that allow to handle the patients
+ * @details     Allows to create, read, update, delete every patients
+ * @date        2022
+ */
+
 class PatientController extends AbstractController
 {
+
+    /**
+      * Allows to list every patients in the database with the paginator
+     */
     public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
         $patients=$this->getAllPatient($patientRepository); 
@@ -23,72 +34,83 @@ class PatientController extends AbstractController
             $request->query->getInt('page',1),
             8
         ); 
-        //créer la page de gestion des patients en envoyant la liste de tous les patients stockés en database
         return $this->render('patient/index.html.twig', ['patients' => $patients]);
     }
     
+    /**
+      * Allows to list every patients in the database without pagination
+     */
     public function getAllPatient(PatientRepository $patientRepository){
         $patient=$patientRepository->findBy(array(),array('lastname' => 'ASC')); 
         return $patient; 
 
     }
+
+    /**
+      * Allows to add a patient in the database
+     */
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
-        // On recupere toutes les données de la requête
+        //Get parameters from the request
         $param = $request->request->all();
 
         $lastname = $param['lastname'];       // le nom
         $firstname = $param['firstname'];     // le prenom
 
-        // Création du patient
+        //Creating the patient
         $patient = new Patient(); 
         $patient->setLastname($lastname);
         $patient->setFirstname($firstname);
             
-        // ajout dans la bdd
+        //Adding the patient in the database
         $patientRepository->add($patient, true);
 
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
+    /**
+      * Allows to edit a patient that is already in the database
+     */
     public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
     {
-        //on récupère les nouvelles informations sur le patient
+        //Get the new data of the patient
         $idpatient = $request->request->get("idpatient");
         $lastname = $request->request->get("lastname");
         $firstname = $request->request->get("firstname");
 
-        //on récupère le patient grâce à son id
+        //Get the edited patient with his id
         $patient = $patientRepository->findOneBy(['id' => $idpatient]);
 
-        //on modifie les données du patient
+        //Modifying the patient attributes
         $patient->setLastname($lastname);
         $patient->setFirstname($firstname);
 
-        //on met à jour le patient dans la bdd
+        //Updating the patient in the database
         $entityManager->persist($patient);
         $entityManager->flush();
 
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
+    /**
+      * Allows to delete a patient that is already in the database
+     */
     public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository,ManagerRegistry $doctrine): Response
     {
-        //suppression des données associées au patient de la table Appointment
+        //Deleting linked data to the patient
         $appointmentRepository = $doctrine->getManager()->getRepository("App\Entity\Appointment");
         $appointments = $appointmentRepository->findBy(['patient' => $patient]);
 
         foreach($appointments as $appointment)
         {
             $date = $appointment->getDayappointment()->format('Y-m-d');
-
-            //suppression des données associées au patient dans les tables ScheduledActivity, MaterialResourceScheduled et HumanResourceScheduled 
+             
             $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
             $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
 
             foreach($scheduledActivities as $scheduledActivity)
             {
-                //suppression des données associées au patient de la table MaterialResourceScheduled
+                
                 $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
                 $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
@@ -97,8 +119,6 @@ class PatientController extends AbstractController
                     $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
                 }
 
-
-                //suppression des données associées au patient de la table HumanResourceScheduled
                 $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
                 $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
@@ -107,25 +127,29 @@ class PatientController extends AbstractController
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
                 }
 
-
-                //suppression des données associées au patient de la table ScheduledActivity
                 $scheduledActivityRepository->remove($scheduledActivity, true);
             }
             $appointmentRepository->remove($appointment, true);
         }
 
-        //suppression du patient dans la table Patient
+        //Deleting the patient in the database
         $patientRepository->remove($patient, true);
 
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
+    /**
+      * Allows to display the data of a specific patient
+     */
     public function getDataPatient(ManagerRegistry $doctrine)
     {
         $appointments = $this->getAppointmentByPatientId($_POST["idPatient"], $doctrine);
         return new JsonResponse($appointments);
     }
 
+    /**
+      * Allows to display every appointments linked to a specific patient
+     */
     public function getAppointmentByPatientId($id, ManagerRegistry $doctrine)
     {
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(["id"=>$id]);
@@ -143,6 +167,10 @@ class PatientController extends AbstractController
 
         return $appointmentArray;
     }
+
+    /**
+      * Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
+     */
     public function autocompletePatient(Request $request, PatientRepository $patientRepository)
     {
         $term = strtolower($request->query->get('term'));

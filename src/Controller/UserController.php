@@ -14,9 +14,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * @file        UserController.php
+ * @brief       Contains the functions that handle the users in the database
+ * @date        2022
+ */
 
 class UserController extends AbstractController
 {
+    
+    /**
+      * Allows to list every users in the database
+     */
 
     public function userGet(UserRepository $userRepository, ManagerRegistry $doctrine): Response
     {
@@ -27,6 +36,11 @@ class UserController extends AbstractController
             'listeUser' => $listeUser
         ]);
     }
+
+
+    /**
+      * Allows to add a new user in the database
+     */
 
     public function userAdd(Request $request, userRepository $userRepository): Response
     {
@@ -53,7 +67,9 @@ class UserController extends AbstractController
         }
     }
 
-
+    /**
+      * Allows to edit a user that is already in the database
+     */
     public function userEdit(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         $iduserEdit = $request->request->get("iduserEdit");
@@ -73,6 +89,10 @@ class UserController extends AbstractController
         return $this->redirectToRoute('User', [], Response::HTTP_SEE_OTHER);
     }
 
+
+    /**
+      * Allows to delete a user that is already in the database
+     */
     public function userDelete(User $user, UserRepository $userRepository,ManagerRegistry $doctrine): Response
     {
         $modificationRepository = $doctrine->getManager()->getRepository("App\Entity\Modification");
@@ -87,11 +107,13 @@ class UserController extends AbstractController
             $userSettingsRepository->remove($userSettings, true);
         }
 
-        //suppression du patient dans la table User
         $userRepository->remove($user, true);
         return $this->redirectToRoute('User', [], Response::HTTP_SEE_OTHER);
     }
 
+    /**
+      * Allows to create a JSON object from a list of users in the database
+     */
     public function listUserJSON(ManagerRegistry $doctrine)
     {
         $users = $doctrine->getRepository('App\Entity\User')->findAll();

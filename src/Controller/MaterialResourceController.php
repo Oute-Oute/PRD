@@ -24,7 +24,6 @@ use App\Repository\UnavailabilityMaterialResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
-
 /**
  * @file        MaterialResourceController.php
  * @brief       Contains the functions that allow to handle the material resources
