@@ -1,0 +1,14 @@
+#scheduled-appointments-body {
+    overflow-y: scroll;
+    max-height: 100px;
+}
+
+#scheduled-appointments-header {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+#scheduled-appointments-header div p {
+    margin: 0px;
+}

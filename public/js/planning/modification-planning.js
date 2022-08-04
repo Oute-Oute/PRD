@@ -528,14 +528,17 @@ function autoAddPathway(){
       console.log(categoryOfHumanResource);
       for(let j=0; j<categoryHumanResources.length; j++){
         let countResources=0; 
+        var nbResourceOfcategory=countOccurencesInArray(categoryHumanResources[j].id,categoryOfHumanResource); 
+        var counterNbResourceOfCategory=0; 
+        var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
         for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents(); 
-          var slotAlreadyScheduled=false; 
+          var slotAlreadyScheduled=false;
           if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory){ 
             if(countResources<categoryHumanResources[j].quantity){
                if(allEvents.length>0){
                 for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
-                  if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=PathwayBeginDate.getTime() && allEvents[allEventsIterator].end.getTime()>=PathwayBeginDate.getTime()){
+                  if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=PathwayBeginDate.getTime() && allEvents[allEventsIterator].end.getTime()>=PathwayBeginDate.getTime() || allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=endTime && allEvents[allEventsIterator].end.getTime()>=endTime){
                     slotAlreadyScheduled=true; 
                   }
                 }
@@ -544,11 +547,15 @@ function autoAddPathway(){
                   countResources++; 
                 }
                 else{
-                  PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000); 
-                  j--;
-                  break;  
+                  if(counterNbResourceOfCategory<nbResourceOfcategory){
+                    counterNbResourceOfCategory++; 
+                    if(counterNbResourceOfCategory==nbResourceOfcategory){
+                      PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000);
+                      j--;
+                      break;  
+                    }
+                  }   
                 }
-
               }
               else{
                 humanResources.push(categoryOfHumanResource[categoryOfHumanResourceIt].idresource); 
@@ -2593,4 +2600,14 @@ function reduceNotification(childs) {
   }
 
 
+}
+
+function countOccurencesInArray(val,array){
+  let counter=0; 
+  for(let i=0; i<array.length; i++){
+    if(array[i].idcategory==val){
+      counter++; 
+    }
+  }
+  return counter; 
 }
