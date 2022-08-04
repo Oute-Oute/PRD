@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
-
 /**
  * @file        HumanResourceController.php
  * @brief       Contains the functions that allow to handle the human resources

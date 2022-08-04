@@ -668,8 +668,8 @@ class PathwayController extends AbstractController
                         }
 
                     } else {
-                        // if the activity is available = false, it has been deleted but we need to know if it was tin the pathway before the editing
-                        // so we verify if it wis in the db
+                        // if the activity is available = false, it has been deleted but we need to know if it was in the pathway before the editing
+                        // so we verify if it is in the db
                         if ($resourcesByActivities[$indexActivity]->id != -1) {
 
                             // We get the activity
