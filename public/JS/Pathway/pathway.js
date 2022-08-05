@@ -884,15 +884,27 @@ function showActivitiesPathway() {
  * Called when the user clicks outside the modal or on the "Annuler" button
  */
 function hideActivitiesPathway(){
-    deleteSuccessors();
-    deleteSuccessors(0);
-    var divContent = document.getElementById('divContent');
-    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
-    for(i = 0; i < activities.length; i++){
-        activities[i].style.display = 'none';
+    if(SUCCESSORS.length != 0){
+        let quit = confirm("Quitter sans valider vos modifications supprimera tous les liens présents, voulez-vous vraiment continuer ?")
+        if(quit){
+            deleteSuccessors();
+            var divContent = document.getElementById('divContent');
+            var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+            for(i = 0; i < activities.length; i++){
+                activities[i].style.display = 'none';
+            }
+            $('#edit-pathway-modal-activities').modal("hide");
+        }
     }
-    $('#edit-pathway-modal-activities').modal("hide");
-    $('#edit-pathway-modal-activities').modal("hide");
+    else{
+        deleteSuccessors();
+        var divContent = document.getElementById('divContent');
+        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            activities[i].style.display = 'none';
+        }
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
 }
 
 /**
@@ -901,12 +913,19 @@ function hideActivitiesPathway(){
  */
 function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
-    divContent.innerHTML = ""; // reset the content
 
-    for(i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++){
-        rba = RESOURCES_BY_ACTIVITIES[i];
-        if(rba.available){
-            createActivitiesGraph(rba.activityname, i+1, rba.activityduration);
+    if(!divContent.innerHTML.includes("div")){
+        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+            rba = RESOURCES_BY_ACTIVITIES[i];
+            if (rba.available) {
+                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+            }
+        }
+    }
+    else{
+        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            activities[i].style.display = 'block';
         }
     }
 }
@@ -1290,12 +1309,9 @@ function deleteSuccessor(id) {
 /**
  * Delete all successors and arrows
  */
-function deleteSuccessors(fullReset){
+function deleteSuccessors(){
     NB_SUCCESSOR = 0;
     SUCCESSORS = new Array();
-    if (!fullReset) {
-        initSuccessorsList();
-    }
     deleteArrows();
     fillSuccessorList();
 }
