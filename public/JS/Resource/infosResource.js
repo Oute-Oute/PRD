@@ -1,17 +1,18 @@
 const { forEach } = require("core-js/core/array");
 
-/**
- * Permet d'afficher la fenêtre modale d'informations
- */
 var idHR;
 var idMR;
+
+/**
+ * Allows to display a modal that shows data about the selected human resource
+ */
 function showInfosModalHuman(idHumanResource, resourceName) {
   document.getElementById("human-resource1").innerHTML = resourceName;
   document.getElementById("human-resource2").innerHTML = resourceName;
   document.getElementById("human-resource3").innerHTML = resourceName;
   idHR = idHumanResource;
   var tableBody = document.getElementById("tbody-human-resource");
-  tableBody.innerHTML = ""; // On supprime ce qui a précédemment été écrit dans la modale
+  tableBody.innerHTML = "";
   date = new Date();
   getAjaxHumanResources(idHumanResource, date, tableBody);
   createCalendarResource("humanresource");
@@ -22,12 +23,16 @@ function showInfosModalHuman(idHumanResource, resourceName) {
   document.getElementById("empty-planning").style.visibility = "hidden";
 }
 
+
+/**
+ * Allows to display a modal that shows data about the selected human resource category
+ */
 function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
   document.getElementById("human-resource-category").innerHTML =
     resourceCategName;
 
   var tableBody = document.getElementById("tbody-human-resource-category");
-  tableBody.innerHTML = ""; // On supprime ce qui a précédemment été écrit dans la modale
+  tableBody.innerHTML = "";
 
   $.ajax({
     type: "POST",
@@ -45,12 +50,16 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
   $("#infos-human-resource-category-modal").modal("show");
 }
 
+
+/**
+ * Allows to display a modal that shows data about the selected material resource
+ */
 function showInfosModalMaterial(idMaterialResource, resourceName) {
   document.getElementById("material-resource1").innerHTML = resourceName;
   document.getElementById("material-resource2").innerHTML = resourceName;
   idMR = idMaterialResource;
   var tableBody = document.getElementById("tbody-material-resource");
-  tableBody.innerHTML = ""; // On supprime ce qui a précédemment été écrit dans la modale
+  tableBody.innerHTML = "";
   date = new Date();
   getAjaxMaterialResources(idMaterialResource, date, tableBody);
   createCalendarResource("materialresource");
@@ -60,6 +69,9 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
   document.getElementById("empty-planning").style.visibility = "hidden";
 }
 
+/**
+ * Allows to display a modal that shows data about the selected material resource category
+ */
 function showInfosModalMaterialCateg(
   idMaterialResourceCategory,
   resourceCategName
@@ -246,6 +258,9 @@ function getWorkingHours(id) {
   }
 }
 
+/**
+ * Allows to change the selected tab in the modal infos of a human resource
+ */
 function change_tab_human_infos(id) {
   liHeader = document.getElementsByClassName("li-header");
   selectedDivs = liHeader[0].getElementsByClassName("selected");
@@ -281,6 +296,10 @@ function change_tab_human_infos(id) {
   }
 }
 
+
+/**
+ * Allows to change the selected tab in the modal infos of a material resource
+ */
 function change_tab_material_infos(id) {
   document.getElementById("planning").className = "notselected";
   document.getElementById("categoriesbyresource").className = "notselected";
