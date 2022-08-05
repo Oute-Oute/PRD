@@ -12,104 +12,57 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
 })
 
+/**
+  * Allows to display the modal that is used to create a new human resource
+ */
 function showNewHumanModalForm(){
     $('#new-human-resource-modal').modal("show");
 }
 
+/**
+  * Allows to display the modal that is used to create a new material resource
+ */
 function showNewMaterialModalForm(){
     $('#new-material-resource-modal').modal("show");
 }
 
+/**
+  * Allows to display the modal that is used to create a new category of human resource
+ */
 function showNewHumanCategModalForm() {
     $('#new-human-resource-category-modal').modal("show");
 }
 
+
+/**
+  * Allows to display the modal that is used to create a new category of material resource
+ */
 function showNewMaterialCategModalForm() {
     $('#new-material-resource-category-modal').modal("show");
 }
 
+
+/**
+  * Allows to display the modal that is used to edit a human resource category
+ */
 function showEditHumanCategModalForm(id, name) {
     document.getElementById('idcategoryedit').value = id;
     document.getElementById('categorynameedit').value = name;
  $('#edit-human-resource-category-modal').modal("show");
 }
 
+
+/**
+  * Allows to display the modal that is used to edit material resource category
+ */
 function showEditMaterialCategModalForm(id, name) {
     document.getElementById('idcategoryedit').value = id;
     document.getElementById('categorynameedit').value = name;
 $('#edit-material-resource-category-modal').modal("show");
 }
-/** 
- * Permet d'ajouter une ou plusieurs catégories de ressources à une ressource humaine lors de sa création.
- */
-function handleAddHumanCategory() {
-
-    let selectSample = document.getElementsByClassName('select-category-sample')[0];
-    if(selectSample.length != 0) {
-    let newSelect = document.createElement('select');
-    let btnSubmit = document.getElementById('submit')
-    newSelect.addEventListener('change', function() {
-            btnSubmit.disabled = true;
-      });
-    
-    //Boucle pour remplir toutes les categs dans chaque select
-    for (let i = 0; i < selectSample.length; i++){
-        let option = document.createElement('option')
-        option.value = selectSample.options[i].value;
-        option.text = selectSample.options[i].text;
-        newSelect.add(option);
-    }
-
-    newSelect.setAttribute('name' , 'select-'+SELECT_ID);
-    let categoriesContainer = document.getElementById('categories-container');
-    let formField = document.createElement("div");
-    formField.setAttribute('class', 'form-field category-'+SELECT_ID);
-    newSelect.style.border = 'none';
-    //Image pour delete une categ
-    let image = new Image();
-    image.src = 'img/delete.svg';
-    image.style.marginLeft = '30px';
-    image.setAttribute('id','img-'+SELECT_ID)
-    image.setAttribute('onclick', 'deleteSelect(this.id)')
-    formField.appendChild(newSelect);
-    formField.appendChild(image);
-    categoriesContainer.appendChild(formField);
-    let nbCategory = document.getElementById('nbCategory');
-    SELECT_ID = SELECT_ID +1;
-    console.log(SELECT_ID)
-
-    NB_CATEGORY = NB_CATEGORY +1;
-    nbCategory.value = NB_CATEGORY;
-}
-
-else {
-    alert('Il n\'y a pas de catégories existantes !')
-}
-
-}
-/** Permet de supprimer un select dans la liste déroulante */
-function deleteSelect(id) {
-
-
-    // On récupère le numero de la div a supprimer  
-    // Pour cela on recupere que le dernier caracetere de l'id de l'img : (img-1)
-    id = id[id.length - 1] 
-    // On peut donc recuperer la div
-    let divToDelete = document.getElementsByClassName('category-'+id)[0]
-    // puis la supprimer
-    let divAddCategory = document.getElementById('categories-container')
-    divAddCategory.removeChild(divToDelete)
-    
-    let nbCategory = document.getElementById('nbCategory');
-    SELECT_ID = SELECT_ID - 1;
-    console.log(SELECT_ID)
-    NB_CATEGORY = NB_CATEGORY -1;
-    nbCategory.value = NB_CATEGORY;
-}
-
 
 /**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ * Allows to check fields in the modal form to create a human resource
  */
  function humanResourceVerify() {
 
@@ -122,8 +75,7 @@ function deleteSelect(id) {
     let endHigherThanBegin = false;
     let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
+    
     for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
         if(categoriesContainer.children[i].children[0].checked) {
         categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
@@ -157,6 +109,10 @@ function deleteSelect(id) {
     
 }
 
+
+/**
+ * Allows to check fields in the modal form to create a material resource
+ */
 function materialResourceVerify() {
 
     // D'abord on recupere la div qui contient toutes les activity
@@ -179,6 +135,10 @@ function materialResourceVerify() {
     btnAdd.click();    
 }
 
+
+/**
+ * Allows to check fields in the edit modal form to create a human resource
+ */
 function materialResourceVerifyEdit() {
 
     // D'abord on recupere la div qui contient toutes les activity
@@ -213,6 +173,10 @@ function hasDuplicates(array) {
     return false;
 }
 
+
+/**
+ * Allows to hide a create modal form. Called when you click somewhere else than the modal
+ */
 function hideNewModalForm() {
     $('#new-human-resource-category-modal').modal("hide");
     $('#new-human-resource-modal').modal("hide");
@@ -220,6 +184,9 @@ function hideNewModalForm() {
     $('#new-material-resource-modal').modal("hide");
 }
 
+/**
+ * Allows to hide an edit modal form. Called when you click somewhere else than the modal
+ */
 function hideEditModalForm() {
 
     $('#edit-human-resource-category-modal').modal("hide");
@@ -231,6 +198,9 @@ function hideEditModalForm() {
 
 }
 
+/**
+ * Allows to change the selected tab in the material resource page
+ */
 function change_tab_material(id)
 {
   document.getElementById("resources").className="notselected";
@@ -252,6 +222,9 @@ function change_tab_material(id)
   }
 }
 
+/**
+ * Allows to change the selected tab in the human resource page
+ */
 function change_tab_human(id)
 {
   document.getElementById("resources").className="notselected";
@@ -271,12 +244,11 @@ function change_tab_human(id)
     paginator.style.display='none';
   }
 }
-// #container-modal 
-// .modal-form             #form-add-activity
 
-
+/**
+ * Allows to filter resources according to the categories
+ */
 function filterResource(type,selected=null){
-    console.log(selected);
     var categoriesStr=[];
     for (var i=0;i<selected["categories"].length-1;i++){
         categoriesStr += selected["categories"][i]["category"]+", ";
@@ -284,12 +256,8 @@ function filterResource(type,selected=null){
     if(selected["categories"].length>0){
     categoriesStr += selected["categories"][selected["categories"].length-1]["category"];
     }
-    console.log(type);
     var Type=type.charAt(0).toUpperCase()+type.slice(1); //equal to type.capitalize()
-    console.log('test')
-    console.log('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');
     var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');
-    console.log(trs);
     for(let i=0; i<trs.length; i++){
             trs[i].style.display='none';
     }
@@ -355,6 +323,9 @@ function filterResource(type,selected=null){
 }
 }
 
+/**
+ * Allows to filter human resources according to entered category name
+ */
   function filterHumanResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableHumanResourceCategory tr:not(.headerHumanResourceCategory)');
     if(selected == null){
@@ -380,7 +351,9 @@ function filterResource(type,selected=null){
   }
 
   
-
+/**
+ * Allows to filter material resources according to entered category name
+ */
   function filterMaterialResourceCategory(idInput,selected=null){
     var trs = document.querySelectorAll('#tableMaterialResourceCategory tr:not(.headerMaterialResourceCategory)');
     if(selected == null){
