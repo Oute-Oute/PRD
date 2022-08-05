@@ -441,8 +441,14 @@ function updateEventsAppointment(modifyEvent) {
 function autoAddAllPathway(){
    
  do{
+    displayAddPathway();  
+    console.log()
+    if(selectAppointment!=undefined && document.getElementById('select-appointment').value==selectionAppointmentValue){
+        break;
+    } 
     var selectAppointment = document.getElementById('select-appointment');
-    displayAddPathway(); 
+    var selectionAppointmentValue=[]; 
+    selectionAppointmentValue.push(selectAppointment.value);
     autoAddPathway(); 
    
   } while(selectAppointment.options.length!=1);
