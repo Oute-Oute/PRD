@@ -121,7 +121,6 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  console.log(document.getElementById("listeAppointments").value);
   document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
   document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
   document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
@@ -176,6 +175,7 @@ function displayAddPathway() {
     //while there is something in the filter
     filter.removeChild(filter.firstChild); //remove the old content
   }
+
 }
 
 /**
@@ -202,7 +202,6 @@ function addPathway() {
       listeAppointments[i].scheduled = true;
     }
   }
-  console.log(listeAppointments)
 
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
@@ -437,6 +436,16 @@ function updateEventsAppointment(modifyEvent) {
 
   verifyHistoryPush(historyEvents, -1);
   updateErrorMessages();
+}
+
+function autoAddAllPathway(){
+   
+ do{
+    var selectAppointment = document.getElementById('select-appointment');
+    displayAddPathway(); 
+    autoAddPathway(); 
+   
+  } while(selectAppointment.options.length!=1);
 }
 
 function autoAddPathway(){
@@ -720,7 +729,6 @@ function autoAddPathway(){
       }
     }
     PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
-    console.log(PathwayBeginDate.getDate().toString(),currentDateStr.substring(8,10))
     if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
       eventScheduledTomorrow=true; 
     }
@@ -736,9 +744,7 @@ function autoAddPathway(){
     currentEvent.setEnd(currentEvent.end);
   })
   isUpdated = false;
-  console.log(eventScheduledTomorrow);
   if(eventScheduledTomorrow==true){
-    console.log(document.getElementById('alert-scheduled-tomorrow').s);
     document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
     undoEvent(); 
   }
