@@ -17,14 +17,15 @@ var IS_EDIT_MODE = false
 
 var PATHWAY_APPOINTMENTS = new Object()        
 PATHWAY_APPOINTMENTS.areAppointmentsDeleted = false
+PATHWAY_APPOINTMENTS.scheduledAppointments = new Array()
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
-var NB_SUCCESSOR = 0;
 var ACTIVITY_POSITION = new Array();
 var SUCCESSORS = new Array();
 var lines = new Array();
 var VALIDATE = 0;
+var ARROWS_HIDDEN = 0;
 
 /**
  * Call at the loading of the add pathway page
@@ -115,12 +116,11 @@ function initActivitiesList() {
 
 function initSuccessorsList() {
     for (let i = 0; i < PATHWAY.successors.length; i++) {
-        for (j = 1; j <= NB_ACTIVITY; j++) {
-            if (SUCCESSORS[i] === undefined) {
-                SUCCESSORS[i] = new Object()
-            }
-            if (RESOURCES_BY_ACTIVITIES[j - 1].available) {
-
+        for (j = 1; j <= RESOURCES_BY_ACTIVITIES.length; j++) {
+            if(RESOURCES_BY_ACTIVITIES[j-1].available){
+                if (SUCCESSORS[i] === undefined) {
+                    SUCCESSORS[i] = new Object()
+                }
                 divAct = document.getElementById('act' + j)
                 inputs = divAct.getElementsByTagName('input')
                 let idActivity = inputs[0].value
@@ -130,34 +130,20 @@ function initSuccessorsList() {
                 if (idActivity == PATHWAY.successors[i].idActivityB) {
                     SUCCESSORS[i].idActivityB = 'activity' + j
                 }
+                SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
+                SUCCESSORS[i].nameActivityB = PATHWAY.successors[i].nameActivityB
+
+                SUCCESSORS[i].delayMin = PATHWAY.successors[i].delayMin
+                SUCCESSORS[i].delayMax = PATHWAY.successors[i].delayMax
             }
         }
-        SUCCESSORS[i].nameActivityA = PATHWAY.successors[i].nameActivityA
-        SUCCESSORS[i].nameActivityB = PATHWAY.successors[i].nameActivityB
-
-        SUCCESSORS[i].delayMin = PATHWAY.successors[i].delayMin
-        SUCCESSORS[i].delayMax = PATHWAY.successors[i].delayMax
-
-        NB_SUCCESSOR++;
     }
 
-    for (i = 0; i < NB_ACTIVITY; i++) {
+    for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
         if (!RESOURCES_BY_ACTIVITIES[i].available) {
             let idActivity = "activity" + (i + 1);
             for (var j = SUCCESSORS.length - 1; j >= 0; j--) {
-                if (SUCCESSORS[j].idActivityA == idActivity || SUCCESSORS[j].idActivityB == idActivity) {
-                    for (k = 0; k < lines.length; k++) {
-                        if (lines[k].start == document.getElementById(SUCCESSORS[j].idActivityA) && lines[k].end == document.getElementById(SUCCESSORS[j].idActivityB)) {
-                            lines[k].remove();
-                            lines.splice(k, 1);
-                        }
-                    }
-
-                    for (k = 0; k < lines.length; k++) {
-                        lines[k].middleLabel = "Lien n°" + (k + 1);
-                    }
-
-                    NB_SUCCESSOR--;
+                if (SUCCESSORS[j].idActivityA == idActivity || SUCCESSORS[j].idActivityB == idActivity || SUCCESSORS[j].idActivityA === undefined || SUCCESSORS[j].idActivityB === undefined) {
                     SUCCESSORS.splice(j, 1);
                 }
             }
@@ -248,16 +234,16 @@ function addArray() {
     }
 
     if (verif) {
-
         PATHWAY_APPOINTMENTS.modification = "add"
 
         if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
             addActivity()
         } else {
-            if (verifyScheduledAppointments(PATHWAY.id)) {
-            }
+            verifyScheduledAppointments(PATHWAY.id)        
         }
+        return true
     }
+    return false
 }
 
 /**
@@ -265,7 +251,6 @@ function addArray() {
  * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
  */
 function addActivity() {
-
         // if the activity is open in edit mode
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
@@ -422,13 +407,30 @@ async function verifyScheduledAppointments(idPathway) {
         PATHWAY_APPOINTMENTS.scheduledAppointments = await getScheduledAppointments(idPathway)
         if (PATHWAY_APPOINTMENTS.scheduledAppointments.length > 0) {
             showScheduledAppointmentsModal()
-            return true
         } else {
-            return false
+            if (PATHWAY_APPOINTMENTS.modification == 'delete') {
+                deleteActivity()
+            } else {
+                addActivity()
+            }
+
+            if (IS_EDIT_MODE) {
+                initActivity()
+                document.getElementById('btn-cancel-activity').style.display = 'none'
+                document.getElementById('btn-confirm-activity').style.display = 'none'
+                document.getElementById('btn-add-activity').style.display = 'flex'
+        
+                document.getElementById('input-name').value = ''
+                document.getElementById('input-duration').value = ''
+        
+                document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
+                IS_EDIT_MODE = false
+                handleHumanButton()
+            }
+
         }
     } catch(err) {
         console.log(err);
-        return false
     }
 }
 
@@ -447,9 +449,8 @@ function showScheduledAppointmentsModal() {
 
     $('#pathway-modal-scheduled-appointments').modal('show');
     let body = document.getElementById('scheduled-appointments-body')
-    
+    body.innerHTML = ""
     for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < PATHWAY_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
-        console.log(PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day)
         let p = document.createElement('p')
 
         lastname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_firstname
@@ -491,23 +492,20 @@ function showScheduledAppointmentsModal() {
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
 function requestDeleteActivity(id) {
-    console.log(PATHWAY_APPOINTMENTS)
 
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     activityIndex = getId(id)
+    PATHWAY_APPOINTMENTS.indexActivityToDelete  = activityIndex
 
     PATHWAY_APPOINTMENTS.modification = "delete"
 
-
     if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
-        PATHWAY_APPOINTMENTS.indexActivityToDelete = activityIndex
         deleteActivity()
     } else {
-        if (verifyScheduledAppointments(PATHWAY.id)) {
-            PATHWAY_APPOINTMENTS.indexActivityToDelete  = activityIndex
-        }
+        verifyScheduledAppointments(PATHWAY.id)     
     }
+
 }
 
 /**
@@ -522,11 +520,10 @@ function deleteActivity() {
     document.getElementById('nbactivity').value = NB_ACTIVITY
 
     RESOURCES_BY_ACTIVITIES[id].available = false
-
     let idActivity = "activity" + (parseInt(id) + 1);
     for (var i = SUCCESSORS.length - 1; i >= 0; i--) {
         if (SUCCESSORS[i].idActivityA == idActivity || SUCCESSORS[i].idActivityB == idActivity) {
-            for (j = 0; j < lines.length; j++) {
+            for (j = lines.length-1; j >= 0; j--) {
                 if (lines[j].start == document.getElementById(SUCCESSORS[i].idActivityA) && lines[j].end == document.getElementById(SUCCESSORS[i].idActivityB)) {
                     lines[j].remove();
                     lines.splice(j, 1);
@@ -536,10 +533,12 @@ function deleteActivity() {
             for (j = 0; j < lines.length; j++) {
                 lines[j].middleLabel = "Lien n°" + (j + 1);
             }
-
-            NB_SUCCESSOR--;
             SUCCESSORS.splice(i, 1);
         }
+    }
+    activityGraph = document.getElementById(idActivity) 
+    if(activityGraph != null){
+        activityGraph.remove()
     }
 
     fillActivityList()
@@ -621,28 +620,8 @@ function cancelEditActivity() {
  * Allow to confirm the changes during the editing of the activity 
  */
 function confirmEditActivity() {
-
-    let res = requestAddActivity()
-    if (res) {
-        initActivity()
-        document.getElementById('btn-cancel-activity').style.display = 'none'
-        document.getElementById('btn-confirm-activity').style.display = 'none'
-        document.getElementById('btn-add-activity').style.display = 'flex'
-
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-
-        document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
-        IS_EDIT_MODE = false
-
-    } else {
-        // l'edition n'a pas fonctionné
-    }
-    handleHumanButton()
-
+    requestAddActivity()
 }
-
-
 
 
 function getId(str) {
@@ -650,8 +629,6 @@ function getId(str) {
     id = str.split('-')
     return id[id.length - 1]
 }
-
-
 
 
 /**
@@ -1044,6 +1021,7 @@ function submitPathway() {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
             document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
+            document.getElementById('are-appointments-deleted').value = PATHWAY_APPOINTMENTS.areAppointmentsDeleted
             btnSubmit.click()
         }
     } else {
@@ -1137,7 +1115,7 @@ function createActivitiesGraph(name, idActivity, duration) {
             }
             start = document.getElementById(ID_ACTIVITY_PREDECESSOR);
             end = document.getElementById(div.id);
-            for (i = 0; i < NB_SUCCESSOR; i++) {
+            for (i = 0; i < SUCCESSORS.length; i++) {
                 if (SUCCESSORS[i].idActivityA == start.id && SUCCESSORS[i].idActivityB == end.id) {
                     alert('Ce lien est déjà créé !')
                     errorLine = true;
@@ -1148,7 +1126,7 @@ function createActivitiesGraph(name, idActivity, duration) {
                 }
             }
             if (!errorLine) {
-                l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (NB_SUCCESSOR + 1) });
+                l = new LeaderLine(start, end, { color: '#0dac2d', middleLabel: "Lien n°" + (SUCCESSORS.length + 1) });
 
                 lines.push(l);
                 addSuccessor(ID_ACTIVITY_PREDECESSOR, div.id, NAME_ACTIVITY_PREDECESSOR, name);
@@ -1179,18 +1157,20 @@ function createActivitiesGraph(name, idActivity, duration) {
     div.addEventListener('mouseleave', (e) => {
         lines.forEach((l) => {
             l.color = '#0dac2d';
-        }); 
+        });
+        if(ARROWS_HIDDEN){
+            l.hide();
+        }
     });
 }
 
 function addSuccessor(idA, idB, nameA, nameB) {
     addArraySuccessor(idA, idB, nameA, nameB);
-    NB_SUCCESSOR++;
     fillSuccessorList();
 }
 
 function drawArrows() {
-    for (i = 0; i < NB_SUCCESSOR; i++) {
+        for (i = 0; i < SUCCESSORS.length; i++) {
         start = document.getElementById(SUCCESSORS[i].idActivityA);
         end = document.getElementById(SUCCESSORS[i].idActivityB);
         l = new LeaderLine(start, end, {middleLabel: "Lien n°" + (i + 1)});
@@ -1199,6 +1179,7 @@ function drawArrows() {
 }
 
 function showArrows(){
+    ARROWS_HIDDEN = 0;
     lines.forEach((l) => {
         l.show('draw');
     });
@@ -1206,6 +1187,7 @@ function showArrows(){
 }
 
 function hideArrows(){
+    ARROWS_HIDDEN = 1;
     lines.forEach((l) => {
         l.hide('draw');
     });
@@ -1343,6 +1325,9 @@ function fillSuccessorList() {
                 l.color = '#0dac2d';
                 l.size = 4;
             }); 
+            if(ARROWS_HIDDEN){
+                l.hide();
+            }
         });
     }
     if (SUCCESSORS.length == 0) {
@@ -1384,14 +1369,14 @@ function showDelays() {
     if(delayButton.src.includes('/img/chevron_down.svg')){
         delayButton.src = '/img/chevron_up.svg'
         delayButton.title = 'Cacher tous les délais'
-        for(i = 0; i < NB_SUCCESSOR; i++){
+        for(i = 0; i < SUCCESSORS.length; i++){
             showDelay(i);
         }
     }
     else{
         delayButton.src = '/img/chevron_down.svg'
         delayButton.title = 'Montrer tous les délais'
-        for(i = 0; i < NB_SUCCESSOR; i++){
+        for(i = 0; i < SUCCESSORS.length; i++){
             hideDelay(i);
         }
     }
@@ -1414,15 +1399,12 @@ function deleteSuccessor(id) {
     for (i = 0; i < lines.length; i++) {
         lines[i].middleLabel = "Lien n°" + (i + 1);
     }
-
-    NB_SUCCESSOR--;
     SUCCESSORS.splice(id, 1);
 
     fillSuccessorList();
 }
 
 function deleteSuccessors(fullReset) {
-    NB_SUCCESSOR = 0;
     SUCCESSORS = new Array();
     if (!fullReset) {
         initSuccessorsList();
@@ -1442,7 +1424,7 @@ function validateSuccessors(){
     error = checkSuccessor();
     switch(error){
         case 0:
-            for(i = 0; i < NB_SUCCESSOR; i++){
+            for(i = 0; i < SUCCESSORS.length; i++){
                 inputMin = document.getElementById("delayMinInput" + (i+1));
                 inputMax = document.getElementById("delayMaxInput" + (i+1));
                 SUCCESSORS[i].delayMin = inputMin.value;
@@ -1467,7 +1449,7 @@ function checkSuccessor(){
     var loop = true;
     for(i = 0; i < NB_ACTIVITY; i++){
         predecessor = false;
-        for(j = 0; j < NB_SUCCESSOR; j++){
+        for(j = 0; j < SUCCESSORS.length; j++){
             if(SUCCESSORS[j].nameActivityA == RESOURCES_BY_ACTIVITIES[i].activityname){
                 predecessor = true;
             }

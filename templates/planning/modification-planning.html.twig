@@ -142,7 +142,6 @@
 					class="modal-body">
 					<!-- sépare le body de la modal -->
 					<input id="date" name="date" type="hidden" value={{currentdate}}>
-					<input id="listeAppointments" name="listeAppointments" type='hidden' value={{listAppointmentsJSON.content}}>
 					<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listSuccessorsJSON.content}}>
 					<input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
 
@@ -167,6 +166,7 @@
 						<button type="submit" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
 						<button type="submit" class="btn-valide btn secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
 					</div>
+					<div id='alert-scheduled-tomorrow' class="alert alert-danger" role="alert">Erreur ! Le rendez-vous se termine au lendemain.</div>	
 				</div>
 			</form>
 		</div>
@@ -237,6 +237,7 @@
 					<input type="hidden" id='events' name="events"/>
 					<input type="hidden" id='validation-date' name="validation-date"/>
 					<input type="hidden" id='list-resource' name="list-resource"/>
+					<input type="hidden" id='scheduled-appointments' name="scheduled-appointments"/>
 				</form>
 			</div>
 			<div >

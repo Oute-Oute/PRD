@@ -666,13 +666,25 @@ class ModificationPlanningController extends AbstractController
     }
 
     //Appelée lors de l'appui du bouton valider
-    //Sauvegarde en nBDD les modifications de l'utilisateur
+    //Sauvegarde en BDD les modifications de l'utilisateur
     public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         //récupération des events et des ressources depuis le twig
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
+        $listScheduledAppointments = json_decode($request->request->get("scheduled-appointments"));
         $userId = $request->request->get("user-id");
+        
+        //update the new scheduled appointments
+        foreach($listScheduledAppointments as $oneScheduledAppointment)
+        {
+            if($oneScheduledAppointment->scheduled)
+            {
+                $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $oneScheduledAppointment->id]);
+                $appointment->setScheduled($oneScheduledAppointment->scheduled);
+                $doctrine->getRepository("App\Entity\Appointment")->add($appointment, true);
+            }
+        }
 
         //création d'une nouvelle liste fusionnant les deux listes précédentes : events et ressources
         $listScheduledEvent = array();
@@ -687,7 +699,8 @@ class ModificationPlanningController extends AbstractController
         $date = $request->request->get("validation-date");
         $listScheduledActivity = $scheduledActivityRepository->findSchedulerActivitiesByDate(substr($date, 0, 10));
         //on parcours la liste des évènement plannifié qui viennent d'être modifiés
-        foreach ($listScheduledEvent as $event) {
+        foreach ($listScheduledEvent as $event) 
+        {
             //on instancie un booléen pour savoir si l'évènement est déjà en bdd ou non
             $scheduledActivityExist = false;
 
@@ -838,7 +851,6 @@ class ModificationPlanningController extends AbstractController
                     $activity = $doctrine->getRepository("App\Entity\Activity")->findOneBy(["id" => $event[0]->extendedProps->activity]);
                     $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $event[0]->extendedProps->appointment]);
 
-                    $appointment->setScheduled(true);
                     $newScheduledActivity->setActivity($activity);
                     $newScheduledActivity->setAppointment($appointment);
                     $scheduledActivityRepository->add($newScheduledActivity, true);
