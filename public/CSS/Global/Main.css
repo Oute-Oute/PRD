@@ -2,6 +2,7 @@ body {
     display: flex;
     flex-direction: row;
     height: 100vh;
+    width: 100%;
 }
 
 :root {
@@ -104,9 +105,9 @@ body {
 }
 
 .btn-add {
-    margin-left: 50px;
+    /*margin-left: 50px;
     margin-right: 50px;
-    margin-bottom: 30px;
+    margin-bottom: 30px;*/
 }
 
 .btn-edit {
@@ -133,7 +134,11 @@ div#conn-form {
     justify-content: center;
     height: 100vh;
     width: 100%;
-    margin-left: 54vh;
+}
+
+#connection-form {
+    height: 100%;
+    width: 100%;
 }
 
 div#conn-form div#container {
