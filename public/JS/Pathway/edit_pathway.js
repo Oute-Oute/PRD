@@ -256,7 +256,9 @@ function addArray() {
         } else {
             verifyScheduledAppointments(PATHWAY.id)        
         }
+        return true
     }
+    return false
 }
 
 /**
@@ -264,7 +266,6 @@ function addArray() {
  * or to modify the information of an activity already in the list, thanks to IS_EDIT_MODE and ACTIVITY_IN_PROGRESS
  */
 function addActivity() {
-
         // if the activity is open in edit mode
         if (IS_EDIT_MODE) {
             RESOURCES_BY_ACTIVITIES[ID_EDITED_ACTIVITY].activityname = document.getElementById('input-name').value
@@ -427,6 +428,21 @@ async function verifyScheduledAppointments(idPathway) {
             } else {
                 addActivity()
             }
+
+            if (IS_EDIT_MODE) {
+                initActivity()
+                document.getElementById('btn-cancel-activity').style.display = 'none'
+                document.getElementById('btn-confirm-activity').style.display = 'none'
+                document.getElementById('btn-add-activity').style.display = 'flex'
+        
+                document.getElementById('input-name').value = ''
+                document.getElementById('input-duration').value = ''
+        
+                document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
+                IS_EDIT_MODE = false
+                handleHumanButton()
+            }
+
         }
     } catch(err) {
         console.log(err);
@@ -450,7 +466,6 @@ function showScheduledAppointmentsModal() {
     let body = document.getElementById('scheduled-appointments-body')
     body.innerHTML = ""
     for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < PATHWAY_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
-        console.log(PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day)
         let p = document.createElement('p')
 
         lastname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_firstname
@@ -619,28 +634,8 @@ function cancelEditActivity() {
  * Allow to confirm the changes during the editing of the activity 
  */
 function confirmEditActivity() {
-
-    let res = requestAddActivity()
-    if (res) {
-        initActivity()
-        document.getElementById('btn-cancel-activity').style.display = 'none'
-        document.getElementById('btn-confirm-activity').style.display = 'none'
-        document.getElementById('btn-add-activity').style.display = 'flex'
-
-        document.getElementById('input-name').value = ''
-        document.getElementById('input-duration').value = ''
-
-        document.getElementById('lbl-title-create').innerText = 'Création d\'une activité'
-        IS_EDIT_MODE = false
-
-    } else {
-        // l'edition n'a pas fonctionné
-    }
-    handleHumanButton()
-
+    requestAddActivity()
 }
-
-
 
 
 function getId(str) {
@@ -648,8 +643,6 @@ function getId(str) {
     id = str.split('-')
     return id[id.length - 1]
 }
-
-
 
 
 /**
