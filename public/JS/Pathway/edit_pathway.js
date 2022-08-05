@@ -17,6 +17,7 @@ var IS_EDIT_MODE = false
 
 var PATHWAY_APPOINTMENTS = new Object()        
 PATHWAY_APPOINTMENTS.areAppointmentsDeleted = false
+PATHWAY_APPOINTMENTS.scheduledAppointments = new Array()
 
 var ID_ACTIVITY_PREDECESSOR = -1;
 var NAME_ACTIVITY_PREDECESSOR = '';
@@ -233,14 +234,12 @@ function addArray() {
     }
 
     if (verif) {
-
         PATHWAY_APPOINTMENTS.modification = "add"
 
         if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
             addActivity()
         } else {
-            if (verifyScheduledAppointments(PATHWAY.id)) {
-            }
+            verifyScheduledAppointments(PATHWAY.id)        
         }
     }
 }
@@ -407,13 +406,15 @@ async function verifyScheduledAppointments(idPathway) {
         PATHWAY_APPOINTMENTS.scheduledAppointments = await getScheduledAppointments(idPathway)
         if (PATHWAY_APPOINTMENTS.scheduledAppointments.length > 0) {
             showScheduledAppointmentsModal()
-            return true
         } else {
-            return false
+            if (PATHWAY_APPOINTMENTS.modification == 'delete') {
+                deleteActivity()
+            } else {
+                addActivity()
+            }
         }
     } catch(err) {
         console.log(err);
-        return false
     }
 }
 
@@ -432,7 +433,7 @@ function showScheduledAppointmentsModal() {
 
     $('#pathway-modal-scheduled-appointments').modal('show');
     let body = document.getElementById('scheduled-appointments-body')
-    
+    body.innerHTML = ""
     for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < PATHWAY_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
         console.log(PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day)
         let p = document.createElement('p')
@@ -476,23 +477,20 @@ function showScheduledAppointmentsModal() {
  * @param { id of the HTML Element which calls the function } id Ex : img-2, img-10
  */
 function requestDeleteActivity(id) {
-    console.log(PATHWAY_APPOINTMENTS)
 
     // We want to get the index of the div to delete  
     // To do this we get number after '-' in the id of the image : (img-1)
     activityIndex = getId(id)
+    PATHWAY_APPOINTMENTS.indexActivityToDelete  = activityIndex
 
     PATHWAY_APPOINTMENTS.modification = "delete"
 
-
     if (PATHWAY_APPOINTMENTS.areAppointmentsDeleted) {
-        PATHWAY_APPOINTMENTS.indexActivityToDelete = activityIndex
         deleteActivity()
     } else {
-        if (verifyScheduledAppointments(PATHWAY.id)) {
-            PATHWAY_APPOINTMENTS.indexActivityToDelete  = activityIndex
-        }
+        verifyScheduledAppointments(PATHWAY.id)     
     }
+
 }
 
 /**
@@ -1030,6 +1028,7 @@ function submitPathway() {
         if (verif) {
             document.getElementById('json-resources-by-activities').value = JSON.stringify(RESOURCES_BY_ACTIVITIES);
             document.getElementById('json-successors').value = JSON.stringify(SUCCESSORS);
+            document.getElementById('are-appointments-deleted').value = PATHWAY_APPOINTMENTS.areAppointmentsDeleted
             btnSubmit.click()
         }
     } else {

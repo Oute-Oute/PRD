@@ -121,10 +121,12 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
+  console.log(document.getElementById("listeAppointments").value);
   document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
   document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
   document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
   document.getElementById("validation-date").value = $_GET("date"); //set the planning date modified
+  document.getElementById("scheduled-appointments").value = document.getElementById("listeAppointments").value;
   isUpdated = true;
 }
 
@@ -200,6 +202,7 @@ function addPathway() {
       listeAppointments[i].scheduled = true;
     }
   }
+  console.log(listeAppointments)
 
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
@@ -502,11 +505,13 @@ function autoAddPathway(){
     activitiesA.push(activityA);
     allActivtiesA.push(firstActivitiesPathway[i].id);
   }
+
+  var eventScheduledTomorrow=false; 
+
   do {
 
     //Creating Activities in FullCalendar
     for (let i = 0; i < activitiesA.length; i++) {
-     
       var activityResourcesArray = [];
       var humanAlreadyScheduled = [];
       var materialAlreadyScheduled = [];
@@ -603,7 +608,6 @@ function autoAddPathway(){
         categoryMaterialResource: categoryMaterialResources,
         categoryHumanResource: categoryHumanResources,
       });
-      console.log(event); 
     }
 
     var successorsActivitiesA = [];
@@ -670,12 +674,14 @@ function autoAddPathway(){
       }
     }
     PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
+    console.log(PathwayBeginDate.getDate().toString(),currentDateStr.substring(8,10))
+    if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
+      eventScheduledTomorrow=true; 
+    }
 
   } while (successorsActivitiesA.length != 0);
   verifyHistoryPush(historyEvents, appointmentid);
   calendar.render();
-
-  $("#add-planning-modal").modal("toggle");
   updateErrorMessages();
 
   calendar.getEvents().forEach((currentEvent) => {
@@ -684,6 +690,16 @@ function autoAddPathway(){
     currentEvent.setEnd(currentEvent.end);
   })
   isUpdated = false;
+  console.log(eventScheduledTomorrow);
+  if(eventScheduledTomorrow==true){
+    console.log(document.getElementById('alert-scheduled-tomorrow').s);
+    document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
+    undoEvent(); 
+  }
+  else{
+    document.getElementById('alert-scheduled-tomorrow').style.display='none';
+    $("#add-planning-modal").modal("toggle");
+  }
 }
 
 function showSelectDate() {
@@ -1256,9 +1272,7 @@ function clearArray(array) {
 /**
  * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
-function undoEvent() {
-  var slotDuration = calendar.getOption('slotDuration');
-  var scrollTime = calendar.getOption('scrollTime');
+function undoEvent() {;
   var zoom = document.getElementById('zoom').value;
 
   if (historyEvents.length != 1) {
