@@ -10,7 +10,7 @@
 	<script src="js/Login/login.js"></script>
 {% endblock %}
 {% block body %}
-	<form method="post">
+	<form method="post" id="connection-form">
 		{% if error %}
 			<div class="alert alert-danger">Erreur : Mot de passe ou nom d'utilisateur erroné</div>
 		{% endif %}

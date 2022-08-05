@@ -1,5 +1,5 @@
 /**
- * Call to verify if the New password is the same as the Confirmation password
+ * Allows to verify if the new password is the same as the confirmation password
  */
 function inputGestion() {
     let newPassword1 = document.getElementById('new_password').value;

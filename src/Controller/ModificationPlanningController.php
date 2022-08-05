@@ -6,10 +6,7 @@ use App\Entity\MaterialResourceScheduled;
 use App\Entity\HumanResourceScheduled;
 use App\Entity\ScheduledActivity;
 use App\Entity\Modification;
-use App\Entity\Unavailability;
-use App\Entity\UnavailabilityHumanResource;
-use App\Entity\UnavailabilityMaterialResource;
-use App\Repository\UnavailabilityMaterialResourceRepository;
+use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\ModificationRepository;
@@ -20,25 +17,23 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ScheduledActivityRepository;
-use App\Repository\UnavailabilityHumanResourceRepository;
-use App\Repository\UserRepository;
-use DateInterval;
-use DateTime;
 use DateTimeZone;
-use Symfony\Component\Validator\Constraints\Length;
 
 
 /**
- * Controller de la page modification du planning
+ * Modification planning controller
  */
 class ModificationPlanningController extends AbstractController
 {
     public $dateModified;
 
+    //Part 1
+    //This part manages the controller (GET and POST)
+
     /**
-     * Fonction pour l'affichage de la page modification planning par la méthode GET
+     * This function build the main page of modification planning and give many informations
      */
-    public function modificationPlanningGet(Request $request, ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, EntityManagerInterface $entityManager): Response
+    public function modificationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
     {
         $english_months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
         $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
@@ -109,567 +104,12 @@ class ModificationPlanningController extends AbstractController
         ]);
     }
 
-    //Fonction vérifiant si une modification a lieu ou non pour le jour souhaité, si c'est le cas l'utilisateur ne peut pas accéder à la page. 
-    public function alertModif($dateModified, $idUser, $doctrine, $settingsRepository)
-    {
-        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
-        $modifications = $modificationRepository->findAll();
-
-        $dateModified = str_replace('T12:00:00', '', $dateModified);
-        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
-
-        $modifAlertTime = 8;
-        foreach($settingsRepository as $setting){
-            $modifAlertTime = intdiv($setting->getAlertmodificationtimer(), 60000);
-        }
-
-        $modifArray = array();
-        $i = 0;
-        foreach ($modifications as $modification) {
-            $modifArray[] = array(
-                'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
-                'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
-                'userId' => ($modification->getUser()->getId())
-            );
-            $usernameModifiying = $doctrine->getRepository("App\Entity\User")->findOneBy(['id' => $modifArray[$i]['userId']])->getUsername();
-
-            $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
-            $interval = $datetimeModified->diff($dateToday);
-
-            $intervalHour = $interval->format('%h');
-            $intervalMinutes = $interval->format('%i');
-
-            if ($modifArray[$i]['dateModified'] == $dateModified) {
-                // ATTENTION, le timer doit être supérieur à celui du popup
-                if ($intervalHour * 60 + $intervalMinutes < $modifAlertTime + 2) {
-                    if ($idUser == $modifArray[$i]['userId']) { // Empeche d'envoyer une erreur si un user quitte et revient
-                        $modificationRepository->remove($modification, true);
-                    }
-                    else {
-                        echo "<script>
-                            if(confirm('Une modification de ".$usernameModifiying." pour le ".$dateModified." est déjà en cours, voulez-vous continuer ?')){
-                                redirect = 1;
-                            }
-                            else{
-                                redirect = 0;
-                                window.location.assign('/ConsultationPlanning');
-                            }
-                        </script>";
-                        return "<script>document.write(redirect);</script>";
-                    }
-                } 
-                else {
-                    // Supprimer la modif dans BDD car trop vieille
-                    $modificationRepository->remove($modification, true);
-                }
-            }
-            $i++;
-        }
-        return true;
-    }
-
-    public function modificationAdd($dateModified, $idUser, $doctrine)
-    {
-        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
-        $userRepository = $doctrine->getRepository("App\Entity\User");
-        $user = $userRepository->findOneBy(['id' => $idUser]);
-
-        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
-        // A enlever plus tard car on est censé être connecté
-        if (!$user) {
-            //dd($user, "Erreur, vous n'êtes pas connecté !");
-        } else {
-            $userRepository->add($user, true);
-
-            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
-            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
-            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
-
-            $modification = new Modification();
-            $modification->setUser($user);
-            $modification->setDatemodif($datetimeModified);
-            $modification->setDatetimemodification($dateToday);
-
-            // ajout dans la bdd
-            $modificationRepository->add($modification, true);
-        }
-    }
-
-    //Renvoie la liste de tous les successors en format JSON
-    public function getSuccessorJSON(ManagerRegistry $doctrine)
-    {
-        $successors = $doctrine->getRepository('App\Entity\Successor')->findAll();
-        $successorsArray = array();
-        foreach ($successors as $succesor) {
-            $successorsArray[] = array(
-                'id' => $succesor->getId(),
-                'idactivitya' => $succesor->getActivitya()->getId(),
-                'idactivityb' => $succesor->getActivityb()->getId(),
-                'delaymin' => $succesor->getDelaymin(),
-                'delaymax' => $succesor->getDelaymax(),
-            );
-        }
-
-        $successorsArrayJSON = new JsonResponse($successorsArray);
-        return $successorsArrayJSON;
-    }
-
-    //Renvoie a liste de toutes les Activity en format JSON
-    public function getActivityJSON(ManagerRegistry $doctrine)
-    {
-        $activities = $doctrine->getRepository('App\Entity\Activity')->findAll();
-        $activitiesArray = array();
-        foreach ($activities as $activity) {
-            $activitiesArray[] = array(
-                'id' => $activity->getId(),
-                'name' => (str_replace(" ", "3aZt3r", $activity->getActivityname())),
-                'duration' => $activity->getDuration(),
-                'idPathway' => $activity->getPathway()->getId()
-            );
-        }
-        $activitiesArrayJSON = new JsonResponse($activitiesArray);
-        return $activitiesArrayJSON;
-    }
- 
-    //Renvoie la liste de tous les rendez-vous pour un jour donné
-    public function getAppointment(ManagerRegistry $doctrine, $date)
-    {
-
-        $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
-        return $appointments;
-    }
-
-    //Renvoie la liste de tous les rendez-vous pour un jour donné en JSON
-    public function getAppointmentJSON(ManagerRegistry $doctrine, $date)
-    {
-        $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
-        $appointmentsArray = array();
-        foreach ($appointments as $appointment) {
-            $earliestappointmenttime = "";
-            if ($appointment->getEarliestappointmenttime() != null) {
-                $earliestappointmenttime = str_replace(" ", "T", $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s'));
-            }
-            $latestappointmenttime = "";
-            if ($appointment->getLatestappointmenttime() != null) {
-                $latestappointmenttime = str_replace(" ", "T", $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s'));
-            }
-            $appointmentsArray[] = array(
-                'id' => $appointment->getId(),
-                'earliestappointmenttime' => $earliestappointmenttime,
-                'latestappointmenttime' => $latestappointmenttime,
-                'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
-                'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
-                'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
-                'scheduled' => $appointment->isScheduled(),
-            );
-        }
-        $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
-        return $appointmentsArrayJSON;
-    }
-
-
-    public function getPatient(ManagerRegistry $doctrine, $id)
-    {
-        //recuperation d'un patient depuis la base de données
-        $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
-        $patientArray = array();
-        $lastname = $patient->getLastname();
-        $firstname = $patient->getFirstname();
-        $title = $lastname . " " . $firstname; //utilisé pour l'affichage fullcalendar
-        $id = $patient->getId();
-        $id = "patient_" . $id;
-        $patientArray[] = array(
-            'id' => (str_replace(" ", "3aZt3r", $id)),
-            'lastname' => (str_replace(" ", "3aZt3r", $lastname)),
-            'firstname' => (str_replace(" ", "3aZt3r", $firstname)),
-            'title' => (str_replace(" ", "3aZt3r", $title))
-        );
-
-        //Conversion des données ressources en json 
-        return $patientArray;
-    }
-
-    //Récupération d'un parcours dans la base de donnée
-    public function getPathway(ManagerRegistry $doctrine, $id)
-    {
-        //recuperation du pathway depuis la base de données
-        $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
-        $pathwayArray = array();
-        $idpath = $pathway->getId();
-        $idpath = "pathway-" . $idpath; //formatage pour fullcalendar
-        //ajout des données du pathway dans un tableau
-        $pathwayArray[] = array(
-            'id' => $idpath,
-            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
-        );
-        return $pathwayArray;
-    }
-
-    //Retourne la liste des HumanResources en format JSON. 
-    public function getHumanResourcesJSON(ManagerRegistry $doctrine)
-    {
-        $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
-        $humanResourcesArray = array();
-
-        if ($humanResources != null) {
-            foreach ($humanResources as $humanResource) {
-                $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $humanResource));
-                $categoriesArray=array();
-                foreach ($categories as $category) {
-                    $categoriesArray[]=array(
-                        'id' => $category->getId(),
-                        'name' => $category->getHumanResourceCategory()->getCategoryname()
-                    );
-                }
-                $humanResourcesArray[] = array(
-                    'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
-                    'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
-                    'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
-                    'categories' => $categoriesArray
-
-                );
-            }
-        }
-        //Conversion des données ressources en json
-        $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
-        return $humanResourcesArrayJson;
-    }
-    /*
-     * @brief This function is the getter of the working hours to display from the database.
-     * @param ManagerRegistry $doctrine
-     * @return array of the resource's data
+    /**
+     * This method recover all informations from modification planning and update database
      */
-    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    public function modificationPlanningValidation(Request $request, AppointmentRepository $appointmentRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
-        global $dateModified;
-        $dateTimeModified = explode("T", $dateModified);
-        $dayWeek = date('w', strtotime($dateTimeModified[0]));
-        //recuperation du pathway depuis la base de données
-        $workingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findOneBy(['humanresource' => $resource, 'dayweek' => $dayWeek]);
-        $workingHoursArray = array();
-        if($workingHours !=null){
-            $dayWorkingHours = $workingHours->getDayweek();
-            //ajout des données du pathway dans un tableau
-            $workingHoursArray[] = [
-                'day' => $dayWorkingHours,
-                'startTime' => ($workingHours->getStarttime()->format('H:i')),
-                'endTime' => ($workingHours->getEndtime()->format('H:i')),
-            ];
-        }
-        else{
-            $workingHoursArray[] = [
-                'day' => $dayWeek,
-                'startTime' => '00:00',
-                'endTime' => '00:00',
-            ];
-        }
-        return $workingHoursArray;
-    }
-
-    //Retourne la liste des MaterialResources en nformat JSON
-    public function getMaterialResourcesJSON(ManagerRegistry $doctrine)
-    {
-        $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
-        $materialResourcesArray = array();
-        if ($materialResources != null) {
-            foreach ($materialResources as $materialResource) {
-                $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResource));
-                $categoriesArray=array();
-                foreach ($categories as $category) {
-                    $categoriesArray[]=array(
-                        'id' => $category->getId(),
-                        'name' => $category->getMaterialResourceCategory()->getCategoryname()
-                    );
-                }
-                $materialResourcesArray[] = array(
-                    'id' => ("material-" . str_replace(" ", "3aZt3r", $materialResource->getId())),
-                    'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
-                    'categories' => $categoriesArray
-                );
-            }
-        }
-        unset($categoriesArray);
-        //Conversion des données ressources en json
-        $materialResourcesArrayJson = new JsonResponse($materialResourcesArray);
-        return $materialResourcesArrayJson;
-    }
-
-/*
-     * @brief This function get the unavailabitity of the material resources.
-     * @param ManagerRegistry $doctrine
-     * @return an array containing the unavailability of the material resources.
-     */
-    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
-        $materialResourcesUnavailableArray = array();
-        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
-            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
-            $resource = "material-" . $resource;
-                $materialResourcesUnavailableArray[] = array(
-                    'description' =>'Ressource Indisponible',
-                    'resourceId' => ($resource),
-                    'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                    'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                    'display'=>'background',
-                    'color'=>'#ff0000',
-                    'type'=>'unavailability'
-                );
-            }
-        return $materialResourcesUnavailableArray;
-    }
-    
-    
-        /*
-     * @brief This function get the unavailabitity of the human resources.
-     * @param ManagerRegistry $doctrine
-     * @return an array containing the unavailability of the human resources.
-     */
-    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
-    {
-        //recuperation du patient depuis la base de données
-    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
-        $humanResourcesUnavailableArray = array();
-        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
-            $resource= $humanResourceUnavailable->getHumanresource()->getId();
-            $resource = "human-" . $resource;
-            $humanResourcesUnavailableArray[] = array(
-                'description' =>'Employé Indisponible',
-                'resourceId' => ($resource),
-                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
-                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
-                'display'=>'background',
-                'color'=>'#ff0000',
-                'type'=>'unavailability'
-            );
-
-
-        }
-        return $humanResourcesUnavailableArray;
-    }
-
-    /*
-     * @brief This function get all the unavailabitity of the material and human resources.
-     * @param ManagerRegistry $doctrine
-     * @return an array containing the unavailability
-     */
-    public function getUnavailabity(ManagerRegistry $doctrine){
-        $humanUnavailabity = $this->getHumanResourceUnavailables($doctrine);
-        $materialUnavailabity = $this->getMaterialResourcesUnavailables($doctrine);
-        $unavailabityArray = array();
-        foreach ($humanUnavailabity as $humanUnavailabity) {
-            array_push($unavailabityArray, $humanUnavailabity);
-        }
-        foreach ($materialUnavailabity as $materialUnavailabity) {
-            array_push($unavailabityArray, $materialUnavailabity);
-        }
-        return $unavailabityArray;
-    }
-
-    //Retourne la liste des Scheduled Activity en format JSON pour un jour donné
-    public function getScheduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
-    {
-        $TodayDate = substr($date, 0, 10);
-
-
-        $scheduledActivities = $SAR->findSchedulerActivitiesByDate($TodayDate);
-        $scheduledActivitiesArray = array();
-        foreach ($scheduledActivities as $scheduledActivity) {
-            //Obtention du nombre de resources matérielles à renseigner pour cette activité
-            $activitiesMaterialResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
-            $quantityMaterialResources = 0;
-            $categoryMaterialResource = array();
-            foreach ($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId) {
-                $categoryMaterialResource[] = array(
-                    'id' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getId(),
-                    'quantity' => $activityMaterialResourcesByActivityId->getQuantity(),
-                    'categoryname' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getCategoryname()
-                );
-                $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResourcesByActivityId->getQuantity();
-            }
-
-            //Obtention du nombre de resources Humaines à renseigner pour cette activité
-            $activitiesHumanResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
-            $quantityHumanResources = 0;
-            $categoryHumanResource = array();
-            foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
-                $categoryHumanResource[] = array(
-                    'id' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getId(),
-                    'quantity' => $activityHumanResourcesByActivityId->getQuantity(),
-                    'categoryname' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getCategoryname()
-                );
-                $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
-            }
-            //Tableau contenant toutes les ressources déja plannifiées pour une activité
-            $scheduledActivitiesResourcesArray = array();
-            //Recherche des ressources Humaines déja plannifiées 
-            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
-            $scheduledActivitesHumanResourcesArray = array();
-            foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
-                $scheduledActivitesHumanResourcesArray[] = array(
-                    'id' => "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId(),
-                    'title' => $scheduledActivitiesHumanResource->getHumanresource()->getHumanresourcename(),
-                );
-                $quantityHumanResources = $quantityHumanResources - 1;
-                array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
-            }
-            //Recherche des ressources matérielles déjà plannifiées. 
-            $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
-            $scheduledActivitiesMaterialResourceArray = array();
-            foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
-                $scheduledActivitiesMaterialResourceArray[] = array(
-                    'id' => "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId(),
-                    'title' => $scheduledActivitiesMaterialResource->getMaterialresource()->getMaterialresourcename(),
-                );
-                $quantityMaterialResources = $quantityMaterialResources - 1;
-                array_push($scheduledActivitiesResourcesArray, "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId());
-            }
-
-
-
-            //Put the number of undefined HumanResources in scheduledActivitiesResourcesArray
-            for ($i = 0; $i < $quantityHumanResources; $i++) {
-                array_push($scheduledActivitiesResourcesArray, "h-default");
-            }
-
-            //Put the number of undefined MaterialResources in scheduledActivitiesResourcesArray
-            for ($i = 0; $i < $quantityMaterialResources; $i++) {
-                array_push($scheduledActivitiesResourcesArray, "m-default");
-            }
-            //formatage des informations à rentrer dans le tableau
-            $start = $scheduledActivity->getStarttime();
-            $day = $scheduledActivity->getAppointment()->getDayappointment();
-            $day = $day->format('Y-m-d');
-            $start = $start->format('H:i:s');
-            $start = $day . "T" . $start;
-            $end = $scheduledActivity->getEndtime();
-            $end = $end->format('H:i:s');
-            $end = $day . "T" . $end;
-            $idAppointment = $scheduledActivity->getAppointment()->getId();
-            $idActivity = $scheduledActivity->getActivity()->getId();
-            $scheduledActivitiesArray[] = array(
-                'id' => (str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
-                'start' => $start,
-                'end' => $end,
-                'title' => ($scheduledActivity->getActivity()->getActivityname()),
-                'resourceIds' => $scheduledActivitiesResourcesArray,
-                'appointment' => $idAppointment,
-                'activity' => $idActivity,
-                'patient' => $scheduledActivity->getAppointment()->getPatient()->getLastname() . " " . $scheduledActivity->getAppointment()->getPatient()->getFirstname(),
-                'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
-                'materialResources' => ($scheduledActivitiesMaterialResourceArray),
-                'humanResources' => ($scheduledActivitesHumanResourcesArray),
-                'categoryMaterialResource' => $categoryMaterialResource,
-                'categoryHumanResource' => $categoryHumanResource,
-                'type' => "activity",
-                'description'=>''
-            );
-        }
-        $unavailabityArray = $this->getUnavailabity($doctrine);
-        $scheduledActivitiesArray = array_merge($scheduledActivitiesArray, $unavailabityArray);
-        $scheduledActivitiesArrayJson = new JsonResponse($scheduledActivitiesArray);
-        return $scheduledActivitiesArrayJson;
-    }
-
-    //Retourne les ActivityHuman Ressource en format JSON
-    public function getActivityHumanResourcesJSON(ManagerRegistry $doctrine)
-    {
-        $activitiesHumanResources = $doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll();
-        $activitiesHumanResourcesArray = array();
-        foreach ($activitiesHumanResources as $activityHumanResources) {
-            $activitiesHumanResourcesArray[] = array(
-                'id' => $activityHumanResources->getId(),
-                'activityId' => $activityHumanResources->getActivity()->getId(),
-                'humanResourceCategoryId' => $activityHumanResources->getHumanresourcecategory()->getId(),
-                'quantity' => $activityHumanResources->getQuantity(),
-            );
-        }
-        return new JsonResponse($activitiesHumanResourcesArray);
-    }
-
-    //Retouorne les ActivityMaterialResources en format JSON
-    public function getActivityMaterialResourcesJSON(ManagerRegistry $doctrine)
-    {
-        $activitiesMaterialResources = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();
-        $activitiesMaterialResourcesArray = array();
-        foreach ($activitiesMaterialResources as $activityMaterialResources) {
-            $activitiesMaterialResourcesArray[] = array(
-                'id' => $activityMaterialResources->getId(),
-                'activityId' => $activityMaterialResources->getActivity()->getId(),
-                'materialResourceCategoryId' => $activityMaterialResources->getMaterialresourcecategory()->getId(),
-                'quantity' => $activityMaterialResources->getQuantity(),
-            );
-        }
-        return new JsonResponse($activitiesMaterialResourcesArray);
-    }
-
-    public function getCategoryOfMaterialResource(ManagerRegistry $doctrine)
-    {
-        $categoryOfMaterialResources = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
-        $categoryOfMaterialResourceArray = array();
-        foreach($categoryOfMaterialResources as $categoryOfMaterialResource)
-        {
-            $categoryOfMaterialResourceArray[] = array(
-                'idcategory' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
-                'idresource' => 'material-' . $categoryOfMaterialResource->getMaterialresource()->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()))
-            );
-        }
-        return new JsonResponse($categoryOfMaterialResourceArray);
-    }
-
-    public function getCategoryMaterialResource(ManagerRegistry $doctrine)
-    {
-        $materialResourcesCategory = $doctrine->getRepository("App\Entity\MaterialResourceCategory")->findAll();
-        $materialResourcesCategoryArray = array();
-        foreach($materialResourcesCategory as $materialResourceCategory)
-        {
-            $materialResourcesCategoryArray[] = array(
-                'idcategory' => $materialResourceCategory->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $materialResourceCategory->getCategoryname()))
-            );
-        }
-        return new JsonResponse($materialResourcesCategoryArray);
-    }
-
-    public function getCategoryHumanResource(ManagerRegistry $doctrine)
-    {
-        $humanResourcesCategory = $doctrine->getRepository("App\Entity\HumanResourceCategory")->findAll();
-        $humanResourcesCategoryArray = array();
-        foreach($humanResourcesCategory as $humanResourceCategory)
-        {
-            $humanResourcesCategoryArray[] = array(
-                'idcategory' => $humanResourceCategory->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $humanResourceCategory->getCategoryname()))
-            );
-        }
-        return new JsonResponse($humanResourcesCategoryArray);
-    }
-
-    public function getCategoryOfHumanResource(ManagerRegistry $doctrine)
-    {
-        $categoryOfHumanResources = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
-        $categoryOfHumanResourceArray = array();
-        foreach($categoryOfHumanResources as $categoryOfHumanResource)
-        {
-            $categoryOfHumanResourceArray[] = array(
-                'idcategory' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
-                'idresource' => 'human-' . $categoryOfHumanResource->getHumanresource()->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()))
-            );
-        }
-        return new JsonResponse($categoryOfHumanResourceArray);
-    }
-
-    //Appelée lors de l'appui du bouton valider
-    //Sauvegarde en BDD les modifications de l'utilisateur
-    public function modificationPlanningValidation(Request $request, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
-    {
-        //récupération des events et des ressources depuis le twig
+        //recover all informations from twig file
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
         $listScheduledAppointments = json_decode($request->request->get("scheduled-appointments"));
@@ -682,11 +122,11 @@ class ModificationPlanningController extends AbstractController
             {
                 $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $oneScheduledAppointment->id]);
                 $appointment->setScheduled($oneScheduledAppointment->scheduled);
-                $doctrine->getRepository("App\Entity\Appointment")->add($appointment, true);
+                $appointmentRepository->add($appointment, true);
             }
         }
-
-        //création d'une nouvelle liste fusionnant les deux listes précédentes : events et ressources
+        
+        //we associate the events and the resources for make a unique list
         $listScheduledEvent = array();
         for ($index = 0; $index < sizeof($listEvent); $index++) {
             $newScheduledEvent = array();
@@ -890,6 +330,105 @@ class ModificationPlanningController extends AbstractController
         return $this->redirect("/ModificationPlanning?date=" . $date . "&id=" . $userId);
     }
 
+
+    //Part 2
+    //This part manages the modification data
+
+    /**
+     * This function verified if a modification for this date is already in progress
+     */
+    public function alertModif($dateModified, $idUser, $doctrine, $settingsRepository)
+    {
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $modifications = $modificationRepository->findAll();
+
+        $dateModified = str_replace('T12:00:00', '', $dateModified);
+        $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+
+        $modifAlertTime = 8;
+        foreach($settingsRepository as $setting){
+            $modifAlertTime = intdiv($setting->getAlertmodificationtimer(), 60000);
+        }
+
+        $modifArray = array();
+        $i = 0;
+        foreach ($modifications as $modification) {
+            $modifArray[] = array(
+                'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
+                'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
+                'userId' => ($modification->getUser()->getId())
+            );
+            $usernameModifiying = $doctrine->getRepository("App\Entity\User")->findOneBy(['id' => $modifArray[$i]['userId']])->getUsername();
+
+            $datetimeModified = new \DateTime(date('Y-m-d H:i:s', strtotime($modifArray[$i]['dateTimeModified'])));
+            $interval = $datetimeModified->diff($dateToday);
+
+            $intervalHour = $interval->format('%h');
+            $intervalMinutes = $interval->format('%i');
+
+            if ($modifArray[$i]['dateModified'] == $dateModified) {
+                // ATTENTION, le timer doit être supérieur à celui du popup
+                if ($intervalHour * 60 + $intervalMinutes < $modifAlertTime + 2) {
+                    if ($idUser == $modifArray[$i]['userId']) { // Empeche d'envoyer une erreur si un user quitte et revient
+                        $modificationRepository->remove($modification, true);
+                    }
+                    else {
+                        echo "<script>
+                            if(confirm('Une modification de ".$usernameModifiying." pour le ".$dateModified." est déjà en cours, voulez-vous continuer ?')){
+                                redirect = 1;
+                            }
+                            else{
+                                redirect = 0;
+                                window.location.assign('/ConsultationPlanning');
+                            }
+                        </script>";
+                        return "<script>document.write(redirect);</script>";
+                    }
+                } 
+                else {
+                    // Supprimer la modif dans BDD car trop vieille
+                    $modificationRepository->remove($modification, true);
+                }
+            }
+            $i++;
+        }
+        return true;
+    }
+
+    /**
+     * This function add a data to the table Modification for the user
+     */
+    public function modificationAdd($dateModified, $idUser, $doctrine)
+    {
+        $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $userRepository = $doctrine->getRepository("App\Entity\User");
+        $user = $userRepository->findOneBy(['id' => $idUser]);
+
+        // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
+        // A enlever plus tard car on est censé être connecté
+        if (!$user) {
+            //dd($user, "Erreur, vous n'êtes pas connecté !");
+        } else {
+            $userRepository->add($user, true);
+
+            $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
+            $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));
+            $dateToday = new \DateTime($dateToday->format('Y-m-d H:i:s'));
+
+            $modification = new Modification();
+            $modification->setUser($user);
+            $modification->setDatemodif($datetimeModified);
+            $modification->setDatetimemodification($dateToday);
+
+            // ajout dans la bdd
+            $modificationRepository->add($modification, true);
+        }
+    }
+
+    /**
+     * This function delete the data modification when the user leave modification planning and then redirect to consultation planning
+     */
     public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')
     {
         $dateModified = $request->request->get("validation-date");
@@ -904,7 +443,6 @@ class ModificationPlanningController extends AbstractController
         }
         $dateModified = str_replace('T12:00:00', '', $dateModified);
 
-        //$modificationRepository = $doctrine->getRepository("App\Entity\Modification");
         $modificationRepository = new ModificationRepository($doctrine);
         $modifications = $modificationRepository->findAll();
         $i = 0;
@@ -918,4 +456,540 @@ class ModificationPlanningController extends AbstractController
     }
 
 
+    //Part 3
+    //This part manages the functions use for the page creation
+
+    //Part 3.1
+    //This part manages the functions use for get the data in JSON format
+
+    /**
+     * This function recover all the successors from the database and return the data in a JSON format for JS
+     * @return successorsArrayJSON an array in JSON format with all the data
+     */
+    public function getSuccessorJSON(ManagerRegistry $doctrine)
+    {
+        $successors = $doctrine->getRepository('App\Entity\Successor')->findAll();
+        $successorsArray = array();
+        foreach ($successors as $succesor) {
+            $successorsArray[] = array(
+                'id' => $succesor->getId(),
+                'idactivitya' => $succesor->getActivitya()->getId(),
+                'idactivityb' => $succesor->getActivityb()->getId(),
+                'delaymin' => $succesor->getDelaymin(),
+                'delaymax' => $succesor->getDelaymax(),
+            );
+        }
+
+        $successorsArrayJSON = new JsonResponse($successorsArray);
+        return $successorsArrayJSON;
+    }
+
+    /**
+     * This function recover all the activities from the database and return the data in a JSON format for JS
+     * @return activitiesArrayJSON an array in JSON format with all the data
+     */
+    public function getActivityJSON(ManagerRegistry $doctrine)
+    {
+        $activities = $doctrine->getRepository('App\Entity\Activity')->findAll();
+        $activitiesArray = array();
+        foreach ($activities as $activity) {
+            $activitiesArray[] = array(
+                'id' => $activity->getId(),
+                'name' => (str_replace(" ", "3aZt3r", $activity->getActivityname())),
+                'duration' => $activity->getDuration(),
+                'idPathway' => $activity->getPathway()->getId()
+            );
+        }
+        $activitiesArrayJSON = new JsonResponse($activitiesArray);
+        return $activitiesArrayJSON;
+    }
+
+    /**
+     * This function recover all the appointments for a date given and return the data in a JSON format for JS
+     * @return appointmentsArrayJSON an array in JSON format with all the data
+     */
+    public function getAppointmentJSON(ManagerRegistry $doctrine, $date)
+    {
+        $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
+        $appointmentsArray = array();
+        foreach ($appointments as $appointment) {
+            $earliestappointmenttime = "";
+            if ($appointment->getEarliestappointmenttime() != null) {
+                $earliestappointmenttime = str_replace(" ", "T", $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s'));
+            }
+            $latestappointmenttime = "";
+            if ($appointment->getLatestappointmenttime() != null) {
+                $latestappointmenttime = str_replace(" ", "T", $appointment->getLatestappointmenttime()->format('Y-m-d H:i:s'));
+            }
+            $appointmentsArray[] = array(
+                'id' => $appointment->getId(),
+                'earliestappointmenttime' => $earliestappointmenttime,
+                'latestappointmenttime' => $latestappointmenttime,
+                'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
+                'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
+                'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'scheduled' => $appointment->isScheduled(),
+            );
+        }
+        $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
+        return $appointmentsArrayJSON;
+    }
+
+    /**
+     * This function recover all the human resources and return the data in a JSON format for JS
+     * @return humanResourcesArrayJson an array in JSON format with all the data
+     */
+    public function getHumanResourcesJSON(ManagerRegistry $doctrine)
+    {
+        $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
+        $humanResourcesArray = array();
+
+        if ($humanResources != null) {
+            foreach ($humanResources as $humanResource) {
+                $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $humanResource));
+                $categoriesArray=array();
+                foreach ($categories as $category) {
+                    $categoriesArray[]=array(
+                        'id' => $category->getId(),
+                        'name' => $category->getHumanResourceCategory()->getCategoryname()
+                    );
+                }
+                $humanResourcesArray[] = array(
+                    'id' => ("human-" . str_replace(" ", "3aZt3r", $humanResource->getId())),
+                    'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
+                    'workingHours' => ($this->getWorkingHours($doctrine, $humanResource)),
+                    'categories' => $categoriesArray
+
+                );
+            }
+        }
+        //Conversion des données ressources en json
+        $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
+        return $humanResourcesArrayJson;
+    }
+
+    /**
+     * This function recover all the material resources and return the data in a JSON format for JS
+     * @return materialResourcesArrayJson an array in JSON format with all the data
+     */
+    public function getMaterialResourcesJSON(ManagerRegistry $doctrine)
+    {
+        $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
+        $materialResourcesArray = array();
+        if ($materialResources != null) {
+            foreach ($materialResources as $materialResource) {
+                $categories=$doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $materialResource));
+                $categoriesArray=array();
+                foreach ($categories as $category) {
+                    $categoriesArray[]=array(
+                        'id' => $category->getId(),
+                        'name' => $category->getMaterialResourceCategory()->getCategoryname()
+                    );
+                }
+                $materialResourcesArray[] = array(
+                    'id' => ("material-" . str_replace(" ", "3aZt3r", $materialResource->getId())),
+                    'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
+                    'categories' => $categoriesArray
+                );
+            }
+        }
+        unset($categoriesArray);
+        //Conversion des données ressources en json
+        $materialResourcesArrayJson = new JsonResponse($materialResourcesArray);
+        return $materialResourcesArrayJson;
+    }
+
+    /**
+     * This function recover all the relationships between each activity and each of its associated human resources 
+     * and return the data in a JSON format for JS
+     * @return activitiesHumanResourcesArrayJSON an array in JSON format with all the data
+     */
+    public function getActivityHumanResourcesJSON(ManagerRegistry $doctrine)
+    {
+        $activitiesHumanResources = $doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll();
+        $activitiesHumanResourcesArray = array();
+        foreach ($activitiesHumanResources as $activityHumanResources) {
+            $activitiesHumanResourcesArray[] = array(
+                'id' => $activityHumanResources->getId(),
+                'activityId' => $activityHumanResources->getActivity()->getId(),
+                'humanResourceCategoryId' => $activityHumanResources->getHumanresourcecategory()->getId(),
+                'quantity' => $activityHumanResources->getQuantity(),
+            );
+        }
+        $activitiesHumanResourcesArrayJSON = new JsonResponse($activitiesHumanResourcesArray);
+        return $activitiesHumanResourcesArrayJSON;
+    }
+
+    /**
+     * This function recover all the relationships between each activity and each of its associated material resources 
+     * and return the data in a JSON format for JS
+     * @return activitiesMaterialResourcesArrayJSON an array in JSON format with all the data
+     */
+    public function getActivityMaterialResourcesJSON(ManagerRegistry $doctrine)
+    {
+        $activitiesMaterialResources = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();
+        $activitiesMaterialResourcesArray = array();
+        foreach ($activitiesMaterialResources as $activityMaterialResources) {
+            $activitiesMaterialResourcesArray[] = array(
+                'id' => $activityMaterialResources->getId(),
+                'activityId' => $activityMaterialResources->getActivity()->getId(),
+                'materialResourceCategoryId' => $activityMaterialResources->getMaterialresourcecategory()->getId(),
+                'quantity' => $activityMaterialResources->getQuantity(),
+            );
+        }
+        $activitiesMaterialResourcesArrayJSON = new JsonResponse($activitiesMaterialResourcesArray);
+        return $activitiesMaterialResourcesArrayJSON;
+    }
+
+    /**
+     * This function set all data needed for create all event in fullcalendar corresponding to each scheduled activity
+     * @return scheduledActivitiesArrayJSON an array in JSON format with all the data
+     */
+    public function getScheduledActivity(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR, $date)
+    {
+        $TodayDate = substr($date, 0, 10);
+
+
+        $scheduledActivities = $SAR->findSchedulerActivitiesByDate($TodayDate);
+        $scheduledActivitiesArray = array();
+        foreach ($scheduledActivities as $scheduledActivity) {
+            //Obtention du nombre de resources matérielles à renseigner pour cette activité
+            $activitiesMaterialResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
+            $quantityMaterialResources = 0;
+            $categoryMaterialResource = array();
+            foreach ($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId) {
+                $categoryMaterialResource[] = array(
+                    'id' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getId(),
+                    'quantity' => $activityMaterialResourcesByActivityId->getQuantity(),
+                    'categoryname' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getCategoryname()
+                );
+                $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResourcesByActivityId->getQuantity();
+            }
+
+            //Obtention du nombre de resources Humaines à renseigner pour cette activité
+            $activitiesHumanResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
+            $quantityHumanResources = 0;
+            $categoryHumanResource = array();
+            foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
+                $categoryHumanResource[] = array(
+                    'id' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getId(),
+                    'quantity' => $activityHumanResourcesByActivityId->getQuantity(),
+                    'categoryname' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getCategoryname()
+                );
+                $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
+            }
+            //Tableau contenant toutes les ressources déja plannifiées pour une activité
+            $scheduledActivitiesResourcesArray = array();
+            //Recherche des ressources Humaines déja plannifiées 
+            $scheduledActivitiesHumanResources = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+            $scheduledActivitesHumanResourcesArray = array();
+            foreach ($scheduledActivitiesHumanResources as $scheduledActivitiesHumanResource) {
+                $scheduledActivitesHumanResourcesArray[] = array(
+                    'id' => "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId(),
+                    'title' => $scheduledActivitiesHumanResource->getHumanresource()->getHumanresourcename(),
+                );
+                $quantityHumanResources = $quantityHumanResources - 1;
+                array_push($scheduledActivitiesResourcesArray, "human-" . $scheduledActivitiesHumanResource->getHumanresource()->getId());
+            }
+            //Recherche des ressources matérielles déjà plannifiées. 
+            $scheduledActivitiesMaterialResources = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy((['scheduledactivity' => $scheduledActivity->getId()]));
+            $scheduledActivitiesMaterialResourceArray = array();
+            foreach ($scheduledActivitiesMaterialResources as $scheduledActivitiesMaterialResource) {
+                $scheduledActivitiesMaterialResourceArray[] = array(
+                    'id' => "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId(),
+                    'title' => $scheduledActivitiesMaterialResource->getMaterialresource()->getMaterialresourcename(),
+                );
+                $quantityMaterialResources = $quantityMaterialResources - 1;
+                array_push($scheduledActivitiesResourcesArray, "material-" . $scheduledActivitiesMaterialResource->getMaterialresource()->getId());
+            }
+
+
+
+            //Put the number of undefined HumanResources in scheduledActivitiesResourcesArray
+            for ($i = 0; $i < $quantityHumanResources; $i++) {
+                array_push($scheduledActivitiesResourcesArray, "h-default");
+            }
+
+            //Put the number of undefined MaterialResources in scheduledActivitiesResourcesArray
+            for ($i = 0; $i < $quantityMaterialResources; $i++) {
+                array_push($scheduledActivitiesResourcesArray, "m-default");
+            }
+            //formatage des informations à rentrer dans le tableau
+            $start = $scheduledActivity->getStarttime();
+            $day = $scheduledActivity->getAppointment()->getDayappointment();
+            $day = $day->format('Y-m-d');
+            $start = $start->format('H:i:s');
+            $start = $day . "T" . $start;
+            $end = $scheduledActivity->getEndtime();
+            $end = $end->format('H:i:s');
+            $end = $day . "T" . $end;
+            $idAppointment = $scheduledActivity->getAppointment()->getId();
+            $idActivity = $scheduledActivity->getActivity()->getId();
+            $scheduledActivitiesArray[] = array(
+                'id' => (str_replace(" ", "3aZt3r", $scheduledActivity->getId())),
+                'start' => $start,
+                'end' => $end,
+                'title' => ($scheduledActivity->getActivity()->getActivityname()),
+                'resourceIds' => $scheduledActivitiesResourcesArray,
+                'appointment' => $idAppointment,
+                'activity' => $idActivity,
+                'patient' => $scheduledActivity->getAppointment()->getPatient()->getLastname() . " " . $scheduledActivity->getAppointment()->getPatient()->getFirstname(),
+                'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
+                'materialResources' => ($scheduledActivitiesMaterialResourceArray),
+                'humanResources' => ($scheduledActivitesHumanResourcesArray),
+                'categoryMaterialResource' => $categoryMaterialResource,
+                'categoryHumanResource' => $categoryHumanResource,
+                'type' => "activity",
+                'description'=>''
+            );
+        }
+        $unavailabityArray = $this->getUnavailabity($doctrine);
+        $scheduledActivitiesArray = array_merge($scheduledActivitiesArray, $unavailabityArray);
+        $scheduledActivitiesArrayJSON = new JsonResponse($scheduledActivitiesArray);
+        return $scheduledActivitiesArrayJSON;
+    }
+
+    /**
+     * This function recover all category of material resource from the database and return an array in JSON format for JS
+     * @return categoryOfMaterialResourceArrayJSON an array in JSON format with all the data
+     */
+    public function getCategoryOfMaterialResource(ManagerRegistry $doctrine)
+    {
+        $categoryOfMaterialResources = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
+        $categoryOfMaterialResourceArray = array();
+        foreach($categoryOfMaterialResources as $categoryOfMaterialResource)
+        {
+            $categoryOfMaterialResourceArray[] = array(
+                'idcategory' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
+                'idresource' => 'material-' . $categoryOfMaterialResource->getMaterialresource()->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()))
+            );
+        }
+        $categoryOfMaterialResourceArrayJSON = new JsonResponse($categoryOfMaterialResourceArray);
+        return $categoryOfMaterialResourceArrayJSON;
+    }
+
+    /**
+     * This function recover all category of human resource from the database and return an array in JSON format for JS
+     * @return categoryOfHumanResourceArrayJSON an array in JSON format with all the data
+     */
+    public function getCategoryOfHumanResource(ManagerRegistry $doctrine)
+    {
+        $categoryOfHumanResources = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
+        $categoryOfHumanResourceArray = array();
+        foreach($categoryOfHumanResources as $categoryOfHumanResource)
+        {
+            $categoryOfHumanResourceArray[] = array(
+                'idcategory' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
+                'idresource' => 'human-' . $categoryOfHumanResource->getHumanresource()->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()))
+            );
+        }
+        $categoryOfHumanResourceArrayJSON = new JsonResponse($categoryOfHumanResourceArray);
+        return $categoryOfHumanResourceArrayJSON;
+    }
+
+    /**
+     * This function recover all category material resource from the database and return an array in JSON format for JS
+     * @return materialResourcesCategoryArrayJSON an array in JSON format with all the data
+     */
+    public function getCategoryMaterialResource(ManagerRegistry $doctrine)
+    {
+        $materialResourcesCategory = $doctrine->getRepository("App\Entity\MaterialResourceCategory")->findAll();
+        $materialResourcesCategoryArray = array();
+        foreach($materialResourcesCategory as $materialResourceCategory)
+        {
+            $materialResourcesCategoryArray[] = array(
+                'idcategory' => $materialResourceCategory->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $materialResourceCategory->getCategoryname()))
+            );
+        }
+        $materialResourcesCategoryArrayJSON = new JsonResponse($materialResourcesCategoryArray);
+        return $materialResourcesCategoryArrayJSON;
+    }
+
+    /**
+     * This function recover all category human resource from the database and return an array in JSON format for JS
+     * @return humanResourcesCategoryArrayJSON an array in JSON format with all the data
+     */
+    public function getCategoryHumanResource(ManagerRegistry $doctrine)
+    {
+        $humanResourcesCategory = $doctrine->getRepository("App\Entity\HumanResourceCategory")->findAll();
+        $humanResourcesCategoryArray = array();
+        foreach($humanResourcesCategory as $humanResourceCategory)
+        {
+            $humanResourcesCategoryArray[] = array(
+                'idcategory' => $humanResourceCategory->getId(),
+                'categoryname' => (str_replace(" ", "3aZt3r", $humanResourceCategory->getCategoryname()))
+            );
+        }
+        $humanResourcesCategoryArrayJSON = new JsonResponse($humanResourcesCategoryArray);
+        return $humanResourcesCategoryArrayJSON;
+    }
+ 
+
+    //Part 3.2
+    //This part manages the functions use for get the data in an array
+
+    /**
+     * This function recover all the appointments for a date given and return an array with the data
+     * @return appointments an array with all the data
+     */
+    public function getAppointment(ManagerRegistry $doctrine, $date)
+    {
+
+        $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
+        return $appointments;
+    }
+
+    /**
+     * This function recover a patient by his identifier from the database and return an array with the data
+     * @return patientArray an array with all data related to it
+     */
+    public function getPatient(ManagerRegistry $doctrine, $id)
+    {
+        //recuperation d'un patient depuis la base de données
+        $patient = $doctrine->getRepository("App\Entity\Patient")->findOneBy(array('id' => $id));
+        $patientArray = array();
+        $lastname = $patient->getLastname();
+        $firstname = $patient->getFirstname();
+        $title = $lastname . " " . $firstname; //utilisé pour l'affichage fullcalendar
+        $id = $patient->getId();
+        $id = "patient_" . $id;
+        $patientArray[] = array(
+            'id' => (str_replace(" ", "3aZt3r", $id)),
+            'lastname' => (str_replace(" ", "3aZt3r", $lastname)),
+            'firstname' => (str_replace(" ", "3aZt3r", $firstname)),
+            'title' => (str_replace(" ", "3aZt3r", $title))
+        );
+
+        //Conversion des données ressources en json 
+        return $patientArray;
+    }
+
+    /**
+     * This function recover a pathway by his identifier from the database and return an array with the data
+     * @return pathwayArray an array with all data related to it
+     */
+    public function getPathway(ManagerRegistry $doctrine, $id)
+    {
+        //recuperation du pathway depuis la base de données
+        $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
+        $pathwayArray = array();
+        $idpath = $pathway->getId();
+        $idpath = "pathway-" . $idpath; //formatage pour fullcalendar
+        //ajout des données du pathway dans un tableau
+        $pathwayArray[] = array(
+            'id' => $idpath,
+            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
+        );
+        return $pathwayArray;
+    }
+
+    /**
+     * This function is the getter of the working hours to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        global $dateModified;
+        $dateTimeModified = explode("T", $dateModified);
+        $dayWeek = date('w', strtotime($dateTimeModified[0]));
+        //recuperation du pathway depuis la base de données
+        $workingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findOneBy(['humanresource' => $resource, 'dayweek' => $dayWeek]);
+        $workingHoursArray = array();
+        if($workingHours !=null){
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = [
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+            ];
+        }
+        else{
+            $workingHoursArray[] = [
+                'day' => $dayWeek,
+                'startTime' => '00:00',
+                'endTime' => '00:00',
+            ];
+        }
+        return $workingHoursArray;
+    }
+
+    /**
+     * This function get the unavailabitity of the material resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the material resources.
+     */
+    public function getMaterialResourcesUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $materialResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
+        $materialResourcesUnavailableArray = array();
+        foreach ($materialResourcesUnavailable as $materialResourceUnavailable) {
+            $resource= $materialResourceUnavailable->getMaterialresource()->getId();
+            $resource = "material-" . $resource;
+                $materialResourcesUnavailableArray[] = array(
+                    'description' =>'Ressource Indisponible',
+                    'resourceId' => ($resource),
+                    'start' => ($materialResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                    'end' => ($materialResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                    'display'=>'background',
+                    'color'=>'#ff0000',
+                    'type'=>'unavailability'
+                );
+            }
+        return $materialResourcesUnavailableArray;
+    }
+    
+    
+    /**
+     * This function get the unavailabitity of the human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability of the human resources.
+     */
+    public function getHumanResourceUnavailables(ManagerRegistry $doctrine)
+    {
+        //recuperation du patient depuis la base de données
+    $humanResourcesUnavailable = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
+        $humanResourcesUnavailableArray = array();
+        foreach ($humanResourcesUnavailable as $humanResourceUnavailable) {
+            $resource= $humanResourceUnavailable->getHumanresource()->getId();
+            $resource = "human-" . $resource;
+            $humanResourcesUnavailableArray[] = array(
+                'description' =>'Employé Indisponible',
+                'resourceId' => ($resource),
+                'start' => ($humanResourceUnavailable->getUnavailability()->getStartdatetime()->format('Y-m-d H:i:s')),
+                'end' => ($humanResourceUnavailable->getUnavailability()->getEnddatetime()->format('Y-m-d H:i:s')),
+                'display'=>'background',
+                'color'=>'#ff0000',
+                'type'=>'unavailability'
+            );
+
+
+        }
+        return $humanResourcesUnavailableArray;
+    }
+
+    /**
+     * This function get all the unavailabitity of the material and human resources.
+     * @param ManagerRegistry $doctrine
+     * @return an array containing the unavailability
+     */
+    public function getUnavailabity(ManagerRegistry $doctrine){
+        $humanUnavailabity = $this->getHumanResourceUnavailables($doctrine);
+        $materialUnavailabity = $this->getMaterialResourcesUnavailables($doctrine);
+        $unavailabityArray = array();
+        foreach ($humanUnavailabity as $humanUnavailabity) {
+            array_push($unavailabityArray, $humanUnavailabity);
+        }
+        foreach ($materialUnavailabity as $materialUnavailabity) {
+            array_push($unavailabityArray, $materialUnavailabity);
+        }
+        return $unavailabityArray;
+    }
 }
