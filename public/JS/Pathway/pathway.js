@@ -885,6 +885,13 @@ function showActivitiesPathway() {
  */
 function hideActivitiesPathway(){
     deleteSuccessors();
+    deleteSuccessors(0);
+    var divContent = document.getElementById('divContent');
+    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+    for(i = 0; i < activities.length; i++){
+        activities[i].style.display = 'none';
+    }
+    $('#edit-pathway-modal-activities').modal("hide");
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
@@ -1283,9 +1290,12 @@ function deleteSuccessor(id) {
 /**
  * Delete all successors and arrows
  */
-function deleteSuccessors(){
+function deleteSuccessors(fullReset){
     NB_SUCCESSOR = 0;
-    SUCCESSORS = new Array()
+    SUCCESSORS = new Array();
+    if (!fullReset) {
+        initSuccessorsList();
+    }
     deleteArrows();
     fillSuccessorList();
 }
