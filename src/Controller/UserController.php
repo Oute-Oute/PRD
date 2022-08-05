@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @file        UserController.php
+ * @brief       Contains the functions that handle the users in the database
+ * @date        2022
+ */
 namespace App\Controller;
 
 use App\Entity\User;
@@ -13,6 +17,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 
 class UserController extends AbstractController

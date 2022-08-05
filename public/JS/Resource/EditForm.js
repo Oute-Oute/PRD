@@ -13,7 +13,7 @@ var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 
 document.addEventListener('DOMContentLoaded', () => {
     if(sPage == 'human-resources') {
-
+        //Gettings JSON object lists when the page is loaded. Content loaded is accorded to the resource page loaded
         WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
         CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
         UNAVAILABILITIES_HUMAN = JSON.parse(document.getElementById('unavailabilities-human-resource').value)
@@ -30,10 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
    
 })
 
-function edit__disableSubmit() {
-    let btnSubmit = document.getElementById('edit--submit')
-    btnSubmit.disabled=true
-}
 
 /**
  * Permet de supprimer un select dans la liste déroulante 
@@ -79,22 +75,15 @@ function formatDate(date) {
   }
 
 /**
- * Permet d'afficher la fenêtre modale d'édition
- * => remplit les inputs suivants :
- * Nombre d'activité déjà présentes
- * Id du pathway
- * Nom du pathway
- * Les noms et durée des activités déjà présentes dans le pathway
+ * Allows to display the edit modal of a human resource
  */
 function showEditModalFormHuman(id, name){
-        //let WORKING_HOURS_FILTERED = WORKING_HOURS.filter(WORKING_HOURS[0].humanresource_id => index >= 0);
         var WORKING_HOURS_FILTERED =  WORKING_HOURS.filter(function(WORKING_HOUR) {
             return WORKING_HOUR.humanresource_id == id;
         });
 
 
     SELECT_ID_EDIT = 0;
-    // Affichage de la fenetre modale 
     $('#edit--human-resource-modal').modal("show");
     let categoriesContainer = document.getElementById('edit--categories-container');
 
@@ -157,9 +146,6 @@ function showEditModalFormHuman(id, name){
                 break;
         }
     }
-    /*for (let y = 0; y < 6; y++){
-        beginHours[y]
-    }*/
 
     NB_CATEGORY_EDIT = 0;
     let categoriesId = []
@@ -168,14 +154,6 @@ function showEditModalFormHuman(id, name){
         categoriesId.push(CATEGORIES_BY_HUMAN_RESOURCES[j].humanresourcecategory_id)
         }
     }
-
-    /*for (let y = 0; y <= 6; y++){
-        beginHours.children[y].value = currentTime
-    }*/
-    //TODO : check pq erreur dans console, mettre la length -1 dans le for?
-    //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
-
-
 
     for (let i = 0; i < categoriesContainer.children.length; i++) {
         categoriesContainer.children[i].children[0].checked = false;
@@ -189,13 +167,8 @@ function showEditModalFormHuman(id, name){
 }
 
 /**
-* Permet d'afficher la fenêtre modale d'édition
-* => remplit les inputs suivants :
-* Nombre d'activité déjà présentes
-* Id du pathway
-* Nom du pathway
-* Les noms et durée des activités déjà présentes dans le pathway
-*/
+ * Allows to display an edit modal form of a selected material resource
+ */
 function showEditModalFormMaterial(id, name, index){
     SELECT_ID_EDIT = 0;
     // Affichage de la fenetre modale 
@@ -212,14 +185,6 @@ function showEditModalFormMaterial(id, name, index){
         }
     }
 
-    /*for (let y = 0; y <= 6; y++){
-        beginHours.children[y].value = currentTime
-    }*/
-    //TODO : check pq erreur dans console, mettre la length -1 dans le for?
-    //check aussi si avec le -1 ça met qd même la dernière categ de la liste si cochée
-
-
-
     for (let i = 0; i < categoriesContainer.children.length; i++) {
         categoriesContainer.children[i].children[0].checked = false;
         if(categoriesId.includes(Number(categoriesContainer.children[i].children[0].value))) {
@@ -230,7 +195,9 @@ function showEditModalFormMaterial(id, name, index){
 }
 
 
-
+/**
+ * Allows to launch an ajax request to delete a choosed unavailabilitiy of a human resource
+ */
 function deleteHumanUnavailability(button) {
 
     let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
@@ -253,6 +220,10 @@ function deleteHumanUnavailability(button) {
 }
 }
 
+
+/**
+ * Allows to launch an ajax request to delete a choosed unavailabilitiy of a material resource
+ */
 function deleteMaterialUnavailability(button) {
 
     let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
@@ -276,6 +247,9 @@ function deleteMaterialUnavailability(button) {
 }
 }
 
+/**
+ * Allows to display the unavailabilities of a human resource 
+ */
 function showUnavailabilityHuman(id, name){
     $('#edit--unavailability-human-resource-modal').modal("show");
     document.getElementById('human-resource-id-unavailability').value = id;
@@ -316,7 +290,6 @@ function showUnavailabilityHuman(id, name){
          tr.appendChild(tdBtn)
      }
     }
-    //<input type="datetime-local" name="datetime-begin-unavailability" id="datetime-begin-unavailability"><br>
     if(tbody.children.length == 0) {
         var zeroUnav = document.createElement("p")
         zeroUnav.innerHTML = "Pas de périodes d'indisponibilités créées !"
@@ -326,6 +299,9 @@ function showUnavailabilityHuman(id, name){
  
  }
 
+ /**
+ * Allows to display the unavailabilities of a material resource 
+ */
 function showUnavailabilityMaterial(id, name) {
     $('#edit--unavailability-material-resource-modal').modal("show");
     document.getElementById('material-resource-id-unavailability').value = id;
@@ -379,9 +355,7 @@ function showUnavailabilityMaterial(id, name) {
    }
 }
 
-/**
- * Gestion d'ajout d'activité dans un parcours pour le formulaire d'édition
- */
+
 function edit__handleAddUnavailability() {
         
         let categoriesContainer = document.getElementById('edit--unavailabilities-container');
@@ -408,16 +382,13 @@ function edit__handleAddUnavailability() {
 
 
 /**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ * Allows to check changes in the edit modal form
  */
  function edit__verifyChanges() {
-    // D'abord on recupere la div qui contient toutes les activity
     let categoriesContainer = document.getElementById('edit--categories-container')
     let btnAdd = document.getElementById('btn-none-edit-resource')
     let nbCategory = document.getElementById('edit--nbcategory');
     var nbCateg = 0;
-    // On parcours toutes nos activités 
-    // On set leur 'name' et on verifie leurs contenus
     for (let i = 0; i <= categoriesContainer.children.length-1; i++) {
         if(categoriesContainer.children[i].children[0].checked) {
         categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-'+ nbCateg)
@@ -434,7 +405,7 @@ function edit__handleAddUnavailability() {
 }
 
 /**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ * Allows to check fields in the edit modal unavailabilities of a human resource 
  */
  function edit__verifyUnavailabilityHuman() {
 
@@ -453,7 +424,9 @@ function edit__handleAddUnavailability() {
     }
 
 }
-
+/**
+ * Allows to check fields in the edit modal unavailabilities of a material resource 
+ */
 function edit__verifyUnavailabilityMaterial() {
 
     // D'abord on recupere la div qui contient toutes les activity
@@ -473,7 +446,7 @@ function edit__verifyUnavailabilityMaterial() {
 }
 
 /**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ * Allows to check fields in the edit modal form of a human resource
  */
  function edit__verifyChangesHuman() {
     // D'abord on recupere la div qui contient toutes les activity

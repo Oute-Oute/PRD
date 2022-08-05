@@ -121,7 +121,6 @@ function updateDatabase(id) {
     }
     listResources.push(listResourceCurrentEvent);
   });
-  console.log(document.getElementById("listeAppointments").value);
   document.getElementById("user-id").value = JSON.stringify(id); //set user identifier
   document.getElementById("events").value = JSON.stringify(calendar.getEvents()); //set all informations about the scheduled activities modified
   document.getElementById("list-resource").value = JSON.stringify(listResources); //set all resource identifiers
@@ -176,6 +175,7 @@ function displayAddPathway() {
     //while there is something in the filter
     filter.removeChild(filter.firstChild); //remove the old content
   }
+
 }
 
 /**
@@ -202,7 +202,6 @@ function addPathway() {
       listeAppointments[i].scheduled = true;
     }
   }
-  console.log(listeAppointments)
 
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
@@ -439,6 +438,22 @@ function updateEventsAppointment(modifyEvent) {
   updateErrorMessages();
 }
 
+function autoAddAllPathway(){
+   
+ do{
+    displayAddPathway();  
+    console.log()
+    if(selectAppointment!=undefined && document.getElementById('select-appointment').value==selectionAppointmentValue){
+        break;
+    } 
+    var selectAppointment = document.getElementById('select-appointment');
+    var selectionAppointmentValue=[]; 
+    selectionAppointmentValue.push(selectAppointment.value);
+    autoAddPathway(); 
+   
+  } while(selectAppointment.options.length!=1);
+}
+
 function autoAddPathway(){
       //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
@@ -450,6 +465,7 @@ function autoAddPathway(){
   var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r', ' '));
   var appointmentid = document.getElementById("select-appointment").value;
   var categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll('3aZt3r','')); 
+  var categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll('3aZt3r','')); 
 
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
@@ -529,8 +545,7 @@ function autoAddPathway(){
         }
       }
 
-      var humanResources=[]; 
-      console.log(categoryOfHumanResource);
+      var humanResources=[];
       for(let j=0; j<categoryHumanResources.length; j++){
         let countResources=0; 
         var nbResourceOfcategory=countOccurencesInArray(categoryHumanResources[j].id,categoryOfHumanResource); 
@@ -570,6 +585,11 @@ function autoAddPathway(){
           }
         }
       }
+
+      for(let j=0; j<humanResources.length; j++){
+        activityResourcesArray.push(humanResources[j]);
+      }
+
       var categoryMaterialResources = [];
 
       for (let j = 0; j < listeActivityMaterialResource.length; j++) {
@@ -583,8 +603,49 @@ function autoAddPathway(){
         }
       }
 
-      for(let j=0; j<humanResources.length; j++){
-        activityResourcesArray.push(humanResources[j]); 
+      var materialResources=[];
+      for(let j=0; j<categoryMaterialResources.length; j++){
+        let countResources=0; 
+        var nbResourceOfcategory=countOccurencesInArray(categoryMaterialResources[j].id,categoryOfMaterialResource); 
+        var counterNbResourceOfCategory=0; 
+        var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
+        for(let categoryOfMaterialResourceIt=0;categoryOfMaterialResourceIt<categoryOfMaterialResource.length; categoryOfMaterialResourceIt++){
+          var allEvents=calendar.getEvents(); 
+          var slotAlreadyScheduled=false;
+          if(categoryMaterialResources[j].id==categoryOfMaterialResource[categoryOfMaterialResourceIt].idcategory){ 
+            if(countResources<categoryMaterialResources[j].quantity){
+               if(allEvents.length>0){
+                for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
+                  if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=PathwayBeginDate.getTime() && allEvents[allEventsIterator].end.getTime()>=PathwayBeginDate.getTime() || allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=endTime && allEvents[allEventsIterator].end.getTime()>=endTime){
+                    slotAlreadyScheduled=true; 
+                  }
+                }
+                if(slotAlreadyScheduled==false){
+                  materialResources.push(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource); 
+                  countResources++; 
+                }
+                else{
+                  if(counterNbResourceOfCategory<nbResourceOfcategory){
+                    counterNbResourceOfCategory++; 
+                    if(counterNbResourceOfCategory==nbResourceOfcategory){
+                      PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000);
+                      j--;
+                      break;  
+                    }
+                  }   
+                }
+              }
+              else{
+                materialResources.push(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource); 
+                countResources++; 
+              }
+            }
+          }
+        }
+      }
+
+      for(let j=0; j<materialResources.length; j++){
+        activityResourcesArray.push(materialResources[j]); 
       }
 
       //counting for the ids of events
@@ -603,7 +664,7 @@ function autoAddPathway(){
         activity: activitiesA[i].activity.id,
         type: "activity",
         humanResources: humanResources,
-        materialResources: [],
+        materialResources: materialResources,
         pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
         categoryMaterialResource: categoryMaterialResources,
         categoryHumanResource: categoryHumanResources,
@@ -674,7 +735,6 @@ function autoAddPathway(){
       }
     }
     PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
-    console.log(PathwayBeginDate.getDate().toString(),currentDateStr.substring(8,10))
     if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
       eventScheduledTomorrow=true; 
     }
@@ -690,9 +750,7 @@ function autoAddPathway(){
     currentEvent.setEnd(currentEvent.end);
   })
   isUpdated = false;
-  console.log(eventScheduledTomorrow);
   if(eventScheduledTomorrow==true){
-    console.log(document.getElementById('alert-scheduled-tomorrow').s);
     document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
     undoEvent(); 
   }
