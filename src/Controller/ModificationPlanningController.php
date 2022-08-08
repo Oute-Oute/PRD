@@ -56,12 +56,7 @@ class ModificationPlanningController extends AbstractController
 
 
         //define arrays for data needed by the twig file
-        $listHumanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
-        $listMaterialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
-        $listPatients = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $listPathWayPatients = $doctrine->getRepository("App\Entity\Appointment")->findAll();
         $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
-        $listAppointment = $this->getAppointment($doctrine, $dateModified);
 
         //define arrays for data needed by the JS file
         $listscheduledActivityJSON = $this->getScheduledActivityJSON($doctrine, $SAR, $dateModified);
@@ -83,14 +78,9 @@ class ModificationPlanningController extends AbstractController
 
         //On redirige sur la page html modification planning et on envoie toutes les données dont on a besoin
         return $this->render('planning/modification-planning.html.twig', [
-            'listPatients' => $listPatients,
-            'settingsRepository' => $settingsRepository,
-            'listPathWaypatients' => $listPathWayPatients,
-            'listHumanResources' => $listHumanResources,
-            'listMaterialResources' => $listMaterialResources,
-            'listAppointments' => $listAppointment,
             'currentdate' => $dateModified,
             'dateFormatted' => $dateModifiedStringFormat,
+            'settingsRepository' => $settingsRepository,
 
             'listMaterialResourceJSON' => $listMaterialResourceJSON,
             'listHumanResourceJSON' => $listHumanResourceJSON,
@@ -98,10 +88,10 @@ class ModificationPlanningController extends AbstractController
             'listSuccessorsJSON' => $listSuccessorJSON,
             'listActivitiesJSON' => $listActivitiesJSON,
             'listAppointmentsJSON' => $listAppointmentJSON,
-            'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON,
-            'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON,
-            'categoryOfMaterialResourceJSON' => $categoryOfMaterialResourceJSON,
-            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON,
+            'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON, //à simplifier : peut directement être mis dans les données de l'activité
+            'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON, //à simplifier : peut directement être mis dans les données de l'activité
+            'categoryOfMaterialResourceJSON' => $categoryOfMaterialResourceJSON, //regarder si ce n'est pas possible de les mettres directement avec les ressources
+            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON, //regarder si ce n'est pas possible de les mettres directement avec les ressources
             'categoryMaterialResourceJSON'=> $categoryMaterialResourceJSON,
             'categoryHumanResourceJSON' => $categoryHumanResourceJSON,
         ]);
@@ -834,18 +824,6 @@ class ModificationPlanningController extends AbstractController
 
     //Part 3.2
     //This part manages the functions use for get the data in an array
-
-    /**
-     * This function recover all the appointments for a date given and return an array with the data
-     * @return appointments an array with all the data
-     */
-    public function getAppointment(ManagerRegistry $doctrine, $date)
-    {
-
-        $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
-        $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
-        return $appointments;
-    }
 
     /**
      * This function recover a patient by his identifier from the database and return an array with the data
