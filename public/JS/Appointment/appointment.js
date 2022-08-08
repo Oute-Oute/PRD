@@ -1,5 +1,5 @@
 /**
- * @brief This function is called when we want to change the date of the page
+ * Allows to change the date
  */
 var tagsPatients = [];
 var tagsPathways = [];
@@ -19,7 +19,9 @@ function changeDate() {
     "/appointments?date=" + dateStr); //rerender the page with a new date
 }
 
-//function permettant d'ouvrir la modale d'ajout d'un rendez-vous
+/**
+ * Allows to open a modal to create a new appointment
+ */
 function addAppointment() {
   while (tagsPathways.length > 0) {
     tagsPathways.pop();
@@ -41,6 +43,10 @@ function addAppointment() {
     tagsPathways.push(pathName);
   }
 }
+
+/**
+ * Allows to get the targets filtered by month
+ */
 function getTargetsbyMonth(date,pathwayName) {
   dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   $.ajax({
@@ -64,7 +70,9 @@ function getTargetsbyMonth(date,pathwayName) {
   });
 }
 
-//function permettant d'ouvrir la modale d'ajout d'un rendez-vous
+/**
+ * Allows to display a modal that allows to add a new appointment
+ */
 function openDayModale(type) {
   var dateToGet = new Date();
   console.log(type)
@@ -86,7 +94,9 @@ function openDayModale(type) {
   document.getElementById("pathwayHidden").value = pathwayName;
 }
 
-//function permettant d'ouvrir la modale d'édition d'un rendez-vous
+/**
+ * Allows to display a modal that allows to edit an appointment
+ */
 function editAppointment(
   idappointment,
   lastnamepatient,
@@ -102,7 +112,7 @@ function editAppointment(
   while (tagsPatients.length > 0) {
     tagsPatients.pop();
   }
-  //on initialise les informations affichées avec les données du rendez-vous modifié
+  //Filling fields with the data of the appointment
   document.getElementById("wrong-edit-input").style.visibility = "hidden";
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
@@ -114,30 +124,29 @@ function editAppointment(
   document.getElementById("dayAppointment").value = newDateFormat
   console.log((earliestappointmenttime))
   
-  //document.getElementById("dayAppointment").value = dayappointment.replaceAll('-', '/');
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
-  //on affiche la modale
+  // Displaying the modal
   $("#edit-appointment-modal").modal("show");
 }
 
 /**
- * Permet de cacher la fenêtre modale d'édition
+ * Allows to hide the edit modal form appointment. Called when a click is done somewhere else than the modal
  */
 function hideEditModalForm() {
   $("#edit-appointment-modal").modal("hide");
 }
 
 /**
- * Permet de cacher la fenêtre modale d'ajout
+ * Allows to hide the add modal form appointment. Called when a click is done somewhere else than the modal
  */
 function hideNewModalForm() {
   $("#add-appointment-modal").modal("hide");
 }
 
 /**
- * Permet de cacher la fenêtre modale de selection du jour
+ * Allows to hide the day modal appointments. Called when a click is done somewhere else than the modal
  */
 function hideDayModale(type) {
   $("#select-day-modal").modal("hide");
@@ -149,6 +158,9 @@ function hideDayModale(type) {
   }
 }
 
+/**
+ * Allows to validate the form
+ */
 function validate(type) {
 
   split1 = document.getElementById("dateTemp").value.split('-')
@@ -301,6 +313,9 @@ function Today() {
   document.getElementById('load').style.visibility = "visible";
 }
 
+/**
+ * Allows to display a modal infos that show data of a specific appointment
+ */
 function showAppointment(id) {
   console.log(id);
   document.getElementById('load-info-appt').style.visibility = "visible";
@@ -387,6 +402,9 @@ function showAppointment(id) {
   $('#infos-appointment-modal').modal("show");
 }
 
+/**
+ * Allows to filter pathways to not display all at the same time
+ */
 function filterPathway(idInput) {
 
   var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
@@ -403,6 +421,9 @@ function filterPathway(idInput) {
   }
 }
 
+/**
+ * Allows to filter patients to not display all at the same time
+ */
 function filterPatient(idInput) {
 
   var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
@@ -419,6 +440,9 @@ function filterPatient(idInput) {
   }
 }
 
+/**
+ * Handles the autocomplete
+ */
 function lookAutocompletes(){
   var listPatients;
   var listPathways;

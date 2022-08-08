@@ -2,8 +2,8 @@ const mobileScreen = window.matchMedia("(max-width: 990px )");
 var IS_MENU_DISPLAYED = false;
 
 /**
- * Function call at the loading of the pages
- * Allow to apply a different color in a button in the menu
+ * Function called at the loading of the pages
+ * Allows to apply a different color in a button in the menu according to the loaded page
  */
 //$(document).ready(function () {
     window.addEventListener('click', function(e){   
@@ -63,7 +63,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
     //});
 
-
+/**
+ * Allows to display the menu. Used since the menu is a "menu burger" so he can be hidden
+ */
 function displayMenu(buttonThis) {
     
     buttonThis.classList.toggle('opened');

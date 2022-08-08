@@ -1,26 +1,33 @@
 
 var autocompleteArray = [];
-//function permettant d'ouvrir la modale d'ajout d'un patient
+/**
+ * Allows to open a modal that allows to create a new patient
+ */
 function addPatient(){
     $('#add-patient-modal').modal("show");
 }
 
-//function permettant d'ouvrir la modale d'édition d'un patient
+/**
+ * Allows to open an edit modal of a specific patient
+ */
 function editPatient(id, lastname, firstname) {
-    //on initialise les informations affichées avec les données du patient modifié
+    //Filling fields with data
     document.getElementById('idpatient').value = id;
     document.getElementById('lastname').value = lastname;
     document.getElementById('firstname').value = firstname;
 
-    //on affiche la modale
+    //Displaying the modal
     $('#edit-patient-modal').modal("show");
 }
 
+/**
+ * Allows to open an infos modal that displays data about a specific patient
+ */
 function showInfosPatient(idPatient, lastname, firstname) {
     document.getElementById('patient').innerHTML = lastname + ' ' + firstname;
    
     var tableBody = document.getElementById('tbodyShow');
-    tableBody.innerHTML = ''; // On supprime ce qui a précédemment été écrit dans la modale
+    tableBody.innerHTML = ''; 
 
     $.ajax({
         type : 'POST',
@@ -38,6 +45,9 @@ function showInfosPatient(idPatient, lastname, firstname) {
     $('#infos-patient-modal').modal("show");
 }
 
+/**
+ * Allows display the list of appointments of a patient in a modal
+ */
 function tableAppointment(tableBody, data,){
     if(data.length <= 0){
         var tr = document.createElement('TR');
@@ -61,6 +71,9 @@ function tableAppointment(tableBody, data,){
     }
 }
 
+/**
+ * Allows to filter patients to not display all of them
+ */
 function filterPatient(selected=null){
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
     for(let i=0; i<trs.length; i++){
@@ -101,6 +114,9 @@ function filterPatient(selected=null){
     tr.appendChild(buttons);
   }
 
+/**
+ * Allows to display all patients without any filter
+ */
   function displayAll() {
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
     var input = document.getElementById('autocompleteInputLastname');
@@ -118,11 +134,16 @@ function filterPatient(selected=null){
 }
 }
  
-
+/**
+ * Allows to hide the new modal form of a patient. Called when a click is done somewhere else than the modal
+ */
 function hideNewModalForm() {
     $('#add-patient-modal').modal("hide");
 }
   
+/**
+ * Allows to hide the edit modal form of a patient. Called when a click is done somewhere else than the modal
+ */
 function hideEditModalForm() {
     $('#edit-patient-modal').modal("hide");
 }

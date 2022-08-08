@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220718113621 extends AbstractMigration
+final class Version20220808085121 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -72,6 +72,24 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('DROP TABLE __temp__category_of_material_resource');
         $this->addSql('CREATE INDEX IDX_A467F8653140497B ON category_of_material_resource (materialresourcecategory_id)');
         $this->addSql('CREATE INDEX IDX_A467F8654A4B113F ON category_of_material_resource (materialresource_id)');
+        $this->addSql('DROP INDEX IDX_C5D43906A76ED395');
+        $this->addSql('DROP INDEX IDX_C5D43906E5B533F9');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__comment_appointment AS SELECT id, appointment_id, user_id, comment FROM comment_appointment');
+        $this->addSql('DROP TABLE comment_appointment');
+        $this->addSql('CREATE TABLE comment_appointment (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, appointment_id INTEGER NOT NULL, user_id INTEGER NOT NULL, comment VARCHAR(255) NOT NULL, CONSTRAINT FK_C5D43906E5B533F9 FOREIGN KEY (appointment_id) REFERENCES appointment (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_C5D43906A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO comment_appointment (id, appointment_id, user_id, comment) SELECT id, appointment_id, user_id, comment FROM __temp__comment_appointment');
+        $this->addSql('DROP TABLE __temp__comment_appointment');
+        $this->addSql('CREATE INDEX IDX_C5D43906A76ED395 ON comment_appointment (user_id)');
+        $this->addSql('CREATE INDEX IDX_C5D43906E5B533F9 ON comment_appointment (appointment_id)');
+        $this->addSql('DROP INDEX IDX_1E8FB7BAA76ED395');
+        $this->addSql('DROP INDEX IDX_1E8FB7BA7CF91857');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__comment_scheduled_activity AS SELECT id, scheduledactivity_id, user_id, comment FROM comment_scheduled_activity');
+        $this->addSql('DROP TABLE comment_scheduled_activity');
+        $this->addSql('CREATE TABLE comment_scheduled_activity (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER NOT NULL, user_id INTEGER NOT NULL, comment VARCHAR(255) NOT NULL, CONSTRAINT FK_1E8FB7BA7CF91857 FOREIGN KEY (scheduledactivity_id) REFERENCES scheduled_activity (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_1E8FB7BAA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO comment_scheduled_activity (id, scheduledactivity_id, user_id, comment) SELECT id, scheduledactivity_id, user_id, comment FROM __temp__comment_scheduled_activity');
+        $this->addSql('DROP TABLE __temp__comment_scheduled_activity');
+        $this->addSql('CREATE INDEX IDX_1E8FB7BAA76ED395 ON comment_scheduled_activity (user_id)');
+        $this->addSql('CREATE INDEX IDX_1E8FB7BA7CF91857 ON comment_scheduled_activity (scheduledactivity_id)');
         $this->addSql('DROP INDEX IDX_2E4F9E8C7CF91857');
         $this->addSql('DROP INDEX IDX_2E4F9E8C58A652CC');
         $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, humanresource_id, scheduledactivity_id FROM human_resource_scheduled');
@@ -106,11 +124,6 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('DROP TABLE __temp__scheduled_activity');
         $this->addSql('CREATE INDEX IDX_DDA14B85E5B533F9 ON scheduled_activity (appointment_id)');
         $this->addSql('CREATE INDEX IDX_DDA14B8581C06096 ON scheduled_activity (activity_id)');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__settings AS SELECT id, alertmodificationtimer, zoommultiplier FROM settings');
-        $this->addSql('DROP TABLE settings');
-        $this->addSql('CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, alertmodificationtimer INTEGER DEFAULT NULL, zoommultiplier INTEGER DEFAULT NULL, reloadtime INTEGER DEFAULT NULL)');
-        $this->addSql('INSERT INTO settings (id, alertmodificationtimer, zoommultiplier) SELECT id, alertmodificationtimer, zoommultiplier FROM __temp__settings');
-        $this->addSql('DROP TABLE __temp__settings');
         $this->addSql('DROP INDEX IDX_DD2819F816397BCE');
         $this->addSql('DROP INDEX IDX_DD2819F848CD420');
         $this->addSql('CREATE TEMPORARY TABLE __temp__successor AS SELECT id, activitya_id, activityb_id, delaymin, delaymax FROM successor');
@@ -147,11 +160,11 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_716F7A4F6922FEF ON unavailability_material_resource (unavailability_id)');
         $this->addSql('DROP INDEX UNIQ_8D93D649F85E0677');
         $this->addSql('DROP INDEX IDX_8D93D6499DB8AE1C');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__user AS SELECT id, usersettings_id, username, roles, password FROM user');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__user AS SELECT id, usersettings_id, username, roles, password, firstname, lastname FROM user');
         $this->addSql('DROP TABLE user');
         $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, usersettings_id INTEGER DEFAULT NULL, username VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
-        , password VARCHAR(255) NOT NULL, CONSTRAINT FK_8D93D6499DB8AE1C FOREIGN KEY (usersettings_id) REFERENCES user_settings (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
-        $this->addSql('INSERT INTO user (id, usersettings_id, username, roles, password) SELECT id, usersettings_id, username, roles, password FROM __temp__user');
+        , password VARCHAR(255) NOT NULL, firstname VARCHAR(255) DEFAULT NULL, lastname VARCHAR(255) DEFAULT NULL, CONSTRAINT FK_8D93D6499DB8AE1C FOREIGN KEY (usersettings_id) REFERENCES user_settings (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('INSERT INTO user (id, usersettings_id, username, roles, password, firstname, lastname) SELECT id, usersettings_id, username, roles, password, firstname, lastname FROM __temp__user');
         $this->addSql('DROP TABLE __temp__user');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)');
         $this->addSql('CREATE INDEX IDX_8D93D6499DB8AE1C ON user (usersettings_id)');
@@ -219,6 +232,24 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('DROP TABLE __temp__category_of_material_resource');
         $this->addSql('CREATE INDEX IDX_A467F8654A4B113F ON category_of_material_resource (materialresource_id)');
         $this->addSql('CREATE INDEX IDX_A467F8653140497B ON category_of_material_resource (materialresourcecategory_id)');
+        $this->addSql('DROP INDEX IDX_C5D43906E5B533F9');
+        $this->addSql('DROP INDEX IDX_C5D43906A76ED395');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__comment_appointment AS SELECT id, appointment_id, user_id, comment FROM comment_appointment');
+        $this->addSql('DROP TABLE comment_appointment');
+        $this->addSql('CREATE TABLE comment_appointment (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, appointment_id INTEGER NOT NULL, user_id INTEGER NOT NULL, comment VARCHAR(255) NOT NULL)');
+        $this->addSql('INSERT INTO comment_appointment (id, appointment_id, user_id, comment) SELECT id, appointment_id, user_id, comment FROM __temp__comment_appointment');
+        $this->addSql('DROP TABLE __temp__comment_appointment');
+        $this->addSql('CREATE INDEX IDX_C5D43906E5B533F9 ON comment_appointment (appointment_id)');
+        $this->addSql('CREATE INDEX IDX_C5D43906A76ED395 ON comment_appointment (user_id)');
+        $this->addSql('DROP INDEX IDX_1E8FB7BA7CF91857');
+        $this->addSql('DROP INDEX IDX_1E8FB7BAA76ED395');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__comment_scheduled_activity AS SELECT id, scheduledactivity_id, user_id, comment FROM comment_scheduled_activity');
+        $this->addSql('DROP TABLE comment_scheduled_activity');
+        $this->addSql('CREATE TABLE comment_scheduled_activity (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, scheduledactivity_id INTEGER NOT NULL, user_id INTEGER NOT NULL, comment VARCHAR(255) NOT NULL)');
+        $this->addSql('INSERT INTO comment_scheduled_activity (id, scheduledactivity_id, user_id, comment) SELECT id, scheduledactivity_id, user_id, comment FROM __temp__comment_scheduled_activity');
+        $this->addSql('DROP TABLE __temp__comment_scheduled_activity');
+        $this->addSql('CREATE INDEX IDX_1E8FB7BA7CF91857 ON comment_scheduled_activity (scheduledactivity_id)');
+        $this->addSql('CREATE INDEX IDX_1E8FB7BAA76ED395 ON comment_scheduled_activity (user_id)');
         $this->addSql('DROP INDEX IDX_2E4F9E8C7CF91857');
         $this->addSql('DROP INDEX IDX_2E4F9E8C58A652CC');
         $this->addSql('CREATE TEMPORARY TABLE __temp__human_resource_scheduled AS SELECT id, scheduledactivity_id, humanresource_id FROM human_resource_scheduled');
@@ -253,11 +284,6 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('DROP TABLE __temp__scheduled_activity');
         $this->addSql('CREATE INDEX IDX_DDA14B8581C06096 ON scheduled_activity (activity_id)');
         $this->addSql('CREATE INDEX IDX_DDA14B85E5B533F9 ON scheduled_activity (appointment_id)');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__settings AS SELECT id, alertmodificationtimer, zoommultiplier FROM settings');
-        $this->addSql('DROP TABLE settings');
-        $this->addSql('CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, alertmodificationtimer INTEGER NOT NULL, zoommultiplier INTEGER NOT NULL)');
-        $this->addSql('INSERT INTO settings (id, alertmodificationtimer, zoommultiplier) SELECT id, alertmodificationtimer, zoommultiplier FROM __temp__settings');
-        $this->addSql('DROP TABLE __temp__settings');
         $this->addSql('DROP INDEX IDX_DD2819F848CD420');
         $this->addSql('DROP INDEX IDX_DD2819F816397BCE');
         $this->addSql('CREATE TEMPORARY TABLE __temp__successor AS SELECT id, activitya_id, activityb_id, delaymin, delaymax FROM successor');
@@ -294,11 +320,11 @@ final class Version20220718113621 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_716F7A4F6922FEF ON unavailability_material_resource (unavailability_id)');
         $this->addSql('DROP INDEX UNIQ_8D93D649F85E0677');
         $this->addSql('DROP INDEX IDX_8D93D6499DB8AE1C');
-        $this->addSql('CREATE TEMPORARY TABLE __temp__user AS SELECT id, usersettings_id, username, roles, password FROM user');
+        $this->addSql('CREATE TEMPORARY TABLE __temp__user AS SELECT id, usersettings_id, username, roles, password, firstname, lastname FROM user');
         $this->addSql('DROP TABLE user');
         $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, usersettings_id INTEGER DEFAULT NULL, username VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
-        , password VARCHAR(255) NOT NULL)');
-        $this->addSql('INSERT INTO user (id, usersettings_id, username, roles, password) SELECT id, usersettings_id, username, roles, password FROM __temp__user');
+        , password VARCHAR(255) NOT NULL, firstname VARCHAR(255) NOT NULL, lastname VARCHAR(255) NOT NULL)');
+        $this->addSql('INSERT INTO user (id, usersettings_id, username, roles, password, firstname, lastname) SELECT id, usersettings_id, username, roles, password, firstname, lastname FROM __temp__user');
         $this->addSql('DROP TABLE __temp__user');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)');
         $this->addSql('CREATE INDEX IDX_8D93D6499DB8AE1C ON user (usersettings_id)');
