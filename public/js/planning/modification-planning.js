@@ -735,9 +735,17 @@ function autoAddPathway(){
       }
     }
     PathwayBeginDate = new Date(PathwayBeginDate.getTime() + biggestDuration * 60000 + biggestdelay * 60000);
-    if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
-      eventScheduledTomorrow=true; 
+    if(PathwayBeginDate.getDate().toString().length==1){
+      if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(9,10)){
+        eventScheduledTomorrow=true; 
+      }
     }
+    else{
+      if(PathwayBeginDate.getDate().toString()!=currentDateStr.substring(8,10)){
+        eventScheduledTomorrow=true; 
+      }
+    }
+   
 
   } while (successorsActivitiesA.length != 0);
   verifyHistoryPush(historyEvents, appointmentid);
