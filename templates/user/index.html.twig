@@ -77,7 +77,7 @@
 							<td></td>
 						{% endif %}
 						<td>
-							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}' )">Éditer
+							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' )">Éditer
 							</a>
 							<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer cet utilisateur ?');">
 								<input type="hidden" name="user" value="{{ user.id }}">

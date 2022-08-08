@@ -5,9 +5,11 @@ function addUser() {
   $("#add-user-modal").modal("show");
 }
 
-function editUser(idEdit, usernameEdit) {
+function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit) {
   document.getElementById("iduserEdit").value = idEdit;
   document.getElementById("usernameEdit").value = usernameEdit;
+  document.getElementById("firstnameEdit").value = firstnameEdit;
+  document.getElementById("lastnameEdit").value = lastnameEdit;
 
   $("#edit-user-modal").modal("show");
 }
