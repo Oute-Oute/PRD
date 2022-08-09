@@ -6,43 +6,43 @@
 			</div>
 			<form action="{{ path('UserAdd') }}" method="post">
 				<div class="modal-body">
-					<div>
+					<div  class="flex-col">
 						<label for='usernameAdd'>
 							Nom d'utilisateur
 						</label>
-						<input type='text' oninput="usernameNew()" required="required" name='usernameAdd' id="usernameAdd">
+						<input class="input" type='text' oninput="usernameNew()" required="required" name='usernameAdd' id="usernameAdd">
 
 						<p1 id="ErrorUser">
 							Nom d'utilisateur déjà pris</p1>
 
 					</div>
-					<div>
+					<div class="flex-col">
 						<label for='firstnameAdd'>
 							Prénom
 						</label>
-						<input type='text' required="required" name='firstnameAdd' id='firstnameAdd'>
+						<input class="input" type='text' required="required" name='firstnameAdd' id='firstnameAdd'>
 					</div>
-					<div>
+					<div class="flex-col">
 						<label for='lastnameAdd'>
 							Nom
 						</label>
-						<input type='text' required="required" name='lastnameAdd' id='lastnameAdd'>
+						<input class="input" type='text' required="required" name='lastnameAdd' id='lastnameAdd'>
 					</div>
 					<div>
-						<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+						<input class="input" type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
 					</div>
 
-					<div>
+					<div class="flex-col">
 						<label for='passwordAdd'>
 							Mot de passe Temporaire
 						</label>
-						<input type='passwordAdd' required="required" name='passwordAdd'>
+						<input class="input" type='passwordAdd' required="required" name='passwordAdd'>
 					</div>
-					<div>
+					<div  class="flex-col">
 						<label for='roleAdd'>
 							Roles
 						</label>
-						<select name="roleAdd" id="roleAdd" required="required">
+						<select style="margin-left:10px;" class="input"  name="roleAdd" id="roleAdd" required="required">
 							<option value="">Choisissez le role de l'utilisateur</option>
 							<option value="Admin">Admin</option>
 							<option value="Editeur">Editeur</option>
