@@ -1,5 +1,3 @@
-const { forEach } = require("core-js/core/array");
-
 var idHR;
 var idMR;
 
