@@ -248,7 +248,7 @@ function change_tab_human(id)
 /**
  * Allows to filter resources according to the categories
  */
-function filterResource(type,selected=null){
+function filterResource(type,selected=null) {
     var categoriesStr=[];
     for (var i=0;i<selected["categories"].length-1;i++){
         categoriesStr += selected["categories"][i]["category"]+", ";
@@ -309,10 +309,8 @@ function filterResource(type,selected=null){
   function displayAll(type) {
     var trs = document.querySelectorAll('#table'+type+'Resource tr:not(.header'+type+'Resource)');
     var input = document.getElementById('autocompleteInput'+type+'Name');
-    console.log(input.value)
     if(input.value == ''){
     for(let i=0; i<trs.length; i++){
-        console.log(trs[i].className)
         if(trs[i].style.display == 'none'){
             trs[i].style.display='table-row';
         }
