@@ -1097,14 +1097,13 @@ function createActivitiesGraph(name, idActivity, duration) {
         });
     }), false);
 
-    div.addEventListener('scroll', AnimEvent.add(function () {
+    document.getElementById('edit-pathway-modal-activities').addEventListener('scroll', AnimEvent.add(function() {
         lines.forEach((l) => {
-            if (l.start == div || l.end == div) {
-                l.position();
-            }
-        });
+        if(l.start == div || l.end == div){
+            l.position();
+        }
+        }); 
     }), false);
-
 
     div.addEventListener('dblclick', function (e) {
         if (ID_ACTIVITY_PREDECESSOR != -1) {

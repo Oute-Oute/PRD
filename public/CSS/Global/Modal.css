@@ -297,7 +297,7 @@ ul.ui-autocomplete {
   }
 
   #modal-body-graph{
-    height:600px;
+    height:500px;
     display:flex;
     justify-content: space-between;
     flex-direction: row;
