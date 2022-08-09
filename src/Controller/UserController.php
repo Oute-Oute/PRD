@@ -1,9 +1,11 @@
 <?php
+
 /**
  * @file        UserController.php
  * @brief       Contains the functions that handle the users in the database
  * @date        2022
  */
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -22,9 +24,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
-    
+
     /**
-      * Allows to list every users in the database
+     * Allows to list every users in the database
      */
 
     public function userGet(UserRepository $userRepository, ManagerRegistry $doctrine): Response
@@ -39,7 +41,7 @@ class UserController extends AbstractController
 
 
     /**
-      * Allows to add a new user in the database
+     * Allows to add a new user in the database
      */
 
     public function userAdd(Request $request, userRepository $userRepository): Response
@@ -72,7 +74,7 @@ class UserController extends AbstractController
     }
 
     /**
-      * Allows to edit a user that is already in the database
+     * Allows to edit a user that is already in the database
      */
     public function userEdit(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
@@ -99,9 +101,9 @@ class UserController extends AbstractController
 
 
     /**
-      * Allows to delete a user that is already in the database
+     * Allows to delete a user that is already in the database
      */
-    public function userDelete(User $user, UserRepository $userRepository,ManagerRegistry $doctrine): Response
+    public function userDelete(User $user, UserRepository $userRepository, ManagerRegistry $doctrine): Response
     {
         $modificationRepository = $doctrine->getManager()->getRepository("App\Entity\Modification");
         $allModification = $modificationRepository->findBy(['user' => $user]);
@@ -111,7 +113,7 @@ class UserController extends AbstractController
         }
         $userSettingsRepository = $doctrine->getManager()->getRepository("App\Entity\UserSettings");
         $userSettings = $user->getUsersettings();
-        if($userSettings != null){
+        if ($userSettings != null) {
             $userSettingsRepository->remove($userSettings, true);
         }
 
@@ -120,7 +122,7 @@ class UserController extends AbstractController
     }
 
     /**
-      * Allows to create a JSON object from a list of users in the database
+     * Allows to create a JSON object from a list of users in the database
      */
     public function listUserJSON(ManagerRegistry $doctrine)
     {
@@ -130,6 +132,8 @@ class UserController extends AbstractController
             $usersArray[] = array(
                 'username' => $user->getUsername(),
                 'id' => $user->getId(),
+                'firstName' => $user->getFirstName(),
+                'lastName' => $user->getLastName(),
 
             );
         }
