@@ -55,7 +55,7 @@ class ConsultationPlanningController extends AbstractController
         $dateFormatted->format('Y-F-d');
         $dateStr=str_replace($english_months, $french_months,$dateFormatted->format('d F Y'));
         //Récupération des données ressources de la base de données
-        $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
+        $getAppointmentsJSON = $this->getAppointmentsJSON($doctrine); //Récupération des données pathway-patient de la base de données
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
@@ -68,7 +68,7 @@ class ConsultationPlanningController extends AbstractController
                 'dateFormatted' => $dateStr,
                 'headerResources' => $header,
                 'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
-                'getAppointmentJSON' => $getAppointmentJSON,
+                'getAppointmentsJSON' => $getAppointmentsJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
                 'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
                 'settingsRepository' => $settingsRepository,
@@ -276,7 +276,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array of the Appointments's data
      */
-    public function getAppointmentJSON(ManagerRegistry $doctrine)
+    public function getAppointmentsJSON(ManagerRegistry $doctrine)
     {
         //recuperation de la date dont on veut le planning
         global $date;
@@ -509,6 +509,5 @@ class ConsultationPlanningController extends AbstractController
         //Conversion des données ressources en json 
         return $patientArray;
     }
-
     }
     

@@ -51,20 +51,20 @@
 					</svg>
 				</button>
 				<div class="datepicker">
-					<input type="date" required placeholder="Choisir une date" class="form-control" id="Date" onchange="changeDate()" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
+					<input type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('consultation')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
 				</div>
 				<div id="filterId" class="filter-container" style="display:none"></div>
 			</div>
 			<div class='top-right'>
 				<div class="date-button">
-					<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay()" title="Aller au jour d'avant">
+					<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay('consultation')" title="Aller au jour d'avant">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 					</button>
-					<button class="btn-calendar-edit" onclick="Today()" title="Aller à aujourd'hui">Aujourd'hui</button>
-					<button id="previousButton" class="btn-calendar-edit" onclick="NextDay()" title="Aller au jour d'après">
+					<button class="btn-calendar-edit" onclick="Today('consultation')" title="Aller à aujourd'hui">Aujourd'hui</button>
+					<button id="previousButton" class="btn-calendar-edit" onclick="NextDay('consultation')" title="Aller au jour d'après">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
 					</button>
-					<input type="hidden" id="appointments" value='{{getAppointmentJSON.content}}'/>
+					<input type="hidden" id="appointments" value='{{getAppointmentsJSON.content}}'/>
 					<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
 					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
@@ -91,7 +91,7 @@
 	</div>
 </div>
 <script>
-	reload();
+	reload("consultation");
 </script>
 <div class="modal" id="modify-planning-modal">
 	<div class="modal-dialog">

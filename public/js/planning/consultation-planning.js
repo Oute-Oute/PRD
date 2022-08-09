@@ -11,7 +11,6 @@ var date = new Date(); //create a default date
 var dateStr = date.toDateString();
 var headerResources = "Patients";
 const height = document.querySelector("div").clientHeight;
-var reloadTime = 600000;
 headerResources = "Patients";
 
 /**
@@ -36,14 +35,7 @@ function $_GET(param) {
   return vars;
 }
 
-function reload(){ 
-  if(document.getElementById('reloadTime')!=null){
-    reloadTime = document.getElementById('reloadTime').value; // En millisecondes
-  }
-  setTimeout(function(){
-    window.location.assign("/ConsultationPlanning");
-  }, reloadTime);
-}
+
 
 //update the date with the date in url
 dateStr = $_GET("date");
@@ -67,11 +59,11 @@ document.querySelectorAll("#header-type")[0].innerText=headerResources;
  * @returns a list of the events of the calendar
  */
 function createEvents() {
+  console.log(document.getElementById("events").value)
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-
-
+  console.log(events);
   return events;
 }
 
@@ -79,7 +71,7 @@ function createEvents() {
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
-function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay = undefined) {
+function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefined) {
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
@@ -309,7 +301,7 @@ function createCalendar(typeResource, useCase, slotDuration,resourcesToDisplay =
       break;
   }
   headerResources = typeResource;
-  calendar.gotoDate(date); //go to the date we want to display
+  calendar.gotoDate(date); //go to the start date of the calendar
   calendar.render(); //display the calendar
 }
 
