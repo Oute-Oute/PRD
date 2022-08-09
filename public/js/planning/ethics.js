@@ -35,8 +35,6 @@ function $_GET(param) {
   return vars;
 }
 
-
-
 //update the date with the date in url
 dateStr = $_GET("date");
 date = new Date(dateStr);
@@ -59,10 +57,11 @@ document.querySelectorAll("#header-type")[0].innerText=headerResources;
  * @returns a list of the events of the calendar
  */
 function createEvents() {
-  console.log(document.getElementById("events").value)
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
+
+
   return events;
 }
 
@@ -178,6 +177,19 @@ function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefine
         materialResourcesNames += materialResources[i]; //add the last material resource name to the string
       } else materialResourcesNames = "Aucune ressource associée";
 
+      var comments = activity.extendedProps.comments; //get the comments of the event
+      var commentsText = ""; //create a string with the comments
+      if (comments.length > 0) {
+        for (var i = 0; i < comments.length - 1; i++) {
+          //for each comment except the last one
+          if (comments[i] != undefined) {
+            //if the comment exist
+            commentsText += "<b> <u> "+ comments[i].author + "</b> </u>  : " + comments[i].comment + "<br> "; //add the comment to the string with a ; and a space
+          }
+        }
+        commentsText +="<b> <u> "+ comments[i].author + "</b> </u>  : " + comments[i].comment; //add the last comment to the string
+      } else commentsText = "Aucun commentaire";
+
       //set data to display in the modal window
       $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
       $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
@@ -186,7 +198,9 @@ function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefine
       $("#patient").val(activity.extendedProps.patient); //set the patient of the event
       $("#rh").val(humanResourcesNames); //set the human resources of the event
       $("#rm").val(materialResourcesNames); //set the material resources of the event
-
+      console.log(commentsText);
+      document.getElementById("comments").innerHTML=commentsText; //set the comments of the event
+      console.log(document.getElementById("comments").innerHTML)
       $("#modify-planning-modal").modal("show"); //open the window
     },
   });
@@ -300,7 +314,7 @@ function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefine
       break;
   }
   headerResources = typeResource;
-  calendar.gotoDate(date); //go to the start date of the calendar
+  calendar.gotoDate(date); //go to the date we want to display
   calendar.render(); //display the calendar
 }
 

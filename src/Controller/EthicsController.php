@@ -12,10 +12,10 @@ use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransf
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Length;
 
-class ConsultationPlanningController extends AbstractController
+class EthicsController extends AbstractController
 {
     /*
-     * @file ConsultationPlanningController.php
+     * @file EthicsController.php
      * @brief This file contains the controller for planning's consultation.
      * @author Thomas Blumstein
      * @version 1.0
@@ -35,7 +35,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return JSON File containing the data used by the html and js files.
      */
-    public function consultationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
+    public function index(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
     {   
         $english_months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
         $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
@@ -55,20 +55,20 @@ class ConsultationPlanningController extends AbstractController
         $dateFormatted->format('Y-F-d');
         $dateStr=str_replace($english_months, $french_months,$dateFormatted->format('d F Y'));
         //Récupération des données ressources de la base de données
-        $getAppointmentsJSON = $this->getAppointmentsJSON($doctrine); //Récupération des données pathway-patient de la base de données
+        $getAppointmentJSON = $this->getAppointmentJSON($doctrine); //Récupération des données pathway-patient de la base de données
         $getDisplayedActivitiesJSON = $this->getDisplayedActivitiesJSON($doctrine, $SAR); //Récupération des données activités programmées de la base de données
         $getMaterialResourceScheduledJSON = $this->getMaterialResourceScheduledJSON($doctrine); //Récupération des données mrsa de la base de données
         $getHumanResourceScheduledJSON = $this->getHumanResourceScheduledJSON($doctrine); //Récupération des données HR-activité programmée de la base de données
         $settingsRepository = $doctrine->getRepository("App\Entity\Settings")->findAll();
         //envoi sous forme de JSON
         return $this->render(
-            'planning/consultation-planning.html.twig',
+            'ethics/ethics.html.twig',
             [
                 'currentdate' => $date,
                 'dateFormatted' => $dateStr,
                 'headerResources' => $header,
                 'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
-                'getAppointmentsJSON' => $getAppointmentsJSON,
+                'getAppointmentJSON' => $getAppointmentJSON,
                 'getMaterialResourceScheduledJSON' => $getMaterialResourceScheduledJSON,
                 'getHumanResourceScheduledJSON' => $getHumanResourceScheduledJSON,
                 'settingsRepository' => $settingsRepository,
@@ -224,7 +224,13 @@ class ConsultationPlanningController extends AbstractController
         $displayedActivities = $SAR->findSchedulerActivitiesByDate($date);
         $displayedActivitiesArray = array();
         foreach ($displayedActivities as $displayedActivity) {
-           
+           $comments=$this->getCommentsByActivity($doctrine, $displayedActivity);
+            if(sizeof($comments)>0){
+                $color='#841919';
+            }
+            else{
+                $color='#339d39';
+            }
            //recuperation des ressources associées à une activité programmée
            $resourceArray=$this->getResourcesScheduled($doctrine,$displayedActivity);
             if(count($resourceArray[0])>2){            
@@ -252,11 +258,13 @@ class ConsultationPlanningController extends AbstractController
                 'appointment' => ($displayedActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
                 'description' => ($displayedActivity->getActivity()->getActivityname()),
+                'color' => $color,
                 'extendedProps' => array(
                     'patient' => $patient,
                     'pathway' => ($displayedActivity->getAppointment()->getPathway()->getPathwayname()),
                     'materialResources' => ($resourceArray[1]),
                     'humanResources' => ($resourceArray[2]),
+                    'comments' => $comments,
                 ),
             );
             //reset des tableaux de stockage temporaire des données
@@ -276,7 +284,7 @@ class ConsultationPlanningController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return array of the Appointments's data
      */
-    public function getAppointmentsJSON(ManagerRegistry $doctrine)
+    public function getAppointmentJSON(ManagerRegistry $doctrine)
     {
         //recuperation de la date dont on veut le planning
         global $date;
@@ -508,6 +516,18 @@ class ConsultationPlanningController extends AbstractController
 
         //Conversion des données ressources en json 
         return $patientArray;
+    }
+    public function getCommentsByActivity(ManagerRegistry $doctrine, $activity)
+    {
+        $comments = $doctrine->getRepository("App\Entity\CommentScheduledActivity")->findBy(array('scheduledactivity' => $activity));
+        $commentsArray = array();
+        foreach ($comments as $comment) {
+            $commentsArray[] = array(
+                'comment' => ($comment->getComment()),
+                'author' => ($comment->getUser()->getlastname(). " " . $comment->getUser()->getfirstname()),
+            );
+        }
+        return $commentsArray;
     }
     }
     

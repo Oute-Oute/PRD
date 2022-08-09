@@ -291,3 +291,8 @@ GetAppointmentsFromActivityId:
   path: /activity/{id}/appointments
   controller: App\Controller\AppointmentController::GetAppointmentByActivityId
   methods: [GET]
+
+Ethics:
+  path: /ethics
+  controller: App\Controller\EthicsController::index
+  methods: [GET]

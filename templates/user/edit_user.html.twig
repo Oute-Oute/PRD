@@ -7,41 +7,41 @@
 					<form action="{{ path('UserEdit') }}" method="post">
 						<div class="modal-body">
 							<input type="hidden" name="iduserEdit" id="iduserEdit">
-							<div>
+							<div class="flex-col">
 								<label for='usernameEdit'>
 									Nom d'utilisateur
 								</label>
-								<input type='text' oninput="usernameEdit()" value="" name='usernameEdit' id='usernameEdit'>
+								<input class="input" type='text' oninput="usernameEdit()" value="" name='usernameEdit' id='usernameEdit'>
 								<p1 id="ErrorUserEdit">
 									Nom d'utilisateur deja pris</p1>
 								<div>
-									<input type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+									<input class="input" type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
 								</div>
 
 							</div>
-							<div>
+							<div class="flex-col">
 								<label for='firstnameEdit'>
 									Prénom
 								</label>
-								<input type='text' required="required" name='firstnameEdit' id='firstnameEdit'>
+								<input class="input" type='text' required="required" name='firstnameEdit' id='firstnameEdit'>
 							</div>
-							<div>
+							<div class="flex-col">
 								<label for='lastnameEdit'>
 									Nom
 								</label>
-								<input type='text' required="required" name='lastnameEdit' id='lastnameEdit'>
+								<input class="input" type='text' required="required" name='lastnameEdit' id='lastnameEdit'>
 							</div>
-							<div>
+							<div class="flex-col">
 								<label for='passwordEdit'>
 									Nouveau mot de passe temporaire
 								</label>
-								<input type='passwordEdit' required="required" name='passwordEdit' id='passwordEdit'>
+								<input class="input" type='passwordEdit' required="required" name='passwordEdit' id='passwordEdit'>
 							</div>
-							<div>
+							<div class="flex-col" >
 								<label for='roleEdit'>
 									Roles
 								</label>
-								<select name="roleEdit" id="roleEdit" required="required">
+								<select style="margin-left:10px;" class="input" name="roleEdit" id="roleEdit" required="required">
 									<option value="">--Choissisez le role de l'utilisateur--</option>
 									<option value="Admin">Admin</option>
 									<option value="Editeur">Editeur</option>
@@ -57,6 +57,12 @@
 							<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">Modifier</button>
 						</div>
 					</form>
+				
+					{##}
+
+					{##}
+
 				</div>
+
 			</div>
 		</div>

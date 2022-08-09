@@ -9,6 +9,7 @@
 var humanCategoriesToDisplay = [];
 var materialCategoriesToDisplay = [];
 var firstCreationFilter=true;
+var reloadTime = 600000;
 
 /**
  * @brief This function is called when we want to go to display the filter window, called when click on the filter button
@@ -229,7 +230,7 @@ function modify(id = 1) {
 /**
  * @brief This function is called when we want to change the date of the page
  */
-function changeDate() {
+function newDate(type) {
   var date = new Date(document.getElementById("Date").value); //get the new date in the DatePicker
   var day = date.getDate(); //get the day
   var month = date.getMonth() + 1; //get the month (add 1 because it starts at 0)
@@ -241,18 +242,13 @@ function changeDate() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-    dateStr +
-    "&headerResources=" +
-    headerResources
-  ); //rerender the page with a new date
+  changeDate(dateStr,type,headerResources);
 }
 
 /**
  * @brief This function is called when we want to go to the previous day
  */
-function PreviousDay() {
+function PreviousDay(type) {
   var oldDate = new Date(document.getElementById("Date").value); //get the old day in the calendar
   var newDate = new Date(
     oldDate.getFullYear(),
@@ -269,18 +265,13 @@ function PreviousDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-    dateStr +
-    "&headerResources=" +
-    headerResources
-  ); //rerender the page with a new date
+  changeDate(dateStr,type,headerResources);
 }
 
 /**
  * @brief This function is called when we want to go to the next day
  */
-function NextDay() {
+function NextDay(type) {
   var oldDate = new Date(document.getElementById("Date").value); //get the old day in the calendar
   var newDate = new Date(
     oldDate.getFullYear(),
@@ -297,18 +288,13 @@ function NextDay() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign(
-    "/ConsultationPlanning?date=" +
-    dateStr +
-    "&headerResources=" +
-    headerResources
-  ); //rerender the page with a new date
+  changeDate(dateStr,type,headerResources);
 }
 
 /**
  * @brief This function is called when we want to go to the date of today
  */
-function Today() {
+function Today(type) {
   var today = new Date(); //get the date of today
   var day = today.getDate(); //get the day
   var month = today.getMonth() + 1; //get the month (add 1 because it starts at 0)
@@ -320,13 +306,28 @@ function Today() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
+  changeDate(dateStr,type,headerResources);
+}
+
+function changeDate(dateStr,type,headerResources){
+  if(type == "consultation"){
   window.location.assign(
     "/ConsultationPlanning?date=" +
     dateStr +
     "&headerResources=" +
     headerResources
   ); //rerender the page with a new date
+  }
+  if(type == "ethics"){
+    window.location.assign(
+      "/ethics?date=" +
+      dateStr +
+      "&headerResources=" +
+      headerResources
+    ); //rerender the page with a new date
+  }
 }
+
 
 function zoomChange() {
   newZoom = document.getElementById('zoom').value;
@@ -365,5 +366,20 @@ function categoryShow() {
     calendar.setOption('resourceAreaWidth','15%');
     calendar.render()
   }
+
+}
+
+function reload(type){ 
+  if(document.getElementById('reloadTime')!=null){
+    reloadTime = document.getElementById('reloadTime').value; // En millisecondes
+  }
+  setTimeout(function(){
+    if(type=="consultation"){
+    window.location.assign("/ConsultationPlanning");
+    }
+    if(type=="ethics"){
+    window.location.assign("/ethics");
+    }
+  }, reloadTime);
 
 }

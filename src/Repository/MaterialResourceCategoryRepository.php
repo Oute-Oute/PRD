@@ -39,6 +39,17 @@ class MaterialResourceCategoryRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return MaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
+    */
+    public function findMaterialCategoriesSorted(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('LOWER(c.categoryname)')
+            ->getQuery()
+            ->getResult();
+    } 
+
 //    /**
 //     * @return MaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
 //     */

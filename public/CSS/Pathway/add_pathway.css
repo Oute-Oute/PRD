@@ -31,7 +31,9 @@ button#btn-add-activity {
     color: #37BC9B;
     background : none;    
     border : 1px solid #37BC9B;
-
+}
+button#btn-add-activity:hover {
+    background : rgb(220 225 233); 
 }
 /* button to confirm the editing of an activity in the pathway */
 button#btn-confirm-activity {
@@ -57,6 +59,23 @@ div#activities-list {
     padding: 10px 0px;
     border-radius: 10px;
 }
+
+#title-height {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+/* button to open the successors modal*/
+button#btn-show-activities {
+    color: #37BC9B;
+    background : none;    
+    border : 1px solid #37BC9B;
+}
+button#btn-show-activities:hover {
+    background : rgb(220 225 233); 
+}
+
 /* to store all the activities */
 div#activities-list #list{
     display: flex;
