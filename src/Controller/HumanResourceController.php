@@ -77,7 +77,8 @@ class HumanResourceController extends AbstractController
         $categoryOfHumanResources = $categoryOfHumanResourceRepository->findAll();
         
         $humanResources = array();
-        foreach($humanResourceRepository->findBy(array(), array('humanresourcename' => 'ASC')) as $humanResource){
+        //$humanResourceRepository->findBy(array(), array('humanresourcename' => 'ASC'))
+        foreach($humanResourceRepository->findHumanResourcesSorted() as $humanResource){
             $categories = array();
             foreach($categoryOfHumanResources as $categoryOfHumanResource){
                 if($categoryOfHumanResource->getHumanresource()->getId() == $humanResource->getId()){
@@ -217,6 +218,20 @@ class HumanResourceController extends AbstractController
             $param = $request->request->all();  
             //name          
             $name = $param['resourcename'];
+
+            // Check if the firt letter of the name is an accent, and transform it
+            // This way we can sort names accordingly (for example the Ándre next to Alex)
+            // Note that it will be printed as Andre and not Ándre
+            $name_splitted = mb_str_split($name);
+            $accents = ['Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+                            'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
+                            'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
+                            'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                            'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y'];
+
+            $name_splitted[0] = strtr($name_splitted[0], $accents);
+            $name = implode('', $name_splitted);
+
             //working hours
             $monday = array();
             $tuesday = array();

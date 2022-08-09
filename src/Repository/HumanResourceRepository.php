@@ -51,6 +51,17 @@ class HumanResourceRepository extends ServiceEntityRepository
        ;
    }
 
+   /**
+    * @return HumanResource[] Returns an array of HumanResource objects
+    */
+    public function findHumanResourcesSorted(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->orderBy('LOWER(h.humanresourcename)')
+            ->getQuery()
+            ->getResult();
+    } 
+
 //    public function findOneBySomeField($value): ?HumanResource
 //    {
 //        return $this->createQueryBuilder('h')
