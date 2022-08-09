@@ -60,9 +60,12 @@ class ModificationPlanningController extends AbstractController
 
         //define arrays for data needed by the JS file
         $listscheduledActivityJSON = $this->getScheduledActivityJSON($doctrine, $SAR, $dateModified);
-        $listSuccessorJSON = $this->getSuccessorJSON($doctrine);
-        $listActivitiesJSON = $this->getActivityJSON($doctrine);
-        $listAppointmentJSON = $this->getAppointmentJSON($doctrine, $dateModified);
+
+        $informationsByDateArray = $this->getInformationsByDateArray($doctrine, $dateModified);
+        $listAppointmentJSON = new JsonResponse($informationsByDateArray[0]);
+        $listActivitiesJSON = new JsonResponse($informationsByDateArray[1]);
+        $listSuccessorJSON = new JsonResponse($informationsByDateArray[2]);
+
         $listMaterialResourceJSON = $this->getMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
         $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
@@ -459,10 +462,9 @@ class ModificationPlanningController extends AbstractController
      * This function recover all the successors from the database and return the data in a JSON format for JS
      * @return successorsArrayJSON an array in JSON format with all the data
      */
-    public function getSuccessorJSON(ManagerRegistry $doctrine)
+    public function getSuccessorsArray($successorsArray, ManagerRegistry $doctrine, $idactivity)
     {
-        $successors = $doctrine->getRepository('App\Entity\Successor')->findAll();
-        $successorsArray = array();
+        $successors = $doctrine->getRepository('App\Entity\Successor')->findBy(['activitya' => $idactivity]);
         foreach ($successors as $succesor) {
             $successorsArray[] = array(
                 'id' => $succesor->getId(),
@@ -472,19 +474,16 @@ class ModificationPlanningController extends AbstractController
                 'delaymax' => $succesor->getDelaymax(),
             );
         }
-
-        $successorsArrayJSON = new JsonResponse($successorsArray);
-        return $successorsArrayJSON;
+        return $successorsArray;
     }
 
     /**
      * This function recover all the activities from the database and return the data in a JSON format for JS
      * @return activitiesArrayJSON an array in JSON format with all the data
      */
-    public function getActivityJSON(ManagerRegistry $doctrine)
+    public function getActivitiesArray($activitiesArray, ManagerRegistry $doctrine, $idpathway)
     {
-        $activities = $doctrine->getRepository('App\Entity\Activity')->findAll();
-        $activitiesArray = array();
+        $activities = $doctrine->getRepository('App\Entity\Activity')->findBy(['pathway' => $idpathway]);
         foreach ($activities as $activity) {
             $activitiesArray[] = array(
                 'id' => $activity->getId(),
@@ -493,20 +492,33 @@ class ModificationPlanningController extends AbstractController
                 'idPathway' => $activity->getPathway()->getId()
             );
         }
-        $activitiesArrayJSON = new JsonResponse($activitiesArray);
-        return $activitiesArrayJSON;
+        return $activitiesArray;
     }
 
     /**
      * This function recover all the appointments for a date given and return the data in a JSON format for JS
      * @return appointmentsArrayJSON an array in JSON format with all the data
      */
-    public function getAppointmentJSON(ManagerRegistry $doctrine, $date)
+    public function getInformationsByDateArray(ManagerRegistry $doctrine, $date)
     {
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
         $appointmentsArray = array();
+        $activitiesArray = array();
+        $successorsArray = array();
         foreach ($appointments as $appointment) {
+            $pathwayAlreadySave = false;
+            if($activitiesArray != array()){
+                foreach($activitiesArray as $activity){
+                    if($activity["idPathway"] == $appointment->getPathway()->getId()){
+                        $pathwayAlreadySave = true;
+                    }
+                }
+            }
+            if(!$pathwayAlreadySave){
+                $activitiesArray = $this->getActivitiesArray($activitiesArray, $doctrine, $appointment->getPathway()->getId());
+            }
+
             $earliestappointmenttime = "";
             if ($appointment->getEarliestappointmenttime() != null) {
                 $earliestappointmenttime = str_replace(" ", "T", $appointment->getEarliestappointmenttime()->format('Y-m-d H:i:s'));
@@ -525,8 +537,16 @@ class ModificationPlanningController extends AbstractController
                 'scheduled' => $appointment->isScheduled(),
             );
         }
-        $appointmentsArrayJSON = new JsonResponse($appointmentsArray);
-        return $appointmentsArrayJSON;
+        foreach($activitiesArray as $activity){
+            $successorsArray = $this->getSuccessorsArray($successorsArray, $doctrine, $activity["id"]);
+        }
+
+        $informationsByDateArray = array(
+            $appointmentsArray,
+            $activitiesArray,
+            $successorsArray
+        );
+        return $informationsByDateArray;
     }
 
     /**
