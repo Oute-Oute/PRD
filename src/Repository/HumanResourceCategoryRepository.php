@@ -39,6 +39,17 @@ class HumanResourceCategoryRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return HumanResourceCategory[] Returns an array of HumanResourceCategory objects
+    */
+    public function findHumanCategoriesSorted(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('LOWER(c.categoryname)')
+            ->getQuery()
+            ->getResult();
+    } 
+
 //    /**
 //     * @return HumanResourceCategory[] Returns an array of HumanResourceCategory objects
 //     */

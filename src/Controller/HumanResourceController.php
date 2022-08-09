@@ -52,7 +52,7 @@ class HumanResourceController extends AbstractController
         $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine,$request,$paginator);
 
         $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
-        $humanResourceCategories = $humanResourceCategoryRepository->findAll();
+        $humanResourceCategories = $humanResourceCategoryRepository->findHumanCategoriesSorted();
 
         //get working hours of human resources
         $workingHours = $this->listWorkingHoursJSON($doctrine);

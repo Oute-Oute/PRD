@@ -37,7 +37,7 @@ class MaterialResourceCategoryController extends AbstractController
     public function index(MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
     {
         return $this->render('material_resource_category/index.html.twig', [
-            'material_resource_categories' => $materialResourceCategoryRepository->findAll(),
+            'material_resource_categories' => $materialResourceCategoryRepository->findBy(array(), array('categoryname' => 'ASC')),
         ]);
     }
 
