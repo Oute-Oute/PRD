@@ -55,7 +55,6 @@ function getTargetsbyMonth(date,pathwayName) {
     data: { pathway: pathwayName, date: dateStr },
     dataType: "json",
     success: function (data) {
-      console.log(data);
       if(data[0]['pathway'].length == 0){
         document.getElementById("empty-parcours").style.visibility = "visible";
       }
@@ -65,7 +64,6 @@ function getTargetsbyMonth(date,pathwayName) {
       addTargetsToCalendar(data[0]["targets"]);
     },
     error: function (data) {
-      console.log("error");
     }
   });
 }
@@ -75,12 +73,10 @@ function getTargetsbyMonth(date,pathwayName) {
  */
 function openDayModale(type) {
   var dateToGet = new Date();
-  console.log(type)
   if (type == "new") {
   var pathwayName= $('#autocompletePathwayAdd').val();
   }
   if (type == "edit") {
-    console.log($('#autocompletePathwayEdit').val())
     var pathwayName = $('#autocompletePathwayEdit').val();
   }
 
@@ -117,12 +113,7 @@ function editAppointment(
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
-
-  split1 = dayappointment.split('-')
-  split2 = split1[0].split(' ')
-  newDateFormat = split1[2] + '/' + split1[1] + '/20' + split2[1]
-  document.getElementById("dayAppointment").value = newDateFormat
-  console.log((earliestappointmenttime))
+  document.getElementById("dayAppointment").value = dayappointment
   
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
@@ -169,7 +160,6 @@ function validate(type) {
   if (type == "new") {
     document.getElementById("dateSelected").value = newDateFormat
     //document.getElementById("dateSelected").value = document.getElementById("dateTemp").value.replaceAll('-', '/');;//set the date from the hidden input in the real input
-    console.log(document.getElementById("dateSelected").value);
   }
   else if (type == "edit") {
     document.getElementById("dayAppointment").value = newDateFormat
@@ -317,7 +307,6 @@ function Today() {
  * Allows to display a modal infos that show data of a specific appointment
  */
 function showAppointment(id) {
-  console.log(id);
   document.getElementById('load-info-appt').style.visibility = "visible";
   $.ajax({
     type: 'POST',
@@ -325,7 +314,6 @@ function showAppointment(id) {
     data: { id:id },
     dataType: "json",
     success: function (data) {
-      console.log(data)
       document.getElementById('infos-appointment-title').textContent = data[0].patientLastname + " " + data[0].patientFirstname + " : " + data[0].pathwayName;
       if(data[0].activities.length == 0){
         document.getElementById('infos-appointment-unscheduled').hidden = false;
@@ -374,7 +362,6 @@ function showAppointment(id) {
             description: activities[i]['activity']
             })
           }
-          console.log(data[0])
           calendar.addEvent({
             start: day+"T00:00:00",
             end: day+"T"+data[0]["earliestAppointmentTime"],
@@ -390,12 +377,10 @@ function showAppointment(id) {
             display: 'background',
             color: '#000000'})
         calendar.render(); //render the calendar
-        console.log(calendar.getEvents())
       }
   document.getElementById('load-info-appt').style.visibility = "hidden";
     },
       error: function (data) {
-        console.log("error");
       },
     
     });
@@ -403,91 +388,73 @@ function showAppointment(id) {
 }
 
 /**
- * Allows to filter pathways to not display all at the same time
- */
-function filterPathway(idInput) {
-
-  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
-  var filter = document.querySelector('#' + idInput).value;
-  for (let i = 0; i < trs.length; i++) {
-    var regex = new RegExp(filter, 'i');
-    var pathwayName1 = trs[i].cells[2].outerText;
-    if (regex.test(pathwayName1) == false) {
-      trs[i].style.display = 'none';
-    }
-    else {
-      trs[i].style.display = '';
-    }
-  }
-}
-
-/**
  * Allows to filter patients to not display all at the same time
  */
-function filterPatient(idInput) {
+function filterAppointment(selected) {
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
+    for(let i=0; i<trs.length; i++){
+            trs[i].style.display='none';
+    }
+    table=document.getElementById('appointmentTable');
+    var tr=document.createElement('tr');
+    table.appendChild(tr);
+    var name=document.createElement('td');
+    name.append(selected.lastname+" "+selected.firstname);
+    tr.appendChild(name);
+    var pathway=document.createElement('td');
+    pathway.append(selected.pathway);
+    tr.appendChild(pathway);
+    var dayAppointment=document.createElement('td');
+    dayAppointment.append(selected.dayappointment);
+    tr.appendChild(dayAppointment);
+    var buttons=document.createElement('td');
+    var infos=document.createElement('button');
+    infos.setAttribute('class','btn-infos btn-secondary');
+    infos.setAttribute('onclick','showAppointment('+selected.id+')');
+    infos.append('Informations');
+    var edit=document.createElement('button');
+    edit.setAttribute('class','btn-edit btn-secondary');
+    edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment.replaceAll("/","-")+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
+    edit.append('Editer');
+    var form=document.createElement('form');
+    form.setAttribute('action','/appointment/'+selected.id+"/delete");
+    form.setAttribute('style','display:inline');
+    form.setAttribute('method','POST');
+    form.setAttribute('id','formDelete'+selected.id);
+    form.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce rendez-vous ?")');
+    var deleteButton=document.createElement('button');
+    deleteButton.setAttribute('class','btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('type','submit');
+    buttons.appendChild(infos);
+    buttons.appendChild(edit);
+    form.appendChild(deleteButton);
+    buttons.appendChild(form);
+    tr.appendChild(buttons);
 
-  var trs = document.querySelectorAll('#tableAppointment tr:not(.AppointmentPathway)');
-  var filter = document.querySelector('#' + idInput).value;
-  for (let i = 0; i < trs.length; i++) {
-    var regex = new RegExp(filter, 'i');
-    var patientName = trs[i].cells[1].outerText;
-    if (regex.test(patientName) == false) {
-      trs[i].style.display = 'none';
-    }
-    else {
-      trs[i].style.display = '';
-    }
-  }
+    paginator=document.getElementById('paginator');
+    paginator.style.display='none';
 }
 
 /**
- * Handles the autocomplete
+ * Allows to display all patients without any filter
  */
-function lookAutocompletes(){
-  var listPatients;
-  var listPathways;
-  var patientName;
-  var pathwayName;
-  inputClass = 'wrong-add-input';
-  patientName = document.getElementById('autocompletePatientAdd').value;
-  pathwayName = document.getElementById('autocompletePathwayAdd').value;
-  listPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
-  listPathways = JSON.parse(document.getElementById("pathwayValues").value.replaceAll("3aZt3r", " "));
-  document.getElementById(inputClass).style.visibility = "hidden";
-  var allIsGood = true;
-
-  var patientExist = false;
-  var lookPatientName = patientName.split(' ')
-  if(lookPatientName[0] != undefined && lookPatientName[1] != undefined){
-    listPatients.forEach((onePatient) => {
-      if(onePatient.lastname == lookPatientName[0] && onePatient.firstname == lookPatientName[1]){
-        patientExist = true;
+ function displayAll() {
+  var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
+  var input = document.getElementById('autocompleteInputPatientName');
+  console.log("input : "+input.value);
+  if(input.value == ''){
+  for(let i=0; i<trs.length; i++){
+      if(trs[i].style.display == 'none'){
+          trs[i].style.display='table-row';
       }
-    })
+      else if(trs[i].className != 'original'){
+          trs[i].remove()
+      }
   }
-
-  var pathwayExist = false;
-  listPathways.forEach((onePathway) => {
-    if(onePathway.title == pathwayName){
-      pathwayExist = true;
-    }
-  })
-
-  if(patientExist == false){
-    allIsGood = false;
-    document.getElementById(inputClass).style.visibility = "visible";
-    if(pathwayExist == false){
-      document.getElementById(inputClass).textContent = "Le parcours et le patient proposés n'existent pas."
-    }
-    else {
-      document.getElementById(inputClass).textContent = "Le patient proposé n'existe pas.";
-    }
-  }
-  else if(pathwayExist == false){
-    allIsGood = false;
-    document.getElementById(inputClass).style.visibility = "visible";
-    document.getElementById(inputClass).textContent = "Le parcours proposé n'existe pas.";
-  }
-  return allIsGood;
+  paginator=document.getElementById('paginator');
+  paginator.style.display='';
 }
+}
+
 

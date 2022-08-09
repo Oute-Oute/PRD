@@ -846,6 +846,8 @@ function filterPathway(selected=null){
     formDelete.appendChild(deleteButton);
     buttons.appendChild(formDelete);
     tr.appendChild(buttons);
+    paginator=document.getElementById('paginator');
+    paginator.style.display='none';
   }
 
 function displayAll() {
@@ -862,6 +864,8 @@ function displayAll() {
                 trs[i].remove()
             }
         }
+        paginator=document.getElementById('paginator');
+        paginator.style.display='';
     }
 }
 
