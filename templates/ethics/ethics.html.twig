@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consultation du Planning
+{% endblock %}
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
+
+{% endblock %}
+
+{% block javascripts %}
+	{% if app.user == null %}
+		<script type="text/javascript">
+			document.location.href = "/"
+		</script>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+	<script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY" crossorigin="anonymous"></script>
+	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+	<script src="js/planning/ethics.js"></script>
+	<script src="js/planning/utils-planning.js"></script>
+
+	{% for setting in settingsRepository %}
+		<input type="hidden" name="reloadTime" id="reloadTime" value='{{setting.getReloadtime}}'>
+	{% endfor %}
+	<div class="all-container" id="all">
+		<h1>Vue Éthique du</h1>
+		<div class="top">
+			<div class='top-left'>
+				<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
+				<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
+					<option value="0" selected disabled>Changer l'affichage
+					</option>
+					<option value="patients">Patients</option>
+					<option value="rh">Ressources Humaines</option>
+					<option value="rm">Ressources Matérielles</option>
+				</select>
+				<button id="filterbutton" onclick="filterShow()" class="btn-calendar-edit" title="Filtrer l'affichage">
+					<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewbox="0 0 24 24" width="24px">
+						<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
+					</svg>
+				</button>
+				<div class="datepicker">
+					<input type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('ethics')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
+				</div>
+				<div id="filterId" class="filter-container" style="display:none"></div>
+			</div>
+			<div class='top-right'>
+				<div class="date-button">
+					<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay('ethics')" title="Aller au jour d'avant">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+					</button>
+					<button class="btn-calendar-edit" onclick="Today('ethics')" title="Aller à aujourd'hui">Aujourd'hui</button>
+					<button id="previousButton" class="btn-calendar-edit" onclick="NextDay('ethics')" title="Aller au jour d'après">
+						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+					</button>
+					<input type="hidden" id="appointments" value='{{getAppointmentJSON.content}}'/>
+					<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
+					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
+					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
+				</div>
+				<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom">
+					<option value="02:00:00">Zoom : 12,5%</option>
+					<option value="01:00:00">Zoom : 25%</option>
+					<option value="00:40:00">Zoom : 50%</option>
+					<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
+					<option value="00:10:00">Zoom : 200%</option>
+					<option value="00:05:00">Zoom : 400%</option>
+					<option value="00:02:30">Zoom : 800%</option>
+				</select>
+			</div>
+		</div>
+
+	<div id="calendar-container" class="calendar-container">
+		<table class="header-ressource-consultation">
+			<td id="header-type" class="header-td">Ressources Humaines</td>
+			<td class="header-td-date">{{ dateFormatted }}</td>
+		</table>
+
+		<div id='calendar'></div>
+	</div>
+</div>
+<script>
+	reload("ethics");
+</script>
+<div class="modal" id="modify-planning-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title"></span>
+				</h2>
+			</div>
+			<form method="post" action="/ModificationPlanning">
+				<div class="modal-body">
+					<label class="label-event">Horaires de l'activité :
+					</label>
+					<div class="input-container onWhite">
+						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled>
+						</br>
+						<label class="label-event">Parcours :</label>
+						</br>
+						<input class="input-modal" type="text" id="parcours" name="parcours" disabled>
+						</br>
+						<label class="label-event">Patient :</label>
+						</br>
+						<input class="input-modal" type="text" id="patient" name="patient" disabled>
+						</br>
+						<label class="label-event">Ressource Humaine :</label>
+						</br>
+						<input class="input-modal" type="text" id="rh" name="rh" disabled>
+						</br>
+						<label class="label-event">Ressource Matérielle :</label>
+						</br>
+						<input class="input-modal" type="text" id="rm" name="rm" disabled>
+						</br>
+						<label class="label-event">Commentaires :</label>
+						</br>
+						<div class="input-modal" id="comments" name="comments">
+						<b><u> Jean Bonbeurre :</u></b> Je penses que la modale est magnifique <br>
+						<b><u> Igor Igan :</u></b> Je suis d'accord avec toi!
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+						<button type="button" class="btn-edit btn-secondary" onclick="changeComment()" data-bs-dismiss="modal">Nouveau Commentaire</button>
+					
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
