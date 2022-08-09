@@ -112,6 +112,8 @@ function filterPatient(selected=null){
     form.appendChild(deleteButton);
     buttons.appendChild(form);
     tr.appendChild(buttons);
+    paginator=document.getElementById('paginator');
+    paginator.style.display='none';
   }
 
 /**
@@ -131,6 +133,8 @@ function filterPatient(selected=null){
             trs[i].remove()
         }
     }
+    paginator=document.getElementById('paginator');
+    paginator.style.display='';
 }
 }
  
