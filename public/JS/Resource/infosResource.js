@@ -63,7 +63,7 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
   date = new Date();
   getAjaxMaterialResources(idMaterialResource, date, tableBody);
   createCalendarResource("materialresource");
-  change_tab_material_infos("planning");
+  change_tab_material_infos("planning-mr");
   $("#infos-material-resource-modal").modal("show");
   document.getElementById("load-large").style.visibility = "visible";  
   document.getElementById("empty-planning").style.visibility = "hidden";
@@ -301,7 +301,7 @@ function change_tab_human_infos(id) {
  * Allows to change the selected tab in the modal infos of a material resource
  */
 function change_tab_material_infos(id) {
-  document.getElementById("planning").className = "notselected";
+  document.getElementById("planning-mr").className = "notselected";
   document.getElementById("categoriesbyresource").className = "notselected";
   document.getElementById(id).className = "selected";
 
@@ -309,7 +309,7 @@ function change_tab_material_infos(id) {
   let categories = document.getElementById("material-resource-categories");
 
   switch (id) {
-    case "planning":
+    case "planning-mr":
       planning.style.display = "block";
       categories.style.display = "none";
       document.getElementById("modal-dialog").style.maxWidth = "1000px";

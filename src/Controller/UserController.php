@@ -50,12 +50,16 @@ class UserController extends AbstractController
             $param = $request->request->all();
 
             $username = $param['usernameAdd'];     // le nom d'utilisateur
+            $firstname = $param['firstnameAdd'];     // le nom d'utilisateur
+            $lastname = $param['lastnameAdd'];     // le nom d'utilisateur
             $password = $param['passwordAdd'];     // le mot de passe temporaire
             $role = $param['roleAdd'];             // le role
 
             // Création de l'utilisateur
             $user = new User();
             $user->setUsername($username);
+            $user->setFirstname($firstname);
+            $user->setLastname($lastname);
             $user->setPassword(password_hash($password, PASSWORD_DEFAULT)); //Encodage
             $user->setRoles(['ROLE_USER', $role]);
             // ajout dans la bdd
@@ -74,11 +78,15 @@ class UserController extends AbstractController
     {
         $iduserEdit = $request->request->get("iduserEdit");
         $usernameEdit = $request->request->get("usernameEdit");
+        $firstnameEdit = $request->request->get("firstnameEdit");
+        $lastnameEdit = $request->request->get("lastnameEdit");
         $passwordEdit = $request->request->get("passwordEdit");
         $roleEdit = $request->request->get("roleEdit");
 
         $user = $userRepository->findOneBy(['id' => $iduserEdit]);
         $user->setUsername($usernameEdit);
+        $user->setFirstname($firstnameEdit);
+        $user->setLastname($lastnameEdit);
         $user->setPassword(password_hash($passwordEdit, PASSWORD_DEFAULT));
         $user->setRoles(['ROLE_USER', $roleEdit]);
 
