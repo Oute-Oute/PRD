@@ -166,8 +166,8 @@ div#conn-form div#container form {
 }
 
 .ui-autocomplete {
-    max-height: 200px;
-    overflow-y: auto;
+    max-height: 300px;
+    overflow-y: scroll;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
   }
