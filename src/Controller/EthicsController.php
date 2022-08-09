@@ -224,7 +224,13 @@ class EthicsController extends AbstractController
         $displayedActivities = $SAR->findSchedulerActivitiesByDate($date);
         $displayedActivitiesArray = array();
         foreach ($displayedActivities as $displayedActivity) {
-           
+           $comments=$this->getCommentsByActivity($doctrine, $displayedActivity);
+            if(sizeof($comments)>0){
+                $color='#841919';
+            }
+            else{
+                $color='#339d39';
+            }
            //recuperation des ressources associées à une activité programmée
            $resourceArray=$this->getResourcesScheduled($doctrine,$displayedActivity);
             if(count($resourceArray[0])>2){            
@@ -252,11 +258,13 @@ class EthicsController extends AbstractController
                 'appointment' => ($displayedActivity->getAppointment()->getId()),
                 'resourceIds' => ($resourceArray[0]),
                 'description' => ($displayedActivity->getActivity()->getActivityname()),
+                'color' => $color,
                 'extendedProps' => array(
                     'patient' => $patient,
                     'pathway' => ($displayedActivity->getAppointment()->getPathway()->getPathwayname()),
                     'materialResources' => ($resourceArray[1]),
                     'humanResources' => ($resourceArray[2]),
+                    'comments' => $comments,
                 ),
             );
             //reset des tableaux de stockage temporaire des données
@@ -509,9 +517,17 @@ class EthicsController extends AbstractController
         //Conversion des données ressources en json 
         return $patientArray;
     }
-    public function getCommentsByActivity(){
-        
+    public function getCommentsByActivity(ManagerRegistry $doctrine, $activity)
+    {
+        $comments = $doctrine->getRepository("App\Entity\CommentScheduledActivity")->findBy(array('scheduledactivity' => $activity));
+        $commentsArray = array();
+        foreach ($comments as $comment) {
+            $commentsArray[] = array(
+                'comment' => ($comment->getComment()),
+                'author' => ($comment->getUser()->getlastname(). " " . $comment->getUser()->getfirstname()),
+            );
+        }
+        return $commentsArray;
     }
-
     }
     

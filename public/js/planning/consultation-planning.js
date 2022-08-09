@@ -63,7 +63,6 @@ function createEvents() {
   var events = JSON.parse(
     document.getElementById("events").value.replaceAll("3aZt3r", " ")
   ); //get the events from the hidden input
-  console.log(events);
   return events;
 }
 
