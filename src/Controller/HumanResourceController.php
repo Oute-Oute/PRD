@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\HumanResource;
 use App\Entity\CategoryOfHumanResource;
+use App\Entity\HumanResourceCategory;
 use App\Entity\HumanResourceScheduled;
 use App\Entity\Unavailability;
 use App\Entity\WorkingHours;
@@ -906,7 +907,7 @@ class HumanResourceController extends AbstractController
         return $activitiesArray;
     }
 
-    public function autocompleteHR(Request $request, HumanResourceRepository $HRRepository, CategoryOfHumanResourceRepository $categoryOfHRRepository){
+    public function autocompleteHR(Request $request, HumanResourceRepository $HRRepository, CategoryOfHumanResourceRepository $categoryOfHRRepository,HumanResourceCategoryRepository $humanResourceCategoryRepository){
         $utf8 = array( 
             "œ"=>"oe",
             "æ"=>"ae",
@@ -1044,8 +1045,8 @@ class HumanResourceController extends AbstractController
             "&#7923;" => "y",
             );
         $term = strtr(mb_strtolower($request->query->get('term'),'UTF-8'), $utf8);
-        $HRs = $HRRepository->findAll();
         $results = array();
+        $HRs = $HRRepository->findBy(array(), array('humanresourcename' => 'ASC'));
         foreach ($HRs as $HR) {
             $name = strtr(mb_strtolower($HR->getHumanresourcename(),'UTF-8'), $utf8);
             if (strpos($name, $term) !== false ){
@@ -1064,6 +1065,7 @@ class HumanResourceController extends AbstractController
                 ];
             }
         }
+        
         return new JsonResponse($results);
     }
 }
