@@ -963,6 +963,14 @@ function createActivitiesGraph(name, idActivity, duration){
         containment: "#divContent",
     });
 
+    document.getElementById('edit-pathway-modal-activities').addEventListener('scroll', AnimEvent.add(function() {
+        lines.forEach((l) => {
+        if(l.start == div || l.end == div){
+            l.position();
+        }
+        }); 
+    }), false);
+
     // If the activity is dragged, update the line position
     // The AnimEvent library is here to optimize, because mousemove is fired hundreds or thousands times
     div.addEventListener('mousemove', AnimEvent.add(function() {  

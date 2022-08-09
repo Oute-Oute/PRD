@@ -36,7 +36,7 @@ class HumanResourceCategoryController extends AbstractController
     public function index(HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
     {
         return $this->render('human_resource_category/index.html.twig', [
-            'human_resource_categories' => $humanResourceCategoryRepository->findAll(),
+            'human_resource_categories' => $humanResourceCategoryRepository->findBy(array(), array('categoryname' => 'ASC')),
         ]);
     }
 

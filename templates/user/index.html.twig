@@ -1,14 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block javascripts %}
-{% if app.user == null %}
-<script type="text/javascript">document.location.href="/"</script>
-{% endif %}
-{% if app.user != null %}
-{% if app.user.roles[1] != 'Admin' %}
-<script type="text/javascript">document.location.href="/ConsultationPlanning"</script>
-{% endif %}
-{% endif %}
+	{% if app.user == null %}
+		<script type="text/javascript">
+			document.location.href = "/"
+		</script>
+	{% endif %}
+	{% if app.user != null %}
+		{% if app.user.roles[1] != 'Admin' %}
+			<script type="text/javascript">
+				document.location.href = "/ConsultationPlanning"
+			</script>
+		{% endif %}
+	{% endif %}
 {% endblock %}
 
 {% block title %}Liste des utilisateurs
@@ -23,52 +27,58 @@
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/jquery-ui/jquery-ui.js"></script>    
+	<script src="js/jquery-ui/jquery-ui.js"></script>
 {% endblock %}
 {% block body %}
-	<div  class="index"  id="index-users">
-		<h1 onclick='filterShowUser()' >  Liste des utilisateurs</h1>
+	<div class="index" id="index-users">
+		<h1 onclick='filterShowUser()'>
+			Liste des utilisateurs</h1>
 		<button class="btn-add" onclick="addUser();filterShowUser()">Ajouter un nouvel utilisateur</button>
 		<div><input type="text" id="autocompleteInputUserNname" onclick="filterShowUser()" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Rechercher"></div>
 		<table class="table table-striped table-index-users" id="tableUser">
-			<thead>  
-				<tr class="headerUser" >
+			<thead>
+				<tr class="headerUser">
 					<th>Id</th>
 					<th>Nom d'utilisateur</th>
+					<th>Identité</th>
+
 					<th>
-					<button id="filterbutton" onclick="filterShowUser(false)" class="btn-calendar-edit" title="Selection des rôles à afficher">
-				Rôles
-				
-			</button>
-			<div id="filterId" class="filter-container" style="display:none">
-			<fieldset onchange='filterRole()'>
-       <div>
-      <input type="checkbox" id="admin" checked>
-      <label for="admin">Admin</label>
-    </div>
+						<button id="filterbutton" onclick="filterShowUser(false)" class="btn-calendar-edit" title="Selection des rôles à afficher">
+							Rôles
 
-    <div>
-      <input type="checkbox" id="editeur" checked>
-      <label for="editeur">Editeur</label>
-    </div>
+						</button>
+						<div id="filterId" class="filter-container" style="display:none">
+							<fieldset onchange='filterRole()'>
+								<div>
+									<input type="checkbox" id="admin" checked>
+									<label for="admin">Admin</label>
+								</div>
 
-	<div>
-      <input type="checkbox" id="visiteur" checked>
-      <label for="visiteur">Visiteur</label>
-    </div>
-</fieldset>
-			
-			
-			</div>
+								<div>
+									<input type="checkbox" id="editeur" checked>
+									<label for="editeur">Editeur</label>
+								</div>
+
+								<div>
+									<input type="checkbox" id="visiteur" checked>
+									<label for="visiteur">Visiteur</label>
+								</div>
+							</fieldset>
+
+
+						</div>
 					</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody  onclick='filterShowUser()'>
+			<tbody onclick='filterShowUser()'>
 				{% for user in users %}
 					<tr>
 						<td>{{ user.id }}</td>
 						<td>{{ user.username }}</td>
+						<td>{{ user.firstname }}
+							{{ user.lastname }}</td>
+
 						{% if user.roles[1] is defined %}
 							{% set role = user.roles[1] %}
 							<td>{{role | replace({'"':''})}}</td>
@@ -92,17 +102,17 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		
+
 		{{ include ('user/edit_user.html.twig') }}
 		{{ include ('user/new_user.html.twig') }}
 		<script>
 			$("#autocompleteInputUserNname").autocomplete({
-				source: autocompleteArray,
-				minLength: 3,
-				select: function (event, ui) {
-				filterUser('autocompleteInputUserNname', ui.item.value);
-				}
-			});
+source: autocompleteArray,
+minLength: 3,
+select: function (event, ui) {
+filterUser('autocompleteInputUserNname', ui.item.value);
+}
+});
 		</script>
 
 	{% endblock %}

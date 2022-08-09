@@ -2,11 +2,16 @@
 
 /*  ------------------ SURCHARGE CLASSE BOOTSTRAP------------------ */
 .modal-body {
-    display: flex;
-    flex-direction: column;
-    align-items: self-start;
-
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  width: 100%;
 }
+
+.modal-footer {
+  width: 100%;
+}
+
 .modal-body-select-day {
     display: flex;
     align-items: center;
@@ -292,7 +297,7 @@ ul.ui-autocomplete {
   }
 
   #modal-body-graph{
-    height:600px;
+    height:500px;
     display:flex;
     justify-content: space-between;
     flex-direction: row;
