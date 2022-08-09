@@ -42,7 +42,7 @@ class MaterialResourceController extends AbstractController
         $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine,$request,$paginator);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
-        $materialResourceCategories = $materialResourceCategoryRepository->findAll();
+        $materialResourceCategories = $materialResourceCategoryRepository->findMaterialCategoriesSorted();
         $materialResources = $materialResourceRepository->findAll();
         $categOfMaterialResource = $categOfMaterialResourceRepository->findAll();
         $nbMaterialResource = count($materialResources);
@@ -98,7 +98,7 @@ class MaterialResourceController extends AbstractController
         $categoryOfMaterialResources = $categoryOfMaterialResourceRepository->findAll();
         
         $materialResources = array();
-        foreach($materialResourceRepository->findBy(array(), array('materialresourcename' => 'ASC')) as $materialResource){
+        foreach($materialResourceRepository->findMaterialResourcesSorted() as $materialResource){
             $categories = array();
             foreach($categoryOfMaterialResources as $categoryOfMaterialResource){
                 if($categoryOfMaterialResource->getMaterialresource()->getId() == $materialResource->getId()){
