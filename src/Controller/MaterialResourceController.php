@@ -640,7 +640,7 @@ class MaterialResourceController extends AbstractController
             "&#7923;" => "y",
             );
         $term = strtr(mb_strtolower($request->query->get('term'),'UTF-8'), $utf8);
-        $MRs = $MRRepository->findAll();
+        $MRs = $MRRepository->findBy(array(), array('materialresourcename' => 'ASC'));
         $results = array();
         foreach ($MRs as $MR) {
             $name = strtr(mb_strtolower($MR->getMaterialresourcename(),'UTF-8'), $utf8);
