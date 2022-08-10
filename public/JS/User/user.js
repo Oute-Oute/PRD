@@ -10,6 +10,7 @@ function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   document.getElementById("usernameEdit").value = usernameEdit;
   document.getElementById("firstnameEdit").value = firstnameEdit;
   document.getElementById("lastnameEdit").value = lastnameEdit;
+  document.getElementById("passwordEdit").value = null;
   document.getElementById("roleEdit").value = roleEdit;
   $("#edit-user-modal").modal("show");
 }
@@ -21,14 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("buttonEdit" + actualUser).disabled = true;
   document.getElementById("buttonErase" + actualUser).disabled = true;
 });
-
-function showPatient(id) {
-  document.getElementById("iduser").value = id;
-  document.getElementById("username").value = username;
-  document.getElementById("role").value = role;
-  $("#show-user-modal").modal("show");
-}
-
 function usernameEdit() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
@@ -102,9 +95,9 @@ function hideEditModalForm() {
   var buttons=document.createElement('td');
   var edit=document.createElement('button');
   edit.setAttribute('type','button');
-  edit.setAttribute('id','buttonEdit'+selected.username);
+  edit.setAttribute('id','buttonEdit'+selected.username+selected.id);
   edit.setAttribute('class','btn-edit btn-secondary');
-  edit.setAttribute('onclick',"editUser('"+selected.id+"', '"+selected.username+"', '"+selected.firstname+"', '"+selected.lastname+"' )");
+  edit.setAttribute('onclick',"editUser('"+selected.id+"', '"+selected.username+"', '"+selected.firstname+"', '"+selected.lastname+"', '"+selected.role[1]+"' )");
   edit.append('Editer');
   var form=document.createElement('form');
   form.setAttribute('action','/user/'+selected.id+"/delete");
@@ -114,12 +107,17 @@ function hideEditModalForm() {
   form.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cet utilisateur ?")');
   var deleteButton=document.createElement('button');
   deleteButton.setAttribute('class','btn-delete btn-secondary');
+  deleteButton.setAttribute('id','buttonErase'+selected.username+selected.id);
   deleteButton.append('Supprimer');
   deleteButton.setAttribute('type','submit');
   buttons.appendChild(edit);
   form.appendChild(deleteButton);
   buttons.appendChild(form);
   tr.appendChild(buttons);
+  actualUser = document.getElementById("OwnUsername").value;
+  actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
+  document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
+  document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
   paginator=document.getElementById('paginator');
   paginator.style.display='none';
 }
