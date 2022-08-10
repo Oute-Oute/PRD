@@ -953,6 +953,11 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
       listResource.push(eventResources);
     });
   }
+  if(slotDuration === undefined){
+    // if the slot duartion is not defined, we make sure to apply the default one
+    slotDuration = "00:20:00"
+  }
+
   calendar = new FullCalendar.Calendar(calendarEl, {
     //clé de la license pour utiliser la librairie à des fin non commerciale
     schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
