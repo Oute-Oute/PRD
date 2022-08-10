@@ -76,53 +76,73 @@ function hideEditModalForm() {
   $("#edit-user-modal").modal("hide");
 }
 
-function filterUser(idInput, selected = null) {
-  var trs = document.querySelectorAll("#tableUser tr:not(.headerUser)");
-  if (selected == null) {
-    var filter = document.querySelector("#" + idInput).value;
-  } else {
-    var filter = selected;
+/**
+ * Allows to filter patients to not display all of them
+ */
+ function filterUser(selected=null){
+  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
+  for(let i=0; i<trs.length; i++){
+          trs[i].style.display='none';
   }
-  for (let i = 0; i < trs.length; i++) {
-    var regex = new RegExp(filter, "i");
-    var username = trs[i].cells[1].outerText;
-    if (autocompleteArray.indexOf(username) == -1) {
-      autocompleteArray.push(username);
-    }
-    if (regex.test(username) == false) {
-      trs[i].style.display = "none";
-    } else {
-      trs[i].style.display = "";
-    }
-  }
+  table=document.getElementById('userTable');
+  var tr=document.createElement('tr');
+  table.appendChild(tr);
+  var id=document.createElement('td');
+  id.append(selected.id);
+  tr.appendChild(id);
+  var username=document.createElement('td');
+  username.append(selected.username);
+  tr.appendChild(username);
+  var name=document.createElement('td');
+  name.append(selected.lastname+" "+selected.firstname);
+  tr.appendChild(name);
+  var role=document.createElement('td');
+  role.append(selected.role[1]);
+  tr.appendChild(role);
+  var buttons=document.createElement('td');
+  var edit=document.createElement('button');
+  edit.setAttribute('type','button');
+  edit.setAttribute('id','buttonEdit'+selected.username);
+  edit.setAttribute('class','btn-edit btn-secondary');
+  edit.setAttribute('onclick',"editUser('"+selected.id+"', '"+selected.username+"', '"+selected.firstname+"', '"+selected.lastname+"' )");
+  edit.append('Editer');
+  var form=document.createElement('form');
+  form.setAttribute('action','/user/'+selected.id+"/delete");
+  form.setAttribute('style','display:inline');
+  form.setAttribute('method','POST');
+  form.setAttribute('id','formDelete'+selected.id);
+  form.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cet utilisateur ?")');
+  var deleteButton=document.createElement('button');
+  deleteButton.setAttribute('class','btn-delete btn-secondary');
+  deleteButton.append('Supprimer');
+  deleteButton.setAttribute('type','submit');
+  buttons.appendChild(edit);
+  form.appendChild(deleteButton);
+  buttons.appendChild(form);
+  tr.appendChild(buttons);
+  paginator=document.getElementById('paginator');
+  paginator.style.display='none';
 }
 
-function filterShowUser(button = null) {
-  let filter = document.getElementById("filterId");
-  if (filter.style.display != "none" || button == null) {
-    //if the filter is already displayed
-    filter.style.display = "none"; //hide the filter
+/**
+ * Allows to display all patients without any filter
+ */
+ function displayAll() {
+  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
+  var input = document.getElementById('autocompleteInputUserName');
+  console.log(input.value)
+  if(input.value == ''){
+  for(let i=0; i<trs.length; i++){
+      console.log(trs[i].className)
+      if(trs[i].style.display == 'none'){
+          trs[i].style.display='table-row';
+      }
+      else if(trs[i].className != 'original'){
+          trs[i].remove()
+      }
   }
-  else {
-    filter.style.display = "inline-block";
-  }
+  paginator=document.getElementById('paginator');
+  paginator.style.display='';
 }
-
-function filterRole() {
-  visiteurChecked = document.getElementById('visiteur').checked
-  adminChecked = document.getElementById('admin').checked
-  editeurChecked = document.getElementById('editeur').checked
-  var trs = document.querySelectorAll("#tableUser tr:not(.headerUser)");
-  for (let i = 0; i < trs.length; i++) {
-    var role = trs[i].cells[2].outerText;
-
-    if ((role == 'Visiteur' && visiteurChecked) || (role == 'Editeur' && editeurChecked) || (role == 'Admin' && adminChecked)) {
-      trs[i].style.display = "";
-    } else {
-      trs[i].style.display = "none";
-    }
-  }
 }
-
-
 
