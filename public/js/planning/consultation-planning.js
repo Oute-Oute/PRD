@@ -70,7 +70,7 @@ function createEvents() {
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
-function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefined) {
+function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
@@ -217,6 +217,7 @@ function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefine
       }
       break;
     case "Ressources Humaines": //if we want to display by the resources
+    console.log(resourcesToDisplay)
     if(resourcesToDisplay!=undefined){
       var tempArray=resourcesToDisplay
     }
@@ -228,6 +229,7 @@ function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefine
         if (calendar.getResourceById(temp["id"]) == null) {
           //if the resource is not already in the calendar
           var businessHours = []; //create an array to store the working hours
+          console.log(tempArray);
           for (var j = 0; j < temp["workingHours"].length; j++) {
             businesstemp = {
               //create a new business hour

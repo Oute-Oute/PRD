@@ -69,7 +69,7 @@ function createEvents() {
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
-function createCalendar(typeResource, slotDuration,resourcesToDisplay = undefined) {
+function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
   var events = createEvents();
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
