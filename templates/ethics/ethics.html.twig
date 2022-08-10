@@ -85,7 +85,7 @@
 <script>
 	reload("ethics");
 </script>
-<div class="modal" id="modify-planning-modal">
+<div class="modal" id="ethic-activity-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -93,42 +93,64 @@
 					<span id="show-title"></span>
 				</h2>
 			</div>
-			<form method="post" action="/ModificationPlanning">
-				<div class="modal-body">
-					<label class="label-event">Horaires de l'activité :
-					</label>
-					<div class="input-container onWhite">
-						<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
-						<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled>
-						</br>
-						<label class="label-event">Parcours :</label>
-						</br>
-						<input class="input-modal" type="text" id="parcours" name="parcours" disabled>
-						</br>
-						<label class="label-event">Patient :</label>
-						</br>
-						<input class="input-modal" type="text" id="patient" name="patient" disabled>
-						</br>
-						<label class="label-event">Ressource Humaine :</label>
-						</br>
-						<input class="input-modal" type="text" id="rh" name="rh" disabled>
-						</br>
-						<label class="label-event">Ressource Matérielle :</label>
-						</br>
-						<input class="input-modal" type="text" id="rm" name="rm" disabled>
-						</br>
-						<label class="label-event">Commentaires :</label>
-						</br>
-						<div class="input-modal" id="comments" name="comments">
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-						<button type="button" class="btn-edit btn-secondary" onclick="changeComment()" data-bs-dismiss="modal">Nouveau Commentaire</button>
-					
+			<div class="modal-body">
+				<label class="label-event">Horaires de l'activité :
+				</label>
+				<div class="input-container onWhite">
+					<input type="hidden" id="id-scheduled-activity" name="id-scheduled-activity">
+					<input class="input-modal-date" type="datetime-local" id="start" name="start" disabled>
+					<input class="input-modal-date" type="datetime-local" id="end" name="end" disabled>
+					</br>
+					<label class="label-event">Parcours :</label>
+					</br>
+					<input class="input-modal" type="text" id="parcours" name="parcours" disabled>
+					</br>
+					<label class="label-event">Patient :</label>
+					</br>
+					<input class="input-modal" type="text" id="patient" name="patient" disabled>
+					</br>
+					<label class="label-event">Ressource Humaine :</label>
+					</br>
+					<input class="input-modal" type="text" id="rh" name="rh" disabled>
+					</br>
+					<label class="label-event">Ressource Matérielle :</label>
+					</br>
+					<input class="input-modal" type="text" id="rm" name="rm" disabled>
+					</br>
+					<label class="label-event">Commentaires :</label>
+					</br>
+					<div class="input-modal" id="comments" name="comments">
 					</div>
 				</div>
-			</form>
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
+					<button type="button" class="btn-edit btn-secondary" onclick="changeComment()" data-bs-dismiss="modal">Nouveau Commentaire</button>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="ethic-comment-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title">Nouveau commentaire :</span>
+				</h2>
+			</div>
+			<div class="modal-body">
+				<div class="input-container onWhite">
+					<input id="new-comment" name="new-comment">
+					</input>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<button type="button" class="btn-edit btn-secondary" onclick="validComment()" data-bs-dismiss="modal">Ajouter</button>
+				
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
