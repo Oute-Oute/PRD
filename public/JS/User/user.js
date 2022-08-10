@@ -10,6 +10,7 @@ function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   document.getElementById("usernameEdit").value = usernameEdit;
   document.getElementById("firstnameEdit").value = firstnameEdit;
   document.getElementById("lastnameEdit").value = lastnameEdit;
+  document.getElementById("passwordEdit").value = null;
   document.getElementById("roleEdit").value = roleEdit;
   $("#edit-user-modal").modal("show");
 }
@@ -29,7 +30,7 @@ function showPatient(id) {
   $("#show-user-modal").modal("show");
 }
 
-function usernameEditTest() {
+function usernameEdit() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
   let id = document.getElementById("iduserEdit").value;
