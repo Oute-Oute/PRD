@@ -66,6 +66,42 @@ function createEvents() {
 }
 
 /**
+ * @brief This function is called when we want to add a new comment
+ */
+function changeComment(){
+  document.getElementById("new-comment").value = "";
+  $("#ethic-comment-modal").modal("show"); //open the window
+}
+
+function validComment(){
+  var newComment = document.getElementById("new-comment").value;
+  var idScheduledActivity = document.getElementById("id-scheduled-activity").value;
+  var userName = document.getElementById("OwnUsername").value;
+  console.log(idScheduledActivity, userName)
+
+  $.ajax({
+    type : 'POST',
+    url  : '/ajaxEthicsAddComment',
+    data : {newComment: newComment, idScheduledActivity: idScheduledActivity, userName: userName},
+    dataType : "json",
+    success : function(data){
+      var event = calendar.getEventById(idScheduledActivity)
+      var author = data["userLastname"] + " " + data["userFirstname"];
+      event._def.extendedProps.comments.push({
+        comment: data["newComment"],
+        author: author
+      });
+      event._def.ui.backgroundColor = '#841919';
+      event._def.ui.borderColor = '#841919';
+      event.setStart(event.start);
+    },
+    error: function(data){
+        console.log("error");
+    }
+  });
+}
+
+/**
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
@@ -190,6 +226,8 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
         commentsText +="<b> <u> "+ comments[i].author + "</b> </u>  : " + comments[i].comment; //add the last comment to the string
       } else commentsText = "Aucun commentaire";
 
+      document.getElementById("id-scheduled-activity").value = event.event._def.publicId; //set id scheduled activity
+
       //set data to display in the modal window
       $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
       $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
@@ -201,7 +239,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       console.log(commentsText);
       document.getElementById("comments").innerHTML=commentsText; //set the comments of the event
       console.log(document.getElementById("comments").innerHTML)
-      $("#modify-planning-modal").modal("show"); //open the window
+      $("#ethic-activity-modal").modal("show"); //open the window
     },
   });
   //change the type of the calendar(Patients, Resources...)

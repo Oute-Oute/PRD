@@ -4,13 +4,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Repository\displayedActivityRepository;
 use App\Repository\ScheduledActivityRepository;
-use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
+use App\Entity\CommentScheduledActivity;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Validator\Constraints\Length;
+use Doctrine\ORM\EntityManagerInterface;
 
 class EthicsController extends AbstractController
 {
@@ -529,5 +527,19 @@ class EthicsController extends AbstractController
         }
         return $commentsArray;
     }
+
+    public function addComment(ManagerRegistry $doctrine, EntityManagerInterface $entityManager){
+        $user = $doctrine->getRepository("App\Entity\User")->findOneBy(['username' => $_POST["userName"]]);
+        $scheduledActivity = $doctrine->getRepository("App\Entity\ScheduledActivity")->findOneBy(['id' => $_POST["idScheduledActivity"]]);
+        $commentScheduledActivity = new CommentScheduledActivity();
+        $commentScheduledActivity->setScheduledactivity($scheduledActivity);
+        $commentScheduledActivity->setUser($user);
+        $commentScheduledActivity->setComment($_POST["newComment"]);
+        $entityManager->persist($commentScheduledActivity);
+        $entityManager->flush();
+        $userFirstname = $user->getFirstname();
+        $userLastname = $user->getLastname();
+        return new JsonResponse(["newComment" => $_POST["newComment"], "idScheduledActivity" => $_POST["idScheduledActivity"], "userFirstname" => $userFirstname, "userLastname" => $userLastname]);
     }
+}
     

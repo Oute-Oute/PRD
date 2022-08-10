@@ -296,3 +296,8 @@ Ethics:
   path: /ethics
   controller: App\Controller\EthicsController::index
   methods: [GET]
+
+AjaxEthicsAddComment:
+  path: /ajaxEthicsAddComment
+  controller: App\Controller\EthicsController::addComment
+  methods: [POST]
