@@ -30,7 +30,7 @@ function showPatient(id) {
   $("#show-user-modal").modal("show");
 }
 
-function usernameEdit() {
+function usernameEditTest() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
   let id = document.getElementById("iduserEdit").value;
