@@ -69,15 +69,12 @@
 					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
 				</div>
-				<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom">
-					<option value="02:00:00">Zoom : 12,5%</option>
-					<option value="01:00:00">Zoom : 25%</option>
-					<option value="00:40:00">Zoom : 50%</option>
-					<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
-					<option value="00:10:00">Zoom : 200%</option>
-					<option value="00:05:00">Zoom : 400%</option>
-					<option value="00:02:30">Zoom : 800%</option>
-				</select>
+				<div id="zoom-div">
+					<input id="zoom-value" type="hidden" value="00:20:00">
+					<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
+					<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
+					<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
+				</div>
 			</div>
 		</div>
 

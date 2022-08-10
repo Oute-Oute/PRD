@@ -6,6 +6,8 @@
  * @date 2022/07
  */
 
+const { indexOf } = require("core-js/core/array");
+
 var humanCategoriesToDisplay = [];
 var materialCategoriesToDisplay = [];
 var firstCreationFilter=true;
@@ -328,11 +330,37 @@ function changeDate(dateStr,type,headerResources){
   }
 }
 
-
-function zoomChange() {
-  newZoom = document.getElementById('zoom').value;
-  calendar.setOption('slotDuration', newZoom);
-  calendar.render()
+function zoomChange(change) {
+  zooms = ['02:00:00', '01:00:00', '00:40:00', '00:20:00', '00:10:00', '00:05:00', '00:02:30']
+  zoomValue = document.getElementById('zoom-value').value;
+  indexZoom = zooms.indexOf(zoomValue)
+  if(indexZoom != -1){
+    if(change == "plus"){
+      if(indexZoom < zooms.length-1){
+        calendar.setOption('slotDuration', zooms[indexZoom+1]);
+        document.getElementById('zoom-value').value = zooms[indexZoom+1]
+      }
+    }
+    if(change == 'minus'){
+      if(indexZoom > 0){
+        calendar.setOption('slotDuration', zooms[indexZoom-1]);
+        document.getElementById('zoom-value').value = zooms[indexZoom-1]
+      }
+    }
+    if(change == 'default'){
+      calendar.setOption('slotDuration', "00:20:00");
+      document.getElementById('zoom-value').value = "00:20:00" 
+    }
+    calendar.render()
+  }
+  else{
+    calendar.setOption('slotDuration', "00:20:00");
+    document.getElementById('zoom-value').value = "00:20:00"
+    calendar.render()
+  }
+  
+  scrollableDiv = document.getElementsByClassName("fc-scroller fc-scroller-liquid-absolute")[1]
+  scrollableDiv.scrollLeft = (scrollableDiv.scrollWidth-scrollableDiv.clientWidth)/2
 }
 
 function categoryShow() {
