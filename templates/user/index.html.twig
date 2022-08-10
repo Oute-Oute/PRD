@@ -31,53 +31,27 @@
 {% endblock %}
 {% block body %}
 	<div class="index" id="index-users">
-		<h1 onclick='filterShowUser()'>
+		<h1 >
 			Liste des utilisateurs</h1>
-		<button class="btn-add" onclick="addUser();filterShowUser()">Ajouter un nouvel utilisateur</button>
-		<div><input type="text" id="autocompleteInputUserNname" onclick="filterShowUser()" onkeyup="filterUser('autocompleteInputUserNname')" placeholder="Rechercher"></div>
+		<button class="btn-add" onclick="addUser()">Ajouter un nouvel utilisateur</button>
+		<div><input type="text" id="autocompleteInputUserName" onkeyup="displayAll()" placeholder="Rechercher"></div>
 		<table class="table table-striped table-index-users" id="tableUser">
 			<thead>
 				<tr class="headerUser">
 					<th>Id</th>
 					<th>Nom d'utilisateur</th>
 					<th>Identité</th>
-
-					<th>
-						<button id="filterbutton" onclick="filterShowUser(false)" class="btn-calendar-edit" title="Selection des rôles à afficher">
-							Rôles
-
-						</button>
-						<div id="filterId" class="filter-container" style="display:none">
-							<fieldset onchange='filterRole()'>
-								<div>
-									<input type="checkbox" id="admin" checked>
-									<label for="admin">Admin</label>
-								</div>
-
-								<div>
-									<input type="checkbox" id="editeur" checked>
-									<label for="editeur">Editeur</label>
-								</div>
-
-								<div>
-									<input type="checkbox" id="visiteur" checked>
-									<label for="visiteur">Visiteur</label>
-								</div>
-							</fieldset>
-
-
-						</div>
-					</th>
+					<th>Rôle</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody onclick='filterShowUser()'>
+			<tbody id="userTable">
 				{% for user in users %}
-					<tr>
+					<tr class="original">
 						<td>{{ user.id }}</td>
 						<td>{{ user.username }}</td>
-						<td>{{ user.firstname }}
-							{{ user.lastname }}</td>
+						<td>{{ user.lastname }}
+							{{ user.firstname }}</td>
 
 						{% if user.roles[1] is defined %}
 							{% set role = user.roles[1] %}
@@ -87,7 +61,7 @@
 							<td></td>
 						{% endif %}
 						<td>
-							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' )">Éditer
+							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' , '{{ user.roles[1] }}' )">Éditer
 							</a>
 							<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer cet utilisateur ?');">
 								<input type="hidden" name="user" value="{{ user.id }}">
@@ -106,13 +80,13 @@
 		{{ include ('user/edit_user.html.twig') }}
 		{{ include ('user/new_user.html.twig') }}
 		<script>
-			$("#autocompleteInputUserNname").autocomplete({
-source: autocompleteArray,
-minLength: 3,
-select: function (event, ui) {
-filterUser('autocompleteInputUserNname', ui.item.value);
-}
-});
-		</script>
-
+	$( "#autocompleteInputUserName" ).autocomplete({
+	source: "/autocompleteUser",
+	minLength: 3,
+	select: function( event, ui ) {
+		filterUser(ui.item);
+	}
+	}
+	);
+	</script>
 	{% endblock %}

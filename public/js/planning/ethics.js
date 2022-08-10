@@ -131,9 +131,13 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       field: "categoriesString", //set the field of the column
     }]
   }
+  if(slotDuration === undefined){
+    // if the slot duartion is not defined, we make sure to apply the default one
+    slotDuration = "00:20:00"
+  }
+  
   date = new Date(dateStr); //create a new date with the date in the hidden input
   var calendarEl = document.getElementById("calendar"); //create the calendar variable
-
   //create the calendar
   calendar = new FullCalendar.Calendar(calendarEl, {
     schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license

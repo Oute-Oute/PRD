@@ -1,68 +1,67 @@
 <div class="modal" id="edit-user-modal">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h2 class="modal-title">Modifier un utilisateur</h2>
-					</div>
-					<form action="{{ path('UserEdit') }}" method="post">
-						<div class="modal-body">
-							<input type="hidden" name="iduserEdit" id="iduserEdit">
-							<div class="flex-col">
-								<label for='usernameEdit'>
-									Nom d'utilisateur
-								</label>
-								<input class="input" type='text' oninput="usernameEdit()" value="" name='usernameEdit' id='usernameEdit'>
-								<p1 id="ErrorUserEdit">
-									Nom d'utilisateur deja pris</p1>
-								<div>
-									<input class="input" type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
-								</div>
-
-							</div>
-							<div class="flex-col">
-								<label for='firstnameEdit'>
-									Prénom
-								</label>
-								<input class="input" type='text' required="required" name='firstnameEdit' id='firstnameEdit'>
-							</div>
-							<div class="flex-col">
-								<label for='lastnameEdit'>
-									Nom
-								</label>
-								<input class="input" type='text' required="required" name='lastnameEdit' id='lastnameEdit'>
-							</div>
-							<div class="flex-col">
-								<label for='passwordEdit'>
-									Nouveau mot de passe temporaire
-								</label>
-								<input class="input" type='passwordEdit' required="required" name='passwordEdit' id='passwordEdit'>
-							</div>
-							<div class="flex-col" >
-								<label for='roleEdit'>
-									Roles
-								</label>
-								<select style="margin-left:10px;" class="input" name="roleEdit" id="roleEdit" required="required">
-									<option value="">--Choissisez le role de l'utilisateur--</option>
-									<option value="Admin">Admin</option>
-									<option value="Editeur">Editeur</option>
-									<option value="Visiteur">Visiteur</option>
-
-								</select>
-							</div>
-
-							<br>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Retour</button>
-							<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">Modifier</button>
-						</div>
-					</form>
-				
-					{##}
-
-					{##}
-
-				</div>
-
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Modifier un utilisateur</h2>
 			</div>
+			<form action="{{ path('UserEdit') }}" method="post">
+				<div class="modal-body">
+					<input type="hidden" name="iduserEdit" id="iduserEdit">
+					<div class="flex-col">
+						<label for='usernameEdit'>
+							Nom d'utilisateur
+						</label>
+						<input class="input" type='text' oninput="usernameEditTest()" value="" name='usernameEdit' id='usernameEdit'>
+						<p1 id="ErrorUserEdit">
+							Nom d'utilisateur deja pris</p1>
+						<div>
+							<input class="input" type="hidden" id="userList" name="userList" value="{{ listeUser.content }}">
+						</div>
+
+					</div>
+					<div class="flex-col">
+						<label for='firstnameEdit'>
+							Prénom
+						</label>
+						<input class="input" type='text' required="required" name='firstnameEdit' id='firstnameEdit'>
+					</div>
+					<div class="flex-col">
+						<label for='lastnameEdit'>
+							Nom
+						</label>
+						<input class="input" type='text' required="required" name='lastnameEdit' id='lastnameEdit'>
+					</div>
+					<div class="flex-col">
+						<label for='passwordEdit'>
+							Nouveau mot de passe temporaire
+						</label>
+						<input class="input" type='password' name='passwordEdit' id='passwordEdit'>
+					</div>
+					<div class="flex-col">
+						<label for='roleEdit'>
+							Roles
+						</label>
+						<select style="margin-left:10px;" class="input" name="roleEdit" id="roleEdit" required="required">
+							<option value="">--Choissisez le role de l'utilisateur--</option>
+							<option value="Admin">Admin</option>
+							<option value="Editeur">Editeur</option>
+							<option value="Visiteur">Visiteur</option>
+						</select>
+					</div>
+
+					<br>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-delete btn-secondary" onclick="hideEditModalForm()">Retour</button>
+					<button type="submit" id="buttonConfirmEdit" class="btn-valide btn-secondary">Modifier</button>
+				</div>
+			</form>
+
+			{##}
+
+			{##}
+
 		</div>
+
+	</div>
+</div>
