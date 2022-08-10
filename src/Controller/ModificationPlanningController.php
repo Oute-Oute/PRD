@@ -426,8 +426,7 @@ class ModificationPlanningController extends AbstractController
      * This function delete the data modification when the user leave modification planning and then redirect to consultation planning
      */
     public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')
-    {
-        $dateModified = $request->request->get("validation-date");
+    {   $dateModified = $request->request->get("validation-date");
         if (isset($_GET['dateModified'])) {
             $dateModified = $_GET['dateModified'];
         }
@@ -437,6 +436,7 @@ class ModificationPlanningController extends AbstractController
         else{
             $id = 0;
         }
+        $route='/ConsultationPlanning?date='.$dateModified;
         $dateModified = str_replace('T12:00:00', '', $dateModified);
 
         $modificationRepository = new ModificationRepository($doctrine);
@@ -448,7 +448,7 @@ class ModificationPlanningController extends AbstractController
             }
             $i++;
         }
-        return $this->redirectToRoute('ConsultationPlanning', [], Response::HTTP_SEE_OTHER);
+        return $this->redirect($route);
     }
 
 
