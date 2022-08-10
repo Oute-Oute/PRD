@@ -89,7 +89,10 @@ class UserController extends AbstractController
         $user->setUsername($usernameEdit);
         $user->setFirstname($firstnameEdit);
         $user->setLastname($lastnameEdit);
-        $user->setPassword(password_hash($passwordEdit, PASSWORD_DEFAULT));
+        if ($passwordEdit != '') {
+            $user->setPassword(password_hash($passwordEdit, PASSWORD_DEFAULT));
+        }
+
         $user->setRoles(['ROLE_USER', $roleEdit]);
 
         $entityManager->persist($user);
