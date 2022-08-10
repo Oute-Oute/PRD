@@ -226,7 +226,6 @@
 		<div id='container-top-right'>
 			<div id='top-right-buttons'>
 				<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
-				<button type="button" id="button-top-right" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
 					<input type="hidden" id='user-id' name="user-id" value="{{ app.user.getId() }}"/>
@@ -240,6 +239,7 @@
 					<input type="hidden" id='list-resource' name="list-resource"/>
 					<input type="hidden" id='scheduled-appointments' name="scheduled-appointments"/>
 				</form>
+				<button type="button" id="button-top-right" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 			</div>
 			<div >
 			<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom" >
