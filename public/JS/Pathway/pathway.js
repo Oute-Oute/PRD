@@ -1,6 +1,5 @@
 //const { get } = require("core-js/core/dict");
 
-var SELECT_ID = 0;
 var NB_ACTIVITY = 0;
 var autocompleteArray = new Array()
 
@@ -20,13 +19,7 @@ var lines= new Array();
 var VALIDATE = 0;
 var ARROWS_HIDDEN = 0;
 
-function initActivity() {
-    ACTIVITY_IN_PROGRESS = new Object()
-    ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
-    ACTIVITY_IN_PROGRESS.materialResourceCategories = new Array()
-    ACTIVITY_IN_PROGRESS.available = true
-    ACTIVITY_IN_PROGRESS.btnHM = 'human'
-}
+
 
 /**
  * Allow to show the modal for the target
