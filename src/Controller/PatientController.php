@@ -306,9 +306,7 @@ class PatientController extends AbstractController
         $patients = $patientRepository->findAll();
         $results = array();
         foreach ($patients as $patient) {
-            if (   strpos(strtr(mb_strtolower($patient->getLastname(),'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($patient->getFirstname(),'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($patient->getLastname()." ".$patient->getFirstname(),'UTF-8'),$utf8), $term) !== false 
+            if (   strpos(strtr(mb_strtolower($patient->getLastname()." ".$patient->getFirstname(),'UTF-8'),$utf8), $term) !== false 
                 || strpos(strtr(mb_strtolower($patient->getFirstname()." ".$patient->getLastname(),'UTF-8'),$utf8), $term) !== false) {
                 $results[] = [
                     'id' => $patient->getId(),
