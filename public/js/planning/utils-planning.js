@@ -6,8 +6,6 @@
  * @date 2022/07
  */
 
-const { indexOf } = require("core-js/core/array");
-
 var humanCategoriesToDisplay = [];
 var materialCategoriesToDisplay = [];
 var firstCreationFilter=true;
@@ -356,7 +354,7 @@ function zoomChange(change) {
   else{
     calendar.setOption('slotDuration', "00:20:00");
     document.getElementById('zoom-value').value = "00:20:00"
-    calendar.render()
+  calendar.render()
   }
   
   scrollableDiv = document.getElementsByClassName("fc-scroller fc-scroller-liquid-absolute")[1]
