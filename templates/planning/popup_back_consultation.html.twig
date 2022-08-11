@@ -1,0 +1,17 @@
+<div class="modal" id="popup-back-consultation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Attention</h2>
+            </div>
+            <div class="modal-body">
+                <p>Les modifications n'ont pas été enregistrées et vont être perdues.<br>
+                    Voulez-vous malgré tout quitter les modifications ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Quitter</button>
+                <button type="button" onclick="$('#popup-back-consultation').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
+            </div>
+        </div>
+    </div>
+</div>
