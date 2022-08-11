@@ -366,7 +366,6 @@ function addResources() {
     
     // On verifie que le champs quantité est bien rempli 
     let verif = true
-    console.log(document.getElementById('resource-nb').value)
 
     if (document.getElementById('resource-nb').value == '') {
         verif = false
@@ -846,10 +845,8 @@ function filterPathway(selected=null){
 function displayAll() {
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var input = document.getElementById('autocompleteInputPathwayNname');
-    console.log(input.value)
     if(input.value == ''){
         for(let i=0; i<trs.length; i++){
-            console.log(trs[i].className)
             if(trs[i].style.display == 'none'){
                 trs[i].style.display='table-row';
             }

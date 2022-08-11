@@ -121,10 +121,8 @@ function filterPatient(selected=null){
   function displayAll() {
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
     var input = document.getElementById('autocompleteInputLastname');
-    console.log(input.value)
     if(input.value == ''){
     for(let i=0; i<trs.length; i++){
-        console.log(trs[i].className)
         if(trs[i].style.display == 'none'){
             trs[i].style.display='table-row';
         }
