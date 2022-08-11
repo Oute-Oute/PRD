@@ -64,15 +64,12 @@
 					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
 				</div>
-				<select name="zoom" onclick="zoomChange()" class="form-select" id="zoom">
-					<option value="02:00:00">Zoom : 12,5%</option>
-					<option value="01:00:00">Zoom : 25%</option>
-					<option value="00:40:00">Zoom : 50%</option>
-					<option value='00:20:00' selected>Zoom : 100% (Défaut)</option>
-					<option value="00:10:00">Zoom : 200%</option>
-					<option value="00:05:00">Zoom : 400%</option>
-					<option value="00:02:30">Zoom : 800%</option>
-				</select>
+				<div id="zoom-div">
+					<input id="zoom-value" type="hidden" value="00:20:00">
+					<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
+					<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
+					<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
+				</div>
 			</div>
 		</div>
 
@@ -122,7 +119,7 @@
 					</br>
 					<label class="label-event">Commentaires :</label>
 					</br>
-					<div class="input-modal" id="comments" name="comments">
+					<div id="comments" name="comments">
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -152,6 +149,49 @@
 					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
 					<button type="button" class="btn-edit btn-secondary" onclick="validComment()" data-bs-dismiss="modal">Ajouter</button>
 				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="ethic-edit-comment-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title">Commentaire :</span>
+				</h2>
+			</div>
+			<div class="modal-body">
+				<input hidden id="edit-comment-id" name="edit-comment-id">
+				<div class="input-container onWhite">
+					<input id="edit-comment" name="edit-comment">
+					</input>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<button type="button" class="btn-edit btn-secondary" onclick="validEditComment()" data-bs-dismiss="modal">Modifier</button>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="ethic-confirm-delete-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="confirm-delete-title"></span>
+				</h2>
+			</div>
+			<div class="modal-body">
+				<input hidden id="delete-confirm-comment-id" name="delete-confirm-comment-id">
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Non</button>
+					<button type="button" class="btn-edit btn-secondary" onclick="deleteCommentConfirm()" data-bs-dismiss="modal">Oui</button>
 				</div>
 			</div>
 		</div>

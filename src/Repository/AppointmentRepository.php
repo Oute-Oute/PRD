@@ -45,6 +45,10 @@ class AppointmentRepository extends ServiceEntityRepository
     public function findAppointmentByDate($date)
     {
         $qb= $this->createQueryBuilder('a')
+        ->join('a.patient','patient')
+        ->join('a.pathway','pathway')
+        ->select('a.id, a.dayappointment, a.earliestappointmenttime, a.latestappointmenttime, patient.lastname, patient.firstname, pathway.pathwayname')
+        ->orderBy('patient.lastname', 'ASC')
         ->where('a.dayappointment= :date')
         ->setParameter('date',$date);
         $query=$qb->getQuery()->getResult(); 

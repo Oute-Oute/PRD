@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
+use Knp\Component\Pager\PaginatorInterface;
 
 
 class UserController extends AbstractController
@@ -29,12 +29,18 @@ class UserController extends AbstractController
      * Allows to list every users in the database
      */
 
-    public function userGet(UserRepository $userRepository, ManagerRegistry $doctrine): Response
+    public function userGet(UserRepository $userRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
     {
+
+        $users=$paginator->paginate(
+            $userRepository->findAll(),
+            $request->query->getInt('page',1),
+            8
+        ); 
 
         $listeUser = $this->listUserJSON($doctrine);
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
             'listeUser' => $listeUser
         ]);
     }

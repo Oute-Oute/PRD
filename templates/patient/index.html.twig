@@ -48,10 +48,7 @@
 						<td>
 							<button class = "btn-infos btn-secondary" onclick="showInfosPatient('{{patient.id}}', '{{patient.lastname}}', '{{patient.firstname}}')">Informations</a>
 						    <button type="button" class="btn-edit btn-secondary" onclick="editPatient('{{ patient.id }}', '{{ patient.lastname }}', '{{ patient.firstname }}')">Éditer</a>
-							<form method="post" action="{{ path('PatientDelete', {'id': patient.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce patient ?');">
-								<input type="hidden" name="patient" value="{{ patient.id }}">
-								<button class="btn-delete btn-secondary">Supprimer</button>
-							</form>
+							<button class="btn-delete btn-secondary" onclick="showPopup({{patient.id}})">Supprimer</button>
 						</td>
 					</tr>
 				{% else %}
@@ -65,6 +62,7 @@
     {{ include ('patient/edit_patient.html.twig') }}
 	{{ include ('patient/new_patient.html.twig') }}
 	{{ include ('patient/show_patient.html.twig') }}
+	{{ include ('patient/modal_popup.html.twig') }}
 
 	<script>
 	$( "#autocompleteInputLastname" ).autocomplete({

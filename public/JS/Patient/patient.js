@@ -56,7 +56,6 @@ function tableAppointment(tableBody, data,){
         td.setAttribute('colspan', 5);
         td.append("Pas de parcours prévus pour ce patient dans les prochains jours.");
         tr.appendChild(td);
-        console.log(tableBody)
     }
     else{
         for(i = 0; i < data.length; i++){
@@ -97,20 +96,13 @@ function filterPatient(selected=null){
     edit.setAttribute('class','btn-edit btn-secondary');
     edit.setAttribute('onclick','editPatient('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'")');
     edit.append('Editer');
-    var form=document.createElement('form');
-    form.setAttribute('action','/patient/'+selected.id+"/delete");
-    form.setAttribute('style','display:inline');
-    form.setAttribute('method','POST');
-    form.setAttribute('id','formDelete'+selected.id);
-    form.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce patient ?")');
     var deleteButton=document.createElement('button');
     deleteButton.setAttribute('class','btn-delete btn-secondary');
     deleteButton.append('Supprimer');
-    deleteButton.setAttribute('type','submit');
+    deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
     buttons.appendChild(infos);
     buttons.appendChild(edit);
-    form.appendChild(deleteButton);
-    buttons.appendChild(form);
+    buttons.appendChild(deleteButton);
     tr.appendChild(buttons);
     paginator=document.getElementById('paginator');
     paginator.style.display='none';
@@ -122,10 +114,8 @@ function filterPatient(selected=null){
   function displayAll() {
     var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
     var input = document.getElementById('autocompleteInputLastname');
-    console.log(input.value)
     if(input.value == ''){
     for(let i=0; i<trs.length; i++){
-        console.log(trs[i].className)
         if(trs[i].style.display == 'none'){
             trs[i].style.display='table-row';
         }
@@ -152,3 +142,7 @@ function hideEditModalForm() {
     $('#edit-patient-modal').modal("hide");
 }
 
+function showPopup(id){
+    document.getElementById("form-patient-delete").action = "/patient/" + id + "/delete"
+    $('#modal-popup').modal('show')
+  }

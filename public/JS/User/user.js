@@ -2,6 +2,7 @@ var autocompleteArray = [];
 
 function addUser() {
   document.getElementById("usernameAdd").value = "";
+  usernameNew()
   $("#add-user-modal").modal("show");
 }
 
@@ -12,6 +13,7 @@ function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   document.getElementById("lastnameEdit").value = lastnameEdit;
   document.getElementById("passwordEdit").value = null;
   document.getElementById("roleEdit").value = roleEdit;
+  usernameEditTest()
   $("#edit-user-modal").modal("show");
 }
 
@@ -34,7 +36,6 @@ function usernameEditTest() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
   let id = document.getElementById("iduserEdit").value;
-  console.log(usernamerequest);
   let dispo = true;
   for (let i = 0; i < listeUser.length; i++) {
     if (usernamerequest == listeUser[i].username && !(id == listeUser[i].id)) {
@@ -103,38 +104,34 @@ function filterUser(selected = null) {
   var buttons = document.createElement('td');
   var edit = document.createElement('button');
   edit.setAttribute('type', 'button');
-  edit.setAttribute('id', 'buttonEdit' + selected.username);
+  edit.setAttribute('id', 'buttonEdit' + selected.username+selected.id);
   edit.setAttribute('class', 'btn-edit btn-secondary');
   edit.setAttribute('onclick', "editUser('" + selected.id + "', '" + selected.username + "', '" + selected.firstname + "', '" + selected.lastname + "' )");
   edit.append('Editer');
-  var form = document.createElement('form');
-  form.setAttribute('action', '/user/' + selected.id + "/delete");
-  form.setAttribute('style', 'display:inline');
-  form.setAttribute('method', 'POST');
-  form.setAttribute('id', 'formDelete' + selected.id);
-  form.setAttribute('onsubmit', 'return confirm("Voulez-vous vraiment supprimer cet utilisateur ?")');
   var deleteButton = document.createElement('button');
   deleteButton.setAttribute('class', 'btn-delete btn-secondary');
   deleteButton.append('Supprimer');
-  deleteButton.setAttribute('type', 'submit');
+  deleteButton.setAttribute('id', 'buttonErase' + selected.username+selected.id);
+  deleteButton.setAttribute('onclick', 'showPopup('+selected.id+')');
   buttons.appendChild(edit);
-  form.appendChild(deleteButton);
-  buttons.appendChild(form);
+  buttons.appendChild(deleteButton);
   tr.appendChild(buttons);
+  actualUser = document.getElementById("OwnUsername").value;
+  actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
+  document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
+  document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
   paginator = document.getElementById('paginator');
   paginator.style.display = 'none';
 }
 
 /**
- * Allows to display all patients without any filter
+ * Allows to display all users without any filter
  */
 function displayAll() {
   var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
   var input = document.getElementById('autocompleteInputUserName');
-  console.log(input.value)
   if (input.value == '') {
     for (let i = 0; i < trs.length; i++) {
-      console.log(trs[i].className)
       if (trs[i].style.display == 'none') {
         trs[i].style.display = 'table-row';
       }
@@ -147,3 +144,7 @@ function displayAll() {
   }
 }
 
+function showPopup(id){
+  document.getElementById("form-user-delete").action = "/user/" + id + "/delete"
+  $('#modal-popup').modal('show')
+}

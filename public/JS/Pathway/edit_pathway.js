@@ -1146,20 +1146,22 @@ function createActivitiesGraph(name, idActivity, duration) {
         lines.forEach((l) => {
             if(l.start == div){
                 l.color = 'red';
+                l.show()
             }
             if(l.end == div){
                 l.color = 'blue';
+                l.show()
             }
-        }); 
+        });
     });
       
     div.addEventListener('mouseleave', (e) => {
         lines.forEach((l) => {
+            if(ARROWS_HIDDEN){
+                l.hide();
+            }
             l.color = '#0dac2d';
         });
-        if(ARROWS_HIDDEN){
-            l.hide();
-        }
     });
 }
 

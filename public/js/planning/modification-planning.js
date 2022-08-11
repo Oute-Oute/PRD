@@ -133,8 +133,8 @@ function backToConsultation() {
   if (isUpdated) {
     window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
   }
-  else if (confirm("Les modifications n'ont pas été enregistrées et vont être perdues. Voulez-vous malgré tout quitter les modifications ?")) {
-    window.location.assign('/ModificationDeleteOnUnload?dateModified=' + $_GET('date') + '&id=' + $_GET('id'));
+  else{
+    $('#popup-back-consultation').modal('show');
   }
 }
 /**
@@ -441,8 +441,7 @@ function updateEventsAppointment(modifyEvent) {
 function autoAddAllPathway(){
    
  do{
-    displayAddPathway();  
-    console.log()
+    displayAddPathway();
     if(selectAppointment!=undefined && document.getElementById('select-appointment').value==selectionAppointmentValue){
         break;
     } 

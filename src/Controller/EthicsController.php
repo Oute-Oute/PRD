@@ -522,7 +522,9 @@ class EthicsController extends AbstractController
         foreach ($comments as $comment) {
             $commentsArray[] = array(
                 'comment' => ($comment->getComment()),
+                'idcomment' => ($comment->getId()),
                 'author' => ($comment->getUser()->getlastname(). " " . $comment->getUser()->getfirstname()),
+                'authorusername' => $comment->getUser()->getUsername()
             );
         }
         return $commentsArray;
@@ -539,7 +541,27 @@ class EthicsController extends AbstractController
         $entityManager->flush();
         $userFirstname = $user->getFirstname();
         $userLastname = $user->getLastname();
-        return new JsonResponse(["newComment" => $_POST["newComment"], "idScheduledActivity" => $_POST["idScheduledActivity"], "userFirstname" => $userFirstname, "userLastname" => $userLastname]);
+        return new JsonResponse(["newComment" => $_POST["newComment"], "idComment" => $commentScheduledActivity->getId(), "idScheduledActivity" => $_POST["idScheduledActivity"], "userFirstname" => $userFirstname, "userLastname" => $userLastname]);
+    }
+
+    public function deleteComment(ManagerRegistry $doctrine, EntityManagerInterface $entityManager){
+        $commentScheduledActivity = $doctrine->getRepository("App\Entity\CommentScheduledActivity")->findOneBy(['id' => $_POST["idComment"]]);
+        $idScheduledActivity = $commentScheduledActivity->getScheduledactivity()->getId();
+        $entityManager->remove($commentScheduledActivity);
+        $entityManager->flush();
+        return new JsonResponse(["idComment" => $_POST["idComment"], "idScheduledActivity" => $idScheduledActivity]);
+    }
+
+    public function editComment(ManagerRegistry $doctrine, EntityManagerInterface $entityManager){
+        $user = $doctrine->getRepository("App\Entity\User")->findOneBy(['username' => $_POST["userName"]]);
+        $commentScheduledActivity = $doctrine->getRepository("App\Entity\CommentScheduledActivity")->findOneBy(['id' => $_POST["idComment"]]);
+        $commentScheduledActivity->setUser($user);
+        $commentScheduledActivity->setComment($_POST["commentEdit"]);
+        $entityManager->persist($commentScheduledActivity);
+        $entityManager->flush();
+        $userFirstname = $user->getFirstname();
+        $userLastname = $user->getLastname();
+        return new JsonResponse(["commentEdit" => $_POST["commentEdit"], "idComment" => $commentScheduledActivity->getId(), "idScheduledActivity" => $commentScheduledActivity->getScheduledactivity()->getId(), "userFirstname" => $userFirstname, "userLastname" => $userLastname]);
     }
 }
     
