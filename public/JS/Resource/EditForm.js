@@ -212,8 +212,7 @@ function deleteHumanUnavailability(button) {
             location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
-            console.log(xhr)
-            console.log(ajaxOptions)
+            console.log(xhr, ajaxOptions)
         }
 
     })
@@ -238,8 +237,7 @@ function deleteMaterialUnavailability(button) {
             location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
-            console.log(xhr)
-            console.log(ajaxOptions)
+            console.log(xhr, ajaxOptions)
         }
 
         
