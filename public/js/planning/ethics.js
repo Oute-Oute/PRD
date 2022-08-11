@@ -130,7 +130,8 @@ function deleteComment(idDivComment){
         event._def.ui.borderColor = '#339d39';
         event.setStart(event.start);
       }
-      $("#ethic-activity-modal").modal("hide"); //open the window
+      $("#ethic-activity-modal").modal("hide"); //close the window
+      openActivityModal(event);
     },
     error: function(data){
         console.log("error");
@@ -156,6 +157,113 @@ function deleteComment(idDivComment){
  */
 function editComment(idComment){
 
+}
+
+/**
+ * 
+ * @param {*} event 
+ */
+function openActivityModal(event){
+  //get the data of the event
+  var id = event._def.publicId; //get the id of the event
+  var activity = calendar.getEventById(id); //get the event with the id
+  var start = activity.start; //get the start date of the event
+  var end = activity.end; //get the end date of the event
+  var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
+  var humanResourcesNames = ""; //create a string with the human resources names
+  if (humanResources.length > 0) {
+    for (var i = 0; i < humanResources.length - 1; i++) {
+      //for each human resource except the last one
+      if (humanResources[i][1] != undefined) {
+        //if the human resource exist
+        humanResourcesNames += humanResources[i] + ", "; //add the human resource name to the string with a ; and a space
+      }
+    }
+    humanResourcesNames += humanResources[i]; //add the last human resource name to the string
+  } else humanResourcesNames = "Aucune ressource associée";
+  var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
+  var materialResourcesNames = ""; //create a string with the material resources names
+
+  if (materialResources.length > 0) {
+    for (var i = 0; i < materialResources.length - 1; i++) {
+      //for each material resource except the last one
+      if (materialResources[i] != undefined) {
+        //if the material resource exist
+        materialResourcesNames += materialResources[i] + ", "; //add the material resource name to the string with a ; and a space
+      }
+    }
+
+    materialResourcesNames += materialResources[i]; //add the last material resource name to the string
+  } else materialResourcesNames = "Aucune ressource associée";
+
+  var divComments = document.getElementById("comments");
+  divComments.innerHTML = '';
+  var comments = activity.extendedProps.comments; //get the comments of the event
+  if (comments.length > 0) {
+    for (var i = 0; i < comments.length; i++) {
+      //for each comment except the last one
+      if (comments[i] != undefined) {
+        //if the comment exist
+        let divComment = document.createElement('div');
+        divComment.setAttribute('class', 'div-comment');
+        divComment.setAttribute('id', 'comment' + (comments[i].idcomment));
+        divComment.style.maxHeight = '150px'
+
+        let divUsername = document.createElement('input')
+        divUsername.setAttribute('id', 'username-' + comments[i].idcomment)
+        divUsername.setAttribute('type', 'hidden')
+        divUsername.setAttribute('value', comments[i].authorusername)
+
+        let divContainerP = document.createElement('div');
+        divContainerP.setAttribute('class', 'container-p');
+
+        let p = document.createElement('p');
+        p.style.width = '80%';
+        p.innerHTML = comments[i].author + " : " + comments[i].comment; //add the comment to the string with a ; and a space
+        divContainerP.appendChild(p);
+
+        let imgDelete = new Image();
+        imgDelete.src = '../../img/delete.svg'
+        imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
+        imgDelete.setAttribute('onclick', 'deleteComment(this.id)')
+        imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
+        imgDelete.style.width = '20px'
+        imgDelete.style.cursor = 'pointer'
+
+        let imgEdit = new Image();
+        imgEdit.src = '../../img/edit.svg'
+        imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
+        imgEdit.setAttribute('onclick', 'editComment(this.id)')
+        imgEdit.setAttribute('title', 'Édition de l\'activité')
+        imgEdit.style.width = '20px'
+        imgEdit.style.cursor = 'pointer'
+        imgEdit.style.marginRight = '10px'
+
+        let divImages = document.createElement('div')
+        divImages.setAttribute('class', 'btns')
+        divImages.appendChild(imgEdit)
+        divImages.appendChild(imgDelete)
+
+        divComment.appendChild(divUsername);
+        divComment.appendChild(divContainerP);
+        divComment.appendChild(divImages);
+        divComments.appendChild(divComment);
+      }
+    }
+  } else document.getElementById("comments").innerHTML = "Aucun commentaire";
+
+  document.getElementById("id-scheduled-activity").value = event._def.publicId; //set id scheduled activity
+
+  //set data to display in the modal window
+  $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
+  $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
+  document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
+  $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
+  $("#patient").val(activity.extendedProps.patient); //set the patient of the event
+  $("#rh").val(humanResourcesNames); //set the human resources of the event
+  $("#rm").val(materialResourcesNames); //set the material resources of the event
+  console.log(document.getElementById("comments").innerHTML)
+  $("#ethic-activity-modal").modal("show"); //open the window
 }
 
 /**
@@ -242,106 +350,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
 
     //when we click on an event, display a modal window with the event information
     eventClick: function (event) {
-      //get the data of the event
-      var id = event.event._def.publicId; //get the id of the event
-      var activity = calendar.getEventById(id); //get the event with the id
-      var start = activity.start; //get the start date of the event
-      var end = activity.end; //get the end date of the event
-      var humanResources = activity.extendedProps.humanResources; //get the human resources of the event
-      var humanResourcesNames = ""; //create a string with the human resources names
-      if (humanResources.length > 0) {
-        for (var i = 0; i < humanResources.length - 1; i++) {
-          //for each human resource except the last one
-          if (humanResources[i][1] != undefined) {
-            //if the human resource exist
-            humanResourcesNames += humanResources[i] + ", "; //add the human resource name to the string with a ; and a space
-          }
-        }
-        humanResourcesNames += humanResources[i]; //add the last human resource name to the string
-      } else humanResourcesNames = "Aucune ressource associée";
-      var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
-      var materialResourcesNames = ""; //create a string with the material resources names
-
-      if (materialResources.length > 0) {
-        for (var i = 0; i < materialResources.length - 1; i++) {
-          //for each material resource except the last one
-          if (materialResources[i] != undefined) {
-            //if the material resource exist
-            materialResourcesNames += materialResources[i] + ", "; //add the material resource name to the string with a ; and a space
-          }
-        }
-
-        materialResourcesNames += materialResources[i]; //add the last material resource name to the string
-      } else materialResourcesNames = "Aucune ressource associée";
-
-      var divComments = document.getElementById("comments");
-      divComments.innerHTML = '';
-      var comments = activity.extendedProps.comments; //get the comments of the event
-      if (comments.length > 0) {
-        for (var i = 0; i < comments.length; i++) {
-          //for each comment except the last one
-          if (comments[i] != undefined) {
-            //if the comment exist
-            let divComment = document.createElement('div');
-            divComment.setAttribute('class', 'div-comment');
-            divComment.setAttribute('id', 'comment' + (comments[i].idcomment));
-            divComment.style.maxHeight = '150px'
-
-            let divUsername = document.createElement('input')
-            divUsername.setAttribute('id', 'username-' + comments[i].idcomment)
-            divUsername.setAttribute('type', 'hidden')
-            divUsername.setAttribute('value', comments[i].authorusername)
-
-            let divContainerP = document.createElement('div');
-            divContainerP.setAttribute('class', 'container-p');
-
-            let p = document.createElement('p');
-            p.style.width = '80%';
-            p.innerHTML = comments[i].author + " : " + comments[i].comment; //add the comment to the string with a ; and a space
-            divContainerP.appendChild(p);
-
-            let imgDelete = new Image();
-            imgDelete.src = '../../img/delete.svg'
-            imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
-            imgDelete.setAttribute('onclick', 'deleteComment(this.id)')
-            imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
-            imgDelete.style.width = '20px'
-            imgDelete.style.cursor = 'pointer'
-
-            let imgEdit = new Image();
-            imgEdit.src = '../../img/edit.svg'
-            imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
-            imgEdit.setAttribute('onclick', 'editComment(this.id)')
-            imgEdit.setAttribute('title', 'Édition de l\'activité')
-            imgEdit.style.width = '20px'
-            imgEdit.style.cursor = 'pointer'
-            imgEdit.style.marginRight = '10px'
-
-            let divImages = document.createElement('div')
-            divImages.setAttribute('class', 'btns')
-            divImages.appendChild(imgEdit)
-            divImages.appendChild(imgDelete)
-
-            divComment.appendChild(divUsername);
-            divComment.appendChild(divContainerP);
-            divComment.appendChild(divImages);
-            divComments.appendChild(divComment);
-          }
-        }
-      } else document.getElementById("comments").innerHTML = "Aucun commentaire";
-
-      document.getElementById("id-scheduled-activity").value = event.event._def.publicId; //set id scheduled activity
-
-      //set data to display in the modal window
-      $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
-      $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
-      document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
-      $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
-      $("#patient").val(activity.extendedProps.patient); //set the patient of the event
-      $("#rh").val(humanResourcesNames); //set the human resources of the event
-      $("#rm").val(materialResourcesNames); //set the material resources of the event
-      console.log(document.getElementById("comments").innerHTML)
-      $("#ethic-activity-modal").modal("show"); //open the window
+      openActivityModal(event.event);
     },
   });
   //change the type of the calendar(Patients, Resources...)
