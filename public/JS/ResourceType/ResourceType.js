@@ -10,8 +10,6 @@ function showNewModalForm() {
 
     formAddResourcetype = document.getElementById("form-add-resourcetype");
     formAddResourcetype.style.display = "flex";
-
-    console.log('hello')
 }
 
 function hideNewModalForm() {

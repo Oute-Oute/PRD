@@ -211,7 +211,6 @@ function edit__verifyChanges() {
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
     for (let i = 0; i < NB_ACTIVITY_EDIT; i++) {
-        console.log( activitiesContainer.children[i].children[1])
         activitiesContainer.children[i].children[1].children[0].setAttribute('name', 'name-activity-'+ Number(i))
         let name = activitiesContainer.children[i].children[1].children[0].value
         activitiesContainer.children[i].children[1].children[1].setAttribute('name', 'duration-activity-'+Number(i))

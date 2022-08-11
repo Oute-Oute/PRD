@@ -385,7 +385,6 @@ function addResources() {
     
     // We verify that the quantity field is fill
     let verif = true
-    console.log(document.getElementById('resource-nb').value)
 
     if (document.getElementById('resource-nb').value == '') {
         verif = false

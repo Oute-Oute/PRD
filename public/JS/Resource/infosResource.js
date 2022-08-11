@@ -325,7 +325,6 @@ function change_tab_material_infos(id) {
  * @param {*} resources the type of resources to display (Patients, Resources...)
  */
 function createCalendarResource(type) {
-  console.log("createCalendarResource");
   date = new Date(); //create a new date with the date in the hidden input
   if (type == "humanresource") {
     var calendarEl = document.getElementById("calendar-hr"); //create the calendar variable
@@ -381,7 +380,6 @@ function addToCalendar(data) {
   events = data["activities"];
   unavailability = data["unavailability"];
   workinghours = data["workingHours"];
-  console.log(workinghours);
   for (let i = 0; i < events.length; i++) {
     events[i].starttime
     calendar.addEvent({
