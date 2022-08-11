@@ -67,14 +67,7 @@
 							</div>
 
 							<div>
-								<form action="{{ path('PathwayDelete') }}" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce parours ?');" style="width:100%;">
-									<input type="hidden" value="{{pathway.id}}" name="pathwayid">
-									<button type="submit" class="btn-delete btn-secondary">
-										<p style="margin:0px;">
-											Supprimer
-										</p>
-									</button>
-								</form>
+								<button onclick="showPopup({{pathway.id}})" class="btn-delete btn-secondary">Supprimer</button>
 							</div>
 						</td>
 					</tr>
@@ -93,6 +86,7 @@
 		{#{{ include ('pathway/modal_edit.html.twig') }}#}
 		{# Fenêtre modale d'information #}
 		{{ include ('pathway/show.html.twig') }}
+		{{ include ('pathway/modal_popup.html.twig') }}
 
 			<script>
 $('#infos-pathway-modal').on('hidden.bs.modal', function () {

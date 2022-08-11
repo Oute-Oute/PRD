@@ -146,7 +146,7 @@ function displayAll() {
   }
 }
 
-function showPopup(i){
-  document.getElementById("form-user-delete").action = "/user/" + document.getElementById("id-user-"+i).value + "/delete"
+function showPopup(id){
+  document.getElementById("form-user-delete").action = "/user/" + id + "/delete"
   $('#modal-popup').modal('show')
 }

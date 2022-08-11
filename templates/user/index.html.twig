@@ -63,12 +63,7 @@
 						{% endif %}
 						<td>
 							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' , '{{ user.roles[1] }}' )">Éditer</button>
-							<input type="hidden" name="user" value="{{ user.id }}" id="id-user-{{i}}">
-							<button id='buttonErase{{user.username }}' class="btn-delete btn-secondary" onclick="showPopup({{i}})">Supprimer</button>
-							
-							<!--<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}">
-								
-							</form>-->
+							<button id='buttonErase{{user.username }}' class="btn-delete btn-secondary" onclick="showPopup({{user.id}})">Supprimer</button>
 						</td>
 					</tr>
 					{% set i = i+1 %}
