@@ -1,8 +1,3 @@
- document.addEventListener("DOMContentLoaded", function () {
- document.getElementById("old_password").value = null;
- document.getElementById("new_password").value = null;
- document.getElementById("confirm_password").value = null;
-})
 /**
  * Allows to verify if the new password is the same as the confirmation password
  */
