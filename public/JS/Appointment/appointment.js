@@ -450,6 +450,9 @@ function filterAppointment(selected) {
 }
 }
 
+/**
+ * Allows to display a popup to confirm the deletion of an appointment
+ */
 function showPopup(id){
   document.getElementById("form-appointment-delete").action = "/appointment/" + id + "/delete"
   $('#modal-popup').modal('show')

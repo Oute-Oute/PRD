@@ -1,7 +1,7 @@
 var lines= new Array();
 
 /**
- * Permet d'afficher la fenêtre modale d'informations
+ * Allows to display the info modal of a pathway
  */
  function showInfosPathway(idPathway, name) {
     document.getElementById('pathway1').innerHTML = name;
@@ -46,6 +46,9 @@ var lines= new Array();
   document.getElementById('load-path').style.visibility = "visible";
 }
 
+/**
+ * Allows to display a warning message when a pathway has 0 activities
+ */
 function errorGetActivities(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = "Pas d'activités créées !";
@@ -54,6 +57,9 @@ function errorGetActivities(){
     document.getElementById('load-path').style.visibility = "hidden";
 }
 
+/**
+ * Allows to display a table of appointments linked to the pathway
+ */
 function tableAppointment(tableBody, data) {
     if (data.length <= 0) {
         var tr = document.createElement('TR');
@@ -76,6 +82,9 @@ function tableAppointment(tableBody, data) {
     }
 }
 
+/**
+ * Allows to change tab in the info modal pathway
+ */
 function change_tab(id) {
     document.getElementById("activities").className = "notselected";
     document.getElementById("appointments").className = "notselected";
@@ -98,6 +107,9 @@ function change_tab(id) {
     }
 }
 
+/**
+ * Allows to draw activities of the pathway with a graph
+ */
 function drawActivities(data){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
@@ -187,6 +199,9 @@ function drawActivities(data){
   document.getElementById('load-path').style.visibility = "hidden";
 }
 
+/**
+ * Allows to create new activities for a pathway
+ */
 function createActivities(height, level, name, idActivity, duration){
     var divLevel = document.getElementById('content' + level);
 
@@ -234,6 +249,9 @@ function createActivities(height, level, name, idActivity, duration){
     });
 }
 
+/**
+ * Allows to draw arrows in the pathway graph
+ */
 function drawArrows(data){
     lines = new Array();
     for(i = 0; i < data.length; i++){
@@ -251,6 +269,9 @@ function drawArrows(data){
     }
 }
 
+/**
+ * Allows to delete arrows in the pathway graph
+ */
 function deleteArrows(){
     for (var l of lines) {
         l.remove();
@@ -258,12 +279,18 @@ function deleteArrows(){
     lines = new Array();
 }
 
+/**
+ * Allows to hide arrows in the pathway graph
+ */
 function hideArrows(){
     for (var l of lines) {
         l.hide('none');
     }
 }
 
+/**
+ * Allows to show arrows in the pathway graph
+ */
 function showArrows(){
     for (var l of lines) {
         l.show();

@@ -11,9 +11,9 @@ function edit__disableSubmit() {
 
 
 /**
- * Permet de supprimer un select dans la liste déroulante 
+ * Allows to delete a select from a dropdown bar
  * @param {*} id : img-0, img-1
- * en prenant uniquement le dernier chiffre de l'id on recupere l'indice de l'activité a supprimer
+ * by taking the last number of the id, we get the index of the activity to delete
  */
 function edit__deleteSelect(id) {
     edit__disableSubmit();
@@ -41,6 +41,14 @@ function edit__deleteSelect(id) {
  * Id du pathway
  * Nom du pathway
  * Les noms et durée des activités déjà présentes dans le pathway
+ */
+/**
+ * Allows to display the modal window
+ * Fills :
+ * Number of activities already added before
+ * Pathway ID
+ * Pathway Name
+ * Names and duration of activities that are already in the pathway
  */
 function showEditModalForm(id, name, index){
     // Affichage de la fenetre modale 
@@ -133,7 +141,7 @@ function showEditModalForm(id, name, index){
     }
 }
 /**
- * Permet de cacher la fenêtre modale d'édition
+ * Allows to hide the edit pathway modal
  */
 function hideEditModalForm() {
     $('#edit--pathway-modal').modal("hide");
@@ -141,7 +149,7 @@ function hideEditModalForm() {
 
 
 /**
- * Gestion d'ajout d'activité dans un parcours pour le formulaire d'édition
+ * Handling the adding of activities in the pathways edition
  */
 function edit__handleAddActivity() {
 
@@ -200,7 +208,7 @@ function edit__handleAddActivity() {
 } 
 
 /**
- * Permet de verifier les champs et de leur donner un 'name' pour la requete
+ * Allows to check every fields of the edit form pathway, and giving a name to the request
  */
 function edit__verifyChanges() {
 

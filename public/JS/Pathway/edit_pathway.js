@@ -84,7 +84,7 @@ function initTargets() {
 }
 
 /**
- * initialize the list of activities 
+ * Initialize the list of activities 
  */
 function initActivitiesList() {
     for (let i = 0; i < PATHWAY.activities.length; i++) {
@@ -113,7 +113,9 @@ function initActivitiesList() {
     }
 }
 
-
+/**
+ * Initialize the list of successors 
+ */
 function initSuccessorsList() {
     for (let i = 0; i < PATHWAY.successors.length; i++) {
         for (j = 1; j <= RESOURCES_BY_ACTIVITIES.length; j++) {
@@ -165,6 +167,9 @@ function hideTargets() {
     $('#pathway-modal-targets').modal("hide");
 }
 
+/**
+ * Initialize one activity
+ */
 function initActivity() {
     ACTIVITY_IN_PROGRESS = new Object()
     ACTIVITY_IN_PROGRESS.humanResourceCategories = new Array()
@@ -174,7 +179,7 @@ function initActivity() {
 }
 
 /**
- * push a copy of the ACTIVITY_IN_PROGRESS array into ACTIVITY_IN_PROGRESS
+ * Push a copy of the ACTIVITY_IN_PROGRESS array into ACTIVITY_IN_PROGRESS
  */
 function addArray() {
     let len = RESOURCES_BY_ACTIVITIES.length
@@ -213,7 +218,7 @@ function addArray() {
 
 
 /**
- * 
+ * Handle the request of adding an activity to a pathway
  */
  function requestAddActivity() {
 
@@ -389,7 +394,9 @@ function fillActivityList() {
 
 
 
-
+/**
+ * Returns scheduled appointments according to an activity
+ */
 function getScheduledAppointments(index) {
     // request to get the appointments list of the activity
     return $.ajax({
@@ -509,7 +516,7 @@ function requestDeleteActivity(id) {
 }
 
 /**
- * 
+ * Deletes an activity
  * @param {index of the activity we want to delete in the RESOURCES_BY_ACTIVITIES array} id 
  */
 function deleteActivity() {
@@ -599,7 +606,7 @@ function editActivity(id) {
 }
 
 /**
- * Allow to cancel the changes during the editing of the activity 
+ * Allows to cancel the changes during the editing of the activity 
  */
 function cancelEditActivity() {
     IS_EDIT_MODE = false
@@ -617,13 +624,15 @@ function cancelEditActivity() {
 
 
 /**
- * Allow to confirm the changes during the editing of the activity 
+ * Allows to confirm the changes during the editing of the activity 
  */
 function confirmEditActivity() {
     requestAddActivity()
 }
 
-
+/**
+ * Returns the id
+ */
 function getId(str) {
     str = str.toString()
     id = str.split('-')
@@ -775,7 +784,7 @@ function verifyResourcesDuplicates(id, material) {
 
 
 /**
- * Remplit la liste des ressources humaines 
+ * Fills the human resources list
  */
 function fillHRCList() {
 
@@ -827,7 +836,7 @@ function fillHRCList() {
 
 
 /**
- * Remplit la liste des ressources humaines 
+ * Fills the material resources list
  * @param {id de l'activité dans laquelle on veut ajouter des ressources} id 
  */
 function fillMRCList(id) {
@@ -878,7 +887,7 @@ function fillMRCList(id) {
 }
 
 /**
- * Gestion du clic sur le bouton 'humaines' dans les ressources d'une activité
+ * Handling the click event on the button 'humans' in the resources of an activity
  */
 function handleHumanButton() {
 
@@ -911,7 +920,7 @@ function handleHumanButton() {
 
 
 /**
- * Gestion du clic sur le bouton 'materielle' dans les ressources d'une activité
+ * Handling the click event on the button 'materials' in the resources of an activity
  */
 function handleMaterialButton() {
 
@@ -943,7 +952,7 @@ function handleMaterialButton() {
 
 
 /**
- * Supprime tous les options d'un select
+ * Delete all options from a select
  * @param {L'élément select dont on veut supprimer les options} selectElement 
  * 
  * Source: https://prograide.com/pregunta/37784/comment-effacer-toutes-les-options-dune-liste-deroulante
@@ -957,7 +966,7 @@ function removeOptions(selectElement) {
 }
 
 /**
- * Permet de supprimer une ressource d'une activité
+ * Allows to delete a resource from an activity
  * @param {id de l'element html} id 
  */
 function deleteResource(id) {
@@ -1003,9 +1012,9 @@ function isTargetCorrect() {
 }
 
 /**
- * Verifie que le nom du parcours est correct
- * Stocke le tableau contenant toutes les activités ressources dans un input pour qu'il soit accesible dans le serveur
- * Envoie la requete POST au serveur
+ * Checks that the pathway name is correct
+ * Store the table that contains all the activities so it is reachable easier for the server
+ * Sends the POST request
  */
 function submitPathway() {
     let btnSubmit = document.getElementById('submit')
@@ -1029,6 +1038,9 @@ function submitPathway() {
     }
 }
 
+/**
+ * Allows to show activities of a pathway
+ */
 function showActivitiesPathway() {
     VALIDATE = 0;
     document.getElementById('title-pathway-activities').innerHTML = "Lier les activités";
@@ -1039,6 +1051,9 @@ function showActivitiesPathway() {
     $('#edit-pathway-modal-activities').modal("show");
 }
 
+/**
+ * Allows to hide activities of a pathway
+ */
 function hideActivitiesPathway() {
     deleteSuccessors(0);
     var divContent = document.getElementById('divContent');
@@ -1049,6 +1064,9 @@ function hideActivitiesPathway() {
     $('#edit-pathway-modal-activities').modal("hide");
 }
 
+/**
+ * Allows to draw activities graph of a pathway
+ */
 function drawActivitiesGraph() {
     var divContent = document.getElementById('divContent');
     if(!divContent.innerHTML.includes("div")){
@@ -1067,6 +1085,9 @@ function drawActivitiesGraph() {
     }
 }
 
+/**
+ * Allows to create activities graph of a pathway
+ */
 function createActivitiesGraph(name, idActivity, duration) {
     var divContent = document.getElementById('divContent');
 
@@ -1165,11 +1186,17 @@ function createActivitiesGraph(name, idActivity, duration) {
     });
 }
 
+/**
+ * Allows to add successors to activities
+ */
 function addSuccessor(idA, idB, nameA, nameB) {
     addArraySuccessor(idA, idB, nameA, nameB);
     fillSuccessorList();
 }
 
+/**
+ * Allows to draw arrows in the graphs
+ */
 function drawArrows() {
         for (i = 0; i < SUCCESSORS.length; i++) {
         start = document.getElementById(SUCCESSORS[i].idActivityA);
@@ -1179,6 +1206,9 @@ function drawArrows() {
     }
 }
 
+/**
+ * Allows to show arrows in the graphs
+ */
 function showArrows(){
     ARROWS_HIDDEN = 0;
     lines.forEach((l) => {
@@ -1187,6 +1217,9 @@ function showArrows(){
     document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
 }
 
+/**
+ * Allows to hide arrows in the graphs
+ */
 function hideArrows(){
     ARROWS_HIDDEN = 1;
     lines.forEach((l) => {
@@ -1195,6 +1228,9 @@ function hideArrows(){
     document.getElementById("btn-show-arrows").setAttribute("onclick", "showArrows()");
 }
 
+/**
+ * Allows to add an array successor
+ */
 function addArraySuccessor(idA, idB, nameA, nameB) {
     let len = SUCCESSORS.length
 
@@ -1209,7 +1245,9 @@ function addArraySuccessor(idA, idB, nameA, nameB) {
     SUCCESSORS[len].delayMax = 10;
 }
 
-/* remplit la liste des successeurs (sur la droite) */
+/**
+ * Fills the resources list (on the right of the screen)
+ */
 function fillSuccessorList() {
 
     let divSuccessorsList = document.getElementById('list-graph')
@@ -1339,6 +1377,9 @@ function fillSuccessorList() {
     }
 }
 
+/**
+ * Allows to show delay (min and max) of activities
+ */
 function showDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
@@ -1352,6 +1393,9 @@ function showDelay(id) {
     button.setAttribute('onclick', 'hideDelay(' + id + ')');
 }
 
+/**
+ * Allows to hide delay (min and max) of activities
+ */
 function hideDelay(id) {
     divMin = document.getElementById('divMin' + id);
     divMax = document.getElementById('divMax' + id);
@@ -1365,6 +1409,9 @@ function hideDelay(id) {
     button.setAttribute('onclick', 'showDelay(' + id + ')');
 }
 
+/**
+ * Allows to show delays (min and max) of activities
+ */
 function showDelays() {
     delayButton = document.getElementById('succ_imgdown')
     if(delayButton.src.includes('/img/chevron_down.svg')){
@@ -1383,6 +1430,9 @@ function showDelays() {
     }
 }
 
+/**
+ * Allows to delete a successor of an activity
+ */
 function deleteSuccessor(id) {
     id = getId(id);
     let divSuccessor = document.getElementById('link-' + id);
@@ -1405,6 +1455,9 @@ function deleteSuccessor(id) {
     fillSuccessorList();
 }
 
+/**
+ * Allows to delete successors of an activit
+ */
 function deleteSuccessors(fullReset) {
     SUCCESSORS = new Array();
     if (!fullReset) {
@@ -1414,6 +1467,9 @@ function deleteSuccessors(fullReset) {
     fillSuccessorList();
 }
 
+/**
+ * Allows to delete arrows from a graph
+ */
 function deleteArrows() {
     for (var l of lines) {
         l.remove();
@@ -1421,6 +1477,9 @@ function deleteArrows() {
     lines = new Array();
 }
 
+/**
+ * Allows to validate/check successors
+ */
 function validateSuccessors(){
     error = checkSuccessor();
     switch(error){
@@ -1441,6 +1500,9 @@ function validateSuccessors(){
     }
 }
 
+/**
+ * Allows to validate/check one successor
+ */
 function checkSuccessor(){
     // Return 0 if everything is ok, else some int that will be used in a switch to display specific error 
     if(NB_ACTIVITY == 1 || NB_ACTIVITY == 0){

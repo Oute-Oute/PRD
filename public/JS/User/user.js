@@ -1,11 +1,18 @@
 var autocompleteArray = [];
 
+
+/**
+ * Allows to display a modal to add a user
+ */
 function addUser() {
   document.getElementById("usernameAdd").value = "";
   usernameNew()
   $("#add-user-modal").modal("show");
 }
 
+/**
+ * Allows to display a modal to edit a user
+ */
 function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   document.getElementById("iduserEdit").value = idEdit;
   document.getElementById("usernameEdit").value = usernameEdit;
@@ -17,7 +24,9 @@ function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   $("#edit-user-modal").modal("show");
 }
 
-//Fonction empechant la suppresion ou l'edition de son propre compte administrateur
+/**
+ * Allows to prevent the deletion or edition of his own admin account
+ */
 document.addEventListener("DOMContentLoaded", () => {
   actualUser = document.getElementById("OwnUsername").value;
   actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
@@ -25,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("buttonErase" + actualUser).disabled = true;
 });
 
+/**
+ * Allows to display a modal to add a user
+ */
 function showPatient(id) {
   document.getElementById("iduser").value = id;
   document.getElementById("username").value = username;
@@ -32,6 +44,9 @@ function showPatient(id) {
   $("#show-user-modal").modal("show");
 }
 
+/**
+ * Allows to edit the username of the user
+ */
 function usernameEditTest() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
@@ -51,6 +66,10 @@ function usernameEditTest() {
     document.getElementById("ErrorUserEdit").style.visibility = "hidden";
   }
 }
+
+/**
+ * Allows to create a new user
+ */
 function usernameNew() {
   var listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameAdd").value;
@@ -70,10 +89,16 @@ function usernameNew() {
   }
 }
 
+/**
+ * Allows to hide the creation of user modal when a click is performed somewhere else than the window
+ */
 function hideNewModalForm() {
   $("#add-user-modal").modal("hide");
 }
 
+/**
+ * Allows to hide the edition of user modal when a click is performed somewhere else than the window
+ */
 function hideEditModalForm() {
   $("#edit-user-modal").modal("hide");
 }
@@ -144,6 +169,9 @@ function displayAll() {
   }
 }
 
+/**
+ * Allows to show a popup to confirm the deletion of a user
+ */
 function showPopup(id){
   document.getElementById("form-user-delete").action = "/user/" + id + "/delete"
   $('#modal-popup').modal('show')

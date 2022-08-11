@@ -24,7 +24,9 @@ var ARROWS_HIDDEN = 0;
 
 
 
-
+/**
+ * Allows to filter pathways
+ */
 function filterPathway(selected=null){
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     for(let i=0; i<trs.length; i++){
@@ -75,6 +77,9 @@ function filterPathway(selected=null){
     paginator.style.display='none';
   }
 
+/**
+ * Allows to display all pathways without any filter
+ */
 function displayAll() {
     var trs = document.querySelectorAll('#tablePathway tr:not(.headerPathway)');
     var input = document.getElementById('autocompleteInputPathwayNname');
@@ -297,6 +302,9 @@ function drawArrows(){
     }
 }
 
+/**
+ * Allows to show arrows in the pathway graph
+ */
 function showArrows(){
     ARROWS_HIDDEN = 0;
     lines.forEach((l) => {
@@ -305,6 +313,9 @@ function showArrows(){
     document.getElementById("btn-show-arrows").setAttribute("onclick", "hideArrows()");
 }
 
+/**
+ * Allows to hide arrows in the pathway graph
+ */
 function hideArrows(){
     ARROWS_HIDDEN = 1;
     lines.forEach((l) => {
@@ -498,6 +509,9 @@ function hideDelay(id) {
     button.setAttribute('onclick', 'showDelay(' + id + ')');
 }
 
+/**
+ * Allows to show delays of activities of the pathway
+ */
 function showDelays() {
     delayButton = document.getElementById('succ_imgdown')
     if(delayButton.src.includes('/img/chevron_down.svg')){

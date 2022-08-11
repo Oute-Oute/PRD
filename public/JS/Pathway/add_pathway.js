@@ -176,7 +176,9 @@ function addActivity() {
     }
 }
 
-/* fill the activities list (on the right) */
+/**
+ *  Fill the activities list (on the right)
+ */
 function fillActivityList() {
 
     let divActivitiesList = document.getElementById('list')

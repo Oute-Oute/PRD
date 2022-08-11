@@ -142,6 +142,9 @@ function hideEditModalForm() {
     $('#edit-patient-modal').modal("hide");
 }
 
+/**
+ * Allows to display a popup to confirm the deletion of a patient
+ */
 function showPopup(id){
     document.getElementById("form-patient-delete").action = "/patient/" + id + "/delete"
     $('#modal-popup').modal('show')
