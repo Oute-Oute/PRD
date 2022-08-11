@@ -8,10 +8,9 @@
                     <p>Voulez vous vraiment supprimer cet utilisateur ?<br>
                 </div>
                 <div class="modal-footer">
-                    <input type="hidden" value=0 id="user-id">
-                    <form id="form-user-delete" method="post" action="{{ path('UserDelete', {'id': 0}) }}">
-					    <button type="submit" onclick="userDelete()" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
-                        <button onclick="$('#modal-popup').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
+                    <form id="form-user-delete" method="post" action="{{ path('UserDelete', {'id': 0}) }}" style="display: flex;flex-direction: row;">
+					    <button type="submit" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
+                        <button type="button" onclick="$('#modal-popup').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
                     </form>
                 </div>
         </div>

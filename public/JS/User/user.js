@@ -147,7 +147,6 @@ function displayAll() {
 }
 
 function showPopup(i){
-  document.getElementById("user-id").value = i
-  document.getElementById("form-user-delete").action = "/user/" + i + "/delete"
+  document.getElementById("form-user-delete").action = "/user/" + document.getElementById("id-user-"+i).value + "/delete"
   $('#modal-popup').modal('show')
 }
