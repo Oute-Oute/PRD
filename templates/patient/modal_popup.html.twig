@@ -1,0 +1,18 @@
+<div class="modal" id="modal-popup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Attention</h2>
+            </div>
+                <div class="modal-body">
+                    <p>Voulez vous vraiment supprimer ce patient ?<br>
+                </div>
+                <div class="modal-footer">
+                    <form id="form-patient-delete" method="post" action="{{ path('PatientDelete', {'id': 0}) }}" style="display: flex;flex-direction: row;">
+					    <button type="submit" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
+                        <button type="button" onclick="$('#modal-popup').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
+                    </form>
+                </div>
+        </div>
+    </div>
+</div>
