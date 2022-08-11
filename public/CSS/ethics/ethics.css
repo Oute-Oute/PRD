@@ -1,0 +1,39 @@
+div#comments {
+    display: flex;
+    flex-direction: column;
+    overflow-y:scroll; 
+    overflow-x: hidden;
+}
+/* represents one activity */
+.div-comment {
+    margin: 5px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid lightgray;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 50px;
+    height: 50px;
+    max-height: 150px;
+    position: relative;
+    font-size: 115%;
+}
+
+.div-comment .container-p {
+    max-height: 99%;
+    position: relative;
+    width: 100%;
+    overflow-y: auto;
+}
+/* text of the activity */
+.div-comment .container-p p{
+    width: 80%;
+    padding: 10px;
+    margin: 0px;
+}
+/* btns for edit / remove an activity from the list */ 
+.div-comment .btns {
+    position: absolute;
+    right: 25px;
+}
