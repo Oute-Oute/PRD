@@ -56,7 +56,6 @@ function tableAppointment(tableBody, data,){
         td.setAttribute('colspan', 5);
         td.append("Pas de parcours prévus pour ce patient dans les prochains jours.");
         tr.appendChild(td);
-        console.log(tableBody)
     }
     else{
         for(i = 0; i < data.length; i++){

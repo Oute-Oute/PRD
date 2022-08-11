@@ -34,7 +34,6 @@ function usernameEditTest() {
   let listeUser = JSON.parse(document.getElementById("userList").value);
   let usernamerequest = document.getElementById("usernameEdit").value;
   let id = document.getElementById("iduserEdit").value;
-  console.log(usernamerequest);
   let dispo = true;
   for (let i = 0; i < listeUser.length; i++) {
     if (usernamerequest == listeUser[i].username && !(id == listeUser[i].id)) {
@@ -126,15 +125,13 @@ function filterUser(selected = null) {
 }
 
 /**
- * Allows to display all patients without any filter
+ * Allows to display all users without any filter
  */
 function displayAll() {
   var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
   var input = document.getElementById('autocompleteInputUserName');
-  console.log(input.value)
   if (input.value == '') {
     for (let i = 0; i < trs.length; i++) {
-      console.log(trs[i].className)
       if (trs[i].style.display == 'none') {
         trs[i].style.display = 'table-row';
       }
