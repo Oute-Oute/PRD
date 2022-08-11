@@ -1215,7 +1215,7 @@ function fillSuccessorList() {
 
     for (let indexSuccessor = 0; indexSuccessor < SUCCESSORS.length; indexSuccessor++) {
         let successor = document.createElement('div')
-        successor.setAttribute('class', 'div-activity')
+        successor.setAttribute('class', 'div-activity in-successor')
         successor.setAttribute('id', 'link-' + indexSuccessor);
         let idA = document.createElement('input');
         idA.setAttribute('type', 'hidden');

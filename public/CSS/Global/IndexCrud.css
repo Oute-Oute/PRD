@@ -111,9 +111,10 @@ li a:hover {
  color:#292A0A;
  font-weight:bold;
  cursor:pointer;
- margin-right: 10px;
 }
 
-
+#resources {
+    margin-right: 10px;
+}
 
 
