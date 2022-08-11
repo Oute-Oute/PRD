@@ -154,4 +154,28 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal" id="ethic-edit-comment-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">
+					<span id="show-title">Commentaire :</span>
+				</h2>
+			</div>
+			<div class="modal-body">
+				<input hidden id="edit-comment-id" name="edit-comment-id">
+				<div class="input-container onWhite">
+					<input id="edit-comment" name="edit-comment">
+					</input>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<button type="button" class="btn-edit btn-secondary" onclick="validEditComment()" data-bs-dismiss="modal">Modifier</button>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

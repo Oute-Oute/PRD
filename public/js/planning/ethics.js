@@ -156,8 +156,43 @@ function deleteComment(idDivComment){
  * 
  * @param {*} idComment 
  */
-function editComment(idComment){
+function editComment(idDivComment){
+  var idComment = idDivComment.split('-')[1];
+  var commentEdit = document.getElementById("comment-hidden-" + idComment).value;
+  document.getElementById("edit-comment-id").value = idComment;
+  document.getElementById("edit-comment").value = commentEdit;
+  $("#ethic-edit-comment-modal").modal("show"); //open the window
+}
 
+function validEditComment(){
+  var idComment = document.getElementById("edit-comment-id").value;
+  var commentEdit = document.getElementById("edit-comment").value
+  var userName = document.getElementById("OwnUsername").value;
+
+  $.ajax({
+    type : 'POST',
+    url  : '/ajaxEthicsEditComment',
+    data : {commentEdit: commentEdit, idComment: idComment, userName: userName},
+    dataType : "json",
+    success : function(data){
+      var event = calendar.getEventById(data["idScheduledActivity"])
+      var author = data["userLastname"] + " " + data["userFirstname"];
+      var idComment = data["idComment"];
+      var commentEdit = data["commentEdit"];
+      for(var i = 0; i < event._def.extendedProps.comments.length; i++){
+        if(event._def.extendedProps.comments[i].idcomment == idComment){
+          event._def.extendedProps.comments[i].comment = commentEdit;
+          event._def.extendedProps.comments[i].author = author
+        }
+      }
+      $("#ethic-edit-comment-modal").modal("hide"); //close the window
+      $("#ethic-activity-modal").modal("hide"); //close the window
+      openActivityModal(event);
+    },
+    error: function(data){
+        console.log("error");
+    }
+  });
 }
 
 /**
@@ -215,6 +250,11 @@ function openActivityModal(event){
         divUsername.setAttribute('type', 'hidden')
         divUsername.setAttribute('value', comments[i].authorusername)
 
+        let divCommentHidden = document.createElement('input')
+        divCommentHidden.setAttribute('id', 'comment-hidden-' + comments[i].idcomment)
+        divCommentHidden.setAttribute('type', 'hidden')
+        divCommentHidden.setAttribute('value', comments[i].comment)
+
         let divContainerP = document.createElement('div');
         divContainerP.setAttribute('class', 'container-p');
 
@@ -246,6 +286,7 @@ function openActivityModal(event){
         divImages.appendChild(imgDelete)
 
         divComment.appendChild(divUsername);
+        divComment.appendChild(divCommentHidden);
         divComment.appendChild(divContainerP);
         divComment.appendChild(divImages);
         divComments.appendChild(divComment);
