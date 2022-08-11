@@ -56,13 +56,13 @@
 <tbody id="appointmentTable">
 {% for appointment in currentappointments %}
 	<tr class="original">
-		<td>{{ appointment.patient.lastname }}
-			{{ appointment.patient.firstname }}</td>
-		<td>{{ appointment.pathway.pathwayname }}</td>
+		<td>{{ appointment.lastname }}
+			{{ appointment.firstname }}</td>
+		<td>{{ appointment.pathwayname }}</td>
 		<td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
 		<td>
 			<button type="button" class="btn-infos btn-secondary" onclick="showAppointment('{{ appointment.id }}')">Informations</a>
-			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.patient.lastname }}', '{{ appointment.patient.firstname }}', '{{ appointment.pathway.pathwayname }}', '{{ appointment.dayappointment|date(" d/m/Y") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.lastname }}', '{{ appointment.firstname }}', '{{ appointment.pathwayname }}', '{{ appointment.dayappointment|date(" d/m/Y") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
 			<form method="post" action="{{ path('AppointmentDelete', {'id': appointment.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer ce rendez-vous ?');">
 				<input type="hidden" name="appointment" value="{{ appointment.id }}">
 				<button class="btn-delete btn-secondary">Supprimer</button>
