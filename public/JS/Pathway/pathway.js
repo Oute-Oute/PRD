@@ -818,25 +818,13 @@ function filterPathway(selected=null){
     edit.setAttribute('type','submit');
     edit.append('Editer');
     formEdit.appendChild(edit);
-    var formDelete=document.createElement('form');
-    formDelete.setAttribute('action',"/pathway/delete");
-    formDelete.setAttribute('style','display:inline');
-    formDelete.setAttribute('method','POST');
-    formDelete.setAttribute('id','formDelete'+selected.id);
-    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce parours ?")');
-    var inputHidden=document.createElement('input');
-    inputHidden.setAttribute('type','hidden');
-    inputHidden.setAttribute('name','pathwayid');
-    inputHidden.setAttribute('value',selected.id);
-    formDelete.appendChild(inputHidden);
     var deleteButton=document.createElement('button');
     deleteButton.setAttribute('class','btn-delete btn-secondary');
     deleteButton.append('Supprimer');
-    deleteButton.setAttribute('type','submit');
+    deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
     buttons.appendChild(infos);
     buttons.appendChild(formEdit);
-    formDelete.appendChild(deleteButton);
-    buttons.appendChild(formDelete);
+    buttons.appendChild(deleteButton);
     tr.appendChild(buttons);
     paginator=document.getElementById('paginator');
     paginator.style.display='none';
@@ -1381,3 +1369,8 @@ function checkSuccessor(){
         return 0;  
     }
 }
+
+function showPopup(id){
+    document.getElementById("pathway-id").value = id
+    $('#modal-popup').modal('show')
+  }

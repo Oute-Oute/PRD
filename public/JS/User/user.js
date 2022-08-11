@@ -146,3 +146,7 @@ function displayAll() {
   }
 }
 
+function showPopup(id){
+  document.getElementById("form-user-delete").action = "/user/" + id + "/delete"
+  $('#modal-popup').modal('show')
+}
