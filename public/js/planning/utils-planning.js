@@ -128,7 +128,7 @@ function changeFilter(id, allCategories, type) {
   var categoriesToDisplay = [];
   var resourcesToDisplay = [];
   firstCreationFilter=false;
-  var zoom = document.getElementById('zoom').value;
+  var zoom = document.getElementById('zoom-value').value;
 
 
   switch (type) {
@@ -364,7 +364,7 @@ function zoomChange(change) {
 function categoryShow() {
   var displayButtonStyle = document.getElementById('displayCategory').style;
   var labelDisplayButtonStyle = document.getElementById('labelDisplayCategory');
-  var zoom = document.getElementById('zoom').value;
+  var zoom = document.getElementById('zoom-value').value;
 
   if (resourcesColumns.length == 1) {
     displayButtonStyle.opacity = 0.7;
