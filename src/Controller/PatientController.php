@@ -21,7 +21,6 @@ class PatientController extends AbstractController
      */
     public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
-        $patients=$this->getAllPatient($patientRepository); 
         $patients=$paginator->paginate(
             $patientRepository->findAllPatient(),
             $request->query->getInt('page',1),

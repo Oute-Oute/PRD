@@ -77,6 +77,10 @@
 			</tbody>
 		</table>
 
+		<div id="paginator">
+		{{knp_pagination_render(users,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
+		</div>
+		
 		{{ include ('user/edit_user.html.twig') }}
 		{{ include ('user/new_user.html.twig') }}
 		<script>
