@@ -2,6 +2,7 @@ var autocompleteArray = [];
 
 function addUser() {
   document.getElementById("usernameAdd").value = "";
+  usernameNew()
   $("#add-user-modal").modal("show");
 }
 
@@ -12,6 +13,7 @@ function editUser(idEdit, usernameEdit, firstnameEdit, lastnameEdit, roleEdit) {
   document.getElementById("lastnameEdit").value = lastnameEdit;
   document.getElementById("passwordEdit").value = null;
   document.getElementById("roleEdit").value = roleEdit;
+  usernameEditTest()
   $("#edit-user-modal").modal("show");
 }
 
