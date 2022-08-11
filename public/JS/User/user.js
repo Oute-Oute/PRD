@@ -104,17 +104,22 @@ function filterUser(selected = null) {
   var buttons = document.createElement('td');
   var edit = document.createElement('button');
   edit.setAttribute('type', 'button');
-  edit.setAttribute('id', 'buttonEdit' + selected.username);
+  edit.setAttribute('id', 'buttonEdit' + selected.username+selected.id);
   edit.setAttribute('class', 'btn-edit btn-secondary');
   edit.setAttribute('onclick', "editUser('" + selected.id + "', '" + selected.username + "', '" + selected.firstname + "', '" + selected.lastname + "' )");
   edit.append('Editer');
   var deleteButton = document.createElement('button');
   deleteButton.setAttribute('class', 'btn-delete btn-secondary');
   deleteButton.append('Supprimer');
+  deleteButton.setAttribute('id', 'buttonErase' + selected.username+selected.id);
   deleteButton.setAttribute('onclick', 'showPopup('+selected.id+')');
   buttons.appendChild(edit);
   buttons.appendChild(deleteButton);
   tr.appendChild(buttons);
+  actualUser = document.getElementById("OwnUsername").value;
+  actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
+  document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
+  document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
   paginator = document.getElementById('paginator');
   paginator.style.display = 'none';
 }
