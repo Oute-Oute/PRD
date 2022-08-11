@@ -46,6 +46,7 @@
 				</tr>
 			</thead>
 			<tbody id="userTable">
+				{% set i = 1 %}
 				{% for user in users %}
 					<tr class="original">
 						<td>{{ user.id }}</td>
@@ -61,14 +62,16 @@
 							<td></td>
 						{% endif %}
 						<td>
-							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' , '{{ user.roles[1] }}' )">Éditer
-							</a>
-							<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer cet utilisateur ?');">
-								<input type="hidden" name="user" value="{{ user.id }}">
-								<button id='buttonErase{{user.username }}' class="btn-delete btn-secondary">Supprimer</button>
-							</form>
+							<button type="button" id="buttonEdit{{user.username }}" class="btn-edit btn-secondary" onclick="editUser('{{ user.id }}', '{{ user.username }}', '{{ user.firstname }}', '{{ user.lastname }}' , '{{ user.roles[1] }}' )">Éditer</button>
+							<input type="hidden" name="user" value="{{ user.id }}" id="id-user-{{i}}">
+							<button id='buttonErase{{user.username }}' class="btn-delete btn-secondary" onclick="showPopup({{i}})">Supprimer</button>
+							
+							<!--<form method="post" action="{{ path('UserDelete', {'id': user.id}) }}">
+								
+							</form>-->
 						</td>
 					</tr>
+					{% set i = i+1 %}
 				{% else %}
 					<tr>
 						<td colspan="5">Pas d'utilisateurs créés !</td>
@@ -83,6 +86,7 @@
 		
 		{{ include ('user/edit_user.html.twig') }}
 		{{ include ('user/new_user.html.twig') }}
+		{{ include ('user/modal_popup.html.twig') }}
 		<script>
 	$( "#autocompleteInputUserName" ).autocomplete({
 	source: "/autocompleteUser",
