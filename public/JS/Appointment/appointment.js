@@ -416,20 +416,13 @@ function filterAppointment(selected) {
     edit.setAttribute('class','btn-edit btn-secondary');
     edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment.replaceAll("/","-")+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
     edit.append('Editer');
-    var form=document.createElement('form');
-    form.setAttribute('action','/appointment/'+selected.id+"/delete");
-    form.setAttribute('style','display:inline');
-    form.setAttribute('method','POST');
-    form.setAttribute('id','formDelete'+selected.id);
-    form.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer ce rendez-vous ?")');
     var deleteButton=document.createElement('button');
     deleteButton.setAttribute('class','btn-delete btn-secondary');
     deleteButton.append('Supprimer');
-    deleteButton.setAttribute('type','submit');
+    deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
     buttons.appendChild(infos);
     buttons.appendChild(edit);
-    form.appendChild(deleteButton);
-    buttons.appendChild(form);
+    buttons.appendChild(deleteButton);
     tr.appendChild(buttons);
 
     paginator=document.getElementById('paginator');
@@ -457,4 +450,7 @@ function filterAppointment(selected) {
 }
 }
 
-
+function showPopup(id){
+  document.getElementById("form-appointment-delete").action = "/appointment/" + id + "/delete"
+  $('#modal-popup').modal('show')
+}

@@ -306,3 +306,8 @@ AjaxEthicsDeleteComment:
   path: /ajaxEthicsDeleteComment
   controller: App\Controller\EthicsController::deleteComment
   methods: [POST]
+
+AjaxEthicsEditComment:
+  path: /ajaxEthicsEditComment
+  controller: App\Controller\EthicsController::editComment
+  methods: [POST]
