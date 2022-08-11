@@ -73,6 +73,9 @@ function changeComment(){
   $("#ethic-comment-modal").modal("show"); //open the window
 }
 
+/**
+ * @brief This function is called when we add a new comment
+ */
 function validComment(){
   var newComment = document.getElementById("new-comment").value;
   var idScheduledActivity = document.getElementById("id-scheduled-activity").value;
@@ -89,6 +92,7 @@ function validComment(){
       var author = data["userLastname"] + " " + data["userFirstname"];
       event._def.extendedProps.comments.push({
         comment: data["newComment"],
+        idcomment: data["idComment"],
         author: author
       });
       event._def.ui.backgroundColor = '#841919';
@@ -99,6 +103,59 @@ function validComment(){
         console.log("error");
     }
   });
+}
+
+/**
+ * 
+ * @param {*} idComment 
+ */
+function deleteComment(idDivComment){
+  var idComment = idDivComment.split('-')[1];
+
+  $.ajax({
+    type : 'POST',
+    url  : '/ajaxEthicsDeleteComment',
+    data : {idComment: idComment},
+    dataType : "json",
+    success : function(data){
+      var event = calendar.getEventById(data["idScheduledActivity"]);
+      for(var i = 0; i < event._def.extendedProps.comments.length; i++){
+        if(event._def.extendedProps.comments[i].idcomment == data["idComment"]){
+          event._def.extendedProps.comments.splice(i, 1);
+        }
+      }
+
+      if(event._def.extendedProps.comments.length == 0){
+        event._def.ui.backgroundColor = '#339d39';
+        event._def.ui.borderColor = '#339d39';
+        event.setStart(event.start);
+      }
+      $("#ethic-activity-modal").modal("hide"); //open the window
+    },
+    error: function(data){
+        console.log("error");
+    }
+  });
+
+  /*var authorUsername = document.getElementById('username-' + idComment).value;
+  var username = document.getElementById("OwnUsername").value;
+
+  var confirm;
+  if(username == authorUsername){
+    confirm("Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?");
+  }
+  else {
+    confirm("Voulez-vous vraiment supprimer votre commentaire ?");
+  }
+  console.log(idComment, document.getElementById("OwnUsername").value)*/
+}
+
+/**
+ * 
+ * @param {*} idComment 
+ */
+function editComment(idComment){
+
 }
 
 /**
@@ -217,18 +274,61 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
         materialResourcesNames += materialResources[i]; //add the last material resource name to the string
       } else materialResourcesNames = "Aucune ressource associée";
 
+      var divComments = document.getElementById("comments");
+      divComments.innerHTML = '';
       var comments = activity.extendedProps.comments; //get the comments of the event
-      var commentsText = ""; //create a string with the comments
       if (comments.length > 0) {
-        for (var i = 0; i < comments.length - 1; i++) {
+        for (var i = 0; i < comments.length; i++) {
           //for each comment except the last one
           if (comments[i] != undefined) {
             //if the comment exist
-            commentsText += "<b> <u> "+ comments[i].author + "</b> </u>  : " + comments[i].comment + "<br> "; //add the comment to the string with a ; and a space
+            let divComment = document.createElement('div');
+            divComment.setAttribute('class', 'div-comment');
+            divComment.setAttribute('id', 'comment' + (comments[i].idcomment));
+            divComment.style.maxHeight = '150px'
+
+            let divUsername = document.createElement('input')
+            divUsername.setAttribute('id', 'username-' + comments[i].idcomment)
+            divUsername.setAttribute('type', 'hidden')
+            divUsername.setAttribute('value', comments[i].authorusername)
+
+            let divContainerP = document.createElement('div');
+            divContainerP.setAttribute('class', 'container-p');
+
+            let p = document.createElement('p');
+            p.style.width = '80%';
+            p.innerHTML = comments[i].author + " : " + comments[i].comment; //add the comment to the string with a ; and a space
+            divContainerP.appendChild(p);
+
+            let imgDelete = new Image();
+            imgDelete.src = '../../img/delete.svg'
+            imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
+            imgDelete.setAttribute('onclick', 'deleteComment(this.id)')
+            imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
+            imgDelete.style.width = '20px'
+            imgDelete.style.cursor = 'pointer'
+
+            let imgEdit = new Image();
+            imgEdit.src = '../../img/edit.svg'
+            imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
+            imgEdit.setAttribute('onclick', 'editComment(this.id)')
+            imgEdit.setAttribute('title', 'Édition de l\'activité')
+            imgEdit.style.width = '20px'
+            imgEdit.style.cursor = 'pointer'
+            imgEdit.style.marginRight = '10px'
+
+            let divImages = document.createElement('div')
+            divImages.setAttribute('class', 'btns')
+            divImages.appendChild(imgEdit)
+            divImages.appendChild(imgDelete)
+
+            divComment.appendChild(divUsername);
+            divComment.appendChild(divContainerP);
+            divComment.appendChild(divImages);
+            divComments.appendChild(divComment);
           }
         }
-        commentsText +="<b> <u> "+ comments[i].author + "</b> </u>  : " + comments[i].comment; //add the last comment to the string
-      } else commentsText = "Aucun commentaire";
+      } else document.getElementById("comments").innerHTML = "Aucun commentaire";
 
       document.getElementById("id-scheduled-activity").value = event.event._def.publicId; //set id scheduled activity
 
@@ -240,8 +340,6 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       $("#patient").val(activity.extendedProps.patient); //set the patient of the event
       $("#rh").val(humanResourcesNames); //set the human resources of the event
       $("#rm").val(materialResourcesNames); //set the material resources of the event
-      console.log(commentsText);
-      document.getElementById("comments").innerHTML=commentsText; //set the comments of the event
       console.log(document.getElementById("comments").innerHTML)
       $("#ethic-activity-modal").modal("show"); //open the window
     },
