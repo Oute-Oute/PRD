@@ -105,12 +105,31 @@ function validComment(){
   });
 }
 
+function deleteCommentModale(idCommentDiv){
+  var idComment = idCommentDiv.split("-")[1];
+  document.getElementById("delete-confirm-comment-id").value = idComment;
+
+  var authorUsername = document.getElementById('username-' + idComment).value;
+  var username = document.getElementById("OwnUsername").value;
+  var confirm;
+  if(username != authorUsername){
+    confirm = "Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?";
+  }
+  else {
+    confirm = "Voulez-vous vraiment supprimer votre commentaire ?";
+  }
+  console.log(confirm)
+  document.getElementById("confirm-delete-title").textContent = confirm;
+
+  $("#ethic-confirm-delete-modal").modal("show"); //open the window
+}
+
 /**
  * 
  * @param {*} idComment 
  */
-function deleteComment(idDivComment){
-  var idComment = idDivComment.split('-')[1];
+function deleteCommentConfirm(){
+  var idComment = document.getElementById("delete-confirm-comment-id").value;
 
   $.ajax({
     type : 'POST',
@@ -138,18 +157,6 @@ function deleteComment(idDivComment){
         window.location.href = '/ethics';
     }
   });
-
-  /*var authorUsername = document.getElementById('username-' + idComment).value;
-  var username = document.getElementById("OwnUsername").value;
-
-  var confirm;
-  if(username == authorUsername){
-    confirm("Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?");
-  }
-  else {
-    confirm("Voulez-vous vraiment supprimer votre commentaire ?");
-  }
-  console.log(idComment, document.getElementById("OwnUsername").value)*/
 }
 
 /**
@@ -191,6 +198,7 @@ function validEditComment(){
     },
     error: function(data){
         console.log("error");
+        window.location.href = '/ethics';
     }
   });
 }
@@ -266,7 +274,7 @@ function openActivityModal(event){
         let imgDelete = new Image();
         imgDelete.src = '../../img/delete.svg'
         imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
-        imgDelete.setAttribute('onclick', 'deleteComment(this.id)')
+        imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
         imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
         imgDelete.style.width = '20px'
         imgDelete.style.cursor = 'pointer'
