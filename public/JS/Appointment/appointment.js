@@ -457,4 +457,7 @@ function filterAppointment(selected) {
 }
 }
 
-
+function showPopup(id){
+  document.getElementById("form-appointment-delete").action = "/appointment/" + id + "/delete"
+  $('#modal-popup').modal('show')
+}
