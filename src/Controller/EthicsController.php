@@ -551,5 +551,17 @@ class EthicsController extends AbstractController
         $entityManager->flush();
         return new JsonResponse(["idComment" => $_POST["idComment"], "idScheduledActivity" => $idScheduledActivity]);
     }
+
+    public function editComment(ManagerRegistry $doctrine, EntityManagerInterface $entityManager){
+        $user = $doctrine->getRepository("App\Entity\User")->findOneBy(['username' => $_POST["userName"]]);
+        $commentScheduledActivity = $doctrine->getRepository("App\Entity\CommentScheduledActivity")->findOneBy(['id' => $_POST["idComment"]]);
+        $commentScheduledActivity->setUser($user);
+        $commentScheduledActivity->setComment($_POST["commentEdit"]);
+        $entityManager->persist($commentScheduledActivity);
+        $entityManager->flush();
+        $userFirstname = $user->getFirstname();
+        $userLastname = $user->getLastname();
+        return new JsonResponse(["commentEdit" => $_POST["commentEdit"], "idComment" => $commentScheduledActivity->getId(), "idScheduledActivity" => $commentScheduledActivity->getScheduledactivity()->getId(), "userFirstname" => $userFirstname, "userLastname" => $userLastname]);
+    }
 }
     

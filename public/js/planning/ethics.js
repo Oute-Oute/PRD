@@ -105,12 +105,31 @@ function validComment(){
   });
 }
 
+function deleteCommentModale(idCommentDiv){
+  var idComment = idCommentDiv.split("-")[1];
+  document.getElementById("delete-confirm-comment-id").value = idComment;
+
+  var authorUsername = document.getElementById('username-' + idComment).value;
+  var username = document.getElementById("OwnUsername").value;
+  var confirm;
+  if(username != authorUsername){
+    confirm = "Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?";
+  }
+  else {
+    confirm = "Voulez-vous vraiment supprimer votre commentaire ?";
+  }
+  console.log(confirm)
+  document.getElementById("confirm-delete-title").textContent = confirm;
+
+  $("#ethic-confirm-delete-modal").modal("show"); //open the window
+}
+
 /**
  * 
  * @param {*} idComment 
  */
-function deleteComment(idDivComment){
-  var idComment = idDivComment.split('-')[1];
+function deleteCommentConfirm(){
+  var idComment = document.getElementById("delete-confirm-comment-id").value;
 
   $.ajax({
     type : 'POST',
@@ -138,26 +157,50 @@ function deleteComment(idDivComment){
         window.location.href = '/ethics';
     }
   });
-
-  /*var authorUsername = document.getElementById('username-' + idComment).value;
-  var username = document.getElementById("OwnUsername").value;
-
-  var confirm;
-  if(username == authorUsername){
-    confirm("Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?");
-  }
-  else {
-    confirm("Voulez-vous vraiment supprimer votre commentaire ?");
-  }
-  console.log(idComment, document.getElementById("OwnUsername").value)*/
 }
 
 /**
  * 
  * @param {*} idComment 
  */
-function editComment(idComment){
+function editComment(idDivComment){
+  var idComment = idDivComment.split('-')[1];
+  var commentEdit = document.getElementById("comment-hidden-" + idComment).value;
+  document.getElementById("edit-comment-id").value = idComment;
+  document.getElementById("edit-comment").value = commentEdit;
+  $("#ethic-edit-comment-modal").modal("show"); //open the window
+}
 
+function validEditComment(){
+  var idComment = document.getElementById("edit-comment-id").value;
+  var commentEdit = document.getElementById("edit-comment").value
+  var userName = document.getElementById("OwnUsername").value;
+
+  $.ajax({
+    type : 'POST',
+    url  : '/ajaxEthicsEditComment',
+    data : {commentEdit: commentEdit, idComment: idComment, userName: userName},
+    dataType : "json",
+    success : function(data){
+      var event = calendar.getEventById(data["idScheduledActivity"])
+      var author = data["userLastname"] + " " + data["userFirstname"];
+      var idComment = data["idComment"];
+      var commentEdit = data["commentEdit"];
+      for(var i = 0; i < event._def.extendedProps.comments.length; i++){
+        if(event._def.extendedProps.comments[i].idcomment == idComment){
+          event._def.extendedProps.comments[i].comment = commentEdit;
+          event._def.extendedProps.comments[i].author = author
+        }
+      }
+      $("#ethic-edit-comment-modal").modal("hide"); //close the window
+      $("#ethic-activity-modal").modal("hide"); //close the window
+      openActivityModal(event);
+    },
+    error: function(data){
+        console.log("error");
+        window.location.href = '/ethics';
+    }
+  });
 }
 
 /**
@@ -215,6 +258,11 @@ function openActivityModal(event){
         divUsername.setAttribute('type', 'hidden')
         divUsername.setAttribute('value', comments[i].authorusername)
 
+        let divCommentHidden = document.createElement('input')
+        divCommentHidden.setAttribute('id', 'comment-hidden-' + comments[i].idcomment)
+        divCommentHidden.setAttribute('type', 'hidden')
+        divCommentHidden.setAttribute('value', comments[i].comment)
+
         let divContainerP = document.createElement('div');
         divContainerP.setAttribute('class', 'container-p');
 
@@ -226,7 +274,7 @@ function openActivityModal(event){
         let imgDelete = new Image();
         imgDelete.src = '../../img/delete.svg'
         imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
-        imgDelete.setAttribute('onclick', 'deleteComment(this.id)')
+        imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
         imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
         imgDelete.style.width = '20px'
         imgDelete.style.cursor = 'pointer'
@@ -246,6 +294,7 @@ function openActivityModal(event){
         divImages.appendChild(imgDelete)
 
         divComment.appendChild(divUsername);
+        divComment.appendChild(divCommentHidden);
         divComment.appendChild(divContainerP);
         divComment.appendChild(divImages);
         divComments.appendChild(divComment);
