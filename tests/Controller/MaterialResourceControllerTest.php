@@ -15,6 +15,9 @@ class MaterialResourceControllerTest extends WebTestCase
     private $repository;
     private $path = '/material/resource/';
 
+    /**
+     * This test checks if we can properly get the data from all material resources in the database
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -25,6 +28,9 @@ class MaterialResourceControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * This test checks if we can properly list all material resource from the database
+     */
     public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->path);
@@ -36,6 +42,10 @@ class MaterialResourceControllerTest extends WebTestCase
         // self::assertSame('Some text on the page', $crawler->filter('.p')->first());
     }
 
+
+    /**
+     * This test checks if we can properly create a new material resource in the database
+     */
     public function testNew(): void
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
@@ -56,6 +66,9 @@ class MaterialResourceControllerTest extends WebTestCase
         self::assertSame($originalNumObjectsInRepository + 1, count($this->repository->findAll()));
     }
 
+    /**
+     * This test checks if we can properly show all data from a specified material resource
+     */
     public function testShow(): void
     {
         $this->markTestIncomplete();
@@ -74,6 +87,9 @@ class MaterialResourceControllerTest extends WebTestCase
         // Use assertions to check that the properties are properly displayed.
     }
 
+    /**
+     * This test checks if we can properly edit a material resource that is already in the database
+     */
     public function testEdit(): void
     {
         $this->markTestIncomplete();
@@ -101,6 +117,9 @@ class MaterialResourceControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getCategorymaterialresource());
     }
 
+    /**
+     * This test checks if we can properly delete a material resource frm the database
+     */
     public function testRemove(): void
     {
         $this->markTestIncomplete();

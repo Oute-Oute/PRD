@@ -15,6 +15,10 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
     private $repository;
     private $path = '/material/resource/category/';
 
+
+    /**
+     * This test checks if we can properly get the data of the table of material resource categories from the database
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -25,6 +29,9 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * This test checks if we can properly list all material resource categories from the database
+     */
     public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->path);
@@ -36,6 +43,9 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
         // self::assertSame('Some text on the page', $crawler->filter('.p')->first());
     }
 
+    /**
+     * This test checks if we can properly create a new material resource category in the database
+     */
     public function testNew(): void
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
@@ -54,6 +64,10 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
         self::assertSame($originalNumObjectsInRepository + 1, count($this->repository->findAll()));
     }
 
+
+    /**
+     * This test checks if we can properly list all data about one specified material resource category
+     */
     public function testShow(): void
     {
         $this->markTestIncomplete();
@@ -70,6 +84,9 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
         // Use assertions to check that the properties are properly displayed.
     }
 
+    /**
+     * This test checks if we can properly edit a specified material resource category
+     */
     public function testEdit(): void
     {
         $this->markTestIncomplete();
@@ -91,6 +108,9 @@ class MaterialResourceCategoryControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getCategoryname());
     }
 
+    /**
+     * This test checks if we can properly delete a specified material resource category from the database
+     */
     public function testRemove(): void
     {
         $this->markTestIncomplete();

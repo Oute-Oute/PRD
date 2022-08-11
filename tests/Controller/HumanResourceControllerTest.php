@@ -15,6 +15,9 @@ class HumanResourceControllerTest extends WebTestCase
     private $repository;
     private $path = '/human/resource/';
 
+    /**
+     * This test checks if we can properly get all data from the human resources table in the database
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -25,6 +28,9 @@ class HumanResourceControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * This test checks if we can properly list all material resource from the database
+     */
     public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->path);
@@ -36,6 +42,9 @@ class HumanResourceControllerTest extends WebTestCase
         // self::assertSame('Some text on the page', $crawler->filter('.p')->first());
     }
 
+    /**
+     * This test checks if we can properly create a new material resource in the database
+     */
     public function testNew(): void
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
@@ -55,6 +64,9 @@ class HumanResourceControllerTest extends WebTestCase
         self::assertSame($originalNumObjectsInRepository + 1, count($this->repository->findAll()));
     }
 
+    /**
+     * This test checks if we can properly list all data of a specified material resource from the database
+     */
     public function testShow(): void
     {
         $this->markTestIncomplete();
@@ -72,6 +84,10 @@ class HumanResourceControllerTest extends WebTestCase
         // Use assertions to check that the properties are properly displayed.
     }
 
+
+    /**
+     * This test checks if we can properly edit a material resource that is already in the database
+     */
     public function testEdit(): void
     {
         $this->markTestIncomplete();
@@ -96,6 +112,9 @@ class HumanResourceControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getAvailable());
     }
 
+    /**
+     * This test checks if we can properly remove a material resource from the database
+     */
     public function testRemove(): void
     {
         $this->markTestIncomplete();

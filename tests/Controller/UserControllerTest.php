@@ -15,6 +15,10 @@ class UserControllerTest extends WebTestCase
     private $repository;
     private $path = '/user/';
 
+
+    /**
+     * This test checks if we can properly get the data of the table of users from the database
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -25,6 +29,9 @@ class UserControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * This test checks if we can properly list all users from the database
+     */
     public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->path);
@@ -36,6 +43,9 @@ class UserControllerTest extends WebTestCase
         // self::assertSame('Some text on the page', $crawler->filter('.p')->first());
     }
 
+    /**
+     * This test checks if we can properly create a new user in the database
+     */
     public function testNew(): void
     {
         $originalNumObjectsInRepository = count($this->repository->findAll());
@@ -56,6 +66,10 @@ class UserControllerTest extends WebTestCase
         self::assertSame($originalNumObjectsInRepository + 1, count($this->repository->findAll()));
     }
 
+
+    /**
+     * This test checks if we can properly show all data from a specified user
+     */
     public function testShow(): void
     {
         $this->markTestIncomplete();
@@ -74,6 +88,9 @@ class UserControllerTest extends WebTestCase
         // Use assertions to check that the properties are properly displayed.
     }
 
+    /**
+     * This test checks if we can properly edit a user that is already in the database
+     */
     public function testEdit(): void
     {
         $this->markTestIncomplete();
@@ -101,6 +118,9 @@ class UserControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getPassword());
     }
 
+    /**
+     * This test checks if we can properly remove a user from the database
+     */
     public function testRemove(): void
     {
         $this->markTestIncomplete();
