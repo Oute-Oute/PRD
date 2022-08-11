@@ -135,6 +135,7 @@ function deleteComment(idDivComment){
     },
     error: function(data){
         console.log("error");
+        window.location.href = '/ethics';
     }
   });
 
