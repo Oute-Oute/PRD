@@ -1278,7 +1278,7 @@ function fillSuccessorList() {
         imgDelete.style.cursor = 'pointer';
 
         let imgDownArrow = new Image();
-        imgDownArrow.src = '../../img/chevron_up.svg';
+        imgDownArrow.src = '../../img/chevron_up_black.svg';
         imgDownArrow.setAttribute('id', 'succ_imgdown-' + indexSuccessor);
         imgDownArrow.setAttribute('onclick', 'hideDelay(' + indexSuccessor + ')');
         imgDownArrow.setAttribute('title', 'Cacher les délais');
@@ -1388,7 +1388,7 @@ function showDelay(id) {
     divMax.style.display = "block";
 
     button = document.getElementById('succ_imgdown-' + id);
-    button.src = '/img/chevron_up.svg'
+    button.src = '/img/chevron_up_black.svg'
     button.title = 'Cacher les délais'
     button.setAttribute('onclick', 'hideDelay(' + id + ')');
 }
@@ -1404,7 +1404,7 @@ function hideDelay(id) {
     divMax.style.display = "none";
 
     button = document.getElementById('succ_imgdown-' + id);
-    button.src = '/img/chevron_down.svg'
+    button.src = '/img/chevron_down_black.svg'
     button.title = 'Montrer les délais'
     button.setAttribute('onclick', 'showDelay(' + id + ')');
 }
@@ -1414,15 +1414,15 @@ function hideDelay(id) {
  */
 function showDelays() {
     delayButton = document.getElementById('succ_imgdown')
-    if(delayButton.src.includes('/img/chevron_down.svg')){
-        delayButton.src = '/img/chevron_up.svg'
+    if(delayButton.src.includes('/img/chevron_down_black.svg')){
+        delayButton.src = '/img/chevron_up_black.svg'
         delayButton.title = 'Cacher tous les délais'
         for(i = 0; i < SUCCESSORS.length; i++){
             showDelay(i);
         }
     }
     else{
-        delayButton.src = '/img/chevron_down.svg'
+        delayButton.src = '/img/chevron_down_black.svg'
         delayButton.title = 'Montrer tous les délais'
         for(i = 0; i < SUCCESSORS.length; i++){
             hideDelay(i);
