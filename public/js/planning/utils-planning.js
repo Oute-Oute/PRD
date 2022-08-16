@@ -395,16 +395,27 @@ function categoryShow() {
 
 }
 
-function reload(type){ 
+function reload(type){  
+  var date = new Date(document.getElementById("Date").value);
+  var day = date.getDate(); //get the day
+  var month = date.getMonth() + 1; //get the month (add 1 because it starts at 0)
+  var year = date.getFullYear(); //get the year
+  if (day < 10) {
+    day = "0" + day;
+  } //if the day is less than 10, add a 0 before to fit with DateTime format
+  if (month < 10) {
+    month = "0" + month;
+  } //if the month is less than 10, add a 0 before to fit with DateTime format
+  dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
   if(document.getElementById('reloadTime')!=null){
     reloadTime = document.getElementById('reloadTime').value; // En millisecondes
   }
   setTimeout(function(){
     if(type=="consultation"){
-    window.location.assign("/ConsultationPlanning");
+    window.location.assign("/ConsultationPlanning?date=" + dateStr);
     }
     if(type=="ethics"){
-    window.location.assign("/ethics");
+    window.location.assign("/ethics?date=" + dateStr);
     }
   }, reloadTime);
 
