@@ -31,7 +31,7 @@ class MaterialResourceController extends AbstractController
 {
 
     /**
-      * Allows to list every material resources in the database
+      * @brief Allows to list every material resources in the database
      */
 
     /**
@@ -91,7 +91,7 @@ class MaterialResourceController extends AbstractController
 
 
     /**
-      * Allows to list every material resources in the database with the pagination to not display everything at the same time
+      * @brief Allows to list every material resources in the database with the pagination to not display everything at the same time
      */
     public function listMaterialResources(MaterialResourceRepository $materialResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);
@@ -125,7 +125,7 @@ class MaterialResourceController extends AbstractController
     }
 
     /**
-     * Allows to create a JSON object from a list of unavailabilities of human resources
+     * @brief Allows to create a JSON object from a list of unavailabilities of human resources
      */
     public function listUnavailabilitiesMaterialJSON(ManagerRegistry $doctrine)
     {
@@ -180,7 +180,7 @@ class MaterialResourceController extends AbstractController
     }
 
    /**
-     * Allows to create a new material resource in the dabatase
+     * @brief Allows to create a new material resource in the dabatase
      */
     
     /**
@@ -219,7 +219,7 @@ class MaterialResourceController extends AbstractController
 }
 
     /**
-     * Allows to create a new unavailability linked to a specific material resource
+     * @brief Allows to create a new unavailability linked to a specific material resource
      */
 
     public function unavailability(Request $request,ManagerRegistry $doctrine) {
@@ -248,7 +248,7 @@ class MaterialResourceController extends AbstractController
 }
 
     /**
-     * Allows to create a JSON object from a list of categories of material resources
+     * @brief Allows to create a JSON object from a list of categories of material resources
      */
     public function listCategoriesByMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
@@ -270,7 +270,7 @@ class MaterialResourceController extends AbstractController
     }
 
     /**
-     * Allows to edit a material resource that is already in the database
+     * @brief Allows to edit a material resource that is already in the database
      */
 
     /**
@@ -324,7 +324,7 @@ class MaterialResourceController extends AbstractController
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
     /**
-     * Allows to delete an unavailability linked to a resource that is already in the database
+     * @brief Allows to delete an unavailability linked to a resource that is already in the database
      */
     public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
     {
@@ -351,7 +351,7 @@ class MaterialResourceController extends AbstractController
     }
 
     /**
-     * Allows to delete a material resource that is already in the database
+     * @brief Allows to delete a material resource that is already in the database
      */
 
     /**
@@ -411,6 +411,9 @@ class MaterialResourceController extends AbstractController
         return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
     }
 
+    /**
+      * @brief Allows to get all data of a specified material resource
+     */
     public function getDataMaterialResource(ManagerRegistry $doctrine)
     {
         if(isset($_POST["idMaterialResource"])){
@@ -432,6 +435,9 @@ class MaterialResourceController extends AbstractController
         }
     }
 
+    /**
+      * @brief Allows to get all categories of a material resource
+     */
     public function getCategoryByMaterialResourceId($id, ManagerRegistry $doctrine)
     {
         $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
@@ -445,6 +451,10 @@ class MaterialResourceController extends AbstractController
         }
         return $categoryArray;
     }
+
+    /**
+      * @brief Allows to get all resources of a material resource category
+     */
     public function getResourceByMaterialResourceCategoryId($id, ManagerRegistry $doctrine)
     {
         $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
@@ -459,6 +469,10 @@ class MaterialResourceController extends AbstractController
         return $resourceArray;
     }
 
+
+    /**
+      * @brief Allows to get all unavailabilities of a material resource
+     */
     public function getUnavailabilityByMaterialResourceId($id, ManagerRegistry $doctrine)
     {
         $unavailabilities = $doctrine->getManager()->getRepository("App\Entity\UnavailabilityMaterialResource")->findBy(['materialresource' => $id]);
@@ -474,6 +488,9 @@ class MaterialResourceController extends AbstractController
         return $unavailabilityArray;
     }
 
+    /**
+      * @brief Allows to get all activites linked to a material resource
+     */
     public function getActivities($id, $dateStr, ManagerRegistry $doctrine)
     {
         $activities = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled")->findBy(['materialresource' => $id]);
@@ -502,6 +519,9 @@ class MaterialResourceController extends AbstractController
         return $activityArray;
     }
 
+    /**
+      * @brief Allows to autocomplete the material resources researches
+     */
     public function autocompleteMR(Request $request, MaterialResourceRepository $MRRepository, CategoryOfMaterialResourceRepository $categoryOfMRRepository){
         $utf8 = array( 
             "œ"=>"oe",

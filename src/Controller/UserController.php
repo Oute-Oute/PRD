@@ -26,7 +26,7 @@ class UserController extends AbstractController
 {
 
     /**
-     * Allows to list every users in the database
+     * @brief Allows to list every users in the database
      */
 
     public function userGet(UserRepository $userRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
@@ -47,7 +47,7 @@ class UserController extends AbstractController
 
 
     /**
-     * Allows to add a new user in the database
+     * @brief Allows to add a new user in the database
      */
 
     public function userAdd(Request $request, userRepository $userRepository): Response
@@ -80,7 +80,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Allows to edit a user that is already in the database
+     * @brief Allows to edit a user that is already in the database
      */
     public function userEdit(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
@@ -110,7 +110,7 @@ class UserController extends AbstractController
 
 
     /**
-     * Allows to delete a user that is already in the database
+     * @brief Allows to delete a user that is already in the database
      */
     public function userDelete(User $user, UserRepository $userRepository, ManagerRegistry $doctrine): Response
     {
@@ -131,7 +131,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Allows to create a JSON object from a list of users in the database
+     * @brief Allows to create a JSON object from a list of users in the database
      */
     public function listUserJSON(ManagerRegistry $doctrine)
     {
@@ -151,6 +151,9 @@ class UserController extends AbstractController
         return $usersArrayJSON;
     }
 
+    /**
+     * @brief Allows to autocomplete user researches
+     */
     public function autocompleteUser(Request $request, UserRepository $userRepository)
     {
         $utf8 = array( 

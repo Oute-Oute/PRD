@@ -16,7 +16,7 @@ class ProfilController extends AbstractController
 {
 
     /**
-      * Allows to display current profile data
+      * @brief Allows to display current profile data
      */
     public function profilGet(): Response
     {
@@ -28,7 +28,7 @@ class ProfilController extends AbstractController
     }
 
     /**
-      * Allows to edit the current profile data
+      * @brief Allows to edit the current profile data
      */
     public function profilEdit(Request $request,  UserRepository $userRepository,ManagerRegistry $doctrine): Response
     {

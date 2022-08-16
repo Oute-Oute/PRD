@@ -41,7 +41,7 @@ class HumanResourceController extends AbstractController
 {
 
     /**
-      * Allows to list every human resources in the database
+      * @brief Allows to list every human resources in the database
      */
 
     /**
@@ -70,7 +70,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-      * Allows to list every human resources with a pagination included, to not display every resources at the same time
+      * @brief Allows to list every human resources with a pagination included, to not display every resources at the same time
      */
     public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
@@ -105,7 +105,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-     * Allows to create a JSON object from a list of working hours of human resources
+     * @brief Allows to create a JSON object from a list of working hours of human resources
      */
     public function listWorkingHoursJSON(ManagerRegistry $doctrine)
     {
@@ -129,7 +129,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-     * Allows to create a JSON object from a list of unavailibilities of human resources
+     * @brief Allows to create a JSON object from a list of unavailibilities of human resources
      */
     public function listUnavailabilitiesHumanJSON(ManagerRegistry $doctrine)
     {
@@ -181,7 +181,7 @@ class HumanResourceController extends AbstractController
 
 
     /**
-     * Allows to create a JSON object from a list of categories links with human resources
+     * @brief Allows to create a JSON object from a list of categories links with human resources
      */
     public function listCategoriesByHumanResourcesJSON(ManagerRegistry $doctrine)
     {
@@ -205,7 +205,7 @@ class HumanResourceController extends AbstractController
    
 
     /**
-      * Allows to create a new human resource in the database
+      * @brief Allows to create a new human resource in the database
      */
 
     /**
@@ -366,7 +366,7 @@ class HumanResourceController extends AbstractController
 
 
     /**
-      * Allows to show data of a specific human resource in the database
+      * @brief Allows to show data of a specific human resource in the database
      */
 
     /**
@@ -380,7 +380,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-      * Allows to edit a human resource that is already in the database
+      * @brief Allows to edit a human resource that is already in the database
      */
 
     /**
@@ -716,7 +716,7 @@ class HumanResourceController extends AbstractController
     }
 
     /**
-      * Allows to delete a human resource that is already in the database
+      * @brief Allows to delete a human resource that is already in the database
      */
 
     /**
@@ -765,6 +765,9 @@ class HumanResourceController extends AbstractController
     }
     
 
+    /**
+      * @brief Allows to get data of human resources
+     */
     public function getDataHumanResource(ManagerRegistry $doctrine)
     {
         if(isset($_POST["idHumanResource"])){
@@ -788,6 +791,9 @@ class HumanResourceController extends AbstractController
         }
     }
 
+    /**
+      * @brief Allows to get all categories of a specified resource
+     */
     public function getCategoryByHumanResourceId($id, ManagerRegistry $doctrine)
     {
         $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
@@ -801,6 +807,9 @@ class HumanResourceController extends AbstractController
         }
         return $categoryArray;
     }
+    /**
+      * @brief Allows to get all resources of a specified category
+     */
     public function getResourceByHumanResourceCategoryId($id, ManagerRegistry $doctrine)
     {
         $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
@@ -815,7 +824,7 @@ class HumanResourceController extends AbstractController
         return $resourceArray;
     }
     /**
-      * Allows to create an unavailability linked to a human resource that is already in the database
+      * @brief Allows to create an unavailability linked to a human resource that is already in the database
      */
     public function unavailability(Request $request,ManagerRegistry $doctrine) {
 
@@ -870,7 +879,9 @@ class HumanResourceController extends AbstractController
     }
 
 
-    
+    /**
+      * @brief Allows to get working hours of a specified human resource
+     */
     public function getWorkingHoursByHumanResourceId($id, ManagerRegistry $doctrine){
         $workingHours = $doctrine->getManager()->getRepository("App\Entity\WorkingHours")->findBy(['humanresource' => $id]);
         $workingHoursArray=[];
@@ -884,6 +895,9 @@ class HumanResourceController extends AbstractController
         return $workingHoursArray;
     }
 
+    /**
+      * @brief Allows to get unavailabilities of a specified human resources
+     */
     public function getUnavailabilityByHumanResourceId($id, ManagerRegistry $doctrine){
         $unavailability = $doctrine->getManager()->getRepository("App\Entity\UnavailabilityHumanResource")->findBy(['humanresource' => $id]);
         $unavailabilityArray=[];
@@ -896,6 +910,9 @@ class HumanResourceController extends AbstractController
         return $unavailabilityArray;
     }
 
+    /**
+      * @brief Allows to create an unavailability linked to a human resource that is already in the database
+     */
     public function getActivities($id, $dateStr,ManagerRegistry $doctrine){
         $activities = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled")->findBy(['humanresource' => $id]);
         $activitiesArray=[];
@@ -922,6 +939,9 @@ class HumanResourceController extends AbstractController
         return $activitiesArray;
     }
 
+    /**
+      * @brief Allows to autocomplete human resources researches
+     */
     public function autocompleteHR(Request $request, HumanResourceRepository $HRRepository, CategoryOfHumanResourceRepository $categoryOfHRRepository,HumanResourceCategoryRepository $humanResourceCategoryRepository){
         $utf8 = array( 
             "œ"=>"oe",

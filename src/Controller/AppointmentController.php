@@ -17,6 +17,10 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class AppointmentController extends AbstractController
 {
+    /**
+     * @brief Allows to get appointments
+     * 
+     */
     public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
     {
 
@@ -65,6 +69,11 @@ class AppointmentController extends AbstractController
         return new JsonResponse($pathwaysArray);
     }
 
+    /*
+     * @brief This function is the getter of the patients from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the pathways's data
+     */
     public function getPatientsJSON(ManagerRegistry $doctrine)
     {
         $patients = $doctrine->getRepository("App\Entity\Patient")->findAll();
@@ -80,6 +89,9 @@ class AppointmentController extends AbstractController
         return new JsonResponse($patientsArray);
     }
 
+    /*
+     * @brief Allows to add a new appointment in the database
+     */
     public function appointmentAdd(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine): Response
     {
         // On recupere toutes les données de la requete
@@ -116,6 +128,9 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
+    /*
+     * @brief Allows to edit an appointment that is already in the database
+     */
     public function appointmentEdit(Request $request, AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine)
     {
         //on récupère les nouvelles informations sur le rendez-vous
@@ -150,6 +165,9 @@ class AppointmentController extends AbstractController
         return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
     }
 
+    /*
+     * @brief Allows to delete an appointment from the database
+     */
     public function appointmentDelete(ManagerRegistry $doctrine, Appointment $appointment, AppointmentRepository $appointmentRepository): Response
     {
         //on récupère toutes les activités programmées associées au rendez-vous
@@ -188,6 +206,9 @@ class AppointmentController extends AbstractController
     }
 
 
+    /*
+     * @brief Allows to get all targets of an appointment
+     */
     public function getTargets(ManagerRegistry $doctrine, AppointmentRepository $AR)
     {
         $date = new \DateTime();
@@ -204,6 +225,9 @@ class AppointmentController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /*
+     * @brief Allows display/look autocompletes 
+     */
     public function lookAutocompletes(ManagerRegistry $doctrine)
     {
         $pathway = $this->getPathwayByName($_POST["pathway"], $doctrine);
@@ -216,12 +240,18 @@ class AppointmentController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /*
+     * @brief Allows to get according to a name passed as parameter
+     */
     public function getPathwayByName($name, ManagerRegistry $doctrine)
     {
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findBy(["pathwayname" => $name]);
         return $pathway;
     }
 
+    /*
+     * @brief Allows to get a patient according to a name passed as parameter
+     */
     public function getPatientByName($name, ManagerRegistry $doctrine)
     {
         $name = explode(" ", $name);
@@ -229,6 +259,9 @@ class AppointmentController extends AbstractController
         return $patient;
     }
 
+    /*
+     * @brief Allows to get targets according to a pathway passed as paremeter
+     */
     public function getTargetByPathwayJSON(ManagerRegistry $doctrine, $pathway, AppointmentRepository $AR, $date)
     {
         $targets = $doctrine->getRepository("App\Entity\Target")->findBy(["pathway" => $pathway]);
@@ -317,6 +350,9 @@ class AppointmentController extends AbstractController
         return $targetsJSON;
     }
 
+    /*
+     * @brief Allows to get all info about an appointment according to an id
+     */
     public function getInfosAppointmentById(ManagerRegistry $doctrine)
     {
         $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(array("id" => $_POST["id"]));
@@ -344,7 +380,7 @@ class AppointmentController extends AbstractController
     }
 
     /**
-     * Return the appointments list who are scheduled and use the pathway in the parameter (pathway id id)
+     * @brief Return the appointments list who are scheduled and use the pathway in the parameter (pathway id id)
      */
     public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id) {
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findBy(["id" => $id]);
@@ -366,6 +402,9 @@ class AppointmentController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /*
+     * @brief Allows to autocomplete while researching
+     */
     public function autocompleteAppointment(Request $request, AppointmentRepository $appointmentRepository)
     {
         $utf8 = array( 

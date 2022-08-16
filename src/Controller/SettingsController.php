@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class SettingsController extends AbstractController
 {
     /**
-      * Allows to display current settings
+      * @brief Allows to display current settings
      */
     public function settingsGet(SettingsRepository $settingRepository): Response
     {
@@ -24,7 +24,7 @@ class SettingsController extends AbstractController
     }
 
     /**
-      * Allows to edit the current settings
+      * @brief Allows to edit the current settings
      */
     public function settingsEdit(Request $request, SettingsRepository $settingRepository, EntityManagerInterface $entityManager): Response
     {
@@ -49,7 +49,7 @@ class SettingsController extends AbstractController
 
 
     /**
-      * Allows to set settings to default values
+      * @brief Allows to set settings to default values
      */
     public function settingsAddDefault(EntityManagerInterface $entityManager): Response
     {

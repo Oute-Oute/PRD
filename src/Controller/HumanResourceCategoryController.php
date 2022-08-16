@@ -27,7 +27,7 @@ class HumanResourceCategoryController extends AbstractController
 {
 
     /**
-      * Allows to list every human resource categories in the database
+      * @brief Allows to list every human resource categories in the database
      */
 
     /**
@@ -43,7 +43,7 @@ class HumanResourceCategoryController extends AbstractController
     
 
     /**
-      * Allows to create a new human resource category in the database
+      * @brief Allows to create a new human resource category in the database
      */
 
     /**
@@ -67,7 +67,7 @@ class HumanResourceCategoryController extends AbstractController
     
 
     /**
-      * Allows to show data of a specific human resource category
+     * @brief Allows to show data of a specific human resource category
      */
 
     /**
@@ -83,7 +83,7 @@ class HumanResourceCategoryController extends AbstractController
     
 
     /**
-      * Allows to edit a human resource category that is already in the database
+      * @brief Allows to edit a human resource category that is already in the database
      */
 
     /**
@@ -105,7 +105,7 @@ class HumanResourceCategoryController extends AbstractController
     
 
     /**
-      * Allows to delete a human resource category from the database
+      * @brief Allows to delete a human resource category from the database
      */
 
     /**

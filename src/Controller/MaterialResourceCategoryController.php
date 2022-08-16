@@ -28,7 +28,7 @@ class MaterialResourceCategoryController extends AbstractController
 {
 
     /**
-      * Allows to list every material resource categories in the database
+      * @brief Allows to list every material resource categories in the database
      */
 
     /**
@@ -42,7 +42,7 @@ class MaterialResourceCategoryController extends AbstractController
     }
 
     /**
-      * Allows to create a new material resource category in the database
+      * @brief Allows to create a new material resource category in the database
      */
 
     /**
@@ -64,7 +64,7 @@ class MaterialResourceCategoryController extends AbstractController
     }
 
     /**
-      * Allows to show data of a specific material resource category
+      * @brief Allows to show data of a specific material resource category
      */
 
     /**
@@ -78,7 +78,7 @@ class MaterialResourceCategoryController extends AbstractController
     }
 
     /**
-      * Allows to edit a material resource category that is already in the database
+      * @brief Allows to edit a material resource category that is already in the database
      */
 
     /**
@@ -99,7 +99,7 @@ class MaterialResourceCategoryController extends AbstractController
     }
 
     /**
-      * Allows to delete a material resource category from the database
+      * @brief Allows to delete a material resource category from the database
      */
 
     /**

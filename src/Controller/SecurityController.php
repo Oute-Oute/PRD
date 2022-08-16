@@ -13,7 +13,7 @@ class SecurityController extends AbstractController
 {
 
     /**
-      * Allows to make checks when a user is trying to authenticate on the website
+      * @brief Allows to make checks when a user is trying to authenticate on the website
      */
 
     /**
@@ -35,7 +35,7 @@ class SecurityController extends AbstractController
 
 
     /**
-      * Allows to log out a logged user and delete his session
+      * @brief Allows to log out a logged user and delete his session
      */
 
     /**
@@ -50,7 +50,7 @@ class SecurityController extends AbstractController
 
 
     /**
-      * A classic function that redirects to the login page
+      * @brief A generic function that redirects to the login page
      */
 
     public function redirection($user): Response

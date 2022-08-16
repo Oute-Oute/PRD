@@ -17,7 +17,7 @@ class PatientController extends AbstractController
 {
 
     /**
-      * Allows to list every patients in the database with the paginator
+      * @brief Allows to list every patients in the database with the paginator
      */
     public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
@@ -30,7 +30,7 @@ class PatientController extends AbstractController
     }
     
     /**
-      * Allows to list every patients in the database without pagination
+      * @brief Allows to list every patients in the database without pagination
      */
     public function getAllPatient(PatientRepository $patientRepository){
         $patient=$patientRepository->findBy(array(),array('lastname' => 'ASC')); 
@@ -39,7 +39,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to add a patient in the database
+      * @brief Allows to add a patient in the database
      */
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
@@ -61,7 +61,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to edit a patient that is already in the database
+      * @brief Allows to edit a patient that is already in the database
      */
     public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
     {
@@ -85,7 +85,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to delete a patient that is already in the database
+      * @brief Allows to delete a patient that is already in the database
      */
     public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository,ManagerRegistry $doctrine): Response
     {
@@ -131,7 +131,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to display the data of a specific patient
+      * @brief Allows to display the data of a specific patient
      */
     public function getDataPatient(ManagerRegistry $doctrine)
     {
@@ -140,7 +140,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to display every appointments linked to a specific patient
+      * @brief Allows to display every appointments linked to a specific patient
      */
     public function getAppointmentByPatientId($id, ManagerRegistry $doctrine)
     {
@@ -161,7 +161,7 @@ class PatientController extends AbstractController
     }
 
     /**
-      * Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
+      * @brief Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
      */
     public function autocompletePatient(Request $request, PatientRepository $patientRepository)
     {
