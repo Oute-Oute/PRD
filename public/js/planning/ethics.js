@@ -87,7 +87,6 @@ function validComment(){
   var newComment = document.getElementById("new-comment").value;
   var idScheduledActivity = document.getElementById("id-scheduled-activity").value;
   var userName = document.getElementById("OwnUsername").value;
-  console.log(idScheduledActivity, userName)
 
   $.ajax({
     type : 'POST',
@@ -138,8 +137,6 @@ function deleteCommentModale(idCommentDiv){
  */
 function deleteCommentConfirm(){
   var idComment = document.getElementById("delete-confirm-comment-id").value;
-
-  console.log(idComment)
   $.ajax({
     type : 'POST',
     url  : '/ajaxEthicsDeleteComment',
@@ -178,7 +175,6 @@ function editComment(idDivComment,id ){
   document.getElementById("edit-comment-id").value = idComment;
   document.getElementById("edit-comment").value = commentEdit;
   document.getElementById("cancelEdit").onclick=function(){
-    console.log(id);
     openActivityModal("old",id);
   }
   $("#ethic-activity-modal").modal("hide"); //close the window
@@ -258,11 +254,10 @@ function openActivityModal(type="new",event){
 
     materialResourcesNames += materialResources[i]; //add the last material resource name to the string
   } else materialResourcesNames = "Aucune ressource associée";
-
+  document.getElementById("show-title").textContent = activity.title; //set the title of the activity
   var divComments = document.getElementById("comments");
   divComments.innerHTML = '';
   var comments = activity.extendedProps.comments; //get the comments of the event
-  console.log(comments);
   if (comments.length > 0) {
     for (var i = 0; i < comments.length; i++) {
       //for each comment except the last one
@@ -551,7 +546,6 @@ function enableButton(type){
   else if(type == 'new'){
     area=document.getElementById('new-comment');
   }
-  console.log($('button[for="save-comment"]'));
   if (area.value==''){
     $('button[for="save-comment"]')[0].disabled = true;
     $('button[for="save-comment"]')[1].disabled = true;
