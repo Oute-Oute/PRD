@@ -114,6 +114,7 @@ function validComment(){
 }
 
 function deleteCommentModale(idCommentDiv){
+  $("#ethic-activity-modal").modal("hide");
   var idComment = idCommentDiv.split("-")[1];
   document.getElementById("delete-confirm-comment-id").value = idComment;
   var authorUsername = document.getElementById('username-' + idComment).value;
