@@ -1301,7 +1301,7 @@ function fillSuccessorList() {
         inputMin.setAttribute('min', 0);
         inputMin.setAttribute('step', 1);
         inputMin.setAttribute('value', 0);
-        inputMin.style.width = "20%";
+        inputMin.style.width = "25%";
 
         divMin.appendChild(labelMin);
         divMin.appendChild(inputMin);
@@ -1324,7 +1324,7 @@ function fillSuccessorList() {
         inputMax.setAttribute('min', 0);
         inputMax.setAttribute('step', 1);
         inputMax.setAttribute('value', 360);
-        inputMax.style.width = "20%"
+        inputMax.style.width = "25%"
 
         divMax.appendChild(labelMax);
         divMax.appendChild(inputMax);

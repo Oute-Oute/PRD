@@ -68,10 +68,17 @@ function createEvents() {
 /**
  * @brief This function is called when we want to add a new comment
  */
-function changeComment(){
+function changeComment(id){
   document.getElementById("new-comment").value = "";
+  document.getElementById("save-comment").disabled = true;
   $("#ethic-comment-modal").modal("show"); //open the window
-}
+  document.getElementById("save-comment").onclick = function(){
+    validComment(id);
+  }
+  document.getElementById("cancelNewComment").onclick = function(){
+    openActivityModal("old",id);
+  }
+} 
 
 /**
  * @brief This function is called when we add a new comment
@@ -80,7 +87,6 @@ function validComment(){
   var newComment = document.getElementById("new-comment").value;
   var idScheduledActivity = document.getElementById("id-scheduled-activity").value;
   var userName = document.getElementById("OwnUsername").value;
-  console.log(idScheduledActivity, userName)
 
   $.ajax({
     type : 'POST',
@@ -98,6 +104,8 @@ function validComment(){
       event._def.ui.backgroundColor = '#841919';
       event._def.ui.borderColor = '#841919';
       event.setStart(event.start);
+      $("#ethic-activity-modal").modal("show"); //close the window
+      openActivityModal("old",idScheduledActivity);
     },
     error: function(data){
         console.log("error");
@@ -108,17 +116,16 @@ function validComment(){
 function deleteCommentModale(idCommentDiv){
   var idComment = idCommentDiv.split("-")[1];
   document.getElementById("delete-confirm-comment-id").value = idComment;
-
   var authorUsername = document.getElementById('username-' + idComment).value;
+  var author = document.getElementById('author-' + idComment).value;
   var username = document.getElementById("OwnUsername").value;
   var confirm;
   if(username != authorUsername){
-    confirm = "Voulez-vous vraiment supprimer le commentaire de : " + authorUsername + " ?";
+    confirm = "Voulez-vous vraiment supprimer le commentaire de : " + author + " ?";
   }
   else {
     confirm = "Voulez-vous vraiment supprimer votre commentaire ?";
   }
-  console.log(confirm)
   document.getElementById("confirm-delete-title").textContent = confirm;
 
   $("#ethic-confirm-delete-modal").modal("show"); //open the window
@@ -130,7 +137,6 @@ function deleteCommentModale(idCommentDiv){
  */
 function deleteCommentConfirm(){
   var idComment = document.getElementById("delete-confirm-comment-id").value;
-
   $.ajax({
     type : 'POST',
     url  : '/ajaxEthicsDeleteComment',
@@ -150,7 +156,7 @@ function deleteCommentConfirm(){
         event.setStart(event.start);
       }
       $("#ethic-activity-modal").modal("hide"); //close the window
-      openActivityModal(event);
+      openActivityModal("new",event);
     },
     error: function(data){
         console.log("error");
@@ -163,11 +169,15 @@ function deleteCommentConfirm(){
  * 
  * @param {*} idComment 
  */
-function editComment(idDivComment){
+function editComment(idDivComment,id ){
   var idComment = idDivComment.split('-')[1];
   var commentEdit = document.getElementById("comment-hidden-" + idComment).value;
   document.getElementById("edit-comment-id").value = idComment;
   document.getElementById("edit-comment").value = commentEdit;
+  document.getElementById("cancelEdit").onclick=function(){
+    openActivityModal("old",id);
+  }
+  $("#ethic-activity-modal").modal("hide"); //close the window
   $("#ethic-edit-comment-modal").modal("show"); //open the window
 }
 
@@ -193,8 +203,7 @@ function validEditComment(){
         }
       }
       $("#ethic-edit-comment-modal").modal("hide"); //close the window
-      $("#ethic-activity-modal").modal("hide"); //close the window
-      openActivityModal(event);
+      openActivityModal("old",data["idScheduledActivity"])
     },
     error: function(data){
         console.log("error");
@@ -207,9 +216,15 @@ function validEditComment(){
  * 
  * @param {*} event 
  */
-function openActivityModal(event){
+function openActivityModal(type="new",event){
   //get the data of the event
-  var id = event._def.publicId; //get the id of the event
+  if(type == "old"){
+    var id=event;
+  }
+  else{
+    var id = event._def.publicId; //get the id of the event
+    
+  }
   var activity = calendar.getEventById(id); //get the event with the id
   var start = activity.start; //get the start date of the event
   var end = activity.end; //get the end date of the event
@@ -239,7 +254,7 @@ function openActivityModal(event){
 
     materialResourcesNames += materialResources[i]; //add the last material resource name to the string
   } else materialResourcesNames = "Aucune ressource associée";
-
+  document.getElementById("show-title").textContent = activity.title; //set the title of the activity
   var divComments = document.getElementById("comments");
   divComments.innerHTML = '';
   var comments = activity.extendedProps.comments; //get the comments of the event
@@ -251,12 +266,16 @@ function openActivityModal(event){
         let divComment = document.createElement('div');
         divComment.setAttribute('class', 'div-comment');
         divComment.setAttribute('id', 'comment' + (comments[i].idcomment));
-        divComment.style.maxHeight = '150px'
 
         let divUsername = document.createElement('input')
         divUsername.setAttribute('id', 'username-' + comments[i].idcomment)
         divUsername.setAttribute('type', 'hidden')
         divUsername.setAttribute('value', comments[i].authorusername)
+        
+        let divAuthor = document.createElement('input')
+        divAuthor.setAttribute('id', 'author-' + comments[i].idcomment)
+        divAuthor.setAttribute('type', 'hidden')
+        divAuthor.setAttribute('value', comments[i].author)
 
         let divCommentHidden = document.createElement('input')
         divCommentHidden.setAttribute('id', 'comment-hidden-' + comments[i].idcomment)
@@ -275,15 +294,15 @@ function openActivityModal(event){
         imgDelete.src = '../../img/delete.svg'
         imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
         imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
-        imgDelete.setAttribute('title', 'Supprimer l\'activité du parcours')
+        imgDelete.setAttribute('title', 'Supprimer le commentaire')
         imgDelete.style.width = '20px'
         imgDelete.style.cursor = 'pointer'
 
         let imgEdit = new Image();
         imgEdit.src = '../../img/edit.svg'
         imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
-        imgEdit.setAttribute('onclick', 'editComment(this.id)')
-        imgEdit.setAttribute('title', 'Édition de l\'activité')
+        imgEdit.setAttribute('onclick', 'editComment(this.id,"'+id+'")')
+        imgEdit.setAttribute('title', 'Édition du commentaire')
         imgEdit.style.width = '20px'
         imgEdit.style.cursor = 'pointer'
         imgEdit.style.marginRight = '10px'
@@ -294,6 +313,7 @@ function openActivityModal(event){
         divImages.appendChild(imgDelete)
 
         divComment.appendChild(divUsername);
+        divComment.appendChild(divAuthor);
         divComment.appendChild(divCommentHidden);
         divComment.appendChild(divContainerP);
         divComment.appendChild(divImages);
@@ -301,18 +321,16 @@ function openActivityModal(event){
       }
     }
   } else document.getElementById("comments").innerHTML = "Aucun commentaire";
-
-  document.getElementById("id-scheduled-activity").value = event._def.publicId; //set id scheduled activity
+  document.getElementById("buttonNewComment").setAttribute('onclick', 'changeComment("' + id + '")')
+  document.getElementById("id-scheduled-activity").value = id; //set id scheduled activity
 
   //set data to display in the modal window
   $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
   $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
-  document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
   $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
   $("#patient").val(activity.extendedProps.patient); //set the patient of the event
   $("#rh").val(humanResourcesNames); //set the human resources of the event
   $("#rm").val(materialResourcesNames); //set the material resources of the event
-  console.log(document.getElementById("comments").innerHTML)
   $("#ethic-activity-modal").modal("show"); //open the window
 }
 
@@ -400,7 +418,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
 
     //when we click on an event, display a modal window with the event information
     eventClick: function (event) {
-      openActivityModal(event.event);
+      openActivityModal("new",event.event);
     },
   });
   //change the type of the calendar(Patients, Resources...)
@@ -521,6 +539,20 @@ $(window).resize(function () {
   calendar.setOption('height', $(window).height()*0.75);
 });
 
-
-
+function enableButton(type){
+  if(type == 'edit'){
+    area=document.getElementById('edit-comment');
+  }
+  else if(type == 'new'){
+    area=document.getElementById('new-comment');
+  }
+  if (area.value==''){
+    $('button[for="save-comment"]')[0].disabled = true;
+    $('button[for="save-comment"]')[1].disabled = true;
+  }
+  else{
+    $('button[for="save-comment"]')[0].disabled = false;
+    $('button[for="save-comment"]')[1].disabled = false;
+  }
+}
 
