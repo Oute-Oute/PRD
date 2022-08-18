@@ -1,6 +1,6 @@
 <?php
 
-/**
+/*
  * @file        UserController.php
  * @brief       Contains the functions that handle the users in the database
  * @date        2022
@@ -25,7 +25,7 @@ use Knp\Component\Pager\PaginatorInterface;
 class UserController extends AbstractController
 {
 
-    /**
+    /*
      * @brief Allows to list every users in the database
      */
 
@@ -46,7 +46,7 @@ class UserController extends AbstractController
     }
 
 
-    /**
+    /*
      * @brief Allows to add a new user in the database
      */
 
@@ -79,7 +79,7 @@ class UserController extends AbstractController
         }
     }
 
-    /**
+    /*
      * @brief Allows to edit a user that is already in the database
      */
     public function userEdit(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
@@ -109,7 +109,7 @@ class UserController extends AbstractController
     }
 
 
-    /**
+    /*
      * @brief Allows to delete a user that is already in the database
      */
     public function userDelete(User $user, UserRepository $userRepository, ManagerRegistry $doctrine): Response
@@ -130,7 +130,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('User', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
+    /*
      * @brief Allows to create a JSON object from a list of users in the database
      */
     public function listUserJSON(ManagerRegistry $doctrine)
@@ -151,7 +151,7 @@ class UserController extends AbstractController
         return $usersArrayJSON;
     }
 
-    /**
+    /*
      * @brief Allows to autocomplete user researches
      */
     public function autocompleteUser(Request $request, UserRepository $userRepository)

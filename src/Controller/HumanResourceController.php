@@ -27,24 +27,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
-/**
+/*
  * @file        HumanResourceController.php
  * @brief       Contains the functions that allow to handle the human resources
  * @details     Allows to create, read, update, delete every human resources
  * @date        2022
  */
 
-/**
+/*
  * @Route("/human/resource")
  */
 class HumanResourceController extends AbstractController
 {
 
-    /**
+    /*
       * @brief Allows to list every human resources in the database
      */
 
-    /**
+    /*
      * @Route("/", name="app_human_resource_index", methods={"GET"})
      */
     public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
@@ -69,7 +69,7 @@ class HumanResourceController extends AbstractController
         ]); 
     }
 
-    /**
+    /*
       * @brief Allows to list every human resources with a pagination included, to not display every resources at the same time
      */
     public function listHumanResources(HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
@@ -104,7 +104,7 @@ class HumanResourceController extends AbstractController
         return $humanResources;
     }
 
-    /**
+    /*
      * @brief Allows to create a JSON object from a list of working hours of human resources
      */
     public function listWorkingHoursJSON(ManagerRegistry $doctrine)
@@ -128,7 +128,7 @@ class HumanResourceController extends AbstractController
         return $workingHoursArrayJson;    
     }
 
-    /**
+    /*
      * @brief Allows to create a JSON object from a list of unavailibilities of human resources
      */
     public function listUnavailabilitiesHumanJSON(ManagerRegistry $doctrine)
@@ -180,7 +180,7 @@ class HumanResourceController extends AbstractController
     }
 
 
-    /**
+    /*
      * @brief Allows to create a JSON object from a list of categories links with human resources
      */
     public function listCategoriesByHumanResourcesJSON(ManagerRegistry $doctrine)
@@ -204,11 +204,11 @@ class HumanResourceController extends AbstractController
 
    
 
-    /**
+    /*
       * @brief Allows to create a new human resource in the database
      */
 
-    /**
+    /*
      * @Route("/new", name="app_human_resource_new", methods={"GET", "POST"})
      */
     public function new(Request $request, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
@@ -365,11 +365,11 @@ class HumanResourceController extends AbstractController
     }
 
 
-    /**
+    /*
       * @brief Allows to show data of a specific human resource in the database
      */
 
-    /**
+    /*
      * @Route("/{id}", name="app_human_resource_show", methods={"GET"})
      */
     public function show(HumanResource $humanResource): Response
@@ -379,11 +379,11 @@ class HumanResourceController extends AbstractController
         ]);
     }
 
-    /**
+    /*
       * @brief Allows to edit a human resource that is already in the database
      */
 
-    /**
+    /*
      * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request,ManagerRegistry $doctrine) 
@@ -715,11 +715,11 @@ class HumanResourceController extends AbstractController
         }
     }
 
-    /**
+    /*
       * @brief Allows to delete a human resource that is already in the database
      */
 
-    /**
+    /*
      * @Route("/{id}", name="app_human_resource_delete", methods={"POST"})
      */
     public function delete(HumanResource $humanResource, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
@@ -765,7 +765,7 @@ class HumanResourceController extends AbstractController
     }
     
 
-    /**
+    /*
       * @brief Allows to get data of human resources
      */
     public function getDataHumanResource(ManagerRegistry $doctrine)
@@ -791,7 +791,7 @@ class HumanResourceController extends AbstractController
         }
     }
 
-    /**
+    /*
       * @brief Allows to get all categories of a specified resource
      */
     public function getCategoryByHumanResourceId($id, ManagerRegistry $doctrine)
@@ -807,7 +807,7 @@ class HumanResourceController extends AbstractController
         }
         return $categoryArray;
     }
-    /**
+    /*
       * @brief Allows to get all resources of a specified category
      */
     public function getResourceByHumanResourceCategoryId($id, ManagerRegistry $doctrine)
@@ -823,7 +823,7 @@ class HumanResourceController extends AbstractController
         }
         return $resourceArray;
     }
-    /**
+    /*
       * @brief Allows to create an unavailability linked to a human resource that is already in the database
      */
     public function unavailability(Request $request,ManagerRegistry $doctrine) {
@@ -850,7 +850,7 @@ class HumanResourceController extends AbstractController
         return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
+    /*
       * Allows to delete an unavailability linked to a human resource that is already in the database
      */
     public function deleteUnavailability(Request $request, ManagerRegistry $doctrine)
@@ -879,7 +879,7 @@ class HumanResourceController extends AbstractController
     }
 
 
-    /**
+    /*
       * @brief Allows to get working hours of a specified human resource
      */
     public function getWorkingHoursByHumanResourceId($id, ManagerRegistry $doctrine){
@@ -895,7 +895,7 @@ class HumanResourceController extends AbstractController
         return $workingHoursArray;
     }
 
-    /**
+    /*
       * @brief Allows to get unavailabilities of a specified human resources
      */
     public function getUnavailabilityByHumanResourceId($id, ManagerRegistry $doctrine){
@@ -910,7 +910,7 @@ class HumanResourceController extends AbstractController
         return $unavailabilityArray;
     }
 
-    /**
+    /*
       * @brief Allows to create an unavailability linked to a human resource that is already in the database
      */
     public function getActivities($id, $dateStr,ManagerRegistry $doctrine){
@@ -939,7 +939,7 @@ class HumanResourceController extends AbstractController
         return $activitiesArray;
     }
 
-    /**
+    /*
       * @brief Allows to autocomplete human resources researches
      */
     public function autocompleteHR(Request $request, HumanResourceRepository $HRRepository, CategoryOfHumanResourceRepository $categoryOfHRRepository,HumanResourceCategoryRepository $humanResourceCategoryRepository){

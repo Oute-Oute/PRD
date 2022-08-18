@@ -20,7 +20,7 @@ use App\Repository\ScheduledActivityRepository;
 use DateTimeZone;
 
 
-/**
+/*
  * Modification planning controller
  */
 class ModificationPlanningController extends AbstractController
@@ -30,7 +30,7 @@ class ModificationPlanningController extends AbstractController
     //Part 1
     //This part manages the controller (GET and POST)
 
-    /**
+    /*
      * This function build the main page of modification planning and give many informations
      */
     public function modificationPlanningGet(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
@@ -100,7 +100,7 @@ class ModificationPlanningController extends AbstractController
         ]);
     }
 
-    /**
+    /*
      * This method recover all informations from modification planning and update database
      */
     public function modificationPlanningValidation(Request $request, AppointmentRepository $appointmentRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
@@ -330,7 +330,7 @@ class ModificationPlanningController extends AbstractController
     //Part 2
     //This part manages the modification data
 
-    /**
+    /*
      * This function verified if a modification for this date is already in progress
      */
     public function alertModif($dateModified, $idUser, $doctrine, $settingsRepository)
@@ -392,7 +392,7 @@ class ModificationPlanningController extends AbstractController
         return true;
     }
 
-    /**
+    /*
      * This function add a data to the table Modification for the user
      */
     public function modificationAdd($dateModified, $idUser, $doctrine)
@@ -422,7 +422,7 @@ class ModificationPlanningController extends AbstractController
         }
     }
 
-    /**
+    /*
      * This function delete the data modification when the user leave modification planning and then redirect to consultation planning
      */
     public function modificationDeleteOnUnload(Request $request, ManagerRegistry $doctrine, $username = '')
@@ -458,7 +458,7 @@ class ModificationPlanningController extends AbstractController
     //Part 3.1
     //This part manages the functions use for get the data in JSON format
 
-    /**
+    /*
      * This function recover all the successors from the database and return the data in a JSON format for JS
      * @return successorsArrayJSON an array in JSON format with all the data
      */
@@ -477,7 +477,7 @@ class ModificationPlanningController extends AbstractController
         return $successorsArray;
     }
 
-    /**
+    /*
      * This function recover all the activities from the database and return the data in a JSON format for JS
      * @return activitiesArrayJSON an array in JSON format with all the data
      */
@@ -495,7 +495,7 @@ class ModificationPlanningController extends AbstractController
         return $activitiesArray;
     }
 
-    /**
+    /*
      * This function recover all the appointments for a date given and return the data in a JSON format for JS
      * @return appointmentsArrayJSON an array in JSON format with all the data
      */
@@ -549,7 +549,7 @@ class ModificationPlanningController extends AbstractController
         return $informationsByDateArray;
     }
 
-    /**
+    /*
      * This function recover all the human resources and return the data in a JSON format for JS
      * @return humanResourcesArrayJson an array in JSON format with all the data
      */
@@ -582,7 +582,7 @@ class ModificationPlanningController extends AbstractController
         return $humanResourcesArrayJson;
     }
 
-    /**
+    /*
      * This function recover all the material resources and return the data in a JSON format for JS
      * @return materialResourcesArrayJson an array in JSON format with all the data
      */
@@ -613,7 +613,7 @@ class ModificationPlanningController extends AbstractController
         return $materialResourcesArrayJson;
     }
 
-    /**
+    /*
      * This function recover all the relationships between each activity and each of its associated human resources 
      * and return the data in a JSON format for JS
      * @return activitiesHumanResourcesArrayJSON an array in JSON format with all the data
@@ -634,7 +634,7 @@ class ModificationPlanningController extends AbstractController
         return $activitiesHumanResourcesArrayJSON;
     }
 
-    /**
+    /*
      * This function recover all the relationships between each activity and each of its associated material resources 
      * and return the data in a JSON format for JS
      * @return activitiesMaterialResourcesArrayJSON an array in JSON format with all the data
@@ -655,7 +655,7 @@ class ModificationPlanningController extends AbstractController
         return $activitiesMaterialResourcesArrayJSON;
     }
 
-    /**
+    /*
      * This function set all data needed for create all event in fullcalendar corresponding to each scheduled activity
      * @return scheduledActivitiesArrayJSON an array in JSON format with all the data
      */
@@ -763,7 +763,7 @@ class ModificationPlanningController extends AbstractController
         return $scheduledActivitiesArrayJSON;
     }
 
-    /**
+    /*
      * This function recover all category of material resource from the database and return an array in JSON format for JS
      * @return categoryOfMaterialResourceArrayJSON an array in JSON format with all the data
      */
@@ -783,7 +783,7 @@ class ModificationPlanningController extends AbstractController
         return $categoryOfMaterialResourceArrayJSON;
     }
 
-    /**
+    /*
      * This function recover all category of human resource from the database and return an array in JSON format for JS
      * @return categoryOfHumanResourceArrayJSON an array in JSON format with all the data
      */
@@ -803,7 +803,7 @@ class ModificationPlanningController extends AbstractController
         return $categoryOfHumanResourceArrayJSON;
     }
 
-    /**
+    /*
      * This function recover all category material resource from the database and return an array in JSON format for JS
      * @return materialResourcesCategoryArrayJSON an array in JSON format with all the data
      */
@@ -822,7 +822,7 @@ class ModificationPlanningController extends AbstractController
         return $materialResourcesCategoryArrayJSON;
     }
 
-    /**
+    /*
      * This function recover all category human resource from the database and return an array in JSON format for JS
      * @return humanResourcesCategoryArrayJSON an array in JSON format with all the data
      */
@@ -845,7 +845,7 @@ class ModificationPlanningController extends AbstractController
     //Part 3.2
     //This part manages the functions use for get the data in an array
 
-    /**
+    /*
      * This function recover a patient by his identifier from the database and return an array with the data
      * @return patientArray an array with all data related to it
      */
@@ -870,7 +870,7 @@ class ModificationPlanningController extends AbstractController
         return $patientArray;
     }
 
-    /**
+    /*
      * This function recover a pathway by his identifier from the database and return an array with the data
      * @return pathwayArray an array with all data related to it
      */
@@ -889,7 +889,7 @@ class ModificationPlanningController extends AbstractController
         return $pathwayArray;
     }
 
-    /**
+    /*
      * This function is the getter of the working hours to display from the database.
      * @param ManagerRegistry $doctrine
      * @return array of the resource's data
@@ -921,7 +921,7 @@ class ModificationPlanningController extends AbstractController
         return $workingHoursArray;
     }
 
-    /**
+    /*
      * This function get the unavailabitity of the material resources.
      * @param ManagerRegistry $doctrine
      * @return an array containing the unavailability of the material resources.
@@ -948,7 +948,7 @@ class ModificationPlanningController extends AbstractController
     }
     
     
-    /**
+    /*
      * This function get the unavailabitity of the human resources.
      * @param ManagerRegistry $doctrine
      * @return an array containing the unavailability of the human resources.
@@ -976,7 +976,7 @@ class ModificationPlanningController extends AbstractController
         return $humanResourcesUnavailableArray;
     }
 
-    /**
+    /*
      * This function get all the unavailabitity of the material and human resources.
      * @param ManagerRegistry $doctrine
      * @return an array containing the unavailability

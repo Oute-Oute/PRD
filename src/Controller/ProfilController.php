@@ -15,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class ProfilController extends AbstractController
 {
 
-    /**
+    /*
       * @brief Allows to display current profile data
      */
     public function profilGet(): Response
@@ -27,7 +27,7 @@ class ProfilController extends AbstractController
         return $this->renderForm('profil/index.html.twig', ['messageSucces'  => $messageSucces, 'messageError'  => $messageError]);
     }
 
-    /**
+    /*
       * @brief Allows to edit the current profile data
      */
     public function profilEdit(Request $request,  UserRepository $userRepository,ManagerRegistry $doctrine): Response

@@ -12,11 +12,11 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
 
-    /**
+    /*
       * @brief Allows to make checks when a user is trying to authenticate on the website
      */
 
-    /**
+    /*
      * @Route("/", name="app_login")
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
@@ -34,11 +34,11 @@ class SecurityController extends AbstractController
     }
 
 
-    /**
+    /*
       * @brief Allows to log out a logged user and delete his session
      */
 
-    /**
+    /*
      * @Route("/logout", name="app_logout")
      */
     public function logout(): Response
@@ -49,7 +49,7 @@ class SecurityController extends AbstractController
     }
 
 
-    /**
+    /*
       * @brief A generic function that redirects to the login page
      */
 

@@ -36,14 +36,14 @@ use Symfony\Component\Validator\Constraints\Length;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
-/**
+/*
  * @Route("/circuit")
  */
 class PathwayController extends AbstractController
 {
 
 
-    /**
+    /*
      * Permet de créer un objet json a partir d'une liste de categorie de ressource humaine
      */
     public function listHumanResourcesJSON(ManagerRegistry $doctrine)
@@ -65,7 +65,7 @@ class PathwayController extends AbstractController
         return $humanResourceCategoriesArrayJson;    
     }
 
-    /**
+    /*
      * Permet de créer un objet json a partir d'une liste de categorie de ressource materielle
      */
     public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
@@ -89,7 +89,7 @@ class PathwayController extends AbstractController
 
 
 
-    /**
+    /*
      * Permet de créer un objet json a partir d'une entité de type pathway
      */
     public function pathwayJSON(Pathway $pathway, ManagerRegistry $doctrine)
@@ -182,7 +182,7 @@ class PathwayController extends AbstractController
         return $pathwayJson;    
     }
 
-    /**
+    /*
      * Permet de créer un objet json contenant les targets d'un pathway
      */
     public function listTargetsJSON($pathway, ManagerRegistry $doctrine)
@@ -209,7 +209,7 @@ class PathwayController extends AbstractController
         return $targetsArrayJson;    
     }
 
-    /**
+    /*
      * Redirige vers la page qui liste les utilisateurs 
      * route : "/pathways"
      */
@@ -248,7 +248,7 @@ class PathwayController extends AbstractController
     }
 
 
-    /**
+    /*
      * Redirige vers la page d'édition d'un parcours
      * route : "/pathway/edit/{id}"
      */
@@ -283,7 +283,7 @@ class PathwayController extends AbstractController
             
     }
 
-    /**
+    /*
      * Redirige vers la page d'ajout d'un parcours
      * route : "/pathway/add"
      */
@@ -323,7 +323,7 @@ class PathwayController extends AbstractController
     }
 
     
-    /**
+    /*
      * Ajoute dans la base de données :
      * Ajoute un parcours  
      * Ajoute les activités liées a ce parcours
@@ -470,7 +470,7 @@ class PathwayController extends AbstractController
     }
 
 
-    /**
+    /*
      * @Route("/{id}", name="app_circuit_show", methods={"GET"})
      */
     public function show(Pathway $pathway): Response
@@ -481,7 +481,7 @@ class PathwayController extends AbstractController
     }
 
 
-    /**
+    /*
      * Editing pathway method
      */
     public function pathwayEdit(Request $request, ManagerRegistry $doctrine): Response

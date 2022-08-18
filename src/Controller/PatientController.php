@@ -16,7 +16,7 @@ use Knp\Component\Pager\PaginatorInterface;
 class PatientController extends AbstractController
 {
 
-    /**
+    /*
       * @brief Allows to list every patients in the database with the paginator
      */
     public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
@@ -29,7 +29,7 @@ class PatientController extends AbstractController
         return $this->render('patient/index.html.twig', ['patients' => $patients]);
     }
     
-    /**
+    /*
       * @brief Allows to list every patients in the database without pagination
      */
     public function getAllPatient(PatientRepository $patientRepository){
@@ -38,7 +38,7 @@ class PatientController extends AbstractController
 
     }
 
-    /**
+    /*
       * @brief Allows to add a patient in the database
      */
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
@@ -60,7 +60,7 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
+    /*
       * @brief Allows to edit a patient that is already in the database
      */
     public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
@@ -84,7 +84,7 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
+    /*
       * @brief Allows to delete a patient that is already in the database
      */
     public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository,ManagerRegistry $doctrine): Response
@@ -137,7 +137,7 @@ class PatientController extends AbstractController
         return $this->redirectToRoute('Patients', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
+    /*
       * @brief Allows to display the data of a specific patient
      */
     public function getDataPatient(ManagerRegistry $doctrine)
@@ -146,7 +146,7 @@ class PatientController extends AbstractController
         return new JsonResponse($appointments);
     }
 
-    /**
+    /*
       * @brief Allows to display every appointments linked to a specific patient
      */
     public function getAppointmentByPatientId($id, ManagerRegistry $doctrine)
@@ -167,7 +167,7 @@ class PatientController extends AbstractController
         return $appointmentArray;
     }
 
-    /**
+    /*
       * @brief Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
      */
     public function autocompletePatient(Request $request, PatientRepository $patientRepository)

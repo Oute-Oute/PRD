@@ -17,7 +17,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class AppointmentController extends AbstractController
 {
-    /**
+    /*
      * @brief Allows to get appointments
      * 
      */
@@ -387,7 +387,7 @@ class AppointmentController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
+    /*
      * @brief Return the appointments list who are scheduled and use the pathway in the parameter (pathway id id)
      */
     public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id) {
