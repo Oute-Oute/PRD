@@ -194,6 +194,14 @@ class AppointmentController extends AbstractController
                 $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
             }
 
+            //delete comments scheduled activity
+            $commentsScheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\CommentScheduledActivity");
+            $commentsScheduledActivity = $commentsScheduledActivityRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+            foreach ($commentsScheduledActivity as $commentScheduledActivity) {
+                $commentsScheduledActivityRepository->remove($commentScheduledActivity, true);
+            }
+
 
             //suppression des données associées au rendez-vous de la table ScheduledActivity
             $scheduledActivityRepository->remove($scheduledActivity, true);

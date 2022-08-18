@@ -119,6 +119,13 @@ class PatientController extends AbstractController
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
                 }
 
+                $commentsScheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\CommentScheduledActivity");
+                $commentsScheduledActivity = $commentsScheduledActivityRepository->findBy(['scheduledactivity' => $scheduledActivity]);
+
+                foreach ($commentsScheduledActivity as $commentScheduledActivity) {
+                    $commentsScheduledActivityRepository->remove($commentScheduledActivity, true);
+                }
+
                 $scheduledActivityRepository->remove($scheduledActivity, true);
             }
             $appointmentRepository->remove($appointment, true);
