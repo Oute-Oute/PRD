@@ -21,7 +21,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @date        2022
  */
 
-/*
+/**
  * @Route("/material/resource/category")
  */
 class MaterialResourceCategoryController extends AbstractController
@@ -31,7 +31,7 @@ class MaterialResourceCategoryController extends AbstractController
       * @brief Allows to list every material resource categories in the database
      */
 
-    /*
+    /**
      * @Route("/", name="app_material_resource_category_index", methods={"GET"})
      */
     public function index(MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
@@ -45,7 +45,7 @@ class MaterialResourceCategoryController extends AbstractController
       * @brief Allows to create a new material resource category in the database
      */
 
-    /*
+    /**
      * @Route("/new", name="app_material_resource_category_new", methods={"GET", "POST"})
      */
     public function new(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository,ManagerRegistry $doctrine): Response
@@ -67,7 +67,7 @@ class MaterialResourceCategoryController extends AbstractController
       * @brief Allows to show data of a specific material resource category
      */
 
-    /*
+    /**
      * @Route("/{id}", name="app_material_resource_category_show", methods={"GET"})
      */
     public function show(MaterialResourceCategory $materialResourceCategory): Response
@@ -81,7 +81,7 @@ class MaterialResourceCategoryController extends AbstractController
       * @brief Allows to edit a material resource category that is already in the database
      */
 
-    /*
+    /**
      * @Route("/{id}/edit", name="app_material_resource_category_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, MaterialResourceCategoryRepository $materialResourceCategoryRepository, EntityManagerInterface $entityManager): Response
@@ -102,9 +102,9 @@ class MaterialResourceCategoryController extends AbstractController
       * @brief Allows to delete a material resource category from the database
      */
 
-    /*
+    /**
      * @Route("/{id}", name="app_material_resource_category_delete", methods={"POST"})
-     */
+     */    
     public function delete(Request $request, MaterialResourceCategory $materialResourceCategory, MaterialResourceCategoryRepository $materialResourceCategoryRepository,ManagerRegistry $doctrine): Response
     {
         $categOfMaterialResourceRepository = new CategoryOfMaterialResourceRepository($doctrine);

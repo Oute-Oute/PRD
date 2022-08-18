@@ -24,7 +24,7 @@ use App\Repository\UnavailabilityMaterialResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
-/*
+/**
  * @Route("/material/resource")
  */
 class MaterialResourceController extends AbstractController
@@ -34,7 +34,7 @@ class MaterialResourceController extends AbstractController
       * @brief Allows to list every material resources in the database
      */
 
-    /*
+    /**
      * @Route("/", name="app_material_resource_index", methods={"GET"})
      */
     public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
@@ -183,7 +183,7 @@ class MaterialResourceController extends AbstractController
      * @brief Allows to create a new material resource in the dabatase
      */
     
-    /*
+    /**
      * @Route("/new", name="app_material_resource_new", methods={"GET", "POST"})
      */
     public function new(Request $request, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
@@ -273,7 +273,7 @@ class MaterialResourceController extends AbstractController
      * @brief Allows to edit a material resource that is already in the database
      */
 
-    /*
+    /**
      * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request,ManagerRegistry $doctrine)
@@ -354,7 +354,7 @@ class MaterialResourceController extends AbstractController
      * @brief Allows to delete a material resource that is already in the database
      */
 
-    /*
+    /**
      * @Route("/{id}", name="app_material_resource_delete", methods={"POST"})
      */
     public function delete(MaterialResource $materialResource, CategoryOfMaterialResourceRepository $categoryOfMaterialResourceRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, UnavailabilityMaterialResourceRepository $unavailabilityMaterialResourceRepository, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response

@@ -20,7 +20,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @date        2022
  */
 
-/*
+/**
  * @Route("/human/resource/category")
  */
 class HumanResourceCategoryController extends AbstractController
@@ -30,7 +30,7 @@ class HumanResourceCategoryController extends AbstractController
       * @brief Allows to list every human resource categories in the database
      */
 
-    /*
+    /**
      * @Route("/", name="app_human_resource_category_index", methods={"GET"})
      */
     public function index(HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
@@ -46,7 +46,7 @@ class HumanResourceCategoryController extends AbstractController
       * @brief Allows to create a new human resource category in the database
      */
 
-    /*
+    /**
      * @Route("/new", name="app_human_resource_category_new", methods={"GET", "POST"})
      */
     public function new(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository,ManagerRegistry $doctrine): Response
@@ -70,7 +70,7 @@ class HumanResourceCategoryController extends AbstractController
      * @brief Allows to show data of a specific human resource category
      */
 
-    /*
+    /**
      * @Route("/{id}", name="app_human_resource_category_show", methods={"GET"})
      */
     public function show(HumanResourceCategory $humanResourceCategory): Response
@@ -86,7 +86,7 @@ class HumanResourceCategoryController extends AbstractController
       * @brief Allows to edit a human resource category that is already in the database
      */
 
-    /*
+    /**
      * @Route("/{id}/edit", name="app_human_resource_category_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, HumanResourceCategoryRepository $humanResourceCategoryRepository, EntityManagerInterface $entityManager): Response
@@ -108,7 +108,7 @@ class HumanResourceCategoryController extends AbstractController
       * @brief Allows to delete a human resource category from the database
      */
 
-    /*
+    /**
      * @Route("/{id}", name="app_human_resource_category_delete", methods={"POST"})
      */
     public function delete(Request $request, HumanResourceCategory $humanResourceCategory, HumanResourceCategoryRepository $humanResourceCategoryRepository,ManagerRegistry $doctrine): Response

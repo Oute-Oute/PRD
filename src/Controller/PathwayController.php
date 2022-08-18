@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
-/*
+/**
  * @Route("/circuit")
  */
 class PathwayController extends AbstractController
@@ -470,7 +470,7 @@ class PathwayController extends AbstractController
     }
 
 
-    /*
+    /**
      * @Route("/{id}", name="app_circuit_show", methods={"GET"})
      */
     public function show(Pathway $pathway): Response
