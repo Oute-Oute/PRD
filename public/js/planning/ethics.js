@@ -288,7 +288,7 @@ function openActivityModal(type="new",event){
 
         let p = document.createElement('p');
         p.style.width = '80%';
-        p.innerHTML = comments[i].author + " : " + comments[i].comment; //add the comment to the string with a ; and a space
+        p.innerHTML = comments[i].author + " : " + comments[i].comment.replaceAll("\n","<br>"); //add the comment to the string with a ; and a space
         divContainerP.appendChild(p);
 
         let imgDelete = new Image();
