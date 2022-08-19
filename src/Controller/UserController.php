@@ -126,6 +126,14 @@ class UserController extends AbstractController
             $userSettingsRepository->remove($userSettings, true);
         }
 
+        //delete comments scheduled activity
+        $commentsScheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\CommentScheduledActivity");
+        $commentsScheduledActivity = $commentsScheduledActivityRepository->findBy(['user' => $user]);
+
+        foreach ($commentsScheduledActivity as $commentScheduledActivity) {
+            $commentsScheduledActivityRepository->remove($commentScheduledActivity, true);
+        }
+
         $userRepository->remove($user, true);
         return $this->redirectToRoute('User', [], Response::HTTP_SEE_OTHER);
     }
