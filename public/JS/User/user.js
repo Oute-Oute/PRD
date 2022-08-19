@@ -104,40 +104,42 @@ function hideEditModalForm() {
 }
 
 /**
- * Allows to filter patients to not display all of them
+ * @brief this function display only the searched resource in the list
+ * @param {*} selected - the selected resource
  */
 function filterUser(selected = null) {
-  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
+  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');//get all the rows of the table
   for (let i = 0; i < trs.length; i++) {
-    trs[i].style.display = 'none';
+    trs[i].style.display = 'none';//hide all the rows
   }
-  table = document.getElementById('userTable');
-  var tr = document.createElement('tr');
+  table = document.getElementById('userTable');// get the table
+  var tr = document.createElement('tr');//create a new row
   table.appendChild(tr);
-  var id = document.createElement('td');
+  var id = document.createElement('td');//create the id cell
   id.append(selected.id);
   tr.appendChild(id);
-  var username = document.createElement('td');
+  var username = document.createElement('td');//create the username cell
   username.append(selected.username);
   tr.appendChild(username);
   var name = document.createElement('td');
-  name.append(selected.lastname + " " + selected.firstname);
+  name.append(selected.lastname + " " + selected.firstname);//create the name cell
   tr.appendChild(name);
-  var role = document.createElement('td');
+  var role = document.createElement('td');//create the role cell
   role.append(selected.role[1]);
   tr.appendChild(role);
-  var buttons = document.createElement('td');
-  var edit = document.createElement('button');
+  var buttons = document.createElement('td');//create the buttons cell
+  var edit = document.createElement('button');//create the edit button
   edit.setAttribute('type', 'button');
   edit.setAttribute('id', 'buttonEdit' + selected.username+selected.id);
   edit.setAttribute('class', 'btn-edit btn-secondary');
   edit.setAttribute('onclick', "editUser('" + selected.id + "', '" + selected.username + "', '" + selected.firstname + "', '" + selected.lastname + "' )");
   edit.append('Editer');
-  var deleteButton = document.createElement('button');
+  var deleteButton = document.createElement('button');//create the delete button
   deleteButton.setAttribute('class', 'btn-delete btn-secondary');
   deleteButton.append('Supprimer');
   deleteButton.setAttribute('id', 'buttonErase' + selected.username+selected.id);
   deleteButton.setAttribute('onclick', 'showPopup('+selected.id+')');
+  //add the buttons to the cell
   buttons.appendChild(edit);
   buttons.appendChild(deleteButton);
   tr.appendChild(buttons);
@@ -146,26 +148,26 @@ function filterUser(selected = null) {
   document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
   document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
   paginator = document.getElementById('paginator');
-  paginator.style.display = 'none';
+  paginator.style.display = 'none'; //On cache le paginateur
 }
 
 /**
- * Allows to display all users without any filter
- */
+     * @brief Display all the resources of a type
+     */
 function displayAll() {
-  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');
-  var input = document.getElementById('autocompleteInputUserName');
-  if (input.value == '') {
+  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');//get all the rows of the table
+  var input = document.getElementById('autocompleteInputUserName');//get the input field
+  if (input.value == '') {//if the input field is empty
     for (let i = 0; i < trs.length; i++) {
       if (trs[i].style.display == 'none') {
-        trs[i].style.display = 'table-row';
+        trs[i].style.display = 'table-row';//display all the rows
       }
-      else if (trs[i].className != 'original') {
-        trs[i].remove()
+      else if (trs[i].className != 'original') {//if the row is not the original one (e.g if it is the one created with the search bar)
+        trs[i].remove()//remove the row
       }
     }
     paginator = document.getElementById('paginator');
-    paginator.style.display = '';
+    paginator.style.display = ''; //display the paginator
   }
 }
 

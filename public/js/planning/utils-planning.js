@@ -40,7 +40,7 @@ function filterShow() {
           }
         }
         if (humanCategoriesToDisplay.length == 0) {
-          humanCategoriesToDisplay.push(allCategories);
+          humanCategoriesToDisplay.push(allCategories);//copy all data in the array if it is empty
         }
         break;
       case "Ressources Matérielles": //if we want to display by the patients
@@ -56,7 +56,7 @@ function filterShow() {
           }
         }
         if (materialCategoriesToDisplay.length == 0) {
-          materialCategoriesToDisplay.push(allCategories);
+          materialCategoriesToDisplay.push(allCategories);//copy all data in the array if it is empty
         }
         break;
     }
@@ -122,6 +122,8 @@ function filterShow() {
 /**
  * @brief This function is called when we want to filter the resources of the calendar
  * @param {*} id the id of resource to filter
+ * @param {*} allCategories the array of all resources of the calendar
+ * @param {*} type the type of resource to filter
  */
 function changeFilter(id, allCategories, type) {
   var resources = [];
@@ -132,7 +134,7 @@ function changeFilter(id, allCategories, type) {
 
 
   switch (type) {
-    case "human":
+    case "human"://if we want to filter by the human resources
       for (var i = 0; i < allCategories.length; i++) {
         if (document.getElementById(allCategories[i]).checked == true) {
           if (humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
@@ -149,7 +151,7 @@ function changeFilter(id, allCategories, type) {
         headerResources = "Ressources Humaines";
       }
       break;
-    case "material":
+    case "material"://if we want to filter by the material resources
       for (var i = 0; i < allCategories.length; i++) {
         if (document.getElementById(allCategories[i]).checked == true) {
           if (materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
@@ -199,7 +201,7 @@ function changePlanning() {
     document.getElementById("filterbutton").style.backgroundColor = "#cccccc";
 
   }
-  else {
+  else {//if we want to display the resources
     
     document.getElementById("filterbutton").disabled = false;
     document.getElementById("filterbutton").style.color = "";

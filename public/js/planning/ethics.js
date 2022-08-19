@@ -1,7 +1,8 @@
 /**
  * @file consultation-planning.js
  * @brief This file contains the js scripts for the consultation planning page, essentially the calendar.
- * @author Thomas Blumstein
+ * @author Thomas Blumstein 
+ * @author Vincent Blanco
  * @version 2.0
  * @date 2022/07
  */
@@ -113,18 +114,23 @@ function validComment(){
   });
 }
 
+/**
+ * @brief This function is called when we want to delete a comment
+ * @param {*} idCommentDiv the id of the comment to edit
+ */
+
 function deleteCommentModale(idCommentDiv){
-  $("#ethic-activity-modal").modal("hide");
+  $("#ethic-activity-modal").modal("hide");//close the window
   var idComment = idCommentDiv.split("-")[1];
   document.getElementById("delete-confirm-comment-id").value = idComment;
   var authorUsername = document.getElementById('username-' + idComment).value;
   var author = document.getElementById('author-' + idComment).value;
   var username = document.getElementById("OwnUsername").value;
   var confirm;
-  if(username != authorUsername){
+  if(username != authorUsername){//if the user is not the author of the comment
     confirm = "Voulez-vous vraiment supprimer le commentaire de : " + author + " ?";
   }
-  else {
+  else {//if the user is the author of the comment
     confirm = "Voulez-vous vraiment supprimer votre commentaire ?";
   }
   document.getElementById("confirm-delete-title").textContent = confirm;
@@ -133,7 +139,7 @@ function deleteCommentModale(idCommentDiv){
 }
 
 /**
- * 
+ * @brief This function is called when we confirm the deletion of a comment
  * @param {*} idComment 
  */
 function deleteCommentConfirm(){
@@ -151,7 +157,7 @@ function deleteCommentConfirm(){
         }
       }
 
-      if(event._def.extendedProps.comments.length == 0){
+      if(event._def.extendedProps.comments.length == 0){//reset color of the event if there is no comment
         event._def.ui.backgroundColor = '#339d39';
         event._def.ui.borderColor = '#339d39';
         event.setStart(event.start);
@@ -167,10 +173,11 @@ function deleteCommentConfirm(){
 }
 
 /**
- * 
- * @param {*} idComment 
+ * @brief This function is called when we want to edit a comment
+ * @param {*} idDivComment the id of the comment to edit
+ * @param {*} id the id of the scheduled activity where the comment is
  */
-function editComment(idDivComment,id ){
+function editComment(idDivComment,id ){//edit a comment
   var idComment = idDivComment.split('-')[1];
   var commentEdit = document.getElementById("comment-hidden-" + idComment).value;
   document.getElementById("edit-comment-id").value = idComment;
@@ -182,7 +189,10 @@ function editComment(idDivComment,id ){
   $("#ethic-edit-comment-modal").modal("show"); //open the window
 }
 
-function validEditComment(){
+/**
+ * @brief This function is called when we confirm the edition of a comment
+ */
+function validEditComment(){//valid the edit of a comment
   var idComment = document.getElementById("edit-comment-id").value;
   var commentEdit = document.getElementById("edit-comment").value
   var userName = document.getElementById("OwnUsername").value;
@@ -214,15 +224,16 @@ function validEditComment(){
 }
 
 /**
- * 
- * @param {*} event 
+ * @brief This function is called when we want to add a new activity
+ * @param {*} type the type of the activity
+ * @param {*} event the event of the activity
  */
 function openActivityModal(type="new",event){
   //get the data of the event
-  if(type == "old"){
+  if(type == "old"){//if we want to edit an activity
     var id=event;
   }
-  else{
+  else{//if we want to add an activity
     var id = event._def.publicId; //get the id of the event
     
   }

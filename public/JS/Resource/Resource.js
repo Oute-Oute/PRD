@@ -246,58 +246,63 @@ function change_tab_human(id)
 }
 
 /**
- * Allows to filter resources according to the categories
+ * @brief this function display only the searched resource in the list
+ * @param {*} type - type of resource (human or material)
+ * @param {*} selected - the selected resource
  */
 function filterResource(type,selected=null){
     var categoriesStr=[];
+    //create a string of the categories of a resource
     for (var i=0;i<selected["categories"].length-1;i++){
         categoriesStr += selected["categories"][i]["category"]+", ";
     }
     if(selected["categories"].length>0){
     categoriesStr += selected["categories"][selected["categories"].length-1]["category"];
     }
+
     var Type=type.charAt(0).toUpperCase()+type.slice(1); //equal to type.capitalize()
-    var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');
+    var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');//get all the rows of the table
     for(let i=0; i<trs.length; i++){
-            trs[i].style.display='none';
+            trs[i].style.display='none';//hide all the rows
     }
-    table=document.getElementById(type+'Table');
-    var tr=document.createElement('tr');
+    table=document.getElementById(type+'Table');//get the table
+    var tr=document.createElement('tr');//create a row
     table.appendChild(tr);
-    var resourceName=document.createElement('td');
+    var resourceName=document.createElement('td');//create the name cell
     resourceName.append(selected.value);
     tr.appendChild(resourceName);
-    var categoriestd=document.createElement('td');
+    var categoriestd=document.createElement('td');//create the categories cell
     categoriestd.append(categoriesStr);
     tr.appendChild(categoriestd);
-    var buttons=document.createElement('td');
-    var infos=document.createElement('button');
+    var buttons=document.createElement('td');//create the buttons cell
+    var infos=document.createElement('button');//create information button
     infos.setAttribute('class','btn-infos btn-secondary');
     infos.setAttribute('onclick','showInfosModal'+Type+'('+selected.id+',"'+selected.value+'")');
     infos.append('Informations');
-    var edit=document.createElement('button');
+    var edit=document.createElement('button');//create edit button
     edit.setAttribute('class','btn-edit btn-secondary');
     edit.setAttribute('onclick','showEditModalForm'+Type+'('+selected.id+',"'+selected.value+'")');
     edit.append('Editer');
-    var unavailabilities=document.createElement('button');
+    var unavailabilities=document.createElement('button');//create unavailability button
     unavailabilities.setAttribute('class','btn-add btn-secondary');
     unavailabilities.setAttribute('onclick','showUnavailability'+Type+'('+selected.id+',"'+selected.value+'")');
     unavailabilities.append('Indisponibilités');
-    var formDelete=document.createElement('form');
+    var formDelete=document.createElement('form');//create delete form
     formDelete.setAttribute('action',"/"+type+"/resource/"+selected.id);
     formDelete.setAttribute('style','display:inline');
     formDelete.setAttribute('method','POST');
     formDelete.setAttribute('id','formDelete'+selected.id);
     formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cette ressource ?")');
-    var inputHidden=document.createElement('input');
+    var inputHidden=document.createElement('input');//create hidden input to send the id of the resource to delete
     inputHidden.setAttribute('type','hidden');
     inputHidden.setAttribute('name','pathwayid');
     inputHidden.setAttribute('value',selected.id);
     formDelete.appendChild(inputHidden);
-    var deleteButton=document.createElement('button');
+    var deleteButton=document.createElement('button'); //create delete button
     deleteButton.setAttribute('class','btn-delete btn-secondary');
     deleteButton.append('Supprimer');
     deleteButton.setAttribute('type','submit');
+    //add all buttons to the cell
     buttons.appendChild(infos);
     buttons.appendChild(unavailabilities);
     buttons.appendChild(edit);
@@ -305,23 +310,27 @@ function filterResource(type,selected=null){
     buttons.appendChild(formDelete);
     tr.appendChild(buttons);
     paginator=document.getElementById('paginator');
-    paginator.style.display='none';
+    paginator.style.display='none';//hide paginator
   }
 
+    /**
+     * @brief Display all the resources of a type
+     * @param type type of the resource (human or material)
+     */
   function displayAll(type){
-    var trs = document.querySelectorAll('#table'+type+'Resource tr:not(.header'+type+'Resource)');
-    var input = document.getElementById('autocompleteInput'+type+'Name');
-    if(input.value == ''){
-    for(let i=0; i<trs.length; i++){
+    var trs = document.querySelectorAll('#table'+type+'Resource tr:not(.header'+type+'Resource)');//get all the rows of the table
+    var input = document.getElementById('autocompleteInput'+type+'Name');//get the input field
+    if(input.value == ''){//if the input field is empty
+    for(let i=0; i<trs.length; i++){//display all the rows
         if(trs[i].style.display == 'none'){
             trs[i].style.display='table-row';
         }
-        else if(trs[i].className != 'original'){
-            trs[i].remove()
+        else if(trs[i].className != 'original'){//if the row is not the original one (e.g if it is the one created with the search bar)
+            trs[i].remove()//remove the row
         }
     }
     paginator=document.getElementById('paginator');
-    paginator.style.display='';
+    paginator.style.display='';//display the paginator
 }
 }
 

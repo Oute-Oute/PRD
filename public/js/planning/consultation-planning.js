@@ -137,8 +137,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
     events: events, //set the events
     filterResourcesWithEvents: true,
 
-
-    eventDidMount: function (info) {
+    eventDidMount: function (info) {//when an event is mouse over
       $(info.el).tooltip({
         title: info.event.extendedProps.description,
         placement: "top",
