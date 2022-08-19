@@ -225,7 +225,7 @@ function addPathway() {
     }
   }
 
-  //Get all actiity b in the successors to find the ids of firsts activities in pathway
+  //Get all activity b in the successors to find the ids of firsts activities in pathway
   var successorsActivitybIdList = [];
   for (let i = 0; i < listeSuccessors.length; i++) {
     successorsActivitybIdList.push(listeSuccessors[i].idactivityb);
@@ -438,21 +438,32 @@ function updateEventsAppointment(modifyEvent) {
   updateErrorMessages();
 }
 
+/**
+ * This function works with the Button 'Mode automatique from the ModificationPlanning.twig'. 
+ * Add All pathways of the day at the same time
+ */
 function autoAddAllPathway(){
    
  do{
+    //Refreshing menu select-appointment
     displayAddPathway();
+    //in case of rollBack, we decide to stop everything
     if(selectAppointment!=undefined && document.getElementById('select-appointment').value==selectionAppointmentValue){
         break;
     } 
+    //get the id for the previous ifs
     var selectAppointment = document.getElementById('select-appointment');
     var selectionAppointmentValue=[]; 
     selectionAppointmentValue.push(selectAppointment.value);
+    //call the adding pathway function
     autoAddPathway(); 
    
-  } while(selectAppointment.options.length!=1);
+  } while(selectAppointment.options.length!=1); //while there are still pathways to be planed
 }
 
+/**
+ * Add Automatically a pathway with good resources (resources that are in the category of resources)
+ */
 function autoAddPathway(){
       //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
@@ -544,6 +555,7 @@ function autoAddPathway(){
         }
       }
 
+      //get the good human resources for this activity
       var humanResources=[];
       for(let j=0; j<categoryHumanResources.length; j++){
         let countResources=0; 
@@ -557,6 +569,7 @@ function autoAddPathway(){
             if(countResources<categoryHumanResources[j].quantity){
                if(allEvents.length>0){
                 for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
+                  //if the resources is from the category and free at this time during all the activity
                   if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=PathwayBeginDate.getTime() && allEvents[allEventsIterator].end.getTime()>=PathwayBeginDate.getTime() || allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource)==true && allEvents[allEventsIterator].start.getTime()<=endTime && allEvents[allEventsIterator].end.getTime()>=endTime){
                     slotAlreadyScheduled=true; 
                   }
@@ -566,10 +579,13 @@ function autoAddPathway(){
                   countResources++; 
                 }
                 else{
+                  //check the other ressources of the same category at the same time
                   if(counterNbResourceOfCategory<nbResourceOfcategory){
                     counterNbResourceOfCategory++; 
+                    //change the begin date to see if ressources are free 20 minutes later
                     if(counterNbResourceOfCategory==nbResourceOfcategory){
                       PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000);
+                      //do the same iteration
                       j--;
                       break;  
                     }
@@ -584,16 +600,19 @@ function autoAddPathway(){
           }
         }
       }
-
+      //pushing into the resources array of FullCalendar
       for(let j=0; j<humanResources.length; j++){
         activityResourcesArray.push(humanResources[j]);
       }
 
+      //get the good material resources for this activity
       var categoryMaterialResources = [];
 
+      
       for (let j = 0; j < listeActivityMaterialResource.length; j++) {
         if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
           for (let k = 0; k < categoryMaterialResourceJSON.length; k++) {
+            //if the resources is from the category and free at this time during all the activity
             if (listeActivityMaterialResource[j].materialResourceCategoryId == categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j]) == false) {
               materialAlreadyScheduled.push(listeActivityMaterialResource[j]);
               categoryMaterialResources.push({ id: listeActivityMaterialResource[j].materialResourceCategoryId, quantity: listeActivityMaterialResource[j].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
@@ -624,8 +643,10 @@ function autoAddPathway(){
                   countResources++; 
                 }
                 else{
+                  //check the other ressources of the same category at the same time
                   if(counterNbResourceOfCategory<nbResourceOfcategory){
                     counterNbResourceOfCategory++; 
+                    //change the begin date to see if ressources are free 20 minutes later
                     if(counterNbResourceOfCategory==nbResourceOfcategory){
                       PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 20*60000);
                       j--;
@@ -2646,14 +2667,17 @@ function updateColorErrorButton(state) {
 
 }
 
-
+/**
+ * This function reduce the notification in the errorList messages. 
+ * @param {*} childs all the child in the parent division of the menu in list error page. 
+ */
 function reduceNotification(childs) {
   if (childs.id == 'notificationunplanned') {
     if (childs.childNodes[1].style.display == '') {
       for (let i = 1; i < childs.childNodes.length; i++) {
-        childs.childNodes[i].style.display = 'none';
+        childs.childNodes[i].style.display = 'none';  //reducing what is displayed
       }
-      document.getElementById('expandButton').style.display = ''
+      document.getElementById('expandButton').style.display = '' //expanding what is displayed
       document.getElementById('reduceButton').style.display = 'none'
     }
     else {
@@ -2686,6 +2710,13 @@ function reduceNotification(childs) {
 
 }
 
+/**
+ * This function works with autoAddPathway. 
+ * Check the number of occurences of the value in an array. 
+ * @param {*} val  value to check
+ * @param {*} array arrray to look over
+ * @returns  the number of the occurences. 
+ */
 function countOccurencesInArray(val,array){
   let counter=0; 
   for(let i=0; i<array.length; i++){
