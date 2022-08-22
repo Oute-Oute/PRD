@@ -10,9 +10,8 @@
 var calendar; // var globale pour le calendrier
 var date = new Date(); //create a default date
 var dateStr = date.toDateString();
-var headerResources = "Patients";
+var headerResources = "Ressources Humaines";
 const height = document.querySelector("div").clientHeight;
-headerResources = "Patients";
 
 /**
 
@@ -47,7 +46,7 @@ if (document.getElementById("typeResources").value != "") {
   headerResources = headerResources; //set the space in the header
   headerResources = headerResources; //set the comma in the header
 } else {
-  headerResources = "Patients";
+  headerResources = "Ressources Humaines";
 }
 document.querySelectorAll("#header-type")[0].innerText=headerResources;
   createCalendar(headerResources); //create the calendar
