@@ -83,17 +83,30 @@ function validComment(){
     dataType : "json",
     success : function(data){
       var event = calendar.getEventById(idScheduledActivity)
+      events=JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " "))
       var author = data["userLastname"] + " " + data["userFirstname"];
       event._def.extendedProps.comments.push({
         comment: data["newComment"],
         idcomment: data["idComment"],
         author: author
       });
+      for(var i = 0; i < events.length; i++){
+        if(events[i].id == event._def.publicId){
+          events[i].extendedProps.comments.push({
+            comment: data["newComment"],
+            idcomment: data["idComment"],
+            author: author
+          });
+          events[i].color='#841919';
+          
+        }
+      }
       event._def.ui.backgroundColor = '#841919';
       event._def.ui.borderColor = '#841919';
       event.setStart(event.start);
       $("#ethic-activity-modal").modal("show"); //close the window
       openActivityModal("old",idScheduledActivity);
+      document.getElementById("events").value = JSON.stringify(events);
     },
     error: function(data){
         console.log("error");
@@ -209,6 +222,7 @@ function validEditComment(){//valid the edit of a comment
     dataType : "json",
     success : function(data){
       var event = calendar.getEventById(data["idScheduledActivity"])
+      events=JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " "))
       var author = data["userLastname"] + " " + data["userFirstname"];
       var idComment = data["idComment"];
       var commentEdit = data["commentEdit"];
@@ -218,8 +232,19 @@ function validEditComment(){//valid the edit of a comment
           event._def.extendedProps.comments[i].author = author
         }
       }
+      for(var i = 0; i < events.length; i++){
+        if(events[i].id == event._def.publicId){
+          for(var j = 0; j < event._def.extendedProps.comments.length; j++){
+            if(events[i].extendedProps.comments[j].idcomment == idComment){
+              events[i].extendedProps.comments[j].comment = commentEdit;
+              events[i].extendedProps.comments[j].author = author
+            }
+          }
+        }
+      }
       $("#ethic-edit-comment-modal").modal("hide"); //close the window
       openActivityModal("old",data["idScheduledActivity"])
+      document.getElementById("events").value = JSON.stringify(events);
     },
     error: function(data){
         console.log("error");
