@@ -39,6 +39,21 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return HumanResource[] Returns an array of HumanResource objects
+    */
+    public function findHumanResourceByCategory($idCategory)
+    {
+        $qb= $this->createQueryBuilder('c')
+        ->join('c.humanresource','humanresource')
+        ->select('humanresource.humanresourcename')
+        ->orderBy('humanresource.humanresourcename', 'ASC')
+        ->where('c.humanresourcecategory= :idCategory')
+        ->setParameter('idCategory',$idCategory);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
+
 //    /**
 //     * @return CategoryOfHumanResource[] Returns an array of CategoryOfHumanResource objects
 //     */
