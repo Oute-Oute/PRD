@@ -53,7 +53,6 @@ return array(
     'Symfony\\Component\\Messenger\\Bridge\\Amqp\\' => array($vendorDir . '/symfony/amqp-messenger'),
     'Symfony\\Component\\Messenger\\' => array($vendorDir . '/symfony/messenger'),
     'Symfony\\Component\\Mailer\\' => array($vendorDir . '/symfony/mailer'),
-    'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
     'Symfony\\Component\\HttpKernel\\' => array($vendorDir . '/symfony/http-kernel'),
     'Symfony\\Component\\HttpFoundation\\' => array($vendorDir . '/symfony/http-foundation'),
     'Symfony\\Component\\HttpClient\\' => array($vendorDir . '/symfony/http-client'),
