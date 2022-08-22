@@ -1075,18 +1075,14 @@ class PathwayController extends AbstractController
         else{
             return new JsonResponse('');
         }
-        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
-        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["pathway"=>$pathway]);
+        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findAppointmentByPathway($id, date(('Y-m-d')));
         $appointmentArray=[];
         foreach ($appointments as $appointment) {
-            $date = $appointment->getDayappointment()->format('U');
-            if($date >= date('U')){
-                $appointmentArray[] = [
-                    'lastname' => $appointment->getPatient()->getLastname(),
-                    'firstname' => $appointment->getPatient()->getFirstname(),
-                    'date' => $appointment->getDayappointment()->format('d-m-Y'),
-                ];
-            }
+            $appointmentArray[] = [
+                'lastname' => $appointment['lastname'],
+                'firstname' => $appointment['firstname'],
+                'date' => $appointment['dayappointment']->format('d-m-Y'),
+            ];
         }
 
         return new JsonResponse($appointmentArray);

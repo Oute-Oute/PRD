@@ -812,14 +812,12 @@ class HumanResourceController extends AbstractController
      */
     public function getResourceByHumanResourceCategoryId($id, ManagerRegistry $doctrine)
     {
-        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
+        $categories = $doctrine->getManager()->getRepository("App\Entity\CategoryOfHumanResource")->findHumanResourceByCategory($id);
         $resourceArray=[];
         foreach ($categories as $category) {
-            if ($category->getHumanresourceCategory()->getId() == $id){
-                $resourceArray[] = [
-                    'humanresource' => $category->getHumanresource()->getHumanresourcename(),
-                ];
-            }
+            $resourceArray[] = [
+                'humanresource' => $category['humanresourcename']
+            ];
         }
         return $resourceArray;
     }

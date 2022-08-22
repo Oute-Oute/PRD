@@ -53,6 +53,23 @@ class AppointmentRepository extends ServiceEntityRepository
         ->setParameter('date',$date);
         $query=$qb->getQuery()->getResult(); 
         return $query;
+    }
+
+    /**
+    * @return Appointment[] Returns an array of Appointment objects
+    */
+    public function findAppointmentByPathway($idPathway, $date)
+    {
+        $qb= $this->createQueryBuilder('a')
+        ->join('a.patient','patient')
+        ->select('a.id, a.dayappointment, a.earliestappointmenttime, a.latestappointmenttime, patient.lastname, patient.firstname')
+        ->orderBy('a.dayappointment', 'ASC')
+        ->addOrderBy('patient.lastname', 'ASC')
+        ->where('a.pathway= :idPathway AND a.dayappointment>= :date')
+        ->setParameter('date',$date)
+        ->setParameter('idPathway',$idPathway);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
     } 
 
 //    public function findOneBySomeField($value): ?Appointment
