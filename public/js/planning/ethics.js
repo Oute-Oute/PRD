@@ -52,18 +52,6 @@ document.querySelectorAll("#header-type")[0].innerText=headerResources;
   createCalendar(headerResources); //create the calendar
 });
 
-/**
- * @brief This function create the list of events to display in the calendar
- * @returns a list of the events of the calendar
- */
-function createEvents() {
-  var events = JSON.parse(
-    document.getElementById("events").value.replaceAll("3aZt3r", " ")
-  ); //get the events from the hidden input
-
-
-  return events;
-}
 
 /**
  * @brief This function is called when we want to add a new comment
@@ -150,16 +138,34 @@ function deleteCommentConfirm(){
     dataType : "json",
     success : function(data){
       var event = calendar.getEventById(data["idScheduledActivity"]);
+      events=JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " "))
       for(var i = 0; i < event._def.extendedProps.comments.length; i++){
         if(event._def.extendedProps.comments[i].idcomment == data["idComment"]){
           event._def.extendedProps.comments.splice(i, 1);
         }
       }
+      for(var i = 0; i < events.length; i++){
+        if(events[i].id == event._def.publicId){
+          for(var j = 0; j < events[i].extendedProps.comments.length; j++){
+            if(events[i].extendedProps.comments[j].idcomment == data["idComment"]){
+              events[i].extendedProps.comments.splice(j, 1);
+            }
+          }
+        }
+      }
 
       if(event._def.extendedProps.comments.length == 0){//reset color of the event if there is no comment
+        
+        for(var i = 0; i < events.length; i++){
+          if(events[i].id == event._def.publicId){
+            events[i].color='#339d39';
+            
+          }
+        }
         event._def.ui.backgroundColor = '#339d39';
         event._def.ui.borderColor = '#339d39';
         event.setStart(event.start);
+        document.getElementById("events").value = JSON.stringify(events);
       }
       $("#ethic-activity-modal").modal("hide"); //close the window
       openActivityModal("new",event);
@@ -350,7 +356,8 @@ function openActivityModal(type="new",event){
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
 function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
-  var events = createEvents();
+  var events = JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " ")); //get the events from the hidden input
+  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
