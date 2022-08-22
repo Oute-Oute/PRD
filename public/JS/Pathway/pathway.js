@@ -119,16 +119,10 @@ function showActivitiesPathway() {
  */
 function hideActivitiesPathway(){
     if(SUCCESSORS.length != 0){
-        let quit = confirm("Quitter sans valider vos modifications supprimera tous les liens présents, voulez-vous vraiment continuer ?")
-        if(quit){
-            deleteSuccessors();
-            var divContent = document.getElementById('divContent');
-            var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
-            for(i = 0; i < activities.length; i++){
-                activities[i].style.display = 'none';
-            }
-            $('#edit-pathway-modal-activities').modal("hide");
-        }
+        lines.forEach((l) => {
+            l.hide('none')
+        });
+        $('#popup-quit-successor').modal("show");
     }
     else{
         deleteSuccessors();
@@ -139,6 +133,26 @@ function hideActivitiesPathway(){
         }
         $('#edit-pathway-modal-activities').modal("hide");
     }
+}
+
+function quitModalSuccessor(quit){
+    if(quit){
+        deleteSuccessors();
+        var divContent = document.getElementById('divContent');
+        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            activities[i].style.display = 'none';
+        }
+        $('#popup-quit-successor').modal('hide');
+        $('#edit-pathway-modal-activities').modal("hide");
+    }
+    else{
+        lines.forEach((l) => {
+            l.show()
+        });
+        $('#edit-pathway-modal-activities').modal('show');
+    }
+    $('#popup-quit-successor').modal('hide');
 }
 
 /**
