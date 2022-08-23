@@ -259,6 +259,10 @@ function validEditComment(){//valid the edit of a comment
  * @param {*} event the event of the activity
  */
 function openActivityModal(type="new",event){
+  console.log(document.getElementById("buttonNewComment"))
+  if(document.getElementById("buttonNewComment")!=null){
+    document.getElementById("footerComments").removeChild(document.getElementById("buttonNewComment"));
+  }
   //get the data of the event
   if(type == "old"){//if we want to edit an activity
     var id=event;
@@ -363,7 +367,15 @@ function openActivityModal(type="new",event){
       }
     }
   } else document.getElementById("comments").innerHTML = "Aucun commentaire";
-  document.getElementById("buttonNewComment").setAttribute('onclick', 'changeComment("' + id + '")')
+  var footer=document.getElementById("footerComments");
+  var btnNew = document.createElement('button');
+  btnNew.setAttribute('id', 'buttonNewComment');
+  btnNew.setAttribute('class', 'btn-edit btn-secondary');
+  btnNew.setAttribute('onclick', 'changeComment("' + id + '")');
+  btnNew.setAttribute('data-bs-dismiss', 'modal');
+  btnNew.innerHTML = "Nouveau commentaire";
+  footer.appendChild(btnNew);
+
   document.getElementById("id-scheduled-activity").value = id; //set id scheduled activity
 
   //set data to display in the modal window
