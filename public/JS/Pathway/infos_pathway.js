@@ -254,17 +254,17 @@ function createActivities(height, level, name, idActivity, duration){
  */
 function drawArrows(data){
     lines = new Array();
-    for(i = 0; i < data.length; i++){
-        for(j = 0; j < data[i].length; j++){
-            for(k = 0; k < data[i][j]['successor'].length; k++){
-                start = document.getElementById('activity'+ data[i][j]['id']);
-                end = document.getElementById('activity'+ data[i][j]['successor'][k]['idB']);
+    for(level = 0; level < data.length; level++){
+        for(act = 0; act < data[level].length; act++){ // For each activity in level
+            for(s = 0; s < data[level][act]['successor'].length; s++){ // For each successor of this activity
+                // 
+                start = document.getElementById('activity'+ data[level][act]['id']);
+                end = document.getElementById('activity'+ data[level][act]['successor'][s]['idB']);
                 l = new LeaderLine(start, end, {color: '#0dac2d', startSocket: 'right', endSocket: 'left'});
                 // We store every line to show/hide them when we switch tabs
                 // When you click outside the modal, the line array is reset (see end of index.html.twig) 
                 lines.push(l);
             }
-            
         }
     }
 }
