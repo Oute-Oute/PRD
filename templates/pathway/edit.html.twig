@@ -31,7 +31,7 @@
         <h1> Éditer un parcours </h1>
     </div>
 
-    <form action="{{ path('PathwayEdit') }}" method="post">
+    <form action="{{ path('PathwayEdit') }}" method="post" onkeydown="return event.key != 'Enter';">
 
         <!-- inputs to send json or value to server without displaying them -->
         <input type="hidden" id="json-resources-by-activities" name="json-resources-by-activities" >
@@ -135,6 +135,13 @@
 
 <script>
 $('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
+    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            ACTIVITY_POSITION[i] = new Object()
+            ACTIVITY_POSITION[i].id = activities[i].id
+            ACTIVITY_POSITION[i].top = activities[i].style.top
+            ACTIVITY_POSITION[i].left = activities[i].style.left
+        }
     if(!VALIDATE){
         hideActivitiesPathway();
     }

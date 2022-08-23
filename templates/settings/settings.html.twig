@@ -26,7 +26,7 @@
 	<div class="index">
 		<h1 id="title">Paramètres</h1>
 		{% if settings != null %}
-			<form action="{{ path('SettingsEdit') }}" method="post">
+			<form action="{{ path('SettingsEdit') }}" method="post" onkeydown="return event.key != 'Enter';">
 				<div style="margin-left: 20px;">
 					{% for setting in settings %}
 						<div style="margin-right: 50%;">
