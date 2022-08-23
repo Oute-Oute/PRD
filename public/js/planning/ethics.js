@@ -340,25 +340,25 @@ function openActivityModal(type="new",event){
         console.log(comments[i])
         console.log(document.getElementById("OwnUsername").value)
         if(comments[i].authorusername == document.getElementById("OwnUsername").value){
-        let imgEdit = new Image();
-        imgEdit.src = '../../img/edit.svg'
-        imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
-        imgEdit.setAttribute('onclick', 'editComment(this.id,"'+id+'")')
-        imgEdit.setAttribute('title', 'Édition du commentaire')
-        imgEdit.style.width = '20px'
-        imgEdit.style.cursor = 'pointer'
-        imgEdit.style.marginRight = '10px'
-        divImages.appendChild(imgEdit)
-        }
+          let imgEdit = new Image();
+          imgEdit.src = '../../img/edit.svg'
+          imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
+          imgEdit.setAttribute('onclick', 'editComment(this.id,"'+id+'")')
+          imgEdit.setAttribute('title', 'Édition du commentaire')
+          imgEdit.style.width = '20px'
+          imgEdit.style.cursor = 'pointer'
+          imgEdit.style.marginRight = '10px'
+          divImages.appendChild(imgEdit)
 
-        let imgDelete = new Image();
-        imgDelete.src = '../../img/delete.svg'
-        imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
-        imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
-        imgDelete.setAttribute('title', 'Supprimer le commentaire')
-        imgDelete.style.width = '20px'
-        imgDelete.style.cursor = 'pointer'
-        divImages.appendChild(imgDelete)
+          let imgDelete = new Image();
+          imgDelete.src = '../../img/delete.svg'
+          imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
+          imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
+          imgDelete.setAttribute('title', 'Supprimer le commentaire')
+          imgDelete.style.width = '20px'
+          imgDelete.style.cursor = 'pointer'
+          divImages.appendChild(imgDelete)
+        }
 
         divComment.appendChild(divUsername);
         divComment.appendChild(divAuthor);
