@@ -31,8 +31,15 @@
 	{% endfor %}
 	<div class="all-container" id="all">
 		<h1>Consultation éthique</h1>
-		<div class="top">
-			<div class='top-left'>
+		<div id="calendar-container" class="calendar-container">
+	<div class="top">
+		<table class="header-ressource-consultation" style="font-size:medium;">
+			<td class="header-td">
+				{% if app.user != null %}
+					{% if app.user.roles[1] != 'Visiteur' %}
+						<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
+					{% endif %}
+				{% endif %}
 				<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
 				<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
 					<option value="0" selected disabled>Changer l'affichage
@@ -46,12 +53,12 @@
 						<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
 					</svg>
 				</button>
-				<div class="datepicker">
+				<td class="header-td-center">
 					<input required type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('ethics')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
-				</div>
-				<div id="filterId" class="filter-container" style="display:none"></div>
-			</div>
-			<div class='top-right'>
+				</td>
+				<div id="filterId" class="filter-container" style="display:none; left:30%"></div>
+			
+			<td class="header-td-right">
 				<div class="date-button">
 					<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay('ethics')" title="Aller au jour d'avant">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -65,20 +72,21 @@
 					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
 				</div>
-				<div id="zoom-div">
-					<input id="zoom-value" type="hidden" value="00:20:00">
-					<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
-					<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
-					<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
-				</div>
-			</div>
-		</div>
-
-	<div id="calendar-container" class="calendar-container">
-		<table class="header-ressource-consultation">
-			<td id="header-type" class="header-td">Ressources Humaines</td>
-			<td class="header-td-date">{{ dateFormatted }}</td>
+				
+			</td>
 		</table>
+		</div>
+		<table class="header-ressource-consultation" style="margin-left:10px;">
+			<td id="header-type" class="header-td" >Patients</td>
+			<td class="header-td-center">{{ dateFormatted }}</td>
+			<td id="zoom-div" class="header-td-right header-td-zoom">
+				<input id="zoom-value" type="hidden" value="00:20:00">
+				<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
+				<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
+				<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
+			</td>
+		</table>
+
 
 		<div id='calendar'></div>
 	</div>
