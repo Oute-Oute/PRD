@@ -8,21 +8,14 @@
 return [
     false, // $matchHost
     [ // $staticRoutes
-        '/circuit-type' => [[['_route' => 'app_circuit_type_index', '_controller' => 'App\\Controller\\CircuitTypeController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/circuit-type/new' => [[['_route' => 'app_circuit_type_new', '_controller' => 'App\\Controller\\CircuitTypeController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/human/resource/category' => [[['_route' => 'app_human_resource_category_index', '_controller' => 'App\\Controller\\HumanResourceCategoryController::index'], null, ['GET' => 0], null, true, false, null]],
         '/human/resource/category/new' => [[['_route' => 'app_human_resource_category_new', '_controller' => 'App\\Controller\\HumanResourceCategoryController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/human/resource' => [[['_route' => 'app_human_resource_index', '_controller' => 'App\\Controller\\HumanResourceController::index'], null, ['GET' => 0], null, true, false, null]],
         '/human/resource/new' => [[['_route' => 'app_human_resource_new', '_controller' => 'App\\Controller\\HumanResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/material/resource/category' => [[['_route' => 'app_material_resource_category_index', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::index'], null, ['GET' => 0], null, true, false, null]],
         '/material/resource/category/new' => [[['_route' => 'app_material_resource_category_new', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/material/resource' => [[['_route' => 'app_material_resource_index', '_controller' => 'App\\Controller\\MaterialResourceController::index'], null, ['GET' => 0], null, true, false, null]],
         '/material/resource/new' => [[['_route' => 'app_material_resource_new', '_controller' => 'App\\Controller\\MaterialResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/resource' => [[['_route' => 'app_human_resource_index', '_controller' => 'App\\Controller\\ResourceController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/resource/new' => [[['_route' => 'app_resource_new', '_controller' => 'App\\Controller\\ResourceController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/resources-types' => [[['_route' => 'app_resource_type_index', '_controller' => 'App\\Controller\\ResourceTypeController::index'], null, ['GET' => 0], null, true, false, null]],
-        '/resources-types-humans' => [[['_route' => 'app_resource_type_index_humans', '_controller' => 'App\\Controller\\ResourceTypeController::indexFilteredHumans'], null, ['GET' => 0], null, false, false, null]],
-        '/resources-types-materials' => [[['_route' => 'app_resource_type_index_materials', '_controller' => 'App\\Controller\\ResourceTypeController::indexFilteredMaterials'], null, ['GET' => 0], null, false, false, null]],
-        '/resources-types/new' => [[['_route' => 'app_resource_type_new', '_controller' => 'App\\Controller\\ResourceTypeController::new'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
         '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
         '/_profiler' => [[['_route' => '_profiler_home', '_controller' => 'web_profiler.controller.profiler::homeAction'], null, null, null, true, false, null]],
@@ -51,6 +44,7 @@ return [
         '/user' => [[['_route' => 'User', '_controller' => 'App\\Controller\\UserController::userGet'], null, ['GET' => 0], null, false, false, null]],
         '/userAdd' => [[['_route' => 'UserAdd', '_controller' => 'App\\Controller\\UserController::userAdd'], null, ['POST' => 0], null, false, false, null]],
         '/user/edit' => [[['_route' => 'UserEdit', '_controller' => 'App\\Controller\\UserController::userEdit'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompleteUser' => [[['_route' => 'AutocompleteUser', '_controller' => 'App\\Controller\\UserController::autocompleteUser'], null, ['GET' => 0], null, false, false, null]],
         '/profil' => [
             [['_route' => 'Profil', '_controller' => 'App\\Controller\\ProfilController::profilGet'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'ProfilEdit', '_controller' => 'App\\Controller\\ProfilController::profilEdit'], null, ['POST' => 0], null, false, false, null],
@@ -86,115 +80,101 @@ return [
         '/settings/edit' => [[['_route' => 'SettingsEdit', '_controller' => 'App\\Controller\\SettingsController:settingsEdit'], null, ['POST' => 0], null, false, false, null]],
         '/settings/addDefault' => [[['_route' => 'SettingsAddDefault', '_controller' => 'App\\Controller\\SettingsController:settingsAddDefault'], null, ['POST' => 0], null, false, false, null]],
         '/ajaxAppointment' => [[['_route' => 'AjaxAppointment', '_controller' => 'App\\Controller\\AppointmentController::getTargets'], null, ['POST' => 0], null, false, false, null]],
+        '/ajaxAppointmentLookAddAutocompletes' => [[['_route' => 'AjaxAppointmentLookAddAutocompletes', '_controller' => 'App\\Controller\\AppointmentController::lookAutocompletes'], null, ['POST' => 0], null, false, false, null]],
         '/ajaxInfosAppointment' => [[['_route' => 'AjaxInfosAppointment', '_controller' => 'App\\Controller\\AppointmentController::getInfosAppointmentById'], null, ['POST' => 0], null, false, false, null]],
-        '/ajaxPatient' => [[['_route' => 'AjaxPatient', '_controller' => 'App\\Controller\\PatientController::getDataPatient'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompleteAppointment' => [[['_route' => 'AutocompleteAppointment', '_controller' => 'App\\Controller\\AppointmentController::autocompleteAppointment'], null, ['GET' => 0], null, false, false, null]],
         '/ajaxPathwayAppointments' => [[['_route' => 'AjaxPathwayAppointments', '_controller' => 'App\\Controller\\PathwayController::getAppointmentsByPathwayId'], null, ['POST' => 0], null, false, false, null]],
+        '/ajaxPatient' => [[['_route' => 'AjaxPatient', '_controller' => 'App\\Controller\\PatientController::getDataPatient'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompletePatient' => [[['_route' => 'AutocompletePatient', '_controller' => 'App\\Controller\\PatientController::autocompletePatient'], null, ['GET' => 0], null, false, false, null]],
         '/ajaxPathwayActivities' => [[['_route' => 'AjaxPathwayActivities', '_controller' => 'App\\Controller\\PathwayController::getActivitiesByPathwayId'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompletePathway' => [[['_route' => 'AutocompletePathway', '_controller' => 'App\\Controller\\PathwayController::autocompletePathway'], null, ['GET' => 0], null, false, false, null]],
         '/ajaxHumanResource' => [[['_route' => 'AjaxHumanResource', '_controller' => 'App\\Controller\\HumanResourceController::getDataHumanResource'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompleteHR' => [[['_route' => 'AutocompleteHR', '_controller' => 'App\\Controller\\HumanResourceController::autocompleteHR'], null, ['GET' => 0], null, false, false, null]],
         '/ajaxMaterialResource' => [[['_route' => 'AjaxMaterialResource', '_controller' => 'App\\Controller\\MaterialResourceController::getDataMaterialResource'], null, ['POST' => 0], null, false, false, null]],
+        '/autocompleteMR' => [[['_route' => 'AutocompleteMR', '_controller' => 'App\\Controller\\MaterialResourceController::autocompleteMR'], null, ['GET' => 0], null, false, false, null]],
+        '/ethics' => [[['_route' => 'Ethics', '_controller' => 'App\\Controller\\EthicsController::index'], null, ['GET' => 0], null, false, false, null]],
+        '/ajaxEthicsAddComment' => [[['_route' => 'AjaxEthicsAddComment', '_controller' => 'App\\Controller\\EthicsController::addComment'], null, ['POST' => 0], null, false, false, null]],
+        '/ajaxEthicsDeleteComment' => [[['_route' => 'AjaxEthicsDeleteComment', '_controller' => 'App\\Controller\\EthicsController::deleteComment'], null, ['POST' => 0], null, false, false, null]],
+        '/ajaxEthicsEditComment' => [[['_route' => 'AjaxEthicsEditComment', '_controller' => 'App\\Controller\\EthicsController::editComment'], null, ['POST' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
-                .'|/circuit(?'
-                    .'|\\-type/([^/]++)(?'
-                        .'|(*:36)'
-                        .'|/edit(*:48)'
-                        .'|(*:55)'
-                    .')'
-                    .'|/([^/]++)(*:72)'
-                .')'
                 .'|/human/resource/(?'
                     .'|category/([^/]++)(?'
-                        .'|(*:119)'
-                        .'|/edit(*:132)'
-                        .'|(*:140)'
+                        .'|(*:46)'
+                        .'|/edit(*:58)'
+                        .'|(*:65)'
                     .')'
                     .'|([^/]++)(?'
-                        .'|(*:160)'
-                        .'|/edit(*:173)'
-                        .'|(*:181)'
+                        .'|(*:84)'
+                        .'|/edit(*:96)'
+                        .'|(*:103)'
                     .')'
                 .')'
                 .'|/material/resource/(?'
                     .'|category/([^/]++)(?'
-                        .'|(*:233)'
-                        .'|/edit(*:246)'
-                        .'|(*:254)'
+                        .'|(*:155)'
+                        .'|/edit(*:168)'
+                        .'|(*:176)'
                     .')'
                     .'|([^/]++)(?'
-                        .'|/edit(*:279)'
-                        .'|(*:287)'
+                        .'|/edit(*:201)'
+                        .'|(*:209)'
                     .')'
                 .')'
-                .'|/resource(?'
-                    .'|/([^/]++)(?'
-                        .'|(*:321)'
-                        .'|/edit(*:334)'
-                        .'|(*:342)'
-                    .')'
-                    .'|s\\-types/([^/]++)(?'
-                        .'|(*:371)'
-                        .'|/edit(*:384)'
-                        .'|(*:392)'
-                    .')'
-                .')'
+                .'|/circuit/([^/]++)(*:236)'
                 .'|/_(?'
-                    .'|error/(\\d+)(?:\\.([^/]++))?(*:433)'
-                    .'|wdt/([^/]++)(*:453)'
+                    .'|error/(\\d+)(?:\\.([^/]++))?(*:275)'
+                    .'|wdt/([^/]++)(*:295)'
                     .'|profiler/([^/]++)(?'
                         .'|/(?'
-                            .'|search/results(*:499)'
-                            .'|router(*:513)'
+                            .'|search/results(*:341)'
+                            .'|router(*:355)'
                             .'|exception(?'
-                                .'|(*:533)'
-                                .'|\\.css(*:546)'
+                                .'|(*:375)'
+                                .'|\\.css(*:388)'
                             .')'
                         .')'
-                        .'|(*:556)'
+                        .'|(*:398)'
                     .')'
                 .')'
                 .'|/pat(?'
-                    .'|ient/([^/]++)/delete(*:593)'
-                    .'|hway/edit/([^/]++)(*:619)'
+                    .'|ient/([^/]++)/delete(*:435)'
+                    .'|hway/edit/([^/]++)(*:461)'
                 .')'
-                .'|/user/([^/]++)/delete(*:649)'
-                .'|/appointment/([^/]++)/delete(*:685)'
+                .'|/user/([^/]++)/delete(*:491)'
+                .'|/a(?'
+                    .'|ppointment/([^/]++)/delete(*:530)'
+                    .'|ctivity/([^/]++)/appointments(*:567)'
+                .')'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
-        36 => [[['_route' => 'app_circuit_type_show', '_controller' => 'App\\Controller\\CircuitTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        48 => [[['_route' => 'app_circuit_type_edit', '_controller' => 'App\\Controller\\CircuitTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        55 => [[['_route' => 'app_circuit_type_delete', '_controller' => 'App\\Controller\\CircuitTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        72 => [[['_route' => 'app_circuit_show', '_controller' => 'App\\Controller\\PathwayController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        119 => [[['_route' => 'app_human_resource_category_show', '_controller' => 'App\\Controller\\HumanResourceCategoryController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        132 => [[['_route' => 'app_human_resource_category_edit', '_controller' => 'App\\Controller\\HumanResourceCategoryController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        140 => [[['_route' => 'app_human_resource_category_delete', '_controller' => 'App\\Controller\\HumanResourceCategoryController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        160 => [[['_route' => 'app_human_resource_show', '_controller' => 'App\\Controller\\HumanResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        173 => [[['_route' => 'app_human_resource_edit', '_controller' => 'App\\Controller\\HumanResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        181 => [[['_route' => 'app_human_resource_delete', '_controller' => 'App\\Controller\\HumanResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        233 => [[['_route' => 'app_material_resource_category_show', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        246 => [[['_route' => 'app_material_resource_category_edit', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        254 => [[['_route' => 'app_material_resource_category_delete', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        279 => [[['_route' => 'app_material_resource_edit', '_controller' => 'App\\Controller\\MaterialResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        287 => [[['_route' => 'app_material_resource_delete', '_controller' => 'App\\Controller\\MaterialResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        321 => [[['_route' => 'app_resource_show', '_controller' => 'App\\Controller\\ResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        334 => [[['_route' => 'app_resource_edit', '_controller' => 'App\\Controller\\ResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        342 => [[['_route' => 'app_resource_delete', '_controller' => 'App\\Controller\\ResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        371 => [[['_route' => 'app_resource_type_show', '_controller' => 'App\\Controller\\ResourceTypeController::show'], ['id'], ['GET' => 0], null, false, true, null]],
-        384 => [[['_route' => 'app_resource_type_edit', '_controller' => 'App\\Controller\\ResourceTypeController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        392 => [[['_route' => 'app_resource_type_delete', '_controller' => 'App\\Controller\\ResourceTypeController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
-        433 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
-        453 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
-        499 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
-        513 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
-        533 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
-        546 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        556 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        593 => [[['_route' => 'PatientDelete', '_controller' => 'App\\Controller\\PatientController::patientDelete'], ['id'], ['POST' => 0], null, false, false, null]],
-        619 => [[['_route' => 'PathwayEditPage', '_controller' => 'App\\Controller\\PathwayController:pathwayEditPage'], ['id'], ['GET' => 0], null, false, true, null]],
-        649 => [[['_route' => 'UserDelete', '_controller' => 'App\\Controller\\UserController::userDelete'], ['id'], ['POST' => 0], null, false, false, null]],
-        685 => [
-            [['_route' => 'AppointmentDelete', '_controller' => 'App\\Controller\\AppointmentController::appointmentDelete'], ['id'], ['POST' => 0], null, false, false, null],
+        46 => [[['_route' => 'app_human_resource_category_show', '_controller' => 'App\\Controller\\HumanResourceCategoryController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        58 => [[['_route' => 'app_human_resource_category_edit', '_controller' => 'App\\Controller\\HumanResourceCategoryController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        65 => [[['_route' => 'app_human_resource_category_delete', '_controller' => 'App\\Controller\\HumanResourceCategoryController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        84 => [[['_route' => 'app_human_resource_show', '_controller' => 'App\\Controller\\HumanResourceController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        96 => [[['_route' => 'app_human_resource_edit', '_controller' => 'App\\Controller\\HumanResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        103 => [[['_route' => 'app_human_resource_delete', '_controller' => 'App\\Controller\\HumanResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        155 => [[['_route' => 'app_material_resource_category_show', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        168 => [[['_route' => 'app_material_resource_category_edit', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        176 => [[['_route' => 'app_material_resource_category_delete', '_controller' => 'App\\Controller\\MaterialResourceCategoryController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        201 => [[['_route' => 'app_material_resource_edit', '_controller' => 'App\\Controller\\MaterialResourceController::edit'], ['id'], ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        209 => [[['_route' => 'app_material_resource_delete', '_controller' => 'App\\Controller\\MaterialResourceController::delete'], ['id'], ['POST' => 0], null, false, true, null]],
+        236 => [[['_route' => 'app_circuit_show', '_controller' => 'App\\Controller\\PathwayController::show'], ['id'], ['GET' => 0], null, false, true, null]],
+        275 => [[['_route' => '_preview_error', '_controller' => 'error_controller::preview', '_format' => 'html'], ['code', '_format'], null, null, false, true, null]],
+        295 => [[['_route' => '_wdt', '_controller' => 'web_profiler.controller.profiler::toolbarAction'], ['token'], null, null, false, true, null]],
+        341 => [[['_route' => '_profiler_search_results', '_controller' => 'web_profiler.controller.profiler::searchResultsAction'], ['token'], null, null, false, false, null]],
+        355 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
+        375 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
+        388 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
+        398 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
+        435 => [[['_route' => 'PatientDelete', '_controller' => 'App\\Controller\\PatientController::patientDelete'], ['id'], ['POST' => 0], null, false, false, null]],
+        461 => [[['_route' => 'PathwayEditPage', '_controller' => 'App\\Controller\\PathwayController:pathwayEditPage'], ['id'], ['GET' => 0], null, false, true, null]],
+        491 => [[['_route' => 'UserDelete', '_controller' => 'App\\Controller\\UserController::userDelete'], ['id'], ['POST' => 0], null, false, false, null]],
+        530 => [[['_route' => 'AppointmentDelete', '_controller' => 'App\\Controller\\AppointmentController::appointmentDelete'], ['id'], ['POST' => 0], null, false, false, null]],
+        567 => [
+            [['_route' => 'GetAppointmentsFromActivityId', '_controller' => 'App\\Controller\\AppointmentController::GetAppointmentByActivityId'], ['id'], ['GET' => 0], null, false, false, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

@@ -537,7 +537,7 @@ class PathwayController extends AbstractController
             
 
 
-            // DELETION OF THE SCHEDULED APPOINTMENTS     
+            // UNCHEDULE APPOINTMENTS     
             if ($param["are-appointments-deleted"]) {
                 // deletion of the appointements
                 $appointmentRepository = $doctrine->getRepository("App\Entity\Appointment");
@@ -578,10 +578,11 @@ class PathwayController extends AbstractController
 
                         //suppression des données associées au rendez-vous de la table ScheduledActivity
                         $scheduledActivityRepository->remove($scheduledActivity, true);
+                        
                     }
 
-                    // deletion of the appointment
-                    $appointmentRepository->remove($appointment, true);
+                    // unschedule appointment
+                    $appointment->setScheduled(false);
 
                 }
             }
