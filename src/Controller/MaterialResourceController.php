@@ -34,10 +34,7 @@ class MaterialResourceController extends AbstractController
       * @brief Allows to list every material resources in the database
      */
 
-    /**
-     * @Route("/", name="app_material_resource_index", methods={"GET"})
-     */
-    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
+    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resource"): Response
     {
         $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine,$request,$paginator);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
@@ -85,7 +82,8 @@ class MaterialResourceController extends AbstractController
             'material_resources' => $listMaterialResources,
             'material_resources_categories' => $materialResourceCategories,
             'categoriesByMaterialResources' => $categoriesByMaterialResources,
-            'unavailabilities' => $unavailabilities
+            'unavailabilities' => $unavailabilities,
+            'type' => $type,
         ]); 
     }
 
@@ -183,9 +181,6 @@ class MaterialResourceController extends AbstractController
      * @brief Allows to create a new material resource in the dabatase
      */
     
-    /**
-     * @Route("/new", name="app_material_resource_new", methods={"GET", "POST"})
-     */
     public function new(Request $request, MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
@@ -273,9 +268,6 @@ class MaterialResourceController extends AbstractController
      * @brief Allows to edit a material resource that is already in the database
      */
 
-    /**
-     * @Route("/{id}/edit", name="app_material_resource_edit", methods={"GET", "POST"})
-     */
     public function edit(Request $request,ManagerRegistry $doctrine)
     {
        if ($request->getMethod() === 'POST' ) {
@@ -681,5 +673,9 @@ class MaterialResourceController extends AbstractController
             }
         }
         return new JsonResponse($results);
+    }
+
+    public function showCategory(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
+        $this->index($materialResourceRepository,$doctrine,$request, $paginator,"category");
     }
 }

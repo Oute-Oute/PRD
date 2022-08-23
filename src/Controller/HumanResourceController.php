@@ -43,11 +43,7 @@ class HumanResourceController extends AbstractController
     /*
       * @brief Allows to list every human resources in the database
      */
-
-    /**
-     * @Route("/", name="app_human_resource_index", methods={"GET"})
-     */
-    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
+    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resource"): Response
     {
         $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine,$request,$paginator);
 
@@ -65,7 +61,8 @@ class HumanResourceController extends AbstractController
             'human_resources_categories' => $humanResourceCategories,
             'workingHours' => $workingHours,
             'categoriesByHumanResources' => $categoriesByHumanResources,
-            'unavailabilities' => $unavailabilities
+            'unavailabilities' => $unavailabilities,
+            'type' => $type
         ]); 
     }
 
@@ -208,9 +205,7 @@ class HumanResourceController extends AbstractController
       * @brief Allows to create a new human resource in the database
      */
 
-    /**
-     * @Route("/new", name="app_human_resource_new", methods={"GET", "POST"})
-     */
+
     public function new(Request $request, HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine): Response
     {
         if ($request->getMethod() === 'POST') {
@@ -369,9 +364,7 @@ class HumanResourceController extends AbstractController
       * @brief Allows to show data of a specific human resource in the database
      */
 
-    /**
-     * @Route("/{id}", name="app_human_resource_show", methods={"GET"})
-     */
+
     public function show(HumanResource $humanResource): Response
     {
         return $this->render('human_resource/show.html.twig', [
@@ -383,9 +376,7 @@ class HumanResourceController extends AbstractController
       * @brief Allows to edit a human resource that is already in the database
      */
 
-    /**
-     * @Route("/{id}/edit", name="app_human_resource_edit", methods={"GET", "POST"})
-     */
+
     public function edit(Request $request,ManagerRegistry $doctrine) 
     { 
         if ($request->getMethod() === 'POST' ) {
@@ -1148,6 +1139,11 @@ class HumanResourceController extends AbstractController
         }
         
         return new JsonResponse($results);
+    }
+
+    public function showCategory(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
+        dd("category");
+        $this->index($humanResourceRepository,$doctrine,$request, $paginator,"category");
     }
 }
 

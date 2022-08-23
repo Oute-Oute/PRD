@@ -199,6 +199,10 @@ index_human_resources:
   path: /human-resources
   controller: App\Controller\HumanResourceController:index
 
+index_human_resources_category:
+  path: /human-resources
+  controller: App\Controller\HumanResourceController:showCategory
+
 index_material_resources:
   path: /material-resources
   controller: App\Controller\MaterialResourceController:index

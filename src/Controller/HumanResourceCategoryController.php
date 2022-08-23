@@ -25,25 +25,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class HumanResourceCategoryController extends AbstractController
 {
-
     /*
-      * @brief Allows to list every human resource categories in the database
-     */
-
-    /**
-     * @Route("/", name="app_human_resource_category_index", methods={"GET"})
-     */
-    public function index(HumanResourceCategoryRepository $humanResourceCategoryRepository): Response
-    {
-        return $this->render('human_resource_category/index.html.twig', [
-            'human_resource_categories' => $humanResourceCategoryRepository->findBy(array(), array('categoryname' => 'ASC')),
-        ]);
-    }
-
-    
-
-    /*
-      * @brief Allows to create a new human resource category in the database
+     * @brief Allows to create a new human resource category in the database
      */
 
     /**
@@ -60,27 +43,11 @@ class HumanResourceCategoryController extends AbstractController
             $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
             $humanResourceCategoryRepository->add($humanResourceCateg, true);
 
-            return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
         }
     }
 
-    
-
-    /*
-     * @brief Allows to show data of a specific human resource category
-     */
-
-    /**
-     * @Route("/{id}", name="app_human_resource_category_show", methods={"GET"})
-     */
-    public function show(HumanResourceCategory $humanResourceCategory): Response
-    {
-        return $this->render('human_resource_category/show.html.twig', [
-            'human_resource_category' => $humanResourceCategory,
-        ]);
-    }
-
-    
+      
 
     /*
       * @brief Allows to edit a human resource category that is already in the database
@@ -99,7 +66,7 @@ class HumanResourceCategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 
     
@@ -134,6 +101,6 @@ class HumanResourceCategoryController extends AbstractController
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
         }
 
-        return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 }
