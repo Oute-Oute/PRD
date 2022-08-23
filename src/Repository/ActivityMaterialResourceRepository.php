@@ -39,6 +39,23 @@ class ActivityMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return ActivityMaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
+    */
+    public function findActivitiesByMaterialResourceCategory($id): array
+    {
+        $qb= $this->createQueryBuilder('a')
+        ->join('a.activity','activity')
+        ->join('activity.pathway','pathway')
+        ->select('a.id, a.quantity, activity.activityname, pathway.pathwayname')
+        ->orderBy('pathway.pathwayname', 'ASC')
+        ->addOrderBy('activity.activityname', 'ASC')
+        ->where('a.materialresourcecategory= :idMaterialResouceCategory')
+        ->setParameter('idMaterialResouceCategory',$id);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
+
 //    /**
 //     * @return ActivityMaterialResource[] Returns an array of ActivityMaterialResource objects
 //     */

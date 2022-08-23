@@ -86,14 +86,12 @@ function showInfosModalMaterial(idMaterialResource, resourceName) {
 /**
  * Allows to display a modal that shows data about the selected material resource category
  */
-function showInfosModalMaterialCateg(
-  idMaterialResourceCategory,
-  resourceCategName
-) {
-  document.getElementById("material-resource-category").innerHTML =
-    resourceCategName;
+function showInfosModalMaterialCateg(idMaterialResourceCategory, resourceCategName){
+  document.getElementById("material-resource-category1").innerHTML = resourceCategName;
+  document.getElementById("material-resource-category2").innerHTML = resourceCategName;
 
   var tableBody = document.getElementById("tbody-material-resource-category");
+  var tableBodyActivity = document.getElementById("tbody-category-activities");
   tableBody.innerHTML = ""; // On supprime ce qui a précédemment été écrit dans la modale
 
   $.ajax({
@@ -108,6 +106,21 @@ function showInfosModalMaterialCateg(
       console.log("error");
     },
   });
+
+  $.ajax({
+    type: "POST",
+    url: "/ajaxMaterialResourceCategoriesActivities",
+    data: { idMaterialResourceCategory: idMaterialResourceCategory },
+    dataType: "json",
+    success: function (data) {
+      tableActitivies(tableBodyActivity, data)
+    },
+    error: function () {
+      console.log("error");
+    },
+  });
+
+  change_tab_material_categ_infos("resources-by-categories");
 
   $("#infos-material-resource-category-modal").modal("show");
 }
@@ -461,6 +474,33 @@ function change_tab_material_infos(id) {
       break;
   }
 }
+
+function change_tab_material_categ_infos(id) {
+  liHeader = document.getElementsByClassName("header-material-category");
+  selectedDivs = liHeader[0].getElementsByClassName("selected");
+  for(i = 0; i < selectedDivs.length; i++){
+    selectedDivs[i].className="notselected";
+  }
+
+  document.getElementById(id).className = "selected";
+
+  let resources = document.getElementById("material-resource-category-resources");
+  let activities = document.getElementById("material-resource-category-activities");
+
+  switch (id) {
+    case "resources-by-categories":
+      resources.style.display = "block";
+      activities.style.display = "none";
+      document.getElementById("modal-dialog").style.maxWidth = "600px";
+      break;
+    case "activities-by-categories":
+      resources.style.display = "none";
+      activities.style.display = "block";
+      document.getElementById("modal-dialog").style.maxWidth = "600px";
+      break;
+  }
+}
+
 
 /**
  * @brief This function is called when we want to create or recreate the calendar

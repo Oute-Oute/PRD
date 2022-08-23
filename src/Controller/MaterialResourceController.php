@@ -123,7 +123,7 @@ class MaterialResourceController extends AbstractController
     }
 
     /*
-     * @brief Allows to create a JSON object from a list of unavailabilities of human resources
+     * @brief Allows to create a JSON object from a list of unavailabilities of material resources
      */
     public function listUnavailabilitiesMaterialJSON(ManagerRegistry $doctrine)
     {
@@ -461,6 +461,52 @@ class MaterialResourceController extends AbstractController
         return $resourceArray;
     }
 
+    public function getActivitiesByMaterialResourceCategoryId(ManagerRegistry $doctrine)
+    {
+        if(isset($_POST['idMaterialResourceCategory'])){
+            $id = $_POST['idMaterialResourceCategory'];
+            $activities = $doctrine->getManager()->getRepository("App\Entity\ActivityMaterialResource")->findActivitiesByMaterialResourceCategory($id);
+            $activityArray=[];
+            $i = 0;
+            foreach ($activities as $activity) {
+                if(isset($activityArray[$i])){
+                    if($activityArray[$i]['pathwayname'] == $activity['pathwayname']){
+                        $activityArray[$i]['activities'][] = [
+                            'activityname' => $activity['activityname'],
+                            'quantity' => $activity['quantity']
+                        ];
+                    }
+                    else{
+                        $i++;
+                        $activitiesPathway = [];
+                        $activitiesPathway[] = [
+                            'activityname' => $activity['activityname'],
+                            'quantity' => $activity['quantity']
+                        ];
+                        $activityArray[$i] = [
+                            'pathwayname' => $activity['pathwayname'],
+                            'activities' => $activitiesPathway
+                        ];
+                    }
+                }
+                else{
+                    $activitiesPathway = [];
+                    $activitiesPathway[] = [
+                        'activityname' => $activity['activityname'],
+                        'quantity' => $activity['quantity']
+                    ];
+                    $activityArray[$i] = [
+                        'pathwayname' => $activity['pathwayname'],
+                        'activities' => $activitiesPathway
+                    ];
+                }
+            }
+            return new JsonResponse($activityArray);
+        }
+        else{
+            return null;
+        }
+    }
 
     /*
       * @brief Allows to get all unavailabilities of a material resource
