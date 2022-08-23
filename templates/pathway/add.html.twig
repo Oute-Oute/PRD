@@ -134,6 +134,13 @@
 
 <script>
 $('#edit-pathway-modal-activities').on('hidden.bs.modal', function () {
+    var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
+        for(i = 0; i < activities.length; i++){
+            ACTIVITY_POSITION[i] = new Object()
+            ACTIVITY_POSITION[i].id = activities[i].id
+            ACTIVITY_POSITION[i].top = activities[i].style.top
+            ACTIVITY_POSITION[i].left = activities[i].style.left
+        }
     if(!VALIDATE){
         hideActivitiesPathway();
     }
