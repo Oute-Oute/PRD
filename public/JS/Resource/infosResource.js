@@ -113,8 +113,7 @@ function getAjaxHumanResources(idHumanResource, date, tableBody) {
   });
 }
 function getAjaxMaterialResources(idMaterialResource, date, tableBody) {
-  dateStr =
-    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+  dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   $.ajax({
     type: "POST",
     url: "/ajaxMaterialResource",

@@ -406,7 +406,7 @@ class ModificationPlanningController extends AbstractController
         if (!$user) {
             //dd($user, "Erreur, vous n'êtes pas connecté !");
         } else {
-            $userRepository->add($user, true);
+            //$userRepository->add($user, true);
 
             $datetimeModified = new \DateTime(date('Y-m-d', strtotime($dateModified)));
             $dateToday = new \DateTime('now', new DateTimeZone('Europe/Paris'));

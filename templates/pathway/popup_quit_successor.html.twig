@@ -7,8 +7,9 @@
             <div class="modal-body">
                 <p>Quitter sans valider vos modifications supprimera tous les liens présents, voulez-vous vraiment continuer ?</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" onclick="quitModalSuccessor(1);" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Quitter</button>
+            <div class="modal-footer" style="font-size: 14px;">
+                <button type="button" onclick="validateSuccessors();$('#popup-quit-successor').modal('hide');" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Sauvegarder et quitter</button>
+                <button type="button" onclick="quitModalSuccessor(1);" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Quitter sans sauvegarder</button>
                 <button type="button" onclick="quitModalSuccessor(0);" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
             </div>
         </div>
