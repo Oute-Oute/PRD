@@ -19,9 +19,7 @@ var lines= new Array();
 var VALIDATE = 0;
 var ARROWS_HIDDEN = 0;
 
-
-
-
+var ACTIVITY_POSITION = new Array();
 
 
 /**
@@ -161,19 +159,32 @@ function quitModalSuccessor(quit){
  */
 function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
-
-    if(!divContent.innerHTML.includes("div")){
+    divContent.innerHTML = ""
+    
+    if(ACTIVITY_POSITION.length == 0){
         for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
             rba = RESOURCES_BY_ACTIVITIES[i];
             if (rba.available) {
-                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration);
+                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, null, null);
             }
         }
     }
     else{
-        var activities = divContent.getElementsByClassName("pathway-div-activity-graph");
-        for(i = 0; i < activities.length; i++){
-            activities[i].style.display = 'block';
+        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+            rba = RESOURCES_BY_ACTIVITIES[i];
+            if (rba.available) {
+                drawn = false;
+                for(j = 0; j < ACTIVITY_POSITION.length; j++){
+                    if(ACTIVITY_POSITION[j].id == "activity" + (i+1)){
+                        drawn = true;
+                        createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, ACTIVITY_POSITION[j].top, ACTIVITY_POSITION[j].left);
+                    }
+                }
+                if(!drawn){
+                    drawn = false
+                    createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, null, null);
+                }
+            }
         }
     }
 }
@@ -185,12 +196,14 @@ function drawActivitiesGraph(){
  * @param {duration of the activity} activity
  * Each activity is linked with event listeners to create links via double click on them
  */
-function createActivitiesGraph(name, idActivity, duration){
+function createActivitiesGraph(name, idActivity, duration, top, left){
     var divContent = document.getElementById('divContent');
 
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
     div.classList.add("pathway-div-activity-graph");
+    div.style.top = top
+    div.style.left = left;
 
     var divHeader = document.createElement('div');
     divHeader.classList.add("pathway-div-activity-header");
@@ -471,11 +484,11 @@ function fillSuccessorList() {
             
         divSuccessor.addEventListener('mouseleave', () => {
             lines.forEach((l) => {
-                l.color = '#0dac2d';
-                l.size = 4;
                 if(ARROWS_HIDDEN){
                     l.hide();
                 }
+                l.color = '#0dac2d';
+                l.size = 4;
             }); 
         });
     }
@@ -643,4 +656,9 @@ function checkSuccessor(){
     else{
         return 0;  
     }
+}
+
+function showPopup(id){
+    document.getElementById("pathway-id").value = id
+    $('#modal-popup').modal('show')
 }

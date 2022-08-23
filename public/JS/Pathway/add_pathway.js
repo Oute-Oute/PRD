@@ -246,7 +246,6 @@ function deleteActivity(id) {
     // We get the index of the div to delete
     // To do this we get the character after the '-' : (img-1 or img-10)
     id = getId(id)
-
     // We update the input which contain the number of activity
     NB_ACTIVITY = NB_ACTIVITY - 1;
     document.getElementById('nbactivity').value = NB_ACTIVITY
@@ -255,6 +254,11 @@ function deleteActivity(id) {
     
     // On enlève tous les successeurs reliés à l'activité (on supprime aussi les flèches)
     let idActivity = "activity" + (parseInt(id) + 1);
+    for(i = 0; i < ACTIVITY_POSITION.length; i++){
+        if(ACTIVITY_POSITION[i].id == idActivity){
+            ACTIVITY_POSITION.splice(i, 1)
+        }
+    }
     for (var i = SUCCESSORS.length - 1; i >= 0; i--) {
         // reverse loop because of array_splice() 
         if (SUCCESSORS[i].idActivityA == idActivity || SUCCESSORS[i].idActivityB == idActivity) {
