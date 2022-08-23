@@ -335,15 +335,11 @@ function openActivityModal(type="new",event){
         p.style.width = '80%';
         p.innerHTML = comments[i].author + " : " + comments[i].comment.replaceAll("\n","<br>"); //add the comment to the string with a ; and a space
         divContainerP.appendChild(p);
-
-        let imgDelete = new Image();
-        imgDelete.src = '../../img/delete.svg'
-        imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
-        imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
-        imgDelete.setAttribute('title', 'Supprimer le commentaire')
-        imgDelete.style.width = '20px'
-        imgDelete.style.cursor = 'pointer'
-
+        let divImages = document.createElement('div')
+        divImages.setAttribute('class', 'btns')
+        console.log(comments[i])
+        console.log(document.getElementById("OwnUsername").value)
+        if(comments[i].authorusername == document.getElementById("OwnUsername").value){
         let imgEdit = new Image();
         imgEdit.src = '../../img/edit.svg'
         imgEdit.setAttribute('id', 'imge-' + comments[i].idcomment)
@@ -352,10 +348,16 @@ function openActivityModal(type="new",event){
         imgEdit.style.width = '20px'
         imgEdit.style.cursor = 'pointer'
         imgEdit.style.marginRight = '10px'
-
-        let divImages = document.createElement('div')
-        divImages.setAttribute('class', 'btns')
         divImages.appendChild(imgEdit)
+        }
+
+        let imgDelete = new Image();
+        imgDelete.src = '../../img/delete.svg'
+        imgDelete.setAttribute('id', 'imgd-' + comments[i].idcomment)
+        imgDelete.setAttribute('onclick', 'deleteCommentModale(this.id)')
+        imgDelete.setAttribute('title', 'Supprimer le commentaire')
+        imgDelete.style.width = '20px'
+        imgDelete.style.cursor = 'pointer'
         divImages.appendChild(imgDelete)
 
         divComment.appendChild(divUsername);

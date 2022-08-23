@@ -39,8 +39,9 @@ function filterShow() {
             }
           }
         }
-        if (humanCategoriesToDisplay.length == 0) {
-          humanCategoriesToDisplay.push(allCategories);//copy all data in the array if it is empty
+        if (humanCategoriesToDisplay.length == 0 && firstCreationFilter) {
+          humanCategoriesToDisplay=Object.values(allCategories);//copy all data in the array if it is empty
+          firstCreationFilter=false;
         }
         break;
       case "Ressources Matérielles": //if we want to display by the patients
@@ -55,8 +56,9 @@ function filterShow() {
             }
           }
         }
-        if (materialCategoriesToDisplay.length == 0) {
-          materialCategoriesToDisplay.push(allCategories);//copy all data in the array if it is empty
+        if (materialCategoriesToDisplay.length == 0&&firstCreationFilter) {
+          materialCategoriesToDisplay=Object.values(allCategories);//copy all data in the array if it is empty
+          firstCreationFilter=false
         }
         break;
     }
@@ -67,6 +69,70 @@ function filterShow() {
       label.innerHTML = "Aucune Catégorie à filtrer"; //telling "no resources"
       filter.appendChild(label); //add the label to the filter
     } else {
+      var inputAll = document.createElement("input"); //create a input
+      inputAll.type = "checkbox"; //set the type of the input to checkbox
+      inputAll.id = "all"; //set the name of the input to all
+      var inputNothing = document.createElement("input"); //create a input
+      inputNothing.type = "checkbox"; //set the type of the input to checkbox
+      inputNothing.id = "nothing"; //set the name of the input to nothing
+      switch (headerResources) {
+        case "Ressources Humaines":
+          inputAll.onchange = function () {
+            //set the onchange event
+            changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
+          };
+          inputNothing.onchange = function () {
+            //set the onchange event
+            changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
+          };
+          if(humanCategoriesToDisplay.length==allCategories.length){
+
+            inputAll.checked = true; //set the checkbox to checked if all the resources are selected
+          }
+          if(humanCategoriesToDisplay.length==0){
+
+            inputNothing.checked = true; //set the checkbox to checked if all the resources are selected
+          }
+          else if(humanCategoriesToDisplay.length!=allCategories.length && humanCategoriesToDisplay[0].length!=0){
+
+            inputAll.checked = false; //set the checkbox to unchecked if all the resources are not selected
+            inputNothing.checked = false; //set the checkbox to unchecked if all the resources are not selected
+          }
+
+          break;
+        case "Ressources Matérielles":
+          inputAll.onchange = function () {
+            //set the onchange event
+            changeFilter(this.id, allCategories, 'material'); //call the changeFilter function with the id of the resource
+          }
+          inputNothing.onchange = function () {
+            //set the onchange event
+            changeFilter(this.id, allCategories, 'material'); //call the changeFilter function with the id of the resource
+          }
+
+          if(materialCategoriesToDisplay.length==allCategories.length){
+            inputAll.checked = true; //set the checkbox to checked if all the resources are selected
+          }
+          if(materialCategoriesToDisplay.length==0){
+            inputNothing.checked = true; //set the checkbox to checked if all the resources are selected
+          }
+          else if(materialCategoriesToDisplay.length!=allCategories.length && materialCategoriesToDisplay[0].length!=0){
+            inputAll.checked = false; //set the checkbox to unchecked if all the resources are not selected
+            inputNothing.checked = false; //set the checkbox to unchecked if all the resources are not selected
+          }
+          break;
+        }
+        filter.appendChild(inputAll); //add the input to the filter
+        var labelAll = document.createElement("label"); //create a label
+        labelAll.innerHTML = "&nbsp;" + "Tout sélectionner"; //set the label to "all"
+        filter.appendChild(labelAll); //add the label to the filter
+        filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+        filter.appendChild(inputNothing); //add the input to the filter
+        var labelNothing = document.createElement("label"); //create a label
+        labelNothing.innerHTML = "&nbsp;" + "Tout déselectionner"; //set the label to "nothing"
+        filter.appendChild(labelNothing); //add the label to the filter
+        filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+        filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
       //for all the resources in the calendar
       for (var i = 0; i < allCategories.length; i++) {
         if (document.getElementById(allCategories[i]) == null) {
@@ -132,7 +198,22 @@ function changeFilter(id, allCategories, type) {
   firstCreationFilter=false;
   var zoom = document.getElementById('zoom-value').value;
 
-
+  if(id=="all"){//if we want to select all the resources
+    if(document.getElementById('all').checked==true){//if the checkbox is checked'))
+      for (var i = 0; i < allCategories.length; i++) {
+        document.getElementById(allCategories[i]).checked=true;//set the checkbox to checked
+      }
+      document.getElementById('nothing').checked=false;//set the checkbox to unchecked
+    }
+  }
+  if(id=="nothing"){//if we want to deselect all the resources
+    if(document.getElementById('nothing').checked==true){//if the checkbox is checked'))
+      for(var i=0;i<allCategories.length;i++){
+        document.getElementById(allCategories[i]).checked=false;//set the checkbox to unchecked
+      }
+      document.getElementById('all').checked=false;//set the checkbox to unchecked
+    }
+  }
   switch (type) {
     case "human"://if we want to filter by the human resources
       for (var i = 0; i < allCategories.length; i++) {
@@ -169,6 +250,21 @@ function changeFilter(id, allCategories, type) {
       }
       break;
   }
+      inputAll=document.getElementById("all");
+      inputNothing=document.getElementById("nothing");
+      if(categoriesToDisplay.length==allCategories.length){
+
+        inputAll.checked = true; //set the checkbox to checked if all the resources are selected
+      }
+      if(categoriesToDisplay.length==0){
+
+        inputNothing.checked = true; //set the checkbox to checked if all the resources are selected
+      }
+      else if(categoriesToDisplay.length!=allCategories.length && humanCategoriesToDisplay[0].length!=0){
+
+        inputAll.checked = false; //set the checkbox to unchecked if all the resources are not selected
+        inputNothing.checked = false; //set the checkbox to unchecked if all the resources are not selected
+      }
   for (var i = 0; i < resources.length; i++) {
     for (var j = 0; j < resources[i]["categories"].length; j++) {
       if (categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
@@ -210,6 +306,7 @@ function changePlanning() {
 
   }
   document.querySelectorAll("#header-type")[0].innerText=headerResources;
+  firstCreationFilter=true;
 }
 
 /**

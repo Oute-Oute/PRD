@@ -21,7 +21,7 @@
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
 	<script src="js/popper.min.js" integrity="sha384-AnJFx41Yd4u7+19IurgGio8EHUpltdLG4I2EpjNGAf+LR66YPbFvorbP564+IWuf sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
 	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY" crossorigin="anonymous"></script>
-	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+	<script src='js/fullcalendar-scheduler/lib/main.min.js'></script>
 	<script src="js/planning/consultation-planning.js"></script>
 	<script src="js/planning/utils-planning.js"></script>
 
@@ -57,7 +57,8 @@
 				<td class="header-td-center">
 					<input required type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('consultation')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
 				</td>
-				<div id="filterId" class="filter-container" style="display:none; left:30%"></div>
+				<div id="filterId" class="filter-container" style="display:none; left:30%">
+				</div>
 			
 			<td class="header-td-right">
 				<div class="date-button">
