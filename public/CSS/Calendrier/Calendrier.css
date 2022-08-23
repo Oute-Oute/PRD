@@ -24,6 +24,7 @@ div#container {
   border-radius: 50px;
   box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
   height: auto;
+  margin-top : 5%
 }
 
 .flex{
@@ -267,10 +268,27 @@ a:hover{
 }
 .header-ressource-consultation{
   margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   font-size: 1.75em;
   font-family: 'Nunito', sans-serif;
   z-index:0;
+}
+.header-td-center{
+  left: 50%;
+  position: absolute;
+  text-align: center;
+}
+
+.header-td-right, .header-td-zoom{
+  right:0%;
+  position: absolute;
+  text-align: center;
+  font-size: medium;
+  
+}
+
+.header-td-zoom{
+  margin-top: -15px;
 }
 
 .top{
@@ -291,11 +309,7 @@ a:hover{
   z-index:1;
 }
 
-.header-td-date{
-  left: 50%;
-  position: absolute;
-  text-align: center;
-}
+
 #alert-scheduled-tomorrow{
   width:100%;
   text-align:center;

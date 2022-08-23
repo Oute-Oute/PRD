@@ -199,9 +199,10 @@
 <div style="width:100%;">
 
 	<h1>Modification du Planning</h1>
-	<div id="container-top">
-		<div
-			class="CRUD-div">
+		  
+	<div id="calendar-container" class="calendar-container">
+	<table class="header-ressource-consultation" style="font-size:medium;">
+		<td class="header-td">
 			<!-- bouton d'ajout d'un rendez-vous dans le planning -->
 			<button type="button" class="btn-calendar-edit" onclick="displayAddPathway()">Ajouter</button>
 
@@ -219,14 +220,14 @@
 					<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
 				</svg>
 			</button>
-			
-			<div id="filterId" class="filter-container" style="display:none"></div>
+			</td>
+			<div id="filterId" class="filter-container" style="display:none; left:30%"></div>
 		</div>
 		
 		<!-- liste des boutons pour annuler ou valider les modifications -->
 
 
-		<div id='container-top-right'>
+		<td class="header-td-right">
 			<div id='top-right-buttons'>
 				<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
 				{% if app.user %}
@@ -244,22 +245,21 @@
 				</form>
 				<button type="button" id="button-top-right" class="btn-delete btn-secondary" onclick="backToConsultation()">Quitter</button>
 			</div>
-			<div >
-			<div id="zoom-div">
-					<input id="zoom-value" type="hidden" value="00:20:00">
-					<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
-					<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
-					<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
-			</div>
-		</div>
+	
 		</div>
 		
-	</div>
-	  
-	<div id="calendar-container" class="calendar-container">
-		<table class="header-ressource">
-			<td id="header-type" class="header-td">Ressources Humaines</td>
-		<td>{{ dateFormatted }}</td>
+	</td>
+	</table>
+
+		<table class="header-ressource-consultation" style="margin-left:10px;">
+			<td id="header-type" class="header-td-left">Ressources Humaines</td>
+		<td class="header-td-center">{{ dateFormatted }}</td>
+		<td id="zoom-div" class="header-td-right header-td-zoom">
+			<input id="zoom-value" type="hidden" value="00:20:00">
+			<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
+			<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
+			<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
+			</td>
 		</table>
 		
 		
