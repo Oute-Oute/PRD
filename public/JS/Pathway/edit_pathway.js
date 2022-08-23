@@ -492,7 +492,6 @@ function showScheduledAppointmentsModal() {
     } else {
         deleteActivity()
     }
-    
 }
 
 /**

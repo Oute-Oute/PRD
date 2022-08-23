@@ -18,8 +18,10 @@ var SUCCESSORS = new Array();
 var lines= new Array(); 
 var VALIDATE = 0;
 var ARROWS_HIDDEN = 0;
-
 var ACTIVITY_POSITION = new Array();
+
+var PATHWAY_APPOINTMENTS = new Object()        
+PATHWAY_APPOINTMENTS.scheduledAppointments = new Array()
 
 
 /**
@@ -648,7 +650,58 @@ function checkSuccessor(){
     }
 }
 
-function showPopup(id){
-    document.getElementById("pathway-id").value = id
-    $('#modal-popup').modal('show')
+/**
+ * Returns scheduled appointments according to an activity
+ */
+ function getScheduledAppointments(index) {
+    // request to get the appointments list of the activity
+    return $.ajax({
+        type: 'GET',
+        url: '/activity/'+index+'/appointments',
+        dataType: "json",
+    });
+}
+
+/**
+ * Verify if there is some appointments scheduled for the pathway 
+ */
+async function verifyScheduledAppointments(idPathway) {
+    document.getElementById("pathway-id").value = idPathway
+    try {
+        PATHWAY_APPOINTMENTS.scheduledAppointments = await getScheduledAppointments(idPathway)
+        if (PATHWAY_APPOINTMENTS.scheduledAppointments.length > 0) {
+            showScheduledAppointmentsModal()
+        }
+        else{
+            $('#pathway-modal-scheduled-appointments').modal('show');
+            let body = document.getElementById('scheduled-appointments-body')
+            body.style.overflowY = "hidden"
+            body.innerHTML = "Voulez-vous vraiment supprimer ce parcours ?"
+            document.getElementById("modal-subtitle").innerText = ""
+        }
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
+/**
+ * Display the modal pop-up to inform the user that he will removed some scheduled appointments 
+ */
+function showScheduledAppointmentsModal() {
+    $('#pathway-modal-scheduled-appointments').modal('show');
+    let body = document.getElementById('scheduled-appointments-body')
+    body.innerHTML = ""
+    document.getElementById("modal-subtitle").innerText = "En supprimant ce parcours, vous allez déprogrammer les rendez-vous suivants :"
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < PATHWAY_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
+        let p = document.createElement('p')
+
+        lastname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_firstname
+        firstname = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].patient_lastname
+        day = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[2]
+        month = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[1]
+        year = PATHWAY_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].appointment_day.date.split(' ')[0].split('-')[0]
+        p.innerHTML = lastname +' '+ firstname + ' - '+day +'/'+ month+'/' + year
+        body.appendChild(p)
+    }
 }

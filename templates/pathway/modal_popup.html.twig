@@ -1,19 +1,25 @@
-<div class="modal" id="modal-popup">
+<div class="modal" id="pathway-modal-scheduled-appointments">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Attention</h2>
+            <div class="modal-header" style="flex-direction: column;">
+                <h3 class="modal-title">Attention</h3>
+                <p id="modal-subtitle">En supprimant ce parcours, vous allez déprogrammer les rendez-vous suivants :</p>
+
             </div>
-                <div class="modal-body">
-                    <p>Voulez vous vraiment supprimer ce parcours ?<br>
-                </div>
-                <div class="modal-footer">
-                    <form method="post" action="{{ path('PathwayDelete') }}" style="display: flex;flex-direction: row;">
-                        <input type="hidden" value=0 name="pathwayid" id="pathway-id">
-					    <button type="submit" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
-                        <button type="button" onclick="$('#modal-popup').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
-                    </form>
-                </div>
+
+            <div class="modal-body" id="scheduled-appointments-body" style="max-height: 300px;overflow-y: scroll;">
+               
+            
+            </div>
+
+            <div class="modal-footer">
+                <form method="post" action="{{ path('PathwayDelete') }}" style="display: flex;flex-direction: row;">
+                    <input type="hidden" value=0 name="pathwayid" id="pathway-id">
+                    <button type="submit" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
+                    <button type="button" onclick="$('#pathway-modal-scheduled-appointments').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
+                </form>
+            </div>
+
         </div>
     </div>
 </div>
