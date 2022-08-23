@@ -161,29 +161,19 @@ function drawActivitiesGraph(){
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""
     
-    if(ACTIVITY_POSITION.length == 0){
-        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-            rba = RESOURCES_BY_ACTIVITIES[i];
-            if (rba.available) {
-                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, null, null);
+    for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
+        rba = RESOURCES_BY_ACTIVITIES[i];
+        if (rba.available) {
+            drawn = false;
+            for(j = 0; j < ACTIVITY_POSITION.length; j++){
+                if(ACTIVITY_POSITION[j].id == "activity" + (i+1)){
+                    drawn = true;
+                    createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, ACTIVITY_POSITION[j].top, ACTIVITY_POSITION[j].left);
+                }
             }
-        }
-    }
-    else{
-        for (i = 0; i < RESOURCES_BY_ACTIVITIES.length; i++) {
-            rba = RESOURCES_BY_ACTIVITIES[i];
-            if (rba.available) {
-                drawn = false;
-                for(j = 0; j < ACTIVITY_POSITION.length; j++){
-                    if(ACTIVITY_POSITION[j].id == "activity" + (i+1)){
-                        drawn = true;
-                        createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, ACTIVITY_POSITION[j].top, ACTIVITY_POSITION[j].left);
-                    }
-                }
-                if(!drawn){
-                    drawn = false
-                    createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, null, null);
-                }
+            if(!drawn){
+                drawn = false
+                createActivitiesGraph(rba.activityname, i + 1, rba.activityduration, (Math.floor(i/5)*18 + 5) + "%", (i%5)*15 + "%");
             }
         }
     }
