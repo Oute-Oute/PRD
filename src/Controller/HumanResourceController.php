@@ -812,6 +812,54 @@ class HumanResourceController extends AbstractController
         }
         return $resourceArray;
     }
+
+    public function getActivitiesByHumanResourceCategoryId(ManagerRegistry $doctrine)
+    {
+        if(isset($_POST['idHumanResourceCategory'])){
+            $id = $_POST['idHumanResourceCategory'];
+            $activities = $doctrine->getManager()->getRepository("App\Entity\ActivityHumanResource")->findActivitiesByHumanResourceCategory($id);
+            $activityArray=[];
+            $i = 0;
+            foreach ($activities as $activity) {
+                if(isset($activityArray[$i])){
+                    if($activityArray[$i]['pathwayname'] == $activity['pathwayname']){
+                        $activityArray[$i]['activities'][] = [
+                            'activityname' => $activity['activityname'],
+                            'quantity' => $activity['quantity']
+                        ];
+                    }
+                    else{
+                        $i++;
+                        $activitiesPathway = [];
+                        $activitiesPathway[] = [
+                            'activityname' => $activity['activityname'],
+                            'quantity' => $activity['quantity']
+                        ];
+                        $activityArray[$i] = [
+                            'pathwayname' => $activity['pathwayname'],
+                            'activities' => $activitiesPathway
+                        ];
+                    }
+                }
+                else{
+                    $activitiesPathway = [];
+                    $activitiesPathway[] = [
+                        'activityname' => $activity['activityname'],
+                        'quantity' => $activity['quantity']
+                    ];
+                    $activityArray[$i] = [
+                        'pathwayname' => $activity['pathwayname'],
+                        'activities' => $activitiesPathway
+                    ];
+                }
+            }
+            return new JsonResponse($activityArray);
+        }
+        else{
+            return null;
+        }
+    }
+
     /*
       * @brief Allows to create an unavailability linked to a human resource that is already in the database
      */
