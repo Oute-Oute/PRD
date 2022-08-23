@@ -1355,18 +1355,19 @@ function fillSuccessorList() {
                 if(l.start == start && l.end == end){
                     l.color = 'red';
                     l.size = l.size*2;
+                    l.show()
                 }
             }); 
         });
           
         divSuccessor.addEventListener('mouseleave', (e) => {
             lines.forEach((l) => {
+                if(ARROWS_HIDDEN){
+                    l.hide();
+                }
                 l.color = '#0dac2d';
                 l.size = 4;
             }); 
-            if(ARROWS_HIDDEN){
-                l.hide();
-            }
         });
     }
     if (SUCCESSORS.length == 0) {
