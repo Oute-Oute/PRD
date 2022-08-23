@@ -26,10 +26,11 @@ function showInfosModalHuman(idHumanResource, resourceName) {
  * Allows to display a modal that shows data about the selected human resource category
  */
 function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
-  document.getElementById("human-resource-category").innerHTML =
-    resourceCategName;
+  document.getElementById("human-resource-category1").innerHTML = resourceCategName;
+  document.getElementById("human-resource-category2").innerHTML = resourceCategName;
 
   var tableBody = document.getElementById("tbody-human-resource-category");
+  var tableBodyActivity = document.getElementById("tbody-category-activities");
   tableBody.innerHTML = "";
 
   $.ajax({
@@ -44,6 +45,21 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
       console.log("error");
     },
   });
+
+  $.ajax({
+    type: "POST",
+    url: "/ajaxHumanResourceCategoriesActivities",
+    data: { idHumanResourceCategory: idHumanResourceCategory },
+    dataType: "json",
+    success: function (data) {
+      tableActitivies(tableBodyActivity, data)
+    },
+    error: function () {
+      console.log("error");
+    },
+  });
+
+  change_tab_human_categ_infos("resources-by-categories");
 
   $("#infos-human-resource-category-modal").modal("show");
 }
@@ -174,6 +190,106 @@ function tableResource(tableBody, data, switch_param) {
   }
 }
 
+function tableActitivies(tableBody, data){
+  tableBody.innerHTML = ""
+  if(data.length <= 0){
+      var tr = document.createElement('TR');
+      tableBody.appendChild(tr);
+      var td = document.createElement('TD');
+      td.setAttribute('colspan', 5);
+      td.append("Il n'existe pas d'activités nécessitant cette catégorie");
+      tr.appendChild(td);
+  }
+  else{
+      headerPathway = document.getElementById("header-pathway")
+      let imgDownArrow = new Image();
+      imgDownArrow.src = '../img/chevron_up.svg';
+      imgDownArrow.setAttribute('id', 'pathway_imgdown');
+      imgDownArrow.setAttribute('onclick', "hideAllActivities(" + data.length + ")")
+      imgDownArrow.setAttribute('title', 'Cacher toutes les activités');
+      imgDownArrow.style.width = '20px';
+      imgDownArrow.style.cursor = 'pointer';
+      headerPathway.style.display = "flex"
+      headerPathway.style.justifyContent = "space-between"
+      headerPathway.append(imgDownArrow)
+
+      for(i = 0; i < data.length; i++){
+          var tr = document.createElement('TR');
+          tableBody.appendChild(tr);
+          let imgDownArrow = new Image();
+          imgDownArrow.src = '../img/chevron_up.svg';
+          imgDownArrow.setAttribute('id', 'pathway_imgdown-' + i);
+          imgDownArrow.setAttribute('onclick', "hideActivities(" + i + ")")
+          imgDownArrow.setAttribute('title', 'Cacher les activités');
+          imgDownArrow.style.width = '20px';
+          imgDownArrow.style.cursor = 'pointer';
+          var td1 = document.createElement('TD');
+          var td2 = document.createElement('TD');
+          var td3 = document.createElement('TD');
+          td1.style.display = "flex"
+          td1.style.justifyContent = "space-between"
+          td2.style.width = "300px"
+          td1.append(data[i]['pathwayname'], imgDownArrow);
+          tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+          for(j = 0; j < data[i]['activities'].length; j++){
+            var actj = data[i]['activities'][j]
+
+            var tr = document.createElement('TR');
+            tr.classList.add("activityline" + i)
+            tableBody.appendChild(tr);
+
+            var td1 = document.createElement('TD');
+            var td2 = document.createElement('TD');
+            var td3 = document.createElement('TD');
+
+            td2.append(actj['activityname'])
+            td3.append(actj['quantity'])
+            tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+          }
+      }
+  }
+}
+
+function showAllActivities(length){
+  for(i = 0; i < length; i++){
+    $(".activityline" + i).show();
+    chevron = document.getElementById('pathway_imgdown-' + i)
+    chevron.setAttribute('onclick', "hideActivities(" + i + ")")
+    chevron.setAttribute('src', '../img/chevron_up.svg')
+  }
+
+  chevron = document.getElementById('pathway_imgdown')
+  chevron.setAttribute('onclick', "hideAllActivities(" + length + ")")
+  chevron.setAttribute('src', '../img/chevron_up.svg')
+}
+
+function hideAllActivities(length){
+  for(i = 0; i < length; i++){
+    $(".activityline" + i).hide();
+    chevron = document.getElementById('pathway_imgdown-' + i)
+    chevron.setAttribute('onclick', "showActivities(" + i + ")")
+    chevron.setAttribute('src', '../img/chevron_down.svg')
+  }
+
+  chevron = document.getElementById('pathway_imgdown')
+  chevron.setAttribute('onclick', "showAllActivities(" + length + ")")
+  chevron.setAttribute('src', '../img/chevron_down.svg')
+}
+
+function showActivities(index){
+  $(".activityline" + index).show();
+  chevron = document.getElementById('pathway_imgdown-' + index)
+  chevron.setAttribute('onclick', "hideActivities(" + index + ")")
+  chevron.setAttribute('src', '../img/chevron_up.svg')
+}
+
+function hideActivities(index){
+  $(".activityline" + index).hide();
+  chevron = document.getElementById('pathway_imgdown-' + index)
+  chevron.setAttribute('onclick', "showActivities(" + index + ")")
+  chevron.setAttribute('src', '../img/chevron_down.svg')
+} 
+
 function getWorkingHours(id) {
   var WORKING_HOURS_FILTERED = WORKING_HOURS.filter(function (WORKING_HOUR) {
     return WORKING_HOUR.humanresource_id == id;
@@ -288,6 +404,32 @@ function change_tab_human_infos(id) {
       planning.style.display = "none";
       workinghours.style.display = "none";
       categories.style.display = "block";
+      document.getElementById("modal-dialog").style.maxWidth = "600px";
+      break;
+  }
+}
+
+function change_tab_human_categ_infos(id) {
+  liHeader = document.getElementsByClassName("header-human-category");
+  selectedDivs = liHeader[0].getElementsByClassName("selected");
+  for(i = 0; i < selectedDivs.length; i++){
+    selectedDivs[i].className="notselected";
+  }
+
+  document.getElementById(id).className = "selected";
+
+  let resources = document.getElementById("human-resource-category-resources");
+  let activities = document.getElementById("human-resource-category-activities");
+
+  switch (id) {
+    case "resources-by-categories":
+      resources.style.display = "block";
+      activities.style.display = "none";
+      document.getElementById("modal-dialog").style.maxWidth = "600px";
+      break;
+    case "activities-by-categories":
+      resources.style.display = "none";
+      activities.style.display = "block";
       document.getElementById("modal-dialog").style.maxWidth = "600px";
       break;
   }

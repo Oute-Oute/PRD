@@ -39,6 +39,23 @@ class ActivityHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return ActivityHumanResourceCategory[] Returns an array of ActivityHumanResourceCategory objects
+    */
+    public function findActivitiesByHumanResourceCategory($id): array
+    {
+        $qb= $this->createQueryBuilder('a')
+        ->join('a.activity','activity')
+        ->join('activity.pathway','pathway')
+        ->select('a.id, a.quantity, activity.activityname, pathway.pathwayname')
+        ->orderBy('pathway.pathwayname', 'ASC')
+        ->addOrderBy('activity.activityname', 'ASC')
+        ->where('a.humanresourcecategory= :idHumanResouceCategory')
+        ->setParameter('idHumanResouceCategory',$id);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
+
 //    /**
 //     * @return ActivityHumanResource[] Returns an array of ActivityHumanResource objects
 //     */
