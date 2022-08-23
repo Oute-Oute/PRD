@@ -22,13 +22,14 @@
 	<script src="{{ asset('JS/Resource/Resource.js') }}"></script>
 	<script src="{{ asset('JS/Resource/EditForm.js') }}"></script>
 	<script src="{{ asset('JS/Resource/infosResource.js') }}"></script>
-	<script src='js/fullcalendar-scheduler/lib/main.js'></script>
+	<script src='js/fullcalendar-scheduler/lib/main.min.js'></script>
 	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
-	<script src="js/jquery-ui/jquery-ui.js"></script>
+	<script src="js/jquery-ui/jquery-ui.min.js"></script>
 
 {% endblock %}
 {% block body %}
 	<div class="index" id="main_content" >
+		<input id="type" style="display : none" value="{{type}}">
 		<div>
 			<li class="selected" id="resources" onclick="change_tab_human(this.id);">Ressources</li>
 			<li class="notselected" id="categories" onclick="change_tab_human(this.id);">Catégories</li>
@@ -38,7 +39,6 @@
 			<input id="working-hours-content" style="display : none" value="{{workingHours.content}}">
 			<input id="categories-by-human-resource" style="display : none" value="{{categoriesByHumanResources.content}}">
 			<input id="unavailabilities-human-resource" style="display : none" value="{{unavailabilities.content}}">
-
 			<div id='list-human-resources'>
 				<h1>Liste des ressources humaines</h1>
 				<button class="btn-add" onclick="showNewHumanModalForm()">

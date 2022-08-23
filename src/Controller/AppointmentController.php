@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Date;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
 class AppointmentController extends AbstractController
 {
@@ -552,8 +553,8 @@ class AppointmentController extends AbstractController
             "&#7923;" => "y",
             );
         $term = strtr(mb_strtolower($request->query->get('term'),'UTF-8'), $utf8);
-        $appointments = $appointmentRepository->getAllAppointmentOrderByPatientLastname();
         $results = array();
+        $appointments = $appointmentRepository->getAllAppointmentOrderByPatientLastname();
         foreach ($appointments as $appointment) {
             if (   strpos(strtr(mb_strtolower($appointment["lastname"],'UTF-8'),$utf8), $term) !== false 
                 || strpos(strtr(mb_strtolower($appointment["firstname"],'UTF-8'),$utf8), $term) !== false 

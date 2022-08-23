@@ -28,20 +28,6 @@ class MaterialResourceCategoryController extends AbstractController
 {
 
     /*
-      * @brief Allows to list every material resource categories in the database
-     */
-
-    /**
-     * @Route("/", name="app_material_resource_category_index", methods={"GET"})
-     */
-    public function index(MaterialResourceCategoryRepository $materialResourceCategoryRepository): Response
-    {
-        return $this->render('material_resource_category/index.html.twig', [
-            'material_resource_categories' => $materialResourceCategoryRepository->findBy(array(), array('categoryname' => 'ASC')),
-        ]);
-    }
-
-    /*
       * @brief Allows to create a new material resource category in the database
      */
 
@@ -63,19 +49,6 @@ class MaterialResourceCategoryController extends AbstractController
         }
     }
 
-    /*
-      * @brief Allows to show data of a specific material resource category
-     */
-
-    /**
-     * @Route("/{id}", name="app_material_resource_category_show", methods={"GET"})
-     */
-    public function show(MaterialResourceCategory $materialResourceCategory): Response
-    {
-        return $this->render('material_resource_category/show.html.twig', [
-            'material_resource_category' => $materialResourceCategory,
-        ]);
-    }
 
     /*
       * @brief Allows to edit a material resource category that is already in the database
@@ -95,7 +68,7 @@ class MaterialResourceCategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('index_material_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 
     /*
