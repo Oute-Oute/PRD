@@ -202,6 +202,7 @@ function tableActitivies(tableBody, data){
   }
   else{
       headerPathway = document.getElementById("header-pathway")
+      headerPathway.innerHTML = ""
       let imgDownArrow = new Image();
       imgDownArrow.src = '../img/chevron_up.svg';
       imgDownArrow.setAttribute('id', 'pathway_imgdown');
@@ -211,7 +212,7 @@ function tableActitivies(tableBody, data){
       imgDownArrow.style.cursor = 'pointer';
       headerPathway.style.display = "flex"
       headerPathway.style.justifyContent = "space-between"
-      headerPathway.append(imgDownArrow)
+      headerPathway.append("Parcours", imgDownArrow)
 
       for(i = 0; i < data.length; i++){
           var tr = document.createElement('TR');
