@@ -281,6 +281,11 @@ AjaxHumanResourceCategoryActivities:
   controller: App\Controller\HumanResourceController::getActivitiesByHumanResourceCategoryId
   methods: [POST]
 
+AjaxMaterialResourceCategoryActivities:
+  path: /ajaxMaterialResourceCategoriesActivities
+  controller: App\Controller\MaterialResourceController::getActivitiesByMaterialResourceCategoryId
+  methods: [POST]
+
 AutocompleteHR:
   path: /autocompleteHR
   controller: App\Controller\HumanResourceController::autocompleteHR
