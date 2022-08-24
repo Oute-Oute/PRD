@@ -39,6 +39,24 @@ class HumanResourceScheduledRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAppointmentsByHumanResource($id, $date): array
+    {
+        $qb= $this->createQueryBuilder('h')
+        ->join('h.scheduledactivity','scheduledactivity')
+        ->join('scheduledactivity.appointment','appointment')
+        ->join('appointment.patient','patient')
+        ->join('appointment.pathway','pathway')
+        ->select('appointment.dayappointment, patient.lastname, patient.firstname, pathway.pathwayname')
+        ->orderBy('appointment.dayappointment', 'ASC')
+        ->addOrderBy('patient.lastname', 'ASC')
+        ->where('h.humanresource= :idHumanResource AND appointment.scheduled=1 AND appointment.dayappointment>= :date')
+        ->distinct()
+        ->setParameter('date',$date)
+        ->setParameter('idHumanResource',$id);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
+
 //    /**
 //     * @return HumanResourceScheduled[] Returns an array of HumanResourceScheduled objects
 //     */

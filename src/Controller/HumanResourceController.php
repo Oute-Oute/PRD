@@ -1150,5 +1150,22 @@ class HumanResourceController extends AbstractController
     public function showCategory(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
         return $this->index($humanResourceRepository,$doctrine,$request, $paginator,"categories");
     }
-}
 
+
+    public function GetAppointmentFromHumanResourceId(ManagerRegistry $doctrine, int $id) {
+        $HRSRepository= $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
+        $appointments = $HRSRepository->findAppointmentsByHumanResource($id, date('Y-m-d'));
+
+        $appointmentArray = [];
+        foreach ($appointments as $appointment) {
+            $appointmentArray[] = [
+                'lastname' => $appointment['lastname'],
+                'firstname' => $appointment['firstname'],
+                'pathwayname' => $appointment['pathwayname'],
+                'date' => $appointment['dayappointment']->format('d/m/Y'),
+            ];
+        }
+
+        return new JsonResponse($appointmentArray);
+    }
+}
