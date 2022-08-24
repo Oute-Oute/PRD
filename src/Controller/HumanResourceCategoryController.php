@@ -43,7 +43,7 @@ class HumanResourceCategoryController extends AbstractController
             $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
             $humanResourceCategoryRepository->add($humanResourceCateg, true);
 
-            return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('human_resources_category', [], Response::HTTP_SEE_OTHER);
         }
     }
 
@@ -66,7 +66,7 @@ class HumanResourceCategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('human_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 
     
@@ -101,6 +101,6 @@ class HumanResourceCategoryController extends AbstractController
             $humanResourceCategoryRepository->remove($humanResourceCategory, true);
         }
 
-        return $this->redirectToRoute('index_human_resources_category', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('human_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 }

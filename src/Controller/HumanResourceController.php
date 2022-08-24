@@ -43,7 +43,7 @@ class HumanResourceController extends AbstractController
     /*
       * @brief Allows to list every human resources in the database
      */
-    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resource"): Response
+    public function index(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resources"): Response
     {
         $humanResources = $this->listHumanResources($humanResourceRepository, $doctrine,$request,$paginator);
 
@@ -62,6 +62,7 @@ class HumanResourceController extends AbstractController
             'workingHours' => $workingHours,
             'categoriesByHumanResources' => $categoriesByHumanResources,
             'unavailabilities' => $unavailabilities,
+            'resourceType' => "human",
             'type' => $type
         ]); 
     }
@@ -1142,8 +1143,7 @@ class HumanResourceController extends AbstractController
     }
 
     public function showCategory(HumanResourceRepository $humanResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
-        dd("category");
-        $this->index($humanResourceRepository,$doctrine,$request, $paginator,"category");
+        return $this->index($humanResourceRepository,$doctrine,$request, $paginator,"categories");
     }
 }
 

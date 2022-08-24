@@ -45,7 +45,7 @@ class MaterialResourceCategoryController extends AbstractController
             $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
             $materialResourceCategoryRepository->add($materialResourceCateg, true);
 
-            return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('material_resources_category', [], Response::HTTP_SEE_OTHER);
         }
     }
 
@@ -68,7 +68,7 @@ class MaterialResourceCategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->redirectToRoute('index_material_resources_category', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('material_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 
     /*
@@ -99,6 +99,6 @@ class MaterialResourceCategoryController extends AbstractController
             $materialResourceCategoryRepository->remove($materialResourceCategory, true);
         }
 
-        return $this->redirectToRoute('index_material_resources', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('material_resources_category', [], Response::HTTP_SEE_OTHER);
     }
 }
