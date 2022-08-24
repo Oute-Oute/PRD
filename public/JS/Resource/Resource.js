@@ -523,3 +523,37 @@ function showHumanResourceCategoryModal(id) {
         },
       });
 }
+
+function showMaterialResourceCategoryModal(id) {
+    $('#delete-material-resource-category-modal').modal('show');
+    document.getElementById("form-material-resource-category-delete").setAttribute("action", "/material-resource-category/" + id + "/delete")
+    let body = document.getElementById('resources-body')
+    body.innerHTML = ""
+
+    $.ajax({
+        type: "POST",
+        url: "/ajaxMaterialResource",
+        data: { idMaterialResourceCategory: id },
+        dataType: "json",
+        success: function (data) {
+            if (data.length > 0) {
+                document.getElementById("modal-subtitle-category").innerText = "En supprimant cette catégorie, les RDV des ressources suivantes seront affectés :"
+                for (let indexResource = 0 ;indexResource < data.length; indexResource++) {
+                    let p = document.createElement('p')
+            
+                    p.innerHTML = data[indexResource]['materialresource']
+                    body.appendChild(p)
+                }
+            }
+            else{
+                body.style.overflowY = "hidden"
+                body.innerHTML = "Voulez-vous vraiment supprimer cette catégorie ?"
+                document.getElementById("modal-subtitle-category").innerText = ""
+            }
+            
+        },
+        error: function () {
+          console.log("error");
+        },
+      });
+}

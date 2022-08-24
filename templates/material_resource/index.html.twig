@@ -111,7 +111,7 @@
 								<td>
 									<button class="btn-infos btn-secondary" onclick="showInfosModalMaterialCateg('{{ material_resource_category.id }}', '{{material_resource_category.categoryname}}')">Informations</a>
 									<button class="btn-edit btn-secondary" onclick="showEditMaterialCategModalForm('{{ material_resource_category.id }}', '{{ material_resource_category.categoryname }}')">Éditer</a>
-									{{ include('material_resource/delete_category.html.twig') }}
+									<button class="btn-delete btn-secondary" onclick = "showMaterialResourceCategoryModal({{ material_resource_category.id }})">Supprimer</button>
 								</td>
 							</tr>
 						{% else %}
@@ -135,11 +135,17 @@
 	{{ include ('material_resource/edit_resource.html.twig') }}
 	{{ include ('material_resource/show_category.html.twig') }}
 	{{ include ('material_resource/new_category.html.twig') }}
+	{{ include ('material_resource/delete_category.html.twig') }}
 	{{ include ('material_resource/edit_category.html.twig')}}
 	{{ include ('material_resource/edit_unavailability.html.twig')}}
 
 
 	 <script>
+	 $('#delete-material-resource-category-modal').on('hidden.bs.modal', function () {
+		document.getElementById("modal-subtitle-category").innerText = ""
+		document.getElementById("resources-body").innerHTML = ""
+	});
+
 	$( "#autocompleteInputMaterialName" ).autocomplete({
 	source: "/autocompleteMR",
 	minLength: 3,

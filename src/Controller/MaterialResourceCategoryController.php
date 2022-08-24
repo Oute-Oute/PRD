@@ -95,9 +95,7 @@ class MaterialResourceCategoryController extends AbstractController
         }
 
         $em->flush();
-        if ($this->isCsrfTokenValid('delete'.$materialResourceCategory->getId(), $request->request->get('_token'))) {
-            $materialResourceCategoryRepository->remove($materialResourceCategory, true);
-        }
+        $materialResourceCategoryRepository->remove($materialResourceCategory, true);
 
         return $this->redirectToRoute('material_resources_category', [], Response::HTTP_SEE_OTHER);
     }
