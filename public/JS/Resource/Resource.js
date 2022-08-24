@@ -298,27 +298,15 @@ function filterResource(type,selected=null){
         unavailabilities.setAttribute('class','btn-add btn-secondary');
         unavailabilities.setAttribute('onclick','showUnavailability'+Type+'('+selected.id+',"'+selected.value+'")');
         unavailabilities.append('Indisponibilités');
-        var formDelete=document.createElement('form');//create delete form
-        formDelete.setAttribute('action',"/"+type+"/resource/"+selected.id);
-        formDelete.setAttribute('style','display:inline');
-        formDelete.setAttribute('method','POST');
-        formDelete.setAttribute('id','formDelete'+selected.id);
-        formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cette ressource ?")');
-        var inputHidden=document.createElement('input');//create hidden input to send the id of the resource to delete
-        inputHidden.setAttribute('type','hidden');
-        inputHidden.setAttribute('name','pathwayid');
-        inputHidden.setAttribute('value',selected.id);
-        formDelete.appendChild(inputHidden);
         var deleteButton=document.createElement('button'); //create delete button
         deleteButton.setAttribute('class','btn-delete btn-secondary');
         deleteButton.append('Supprimer');
-        deleteButton.setAttribute('type','submit');
+        deleteButton.setAttribute('onclick','verifyHumanResourceScheduledAppointments(' + selected.id + ')');
         //add all buttons to the cell
         buttons.appendChild(infos);
         buttons.appendChild(unavailabilities);
         buttons.appendChild(edit);
-        formDelete.appendChild(deleteButton);
-        buttons.appendChild(formDelete);
+        buttons.appendChild(deleteButton);
         tr.appendChild(buttons);
         paginator=document.getElementById('paginator');
         paginator.style.display='none';//hide paginator
