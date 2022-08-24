@@ -9,10 +9,15 @@ var HUMAN_RESOURCE_ACTIVITIES= new Object()
 HUMAN_RESOURCE_ACTIVITIES.scheduledActivities = new Array()
 
 document.addEventListener('DOMContentLoaded', () => {
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-})
+    if(document.getElementById('type').value=="categories"){
+        if(document.getElementById('resourcetype').value=="human"){
+            change_tab_human("categories");
+    }
+    else{
+        change_tab_material("categories");
+    }
+}
+});
 
 /**
   * Allows to display the modal that is used to create a new human resource

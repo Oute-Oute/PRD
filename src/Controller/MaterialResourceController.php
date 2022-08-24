@@ -34,7 +34,7 @@ class MaterialResourceController extends AbstractController
       * @brief Allows to list every material resources in the database
      */
 
-    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resource"): Response
+    public function index(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator,String $type="resources"): Response
     {
         $listMaterialResources = $this->listMaterialResources($materialResourceRepository, $doctrine,$request,$paginator);
         $materialResourceCategoryRepository = new MaterialResourceCategoryRepository($doctrine);
@@ -83,6 +83,7 @@ class MaterialResourceController extends AbstractController
             'material_resources_categories' => $materialResourceCategories,
             'categoriesByMaterialResources' => $categoriesByMaterialResources,
             'unavailabilities' => $unavailabilities,
+            'resourceType' => "material",
             'type' => $type,
         ]); 
     }
@@ -722,6 +723,7 @@ class MaterialResourceController extends AbstractController
     }
 
     public function showCategory(MaterialResourceRepository $materialResourceRepository,ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator){
-        $this->index($materialResourceRepository,$doctrine,$request, $paginator,"category");
+        return $this->index($materialResourceRepository,$doctrine,$request, $paginator,"categories");
     }
+
 }

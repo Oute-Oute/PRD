@@ -31,6 +31,7 @@
 {% block body %}
 	<div class="index" id="main_content" >
 		<input id="type" style="display : none" value="{{type}}">
+		<input id="resourcetype" style="display : none" value="{{resourceType}}">
 		<div>
 			<li class="selected" id="resources" onclick="change_tab_human(this.id);">Ressources</li>
 			<li class="notselected" id="categories" onclick="change_tab_human(this.id);">Catégories</li>
@@ -45,7 +46,9 @@
 				<button class="btn-add" onclick="showNewHumanModalForm()">
 					Ajouter une nouvelle ressource humaine
 				</button>
-				<div><input type="text" id="autocompleteInputHumanName" onkeyup='displayAll("Human")' placeholder="Rechercher"></div>
+				<div><input type="text" id="autocompleteInputHumanName" onkeyup='displayAll("Human")' placeholder="Rechercher">
+				<img src="/img/warning.svg" style="height:40px; margin-top:-5px">
+				<b>3 caractères minimum pour activer la recherche intelligente</b></div>
 				<table class="table table-striped table-index-users" id='tableHumanResource'>
 					<thead>
 						<tr class='headerHumanResource'>
@@ -93,7 +96,7 @@
 				<button class="btn-add" onclick="showNewHumanCategModalForm()">
 					Ajouter une nouvelle catégorie de ressource humaine
 				</button>
-				<div><input type="text" id="autocompleteInputHumanNameCategory" onkeyup="displayAll(human)" placeholder="Rechercher"></div>
+				<div><input type="text" id="autocompleteInputHumanNameCategory" onkeyup="filterHumanResourceCategory('autocompleteInputHumanNameCategory')" placeholder="Rechercher"></div>
 				<table class="table table-striped table-index-users" id='tableHumanResourceCategory'>
 					<thead>
 						<tr class='headerHumanResourceCategory'>

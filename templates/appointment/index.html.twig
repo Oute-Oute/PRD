@@ -31,7 +31,9 @@
 		<!-- bouton pour l'ajout d'un nouveau rendez-vous -->
 		<button type="button" class="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
 
-		<div><input type="text" id="autocompleteInputPatientName" onkeyup="displayAll()" placeholder="Rechercher"></div>
+		<div><input type="text" id="autocompleteInputPatientName" onkeyup="displayAll()" placeholder="Rechercher">
+		<img src="/img/warning.svg" style="height:40px; margin-top:-5px">
+				<b>3 caractères minimum pour activer la recherche intelligente</b></div>
 		<!-- affichage de la liste de tous les rendez-vous -->
 		<table class="table table-striped" id='tableAppointment'>
 			<thead>

@@ -204,13 +204,17 @@ index_human_resources:
   path: /human-resources
   controller: App\Controller\HumanResourceController:index
 
-index_human_resources_category:
-  path: /human-resources
+human_resources_category:
+  path: /human-resources-category
   controller: App\Controller\HumanResourceController:showCategory
 
 index_material_resources:
   path: /material-resources
   controller: App\Controller\MaterialResourceController:index
+
+material_resources_category:
+  path: /material-resources-category
+  controller: App\Controller\MaterialResourceController:showCategory
 
 index_mon_profil:
   path: /mon_profil

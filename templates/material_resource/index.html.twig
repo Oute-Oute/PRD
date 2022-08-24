@@ -31,6 +31,7 @@
 {% block body %}
 	<div class="index" id="main_content">
 		<input id="type" style="display : none" value="{{type}}">
+		<input id="resourcetype" style="display : none" value="{{resourceType}}">
 		<div>
 			<li class="selected" id="resources" onclick="change_tab_material(this.id);">Ressources</li>
 			<li class="notselected" id="categories" onclick="change_tab_material(this.id);">Catégories</li>
@@ -46,7 +47,9 @@
 				<button class="btn-add" onclick="showNewMaterialModalForm()">
 					Ajouter une nouvelle ressource matérielle
 				</button>
-				<div><input type="text" id="autocompleteInputMaterialName" onkeyup='displayAll("Material")' placeholder="Rechercher"></div>
+				<div><input type="text" id="autocompleteInputMaterialName" onkeyup='displayAll("Material")' placeholder="Rechercher">
+				<img src="/img/warning.svg" style="height:40px; margin-top:-5px">
+				<b>3 caractères minimum pour activer la recherche intelligente</b></div></div>
 				<table class="table table-striped table-index-users" id='tableMaterialResource'>
 					<thead>
 						<tr class='headerMaterialResource'>
@@ -93,7 +96,7 @@
 				<button class="btn-add" onclick="showNewMaterialCategModalForm()">
 					Ajouter une nouvelle catégorie de ressource matérielle
 				</button>
-				<div><input type="text" id="autocompleteInputMaterialNameCategory" onkeyup="displayAll(material)" placeholder="Rechercher"></div>
+				<div><input type="text" id="autocompleteInputMaterialNameCategory" onkeyup="filterMaterialResourceCategory('autocompleteInputMaterialNameCategory')" placeholder="Rechercher"></div>
 				<table class="table table-striped table-index-users" id='tableMaterialResourceCategory'>
 					<thead>
 						<tr class='headerMaterialResourceCategory'>
