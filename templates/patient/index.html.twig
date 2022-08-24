@@ -71,7 +71,12 @@
 	source: "/autocompletePatient",
 	minLength: 3,
 	select: function( event, ui ) {
-		filterPatient(ui.item);
+		if(ui.item.id!="notfound") {
+			filterPatient(ui.item);
+		}
+		else{
+			ui.item.value="";
+		}
 	}
 	}
 	);

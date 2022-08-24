@@ -49,7 +49,7 @@
 				</button>
 				<div><input type="text" id="autocompleteInputMaterialName" onkeyup='displayAll("Material")' placeholder="Rechercher">
 				<img src="/img/warning.svg" style="height:40px; margin-top:-5px">
-				<b>3 caractères minimum pour activer la recherche intelligente</b></div></div>
+				<b>3 caractères minimum pour activer la recherche intelligente</b></div>
 				<table class="table table-striped table-index-users" id='tableMaterialResource'>
 					<thead>
 						<tr class='headerMaterialResource'>
@@ -144,7 +144,12 @@
 	source: "/autocompleteMR",
 	minLength: 3,
 	select: function( event, ui ) {
-		filterResource('material', ui.item);
+		if(ui.item.id!="notfound") {
+			filterResource("material", ui.item);
+		}
+		else{
+			ui.item.value="";
+		}
 	}
 	}
 	);

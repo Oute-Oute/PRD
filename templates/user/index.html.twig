@@ -89,7 +89,12 @@
 	source: "/autocompleteUser",
 	minLength: 3,
 	select: function( event, ui ) {
-		filterUser(ui.item);
+		if(ui.item.id!="notfound") {
+			filterUser(ui.item);
+		}
+		else{
+			ui.item.value="";
+		}
 	}
 	}
 	);

@@ -108,47 +108,49 @@ function hideEditModalForm() {
  * @param {*} selected - the selected resource
  */
 function filterUser(selected = null) {
-  var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');//get all the rows of the table
-  for (let i = 0; i < trs.length; i++) {
-    trs[i].style.display = 'none';//hide all the rows
+  if(selected.id!="notfound"){
+    var trs = document.querySelectorAll('#tableUser tr:not(.headerUser)');//get all the rows of the table
+    for (let i = 0; i < trs.length; i++) {
+      trs[i].style.display = 'none';//hide all the rows
+    }
+    table = document.getElementById('userTable');// get the table
+    var tr = document.createElement('tr');//create a new row
+    table.appendChild(tr);
+    var id = document.createElement('td');//create the id cell
+    id.append(selected.id);
+    tr.appendChild(id);
+    var username = document.createElement('td');//create the username cell
+    username.append(selected.username);
+    tr.appendChild(username);
+    var name = document.createElement('td');
+    name.append(selected.lastname + " " + selected.firstname);//create the name cell
+    tr.appendChild(name);
+    var role = document.createElement('td');//create the role cell
+    role.append(selected.role[1]);
+    tr.appendChild(role);
+    var buttons = document.createElement('td');//create the buttons cell
+    var edit = document.createElement('button');//create the edit button
+    edit.setAttribute('type', 'button');
+    edit.setAttribute('id', 'buttonEdit' + selected.username+selected.id);
+    edit.setAttribute('class', 'btn-edit btn-secondary');
+    edit.setAttribute('onclick', "editUser('" + selected.id + "', '" + selected.username + "', '" + selected.firstname + "', '" + selected.lastname + "' )");
+    edit.append('Editer');
+    var deleteButton = document.createElement('button');//create the delete button
+    deleteButton.setAttribute('class', 'btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('id', 'buttonErase' + selected.username+selected.id);
+    deleteButton.setAttribute('onclick', 'showPopup('+selected.id+')');
+    //add the buttons to the cell
+    buttons.appendChild(edit);
+    buttons.appendChild(deleteButton);
+    tr.appendChild(buttons);
+    actualUser = document.getElementById("OwnUsername").value;
+    actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
+    document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
+    document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
+    paginator = document.getElementById('paginator');
+    paginator.style.display = 'none'; //On cache le paginateur
   }
-  table = document.getElementById('userTable');// get the table
-  var tr = document.createElement('tr');//create a new row
-  table.appendChild(tr);
-  var id = document.createElement('td');//create the id cell
-  id.append(selected.id);
-  tr.appendChild(id);
-  var username = document.createElement('td');//create the username cell
-  username.append(selected.username);
-  tr.appendChild(username);
-  var name = document.createElement('td');
-  name.append(selected.lastname + " " + selected.firstname);//create the name cell
-  tr.appendChild(name);
-  var role = document.createElement('td');//create the role cell
-  role.append(selected.role[1]);
-  tr.appendChild(role);
-  var buttons = document.createElement('td');//create the buttons cell
-  var edit = document.createElement('button');//create the edit button
-  edit.setAttribute('type', 'button');
-  edit.setAttribute('id', 'buttonEdit' + selected.username+selected.id);
-  edit.setAttribute('class', 'btn-edit btn-secondary');
-  edit.setAttribute('onclick', "editUser('" + selected.id + "', '" + selected.username + "', '" + selected.firstname + "', '" + selected.lastname + "' )");
-  edit.append('Editer');
-  var deleteButton = document.createElement('button');//create the delete button
-  deleteButton.setAttribute('class', 'btn-delete btn-secondary');
-  deleteButton.append('Supprimer');
-  deleteButton.setAttribute('id', 'buttonErase' + selected.username+selected.id);
-  deleteButton.setAttribute('onclick', 'showPopup('+selected.id+')');
-  //add the buttons to the cell
-  buttons.appendChild(edit);
-  buttons.appendChild(deleteButton);
-  tr.appendChild(buttons);
-  actualUser = document.getElementById("OwnUsername").value;
-  actualUser = actualUser.replace(" ", ""); //La fonction innerHtml rajoute un espace, on le supprime
-  document.getElementById("buttonEdit" + actualUser+selected.id).disabled = true;
-  document.getElementById("buttonErase" + actualUser+selected.id).disabled = true;
-  paginator = document.getElementById('paginator');
-  paginator.style.display = 'none'; //On cache le paginateur
 }
 
 /**

@@ -92,7 +92,12 @@
 	source: "/autocompleteAppointment",
 	minLength: 3,
 	select: function( event, ui ) {
-		filterAppointment( ui.item);
+		if(ui.item.id!="notfound") {
+			filterAppointment( ui.item);
+		}
+		else{
+			ui.item.value="";
+		}
 	}
 	}
 	);
