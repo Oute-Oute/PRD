@@ -1,4 +1,24 @@
-<form method="post" action="{{ path('app_human_resource_category_delete', {'id': human_resource_category.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette ressource?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ human_resource_category.id) }}">
-    <button class="btn-delete btn-secondary">Supprimer</button>
-</form>
+<div class="modal" id="delete-human-resource-category-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="flex-direction: column;">
+                <h3 class="modal-title">Attention</h3>
+                <p id="modal-subtitle-category">En supprimant cette catégorie, les RDV des ressources suivantes seront affectés :</p>
+
+            </div>
+
+            <div class="modal-body" id="resources-body" style="max-height: 300px;overflow-y: scroll;">
+               
+            
+            </div>
+
+            <div class="modal-footer">
+                <form method="post" id="form-human-resource-category-delete" action="/human-resource-category/0/delete" style="display: flex;flex-direction: row;">
+                    <button type="submit" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
+                    <button type="button" onclick="$('#delete-human-resource-category-modal').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>	
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

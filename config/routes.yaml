@@ -195,6 +195,16 @@ MaterialResourceDelete:
   controller: App\Controller\MaterialResourceController::delete
   methods: [POST]
 
+HumanResourceCategoryDelete:
+  path: /human-resource-category/{id}/delete
+  controller: App\Controller\HumanResourceCategoryController::delete
+  methods: [POST]
+
+MaterialResourceCategoryDelete:
+  path: /material-resource-category/{id}/delete
+  controller: App\Controller\MaterialResourceCategoryController::delete
+  methods: [POST]
+
 HumanResPost:
   path: /human-resources
   controller: App\Controller\HumanResourceController:new

@@ -198,51 +198,36 @@ function showEditModalFormMaterial(id, name, index){
 /**
  * Allows to launch an ajax request to delete a choosed unavailabilitiy of a human resource
  */
-function deleteHumanUnavailability(button) {
-
-    let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
-
-    if(deleted) {
-
+function deleteHumanUnavailability(value, id) {
     $.ajax({
         type : 'POST',
         url : '/deleteHumanUnavailability',
-        data : {idUnavailability : button.value, idHumanAvailability : button.getAttribute('id')},
+        data : {idUnavailability : value, idHumanAvailability : id},
         success : function(data) {
             location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr, ajaxOptions)
         }
-
     })
-}
 }
 
 
 /**
  * Allows to launch an ajax request to delete a choosed unavailabilitiy of a material resource
  */
-function deleteMaterialUnavailability(button) {
-
-    let deleted = confirm("Êtes-vous sûr de vouloir supprimer cette indisponibilité ?");
-
-   if(deleted) {
-
+function deleteMaterialUnavailability(value, id) {
     $.ajax({
         type : 'POST',
         url : '/deleteMaterialUnavailability',
-        data : {idUnavailability : button.value, idMaterialAvailability : button.getAttribute('id')},
+        data : {idUnavailability : value, idMaterialAvailability : id},
         success : function(data) {
             location.reload()
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr, ajaxOptions)
         }
-
-        
     })
-}
 }
 
 /**
@@ -277,7 +262,7 @@ function showUnavailabilityHuman(id, name){
          btnDelete.setAttribute('value', UNAVAILABILITIES_HUMAN[i]['id_unavailability'])
          btnDelete.setAttribute('id', UNAVAILABILITIES_HUMAN[i]['id_unavailability_human'])
          btnDelete.setAttribute('type', 'button')
-         btnDelete.setAttribute('onclick', 'deleteHumanUnavailability(this)')
+         btnDelete.setAttribute('onclick', 'showDeleteHumanUnavailabilityModal(this)')
  
          tdBegin.innerHTML = (dayBegin +"/"+ monthBegin +"/"+ yearBegin +" "+ hoursBegin)
          tdEnd.innerHTML = (dayEnd +"/"+ monthEnd +"/"+ yearEnd +" "+ hoursEnd)
@@ -332,7 +317,7 @@ function showUnavailabilityMaterial(id, name) {
         btnDelete.setAttribute('class', "btn-delete", "btn-secondary")
         btnDelete.setAttribute('value', UNAVAILABILITIES_MATERIAL[i]['id_unavailability'])
         btnDelete.setAttribute('id', UNAVAILABILITIES_MATERIAL[i]['id_unavailability_material'])
-        btnDelete.setAttribute('onclick', 'deleteMaterialUnavailability(this)')
+        btnDelete.setAttribute('onclick', 'showDeleteMaterialUnavailabilityModal(this)')
 
 
 
@@ -488,4 +473,30 @@ function edit__verifyUnavailabilityMaterial() {
     }  
     nbCategory.value = nbCateg;
 
+}
+
+function showDeleteHumanUnavailabilityModal(button){
+    $("#edit--unavailability-human-resource-modal").hide()
+    value = button.value
+    id = button.getAttribute('id')
+    document.getElementById("button-delete-human-unavailability").setAttribute('onclick', 'deleteHumanUnavailability('+ value + ', ' + id + ')')
+    $("#delete-unavailability-modal").show()
+}
+
+function hideDeleteHumanUnavailabilityModal(){
+    $("#edit--unavailability-human-resource-modal").show()
+    $("#delete-unavailability-modal").hide()
+}
+
+function showDeleteMaterialUnavailabilityModal(button){
+    $("#edit--unavailability-material-resource-modal").hide()
+    value = button.value
+    id = button.getAttribute('id')
+    document.getElementById("button-delete-material-unavailability").setAttribute('onclick', 'deleteMaterialUnavailability('+ value + ', ' + id + ')')
+    $("#delete-unavailability-modal").show()
+}
+
+function hideDeleteMaterialUnavailabilityModal(){
+    $("#edit--unavailability-material-resource-modal").show()
+    $("#delete-unavailability-modal").hide()
 }
