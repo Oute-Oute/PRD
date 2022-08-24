@@ -6,12 +6,6 @@ var mrArray = [];
 var mcrArray = [];
 
 
-document.addEventListener('DOMContentLoaded', () => {
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-})
-
 /**
   * Allows to display the modal that is used to create a new human resource
  */
