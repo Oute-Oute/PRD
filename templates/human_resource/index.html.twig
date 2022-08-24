@@ -75,7 +75,7 @@
 									<button class='btn-infos btn-secondary' onclick='showInfosModalHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Informations</a>
 									<button class='btn-add btn-secondary' onclick='showUnavailabilityHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Indisponibilités</a>
 									<button class='btn-edit btn-secondary' onclick='showEditModalFormHuman("{{human_resource.id}}", "{{human_resource.humanresourcename}}")'>Éditer</a>
-									{{ include('human_resource/delete_resource.html.twig') }}
+									<button class="btn-delete btn-secondary" onclick = "verifyScheduledActivities({{human_resource.id}})">Supprimer</button> 
 								</td>
 							</tr>
 							{% set indexResource = indexResource + 1 %}
@@ -129,6 +129,7 @@
 
 	{{ include ('human_resource/show_resource.html.twig') }}
 	{{ include ('human_resource/new_resource.html.twig') }}
+	{{ include ('human_resource/delete_resource.html.twig') }}
 	{{ include ('human_resource/edit_resource.html.twig') }}
 	{{ include ('human_resource/show_category.html.twig') }}
 	{{ include ('human_resource/new_category.html.twig') }}

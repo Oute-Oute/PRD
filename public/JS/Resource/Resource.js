@@ -5,6 +5,8 @@ var hcrArray = [];
 var mrArray = [];
 var mcrArray = [];
 
+var HUMAN_RESOURCE_ACTIVITIES= new Object()        
+HUMAN_RESOURCE_ACTIVITIES.scheduledActivities = new Array()
 
 document.addEventListener('DOMContentLoaded', () => {
 })
@@ -386,3 +388,58 @@ function filterResource(type,selected=null){
         }
     }
   }
+
+/**
+ * Returns scheduled activities according to a human resource
+ */
+ function getScheduledAppointments(index) {
+    // request to get the appointments list of the activity
+    return $.ajax({
+        type: 'GET',
+        url: '/human-resource/'+index+'/appointments',
+        dataType: "json",
+    });
+}
+
+/**
+ * Verify if there is some activities scheduled with this human resource 
+ */
+async function verifyScheduledActivities(idHumanResource) {
+    document.getElementById("form-human-resource-delete").action = "/human-resource/" + idHumanResource + "/delete"
+    try {
+        HUMAN_RESOURCE_ACTIVITIES.scheduledActivities = await getScheduledAppointments(idHumanResource)
+        if (HUMAN_RESOURCE_ACTIVITIES.scheduledActivities.length > 0) {
+            console.log(HUMAN_RESOURCE_ACTIVITIES.scheduledActivities)
+            showScheduledActivitiesModal()
+        }
+        else{
+            $('#human-resource-modal-scheduled-activities').modal('show');
+            let body = document.getElementById('scheduled-appointments-body')
+            body.style.overflowY = "hidden"
+            body.innerHTML = "Voulez-vous vraiment supprimer cette ressource ?"
+            document.getElementById("modal-subtitle").innerText = ""
+        }
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
+/**
+ * Display the modal pop-up to inform the user that he will removed some scheduled appointments 
+ */
+function showScheduledActivitiesModal() {
+    $('#human-resource-modal-scheduled-activities').modal('show');
+    let body = document.getElementById('scheduled-activities-body')
+    body.innerHTML = ""
+    for (let indexScheduledActivity = 0 ;indexScheduledActivity < HUMAN_RESOURCE_ACTIVITIES.scheduledActivities.length; indexScheduledActivity++) {
+        let p = document.createElement('p')
+
+        lastname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].lastname
+        firstname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].firstname
+        pathwayname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].pathwayname
+        date = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].date
+        p.innerHTML = date + ' - ' + lastname +' '+ firstname + ' - ' + pathwayname
+        body.appendChild(p)
+    }
+}

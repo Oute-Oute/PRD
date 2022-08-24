@@ -185,6 +185,11 @@ MaterialResourceEdit:
   controller: App\Controller\MaterialResourceController::edit
   methods: [POST]
 
+HumanResourceDelete:
+  path: /human-resource/{id}/delete
+  controller: App\Controller\HumanResourceController::delete
+  methods: [POST]
+
 HumanResPost:
   path: /human-resources
   controller: App\Controller\HumanResourceController:new
@@ -304,6 +309,11 @@ AutocompleteMR:
 GetAppointmentsFromActivityId:
   path: /activity/{id}/appointments
   controller: App\Controller\AppointmentController::GetAppointmentByActivityId
+  methods: [GET]
+
+GetAppointmentsFromHumanResourceId:
+  path: /human-resource/{id}/appointments
+  controller: App\Controller\HumanResourceController::GetAppointmentFromHumanResourceId
   methods: [GET]
 
 Ethics:
