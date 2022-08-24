@@ -30,7 +30,9 @@
 		<button type="button" class="btn-add" onclick="addPatient()">Ajouter un nouveau patient</button>
 
 		<!-- affichage de la liste de tous les patients -->
-		<div><input type="text" id="autocompleteInputLastname" onkeyup='displayAll()' placeholder="Rechercher"></input></div>	
+		<div><input type="text" id="autocompleteInputLastname" onkeyup='displayAll()' placeholder="Rechercher"></input>
+		<img src="/img/warning.svg" style="height:40px; margin-top:-5px">
+				<b>3 caractères minimum pour activer la recherche intelligente</b></div>	
 
 		<table class="table table-striped" id="tablePatient">
 			<thead>
