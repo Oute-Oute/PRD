@@ -97,9 +97,8 @@ class HumanResourceCategoryController extends AbstractController
         }
         
         $em->flush();
-        if ($this->isCsrfTokenValid('delete'.$humanResourceCategory->getId(), $request->request->get('_token'))) {
-            $humanResourceCategoryRepository->remove($humanResourceCategory, true);
-        }
+        
+        $humanResourceCategoryRepository->remove($humanResourceCategory, true);
 
         return $this->redirectToRoute('human_resources_category', [], Response::HTTP_SEE_OTHER);
     }

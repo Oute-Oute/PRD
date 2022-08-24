@@ -489,3 +489,37 @@ function showMaterialResourceScheduledAppointmentsModal() {
         body.appendChild(p)
     }
 }
+
+function showHumanResourceCategoryModal(id) {
+    $('#delete-human-resource-category-modal').modal('show');
+    document.getElementById("form-human-resource-category-delete").setAttribute("action", "/human-resource-category/" + id + "/delete")
+    let body = document.getElementById('resources-body')
+    body.innerHTML = ""
+
+    $.ajax({
+        type: "POST",
+        url: "/ajaxHumanResource",
+        data: { idHumanResourceCategory: id },
+        dataType: "json",
+        success: function (data) {
+            if (data.length > 0) {
+                document.getElementById("modal-subtitle-category").innerText = "En supprimant cette catégorie, les RDV des ressources suivantes seront affectés :"
+                for (let indexResource = 0 ;indexResource < data.length; indexResource++) {
+                    let p = document.createElement('p')
+            
+                    p.innerHTML = data[indexResource]['humanresource']
+                    body.appendChild(p)
+                }
+            }
+            else{
+                body.style.overflowY = "hidden"
+                body.innerHTML = "Voulez-vous vraiment supprimer cette catégorie ?"
+                document.getElementById("modal-subtitle-category").innerText = ""
+            }
+            
+        },
+        error: function () {
+          console.log("error");
+        },
+      });
+}
