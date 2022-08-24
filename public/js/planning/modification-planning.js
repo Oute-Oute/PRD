@@ -332,6 +332,7 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
   var calendarEl = document.getElementById("calendar");
   var first;
   var listEvent;
+  var idNowIndicator=[];
 
   let listResource = [];
   if (listEvents == undefined) {
@@ -503,7 +504,36 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         currentEvent.setEnd(currentEvent.end);
       })
       isUpdated = false;
+      console.log(calendar.getEvents())
+      for(let i = 0; i < calendar.getEvents().length; i++){
+        if(calendar.getEvents()[i]._def.publicId == "now"){
+          console.log("slt")
+          calendar.getEvents()[i].remove()
+        }
+      }
     },
+    eventDragStart: function (event) {
+      for(var i = 0; i < calendar.getResources().length; i++){
+        idNowIndicator.push("now"+i)
+        calendar.addEvent(
+          {
+            start: event.event._instance.range.start,
+            end: event.event._instance.range.end,
+            resourceId: calendar.getResources()[i].id,
+            display: 'background',
+            color: '#00f',
+            id: idNowIndicator[i],
+          }
+        )
+      }
+    },
+    eventDragStop: function (event) {
+      console.log(calendar.getEvents())
+      while(idNowIndicator.length != 0){
+        calendar.getEventById(idNowIndicator[0]).remove()
+        idNowIndicator.shift()
+      }
+    }
   });
   switch (typeResource) {
     case "Ressources Humaines": //if we want to display by the resources

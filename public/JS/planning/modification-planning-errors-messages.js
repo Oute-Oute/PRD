@@ -648,29 +648,31 @@
     var messages = [];
   
     calendar.getEvents().forEach((compareScheduledActivity) => { //browse all events
-      if (compareScheduledActivity._def.extendedProps.type != "unavailability") { //if event is not an unavailability
-        if (compareScheduledActivity._def.publicId != scheduledActivity._def.publicId) {
-          compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the scheduled activity compared
-            if (compareResourceId != "h-default" && compareResourceId != "m-default") {
-              if (compareResourceId == resourceId) {
-                //if the resource is already scheduled at the same time as the scheduled activity
-                if ((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)) {
-                  compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
-                    if (humanResource.id == compareResourceId) { //if the resource is a human resource
-                      //set an error message
-                      messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
-                    }
-                  })
-                  compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
-                    if (materialResource.id == compareResourceId) { //if the resource is a material resource
-                      //set an error message
-                      messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
-                    }
-                  })
+      if(compareScheduledActivity._def.publicId!="now") { //if events is a scheduled activity
+        if (compareScheduledActivity._def.extendedProps.type != "unavailability") { //if event is not an unavailability
+          if (compareScheduledActivity._def.publicId != scheduledActivity._def.publicId) {
+            compareScheduledActivity._def.resourceIds.forEach((compareResourceId) => { //browse all resource related to the scheduled activity compared
+              if (compareResourceId != "h-default" && compareResourceId != "m-default") {
+                if (compareResourceId == resourceId) {
+                  //if the resource is already scheduled at the same time as the scheduled activity
+                  if ((scheduledActivity.start > compareScheduledActivity.start && scheduledActivity.start < compareScheduledActivity.end) || (scheduledActivity.end > compareScheduledActivity.start && scheduledActivity.end < compareScheduledActivity.end) || (scheduledActivity.start <= compareScheduledActivity.start && scheduledActivity.end >= compareScheduledActivity.end)) {
+                    compareScheduledActivity._def.extendedProps.humanResources.forEach((humanResource) => { //browse the list human resources
+                      if (humanResource.id == compareResourceId) { //if the resource is a human resource
+                        //set an error message
+                        messages.push(humanResource.title + " est déjà programé sur " + compareScheduledActivity.title + ". ");
+                      }
+                    })
+                    compareScheduledActivity._def.extendedProps.materialResources.forEach((materialResource) => { //browse the list material resources
+                      if (materialResource.id == compareResourceId) { //if the resource is a material resource
+                        //set an error message
+                        messages.push(materialResource.title + " est déjà programé sur " + compareScheduledActivity.title + ".");
+                      }
+                    })
+                  }
                 }
               }
-            }
-          })
+            })
+          }
         }
       }
     })
