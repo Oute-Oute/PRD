@@ -143,17 +143,24 @@
 	$( "#autocompleteInputHumanName" ).autocomplete({
 	source: "/autocompleteHR",
 	minLength: 3,
+	
 	select: function( event, ui ) {
-		filterResource("human", ui.item);
+		if(ui.item.id!="notfound") {
+			filterResource("human", ui.item);
+		}
+		else{
+			ui.item.value="";
+		}
 	}
+	
 	}
 	);
     	$( "#autocompleteInputHumanNameCategory" ).autocomplete({
 	source: hcrArray,
 	minLength: 3,
-	select: function( event, ui ) {
-		filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
-	}
+		select: function( event, ui ) {
+			filterHumanResourceCategory('autocompleteInputHumanNameCategory', ui.item.value);
+		}
 	}
 	);
 	</script>

@@ -256,66 +256,68 @@ function change_tab_human(id)
  * @param {*} selected - the selected resource
  */
 function filterResource(type,selected=null){
-    var categoriesStr=[];
-    //create a string of the categories of a resource
-    for (var i=0;i<selected["categories"].length-1;i++){
-        categoriesStr += selected["categories"][i]["category"]+", ";
-    }
-    if(selected["categories"].length>0){
-    categoriesStr += selected["categories"][selected["categories"].length-1]["category"];
-    }
+    if(selected.id!="notfound"){
+        var categoriesStr=[];
+        //create a string of the categories of a resource
+        for (var i=0;i<selected["categories"].length-1;i++){
+            categoriesStr += selected["categories"][i]["category"]+", ";
+        }
+        if(selected["categories"].length>0){
+        categoriesStr += selected["categories"][selected["categories"].length-1]["category"];
+        }
 
-    var Type=type.charAt(0).toUpperCase()+type.slice(1); //equal to type.capitalize()
-    var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');//get all the rows of the table
-    for(let i=0; i<trs.length; i++){
-            trs[i].style.display='none';//hide all the rows
+        var Type=type.charAt(0).toUpperCase()+type.slice(1); //equal to type.capitalize()
+        var trs = document.querySelectorAll('#table'+Type+'Resource tr:not(.header'+Type+'Resource)');//get all the rows of the table
+        for(let i=0; i<trs.length; i++){
+                trs[i].style.display='none';//hide all the rows
+        }
+        table=document.getElementById(type+'Table');//get the table
+        var tr=document.createElement('tr');//create a row
+        table.appendChild(tr);
+        var resourceName=document.createElement('td');//create the name cell
+        resourceName.append(selected.value);
+        tr.appendChild(resourceName);
+        var categoriestd=document.createElement('td');//create the categories cell
+        categoriestd.append(categoriesStr);
+        tr.appendChild(categoriestd);
+        var buttons=document.createElement('td');//create the buttons cell
+        var infos=document.createElement('button');//create information button
+        infos.setAttribute('class','btn-infos btn-secondary');
+        infos.setAttribute('onclick','showInfosModal'+Type+'('+selected.id+',"'+selected.value+'")');
+        infos.append('Informations');
+        var edit=document.createElement('button');//create edit button
+        edit.setAttribute('class','btn-edit btn-secondary');
+        edit.setAttribute('onclick','showEditModalForm'+Type+'('+selected.id+',"'+selected.value+'")');
+        edit.append('Editer');
+        var unavailabilities=document.createElement('button');//create unavailability button
+        unavailabilities.setAttribute('class','btn-add btn-secondary');
+        unavailabilities.setAttribute('onclick','showUnavailability'+Type+'('+selected.id+',"'+selected.value+'")');
+        unavailabilities.append('Indisponibilités');
+        var formDelete=document.createElement('form');//create delete form
+        formDelete.setAttribute('action',"/"+type+"/resource/"+selected.id);
+        formDelete.setAttribute('style','display:inline');
+        formDelete.setAttribute('method','POST');
+        formDelete.setAttribute('id','formDelete'+selected.id);
+        formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cette ressource ?")');
+        var inputHidden=document.createElement('input');//create hidden input to send the id of the resource to delete
+        inputHidden.setAttribute('type','hidden');
+        inputHidden.setAttribute('name','pathwayid');
+        inputHidden.setAttribute('value',selected.id);
+        formDelete.appendChild(inputHidden);
+        var deleteButton=document.createElement('button'); //create delete button
+        deleteButton.setAttribute('class','btn-delete btn-secondary');
+        deleteButton.append('Supprimer');
+        deleteButton.setAttribute('type','submit');
+        //add all buttons to the cell
+        buttons.appendChild(infos);
+        buttons.appendChild(unavailabilities);
+        buttons.appendChild(edit);
+        formDelete.appendChild(deleteButton);
+        buttons.appendChild(formDelete);
+        tr.appendChild(buttons);
+        paginator=document.getElementById('paginator');
+        paginator.style.display='none';//hide paginator
     }
-    table=document.getElementById(type+'Table');//get the table
-    var tr=document.createElement('tr');//create a row
-    table.appendChild(tr);
-    var resourceName=document.createElement('td');//create the name cell
-    resourceName.append(selected.value);
-    tr.appendChild(resourceName);
-    var categoriestd=document.createElement('td');//create the categories cell
-    categoriestd.append(categoriesStr);
-    tr.appendChild(categoriestd);
-    var buttons=document.createElement('td');//create the buttons cell
-    var infos=document.createElement('button');//create information button
-    infos.setAttribute('class','btn-infos btn-secondary');
-    infos.setAttribute('onclick','showInfosModal'+Type+'('+selected.id+',"'+selected.value+'")');
-    infos.append('Informations');
-    var edit=document.createElement('button');//create edit button
-    edit.setAttribute('class','btn-edit btn-secondary');
-    edit.setAttribute('onclick','showEditModalForm'+Type+'('+selected.id+',"'+selected.value+'")');
-    edit.append('Editer');
-    var unavailabilities=document.createElement('button');//create unavailability button
-    unavailabilities.setAttribute('class','btn-add btn-secondary');
-    unavailabilities.setAttribute('onclick','showUnavailability'+Type+'('+selected.id+',"'+selected.value+'")');
-    unavailabilities.append('Indisponibilités');
-    var formDelete=document.createElement('form');//create delete form
-    formDelete.setAttribute('action',"/"+type+"/resource/"+selected.id);
-    formDelete.setAttribute('style','display:inline');
-    formDelete.setAttribute('method','POST');
-    formDelete.setAttribute('id','formDelete'+selected.id);
-    formDelete.setAttribute('onsubmit','return confirm("Voulez-vous vraiment supprimer cette ressource ?")');
-    var inputHidden=document.createElement('input');//create hidden input to send the id of the resource to delete
-    inputHidden.setAttribute('type','hidden');
-    inputHidden.setAttribute('name','pathwayid');
-    inputHidden.setAttribute('value',selected.id);
-    formDelete.appendChild(inputHidden);
-    var deleteButton=document.createElement('button'); //create delete button
-    deleteButton.setAttribute('class','btn-delete btn-secondary');
-    deleteButton.append('Supprimer');
-    deleteButton.setAttribute('type','submit');
-    //add all buttons to the cell
-    buttons.appendChild(infos);
-    buttons.appendChild(unavailabilities);
-    buttons.appendChild(edit);
-    formDelete.appendChild(deleteButton);
-    buttons.appendChild(formDelete);
-    tr.appendChild(buttons);
-    paginator=document.getElementById('paginator');
-    paginator.style.display='none';//hide paginator
   }
 
     /**

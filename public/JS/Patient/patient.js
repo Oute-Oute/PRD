@@ -74,38 +74,40 @@ function tableAppointment(tableBody, data,){
  * Allows to filter patients to not display all of them
  */
 function filterPatient(selected=null){
-    var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
-    for(let i=0; i<trs.length; i++){
-            trs[i].style.display='none';
+    if(selected.id!="notfound"){
+        var trs = document.querySelectorAll('#tablePatient tr:not(.headerPatient)');
+        for(let i=0; i<trs.length; i++){
+                trs[i].style.display='none';
+        }
+        table=document.getElementById('patientTable');
+        var tr=document.createElement('tr');
+        table.appendChild(tr);
+        var lastname=document.createElement('td');
+        lastname.append(selected.lastname);
+        tr.appendChild(lastname);
+        var firstname=document.createElement('td');
+        firstname.append(selected.firstname);
+        tr.appendChild(firstname);
+        var buttons=document.createElement('td');
+        var infos=document.createElement('button');
+        infos.setAttribute('class','btn-infos btn-secondary');
+        infos.setAttribute('onclick','showInfosPatient('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'")');
+        infos.append('Informations');
+        var edit=document.createElement('button');
+        edit.setAttribute('class','btn-edit btn-secondary');
+        edit.setAttribute('onclick','editPatient('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'")');
+        edit.append('Editer');
+        var deleteButton=document.createElement('button');
+        deleteButton.setAttribute('class','btn-delete btn-secondary');
+        deleteButton.append('Supprimer');
+        deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
+        buttons.appendChild(infos);
+        buttons.appendChild(edit);
+        buttons.appendChild(deleteButton);
+        tr.appendChild(buttons);
+        paginator=document.getElementById('paginator');
+        paginator.style.display='none';
     }
-    table=document.getElementById('patientTable');
-    var tr=document.createElement('tr');
-    table.appendChild(tr);
-    var lastname=document.createElement('td');
-    lastname.append(selected.lastname);
-    tr.appendChild(lastname);
-    var firstname=document.createElement('td');
-    firstname.append(selected.firstname);
-    tr.appendChild(firstname);
-    var buttons=document.createElement('td');
-    var infos=document.createElement('button');
-    infos.setAttribute('class','btn-infos btn-secondary');
-    infos.setAttribute('onclick','showInfosPatient('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'")');
-    infos.append('Informations');
-    var edit=document.createElement('button');
-    edit.setAttribute('class','btn-edit btn-secondary');
-    edit.setAttribute('onclick','editPatient('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'")');
-    edit.append('Editer');
-    var deleteButton=document.createElement('button');
-    deleteButton.setAttribute('class','btn-delete btn-secondary');
-    deleteButton.append('Supprimer');
-    deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
-    buttons.appendChild(infos);
-    buttons.appendChild(edit);
-    buttons.appendChild(deleteButton);
-    tr.appendChild(buttons);
-    paginator=document.getElementById('paginator');
-    paginator.style.display='none';
   }
 
 /**

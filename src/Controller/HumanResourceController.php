@@ -1138,7 +1138,12 @@ class HumanResourceController extends AbstractController
                 ];
             }
         }
-        
+        if(count($results)==0){
+            $results[] = [
+                'id' => "notfound",
+                'value' => 'Aucun résultat',
+            ];
+        }
         return new JsonResponse($results);
     }
 

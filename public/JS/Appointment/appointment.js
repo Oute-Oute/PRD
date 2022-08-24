@@ -391,42 +391,44 @@ function showAppointment(id) {
  * Allows to filter patients to not display all at the same time
  */
 function filterAppointment(selected) {
-  var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
-    for(let i=0; i<trs.length; i++){
-            trs[i].style.display='none';
-    }
-    table=document.getElementById('appointmentTable');
-    var tr=document.createElement('tr');
-    table.appendChild(tr);
-    var name=document.createElement('td');
-    name.append(selected.lastname+" "+selected.firstname);
-    tr.appendChild(name);
-    var pathway=document.createElement('td');
-    pathway.append(selected.pathway);
-    tr.appendChild(pathway);
-    var dayAppointment=document.createElement('td');
-    dayAppointment.append(selected.dayappointment);
-    tr.appendChild(dayAppointment);
-    var buttons=document.createElement('td');
-    var infos=document.createElement('button');
-    infos.setAttribute('class','btn-infos btn-secondary');
-    infos.setAttribute('onclick','showAppointment('+selected.id+')');
-    infos.append('Informations');
-    var edit=document.createElement('button');
-    edit.setAttribute('class','btn-edit btn-secondary');
-    edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment.replaceAll("/","-")+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
-    edit.append('Editer');
-    var deleteButton=document.createElement('button');
-    deleteButton.setAttribute('class','btn-delete btn-secondary');
-    deleteButton.append('Supprimer');
-    deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
-    buttons.appendChild(infos);
-    buttons.appendChild(edit);
-    buttons.appendChild(deleteButton);
-    tr.appendChild(buttons);
+  if(selected.id!="notfound"){
+    var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
+      for(let i=0; i<trs.length; i++){
+              trs[i].style.display='none';
+      }
+      table=document.getElementById('appointmentTable');
+      var tr=document.createElement('tr');
+      table.appendChild(tr);
+      var name=document.createElement('td');
+      name.append(selected.lastname+" "+selected.firstname);
+      tr.appendChild(name);
+      var pathway=document.createElement('td');
+      pathway.append(selected.pathway);
+      tr.appendChild(pathway);
+      var dayAppointment=document.createElement('td');
+      dayAppointment.append(selected.dayappointment);
+      tr.appendChild(dayAppointment);
+      var buttons=document.createElement('td');
+      var infos=document.createElement('button');
+      infos.setAttribute('class','btn-infos btn-secondary');
+      infos.setAttribute('onclick','showAppointment('+selected.id+')');
+      infos.append('Informations');
+      var edit=document.createElement('button');
+      edit.setAttribute('class','btn-edit btn-secondary');
+      edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment.replaceAll("/","-")+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
+      edit.append('Editer');
+      var deleteButton=document.createElement('button');
+      deleteButton.setAttribute('class','btn-delete btn-secondary');
+      deleteButton.append('Supprimer');
+      deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
+      buttons.appendChild(infos);
+      buttons.appendChild(edit);
+      buttons.appendChild(deleteButton);
+      tr.appendChild(buttons);
 
-    paginator=document.getElementById('paginator');
-    paginator.style.display='none';
+      paginator=document.getElementById('paginator');
+      paginator.style.display='none';
+    }
 }
 
 /**
@@ -435,7 +437,6 @@ function filterAppointment(selected) {
  function displayAll() {
   var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
   var input = document.getElementById('autocompleteInputPatientName');
-  console.log("input : "+input.value);
   if(input.value == ''){
   for(let i=0; i<trs.length; i++){
       if(trs[i].style.display == 'none'){
