@@ -190,6 +190,11 @@ HumanResourceDelete:
   controller: App\Controller\HumanResourceController::delete
   methods: [POST]
 
+MaterialResourceDelete:
+  path: /material-resource/{id}/delete
+  controller: App\Controller\MaterialResourceController::delete
+  methods: [POST]
+
 HumanResPost:
   path: /human-resources
   controller: App\Controller\HumanResourceController:new
@@ -318,6 +323,11 @@ GetAppointmentsFromActivityId:
 GetAppointmentsFromHumanResourceId:
   path: /human-resource/{id}/appointments
   controller: App\Controller\HumanResourceController::GetAppointmentFromHumanResourceId
+  methods: [GET]
+
+GetAppointmentsFromMaterialResourceId:
+  path: /material-resource/{id}/appointments
+  controller: App\Controller\MaterialResourceController::GetAppointmentFromMaterialResourceId
   methods: [GET]
 
 Ethics:

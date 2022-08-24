@@ -726,4 +726,20 @@ class MaterialResourceController extends AbstractController
         return $this->index($materialResourceRepository,$doctrine,$request, $paginator,"categories");
     }
 
+    public function GetAppointmentFromMaterialResourceId(ManagerRegistry $doctrine, int $id) {
+        $HRSRepository= $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
+        $appointments = $HRSRepository->findAppointmentsByMaterialResource($id, date('Y-m-d'));
+
+        $appointmentArray = [];
+        foreach ($appointments as $appointment) {
+            $appointmentArray[] = [
+                'lastname' => $appointment['lastname'],
+                'firstname' => $appointment['firstname'],
+                'pathwayname' => $appointment['pathwayname'],
+                'date' => $appointment['dayappointment']->format('d/m/Y'),
+            ];
+        }
+
+        return new JsonResponse($appointmentArray);
+    }
 }

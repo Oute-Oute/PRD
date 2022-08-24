@@ -79,7 +79,7 @@
 									<button class='btn-infos btn-secondary' onclick='showInfosModalMaterial("{{ material_resource.id }}", "{{material_resource.materialresourcename}}")'>Informations</a>
 									<button class='btn-add btn-secondary' onclick='showUnavailabilityMaterial("{{material_resource.id}}", "{{material_resource.materialresourcename}}")'>Indisponibilités</a>
 									<button class='btn-edit btn-secondary' onclick='showEditModalFormMaterial("{{material_resource.id}}", "{{material_resource.materialresourcename}}")'>Éditer</a>
-									{{ include('material_resource/delete_resource.html.twig') }}
+									<button class="btn-delete btn-secondary" onclick = "verifyMaterialResourceScheduledAppointments({{material_resource.id}})">Supprimer</button>
 								</td>
 							</tr>
 							{% set indexResource = indexResource + 1 %}
@@ -131,6 +131,7 @@
 
 	{{ include ('material_resource/show_resource.html.twig') }}
 	{{ include ('material_resource/new_resource.html.twig') }}
+	{{ include ('material_resource/delete_resource.html.twig') }}
 	{{ include ('material_resource/edit_resource.html.twig') }}
 	{{ include ('material_resource/show_category.html.twig') }}
 	{{ include ('material_resource/new_category.html.twig') }}

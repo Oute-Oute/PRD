@@ -5,8 +5,11 @@ var hcrArray = [];
 var mrArray = [];
 var mcrArray = [];
 
-var HUMAN_RESOURCE_ACTIVITIES= new Object()        
-HUMAN_RESOURCE_ACTIVITIES.scheduledActivities = new Array()
+var HUMAN_RESOURCE_APPOINTMENTS= new Object()        
+HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments = new Array()
+
+var MATERIAL_RESOURCE_APPOINTMENTS= new Object()        
+MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments = new Array()
 
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('type').value=="categories"){
@@ -394,11 +397,7 @@ function filterResource(type,selected=null){
     }
   }
 
-/**
- * Returns scheduled activities according to a human resource
- */
- function getScheduledAppointments(index) {
-    // request to get the appointments list of the activity
+ function getHumanResourceScheduledAppointments(index) {
     return $.ajax({
         type: 'GET',
         url: '/human-resource/'+index+'/appointments',
@@ -406,19 +405,16 @@ function filterResource(type,selected=null){
     });
 }
 
-/**
- * Verify if there is some activities scheduled with this human resource 
- */
-async function verifyScheduledActivities(idHumanResource) {
+async function verifyHumanResourceScheduledAppointments(idHumanResource) {
     document.getElementById("form-human-resource-delete").action = "/human-resource/" + idHumanResource + "/delete"
     try {
-        HUMAN_RESOURCE_ACTIVITIES.scheduledActivities = await getScheduledAppointments(idHumanResource)
-        if (HUMAN_RESOURCE_ACTIVITIES.scheduledActivities.length > 0) {
-            console.log(HUMAN_RESOURCE_ACTIVITIES.scheduledActivities)
-            showScheduledActivitiesModal()
+        HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments = await getHumanResourceScheduledAppointments(idHumanResource)
+        if (HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments.length > 0) {
+            console.log(HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments)
+            showHumanResourceScheduledAppointmentsModal()
         }
         else{
-            $('#human-resource-modal-scheduled-activities').modal('show');
+            $('#human-resource-modal-scheduled-appointments').modal('show');
             let body = document.getElementById('scheduled-appointments-body')
             body.style.overflowY = "hidden"
             body.innerHTML = "Voulez-vous vraiment supprimer cette ressource ?"
@@ -430,20 +426,63 @@ async function verifyScheduledActivities(idHumanResource) {
     }
 }
 
-/**
- * Display the modal pop-up to inform the user that he will removed some scheduled appointments 
- */
-function showScheduledActivitiesModal() {
-    $('#human-resource-modal-scheduled-activities').modal('show');
-    let body = document.getElementById('scheduled-activities-body')
+function showHumanResourceScheduledAppointmentsModal() {
+    $('#human-resource-modal-scheduled-appointments').modal('show');
+    document.getElementById("modal-subtitle").innerText = "En supprimant cette ressource, les RDV suivants seront affectés :"
+    let body = document.getElementById('scheduled-appointments-body')
     body.innerHTML = ""
-    for (let indexScheduledActivity = 0 ;indexScheduledActivity < HUMAN_RESOURCE_ACTIVITIES.scheduledActivities.length; indexScheduledActivity++) {
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
         let p = document.createElement('p')
 
-        lastname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].lastname
-        firstname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].firstname
-        pathwayname = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].pathwayname
-        date = HUMAN_RESOURCE_ACTIVITIES.scheduledActivities[indexScheduledActivity].date
+        lastname = HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].lastname
+        firstname = HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].firstname
+        pathwayname = HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].pathwayname
+        date = HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].date
+        p.innerHTML = date + ' - ' + lastname +' '+ firstname + ' - ' + pathwayname
+        body.appendChild(p)
+    }
+}
+
+function getMaterialResourceScheduledAppointments(index) {
+    return $.ajax({
+        type: 'GET',
+        url: '/material-resource/'+index+'/appointments',
+        dataType: "json",
+    });
+}
+
+async function verifyMaterialResourceScheduledAppointments(idMaterialResource) {
+    document.getElementById("form-material-resource-delete").action = "/material-resource/" + idMaterialResource + "/delete"
+    try {
+        MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments = await getMaterialResourceScheduledAppointments(idMaterialResource)
+        if (MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments.length > 0) {
+            showMaterialResourceScheduledAppointmentsModal()
+        }
+        else{
+            $('#material-resource-modal-scheduled-appointments').modal('show');
+            let body = document.getElementById('scheduled-appointments-body')
+            body.style.overflowY = "hidden"
+            body.innerHTML = "Voulez-vous vraiment supprimer cette ressource ?"
+            document.getElementById("modal-subtitle").innerText = ""
+        }
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
+function showMaterialResourceScheduledAppointmentsModal() {
+    $('#material-resource-modal-scheduled-appointments').modal('show');
+    document.getElementById("modal-subtitle").innerText = "En supprimant cette ressource, les RDV suivants seront affectés :"
+    let body = document.getElementById('scheduled-appointments-body')
+    body.innerHTML = ""
+    for (let indexScheduledAppointment = 0 ;indexScheduledAppointment < MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments.length; indexScheduledAppointment++) {
+        let p = document.createElement('p')
+
+        lastname = MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].lastname
+        firstname = MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].firstname
+        pathwayname = MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].pathwayname
+        date = MATERIAL_RESOURCE_APPOINTMENTS.scheduledAppointments[indexScheduledAppointment].date
         p.innerHTML = date + ' - ' + lastname +' '+ firstname + ' - ' + pathwayname
         body.appendChild(p)
     }

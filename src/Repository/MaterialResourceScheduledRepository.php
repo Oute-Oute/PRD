@@ -39,6 +39,24 @@ class MaterialResourceScheduledRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAppointmentsByMaterialResource($id, $date): array
+    {
+        $qb= $this->createQueryBuilder('m')
+        ->join('m.scheduledactivity','scheduledactivity')
+        ->join('scheduledactivity.appointment','appointment')
+        ->join('appointment.patient','patient')
+        ->join('appointment.pathway','pathway')
+        ->select('appointment.dayappointment, patient.lastname, patient.firstname, pathway.pathwayname')
+        ->orderBy('appointment.dayappointment', 'ASC')
+        ->addOrderBy('patient.lastname', 'ASC')
+        ->where('m.materialresource= :idMaterialResource AND appointment.scheduled=1 AND appointment.dayappointment>= :date')
+        ->distinct()
+        ->setParameter('date',$date)
+        ->setParameter('idMaterialResource',$id);
+        $query=$qb->getQuery()->getResult(); 
+        return $query;
+    } 
+
 //    /**
 //     * @return MaterialResourceScheduled[] Returns an array of MaterialResourceScheduled objects
 //     */
