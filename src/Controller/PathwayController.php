@@ -49,7 +49,7 @@ class PathwayController extends AbstractController
     public function listHumanResourcesJSON(ManagerRegistry $doctrine)
     {
         $humanResourceCategoryRepo = $doctrine->getRepository("App\Entity\HumanResourceCategory");
-        $humanResourceCategories = $humanResourceCategoryRepo->findAll();
+        $humanResourceCategories = $humanResourceCategoryRepo->findBy(array(), array('categoryname' => 'ASC'));
         $humanResourceCategoriesArray = array();
 
         if ($humanResourceCategories != null) {
@@ -71,7 +71,7 @@ class PathwayController extends AbstractController
     public function listMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
         $materialResourceCategoryRepo = $doctrine->getRepository("App\Entity\MaterialResourceCategory");
-        $materialResourceCategories = $materialResourceCategoryRepo->findAll();
+        $materialResourceCategories = $materialResourceCategoryRepo->findBy(array(), array('categoryname' => 'ASC'));
         $materialResourceCategoriesArray = array();
 
         if ($materialResourceCategories != null) {
