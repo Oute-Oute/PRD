@@ -89,23 +89,41 @@ class ConsultationPlanningController extends AbstractController
         ->findBy(array("scheduledactivity" => $displayedActivity));
     $HumanResourceScheduledArray[] = array();
     $MaterialResourceScheduledArray[] = array();
-    /*  plusieurs ressources peuvent être associées à une activité programmée
+
+    /*  Sinon : 
+        plusieurs ressources peuvent être associées à une activité programmée
         on récupère les ressources associées à une activité programmée
         on les met dans un tableau pour les affecter à l'activité programmée */
-    foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
-        $id = $MaterialResourceScheduled->getMaterialresource()->getId();
-        $id = "materialresource_" . $id;
-        $MaterialResourceScheduledArray[] = array(
-            $id,
-            $MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename(),
-        );
-    }
-    foreach ($humanResourceScheduleds as $humanResourceScheduled) {
-        $id = $humanResourceScheduled->getHumanresource()->getId();
-        $id = "humanresource_" . $id;
-        $HumanResourceScheduledArray[] = array(
-            $id,
-            $humanResourceScheduled->getHumanresource()->getHumanresourcename(),
+        if($MaterialResourceScheduleds != null){
+            foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
+                $id = $MaterialResourceScheduled->getMaterialresource()->getId();
+                $id = "materialresource_" . $id;
+                $MaterialResourceScheduledArray[] = array(
+                    $id,
+                    $MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename(),
+                );
+            }
+        }
+        else if($MaterialResourceScheduleds == null){
+            $MaterialResourceScheduledArray[]=array(
+                "materialresource_noResource",
+                "Pas de ressource allouée"
+            );
+        }
+        if($humanResourceScheduleds != null){
+            foreach ($humanResourceScheduleds as $humanResourceScheduled) {
+                $id = $humanResourceScheduled->getHumanresource()->getId();
+                $id = "humanresource_" . $id;
+                $HumanResourceScheduledArray[] = array(
+                    $id,
+                    $humanResourceScheduled->getHumanresource()->getHumanresourcename(),
+                );
+            }
+        }
+        else{
+        $HumanResourceScheduledArray[]=array(
+            "humanresource_noResource",
+            "Pas de ressource allouée"
         );
     }
     //factorisation de toutes les ressources en un unique tableau
@@ -226,8 +244,7 @@ class ConsultationPlanningController extends AbstractController
         foreach ($displayedActivities as $displayedActivity) {
            
            //recuperation des ressources associées à une activité programmée
-           $resourceArray=$this->getResourcesScheduled($doctrine,$displayedActivity);
-            if(count($resourceArray[0])>2){            
+           $resourceArray=$this->getResourcesScheduled($doctrine,$displayedActivity);  
             //récupération des données de l'activité programmée
             //jour de l'activité
             $day = $displayedActivity->getAppointment()->getDayappointment();
@@ -243,6 +260,7 @@ class ConsultationPlanningController extends AbstractController
             $patientLastName = $displayedActivity->getAppointment()->getPatient()->getLastname();
             $patientFirstName = $displayedActivity->getAppointment()->getPatient()->getFirstname();
             $patient = $patientLastName . " " . $patientFirstName;
+            
             //ajout des données de l'activité programmée dans un tableau pour etre converti en JSON
             $displayedActivitiesArray[] = array(
                 'id' => (str_replace(" ", "3aZt3r", $displayedActivity->getId())),
@@ -261,7 +279,6 @@ class ConsultationPlanningController extends AbstractController
             );
             //reset des tableaux de stockage temporaire des données
             unset($resourceArray);
-        }
     }
     $unavailabityArray = $this->getUnavailabity($doctrine);
     $displayedActivitiesArray = array_merge($displayedActivitiesArray, $unavailabityArray);
@@ -359,7 +376,8 @@ class ConsultationPlanningController extends AbstractController
                     $MaterialResourceScheduledArray[] = array(
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
-                        'categories' => ($materialCategoryArray)
+                        'categories' => ($materialCategoryArray),
+                        'type' => 1
 
 
                     );
@@ -367,6 +385,17 @@ class ConsultationPlanningController extends AbstractController
                 }
             }
         }
+        $MaterialResourceScheduledArray[] = array(
+            'id' => 'humanresource_noResource',
+            'title' => 'Aucune ressource',
+            'categories' => array(
+                array(
+                    'id' => '0',
+                    'name' => 'Aucune catégorie',
+                ),
+            ),
+            'type' => 0
+        );
         unset($materialCategoryArray);
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
@@ -404,6 +433,7 @@ class ConsultationPlanningController extends AbstractController
         //tilisation de la variable globale $displayedActivities pour recuperer les activites programmées du jour
         global $displayedActivities;
         $HumanResourceScheduledArray = array();
+        $arrayId = array();
         if ($displayedActivities != null) { //si il y a des données dans la base de données
             for ($i = 0; $i < count($displayedActivities); $i++) {
                 //recuperation des ressources de l'activité programmée
@@ -411,27 +441,53 @@ class ConsultationPlanningController extends AbstractController
                     ->findBy(array("scheduledactivity" => $displayedActivities[$i]));
                 //ajout des données des ressources de l'activité programmée dans un tableau pour etre converti en JSON
                 foreach ($HumanResourceScheduleds as $HumanResourceScheduled) {
-                    $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $HumanResourceScheduled->getHumanresource()));
-                    $categoriesArray=array();
-                    foreach ($categories as $category) {
-                        $categoriesArray[]=array(
-                            'id' => $category->getId(),
-                            'name' => $category->getHumanResourceCategory()->getCategoryname()
+                    if(!in_array($HumanResourceScheduled->getHumanresource()->getId(),$arrayId)){
+                    
+                        $categories=$doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $HumanResourceScheduled->getHumanresource()));
+                        $categoriesArray=array();
+                        foreach ($categories as $category) {
+                            $categoriesArray[]=array(
+                                'id' => $category->getId(),
+                                'name' => $category->getHumanResourceCategory()->getCategoryname()
+                            );
+                        }
+                        $id = $HumanResourceScheduled->getHumanresource()->getId();
+                        $id = "humanresource_" . $id;
+                        $HumanResourceScheduledArray[] = array(
+                            'id' => $id,
+                            'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
+                            'categories' => ($categoriesArray),
+                            'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
+                            'type' => 1
                         );
+                        unset($HumanResourceArray);
+                        $arrayId[]=$HumanResourceScheduled->getHumanresource()->getId();
                     }
-                    $id = $HumanResourceScheduled->getHumanresource()->getId();
-                    $id = "humanresource_" . $id;
-                    $HumanResourceScheduledArray[] = array(
-                        'id' => $id,
-                        'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
-                        'categories' => ($categoriesArray),
-                        'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
-
-                    );
-                    unset($HumanResourceArray);
                 }
+                
             }
         }
+        $workingHoursEmpty=array();
+        for($i=0;$i<7;$i++){
+            $workingHoursEmpty[]=array(
+                'day' => $i,
+                'startTime' => "00:00",
+                'endTime' => "23:59",
+
+            );
+        }
+        $HumanResourceScheduledArray[] = array(
+            'id' => 'humanresource_noResource',
+            'title' => 'Aucune ressource',
+            'categories' => array(
+                array(
+                    'id' => '0',
+                    'name' => 'Aucune catégorie',
+                ),
+            ),
+            'workingHours' => $workingHoursEmpty,
+            'type' => 0
+        );
         //Conversion des données ressources en json
         $HumanResourceScheduledArrayJSON = new JsonResponse($HumanResourceScheduledArray);
         return $HumanResourceScheduledArrayJSON;
