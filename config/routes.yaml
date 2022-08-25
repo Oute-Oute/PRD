@@ -20,6 +20,11 @@ ConnexionPost:
   controller: App\Controller\ConnexionController::connexionPost
   methods: [POST]
 
+GetModifications:
+  path: /GetModifications
+  controller: App\Controller\ModificationPlanningController::getModifications
+  methods: [POST]
+
 ModificationPlanning:
   path: /ModificationPlanning
   controller: App\Controller\ModificationPlanningController::modificationPlanningGet
