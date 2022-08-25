@@ -12,7 +12,7 @@ var sPath = window.location.pathname;
 var sPage = sPath.substring(sPath.lastIndexOf('/') + 1);
 
 document.addEventListener('DOMContentLoaded', () => {
-    if(sPage == 'human-resources') {
+    if(sPage == 'human-resources' || sPage == 'human-resources-category') {
         //Gettings JSON object lists when the page is loaded. Content loaded is accorded to the resource page loaded
         WORKING_HOURS = JSON.parse(document.getElementById('working-hours-content').value) 
         CATEGORIES_BY_HUMAN_RESOURCES = JSON.parse(document.getElementById('categories-by-human-resource').value)
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
-    if(sPage == 'material-resources') {
+    if(sPage == 'material-resources' || sPage == 'material-resources-category') {
 
         CATEGORIES_BY_MATERIAL_RESOURCES = JSON.parse(document.getElementById('categories-by-material-resource').value)
         UNAVAILABILITIES_MATERIAL = JSON.parse(document.getElementById('unavailabilities-material-resource').value)
@@ -400,7 +400,7 @@ function edit__handleAddUnavailability() {
     let beginTime = document.getElementById('datetime-begin-unavailability').value
     let endTime = document.getElementById('datetime-end-unavailability').value
     if(beginTime < endTime && beginTime != '' && endTime != '' && beginTime[4] == '-' && endTime[4] == '-') {
-    btnAdd.click();
+        btnAdd.click();
     }
     else {
         alert('Veuillez saisir les deux dates complètes, situées entre 0001 et 9999. La date de début doit être antérieure à celle de fin !')
