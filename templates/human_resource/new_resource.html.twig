@@ -32,56 +32,64 @@
                     </fieldset>
                 </div>
                 <fieldset id="fs-add-working-hours">
-                <legend id = "lgd-working-hours">Choisissez les heures de disponibilités</legend>
-                <div id = 'working-hours-parent'>
-                <div id = 'working-hours-label'>
-                <label> Lundi :</label>
-                <label> Mardi :</label>
-                <label> Mercredi :</label>
-                <label> Jeudi :</label>
-                <label> Vendredi :</label>
-                <label> Samedi :</label>
-                <label> Dimanche :</label>
-                </div>
-                <div id = 'working-hours-input-begin'>
-                    <input type="time" id="monday-begin" name="monday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="tuesday-begin" name="tuesday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="wednesday-begin" name="wednesday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="thursday-begin" name="thursday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="friday-begin" name="friday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="saturday-begin" name="saturday-begin"
-                    min="00:00" max="23:59">
-                    <input type="time" id="sunday-begin" name="sunday-begin"
-                    min="00:00" max="23:59">
+                    <legend id = "lgd-working-hours">Choisissez les heures de disponibilités</legend>
+                    <div id = 'working-hours-parent'>
+                        <div id = 'working-hours-label'>
+                            <label> Lundi :</label>
+                            <label> Mardi :</label>
+                            <label> Mercredi :</label>
+                            <label> Jeudi :</label>
+                            <label> Vendredi :</label>
+                            <label> Samedi :</label>
+                            <label> Dimanche :</label>
+                        </div>
+                        <div id = 'working-hours-input-begin'>
+                            <input type="time" id="monday-begin" name="monday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="tuesday-begin" name="tuesday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="wednesday-begin" name="wednesday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="thursday-begin" name="thursday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="friday-begin" name="friday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="saturday-begin" name="saturday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                            <input type="time" id="sunday-begin" name="sunday-begin"
+                            min="00:00" max="23:59" value = "06:00">
+                        </div>
+                        <div id = 'working-hours-input-end'>
+                            <input type="time" id="monday-end" name="monday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="tuesday-end" name="tuesday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="wednesday-end" name="wednesday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="thursday-end" name="thursday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="friday-end" name="friday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="saturday-end" name="saturday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                            <input type="time" id="sunday-end" name="sunday-end"
+                            min="00:00" max="23:59" value = "20:00">
+                        </div>
+                        <div id="reset-working-hours-div">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(0, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(1, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(2, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(3, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(4, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(5, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                            <img src="../../img/delete.svg" onclick="resetWorkingHours(6, 'new')" title="Effacer" style="width: 20px; cursor: pointer;">
+                        </div>
                     </div>
-                    <div id = 'working-hours-input-end'>
-                    <input type="time" id="monday-end" name="monday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="tuesday-end" name="tuesday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="wednesday-end" name="wednesday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="thursday-end" name="thursday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="friday-end" name="friday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="saturday-end" name="saturday-end"
-                    min="00:00" max="23:59">
-                    <input type="time" id="sunday-end" name="sunday-end"
-                    min="00:00" max="23:59">
-                    </div>
-                    </div>
-                    </fieldset>
+                </fieldset>
                 <div class="modal-footer">
                     <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
                     <button type = "button" onclick="humanResourceVerify()" class="btn-valide btn-secondary"> Ajouter </button>
                     <button id = 'btn-none-add-human-resource' style = "display : none" type = "submit"></button>
-
                 </div>
     	    </form>
         </div>

@@ -400,7 +400,6 @@ async function verifyHumanResourceScheduledAppointments(idHumanResource) {
     try {
         HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments = await getHumanResourceScheduledAppointments(idHumanResource)
         if (HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments.length > 0) {
-            console.log(HUMAN_RESOURCE_APPOINTMENTS.scheduledAppointments)
             showHumanResourceScheduledAppointmentsModal()
         }
         else{
@@ -544,4 +543,21 @@ function showMaterialResourceCategoryModal(id) {
           console.log("error");
         },
       });
+}
+
+function resetWorkingHours(day, page){
+    if(page == 'new'){
+        begin = document.getElementById('working-hours-input-begin')
+        end = document.getElementById('working-hours-input-end')
+    }
+    if(page == 'edit'){
+        begin = document.getElementById('working-hours-input-begin-edit')
+        end = document.getElementById('working-hours-input-end-edit')
+    }
+    
+    inputBegin = begin.getElementsByTagName('input')
+    inputEnd= end.getElementsByTagName('input')
+
+    inputBegin[day].value = ""
+    inputEnd[day].value = ""
 }
