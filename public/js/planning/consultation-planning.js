@@ -55,23 +55,12 @@ document.querySelectorAll("#header-type")[0].innerText=headerResources;
 });
 
 /**
- * @brief This function create the list of events to display in the calendar
- * @returns a list of the events of the calendar
- */
-function createEvents() {
-  console.log(document.getElementById("events").value)
-  var events = JSON.parse(
-    document.getElementById("events").value.replaceAll("3aZt3r", " ")
-  ); //get the events from the hidden input
-  return events;
-}
-
-/**
  * @brief This function is called when we want to create or recreate the calendar
  * @param {*} typeResource the type of resources to display (Patients, Resources...)
  */
 function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
-  var events = createEvents();
+  var events = JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " ")); //get the events from the hidden input
+  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -132,7 +121,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       meridiem: false, //lowercase, short, narrow, false (display of AM/PM)
       hour12: false, //set to 24h format
     },
-    resourceOrder: "title", //display the resources in the alphabetical order of their names
+    resourceOrder: 'type, title', //display the resources in the alphabetical order of their names except for the "noResource" resource
     resourceAreaWidth: "20%", //set the width of the resources area
     events: events, //set the events
     filterResourcesWithEvents: true,
@@ -228,10 +217,10 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
     }
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
+        console.log(temp)
         if (calendar.getResourceById(temp["id"]) == null) {
           //if the resource is not already in the calendar
           var businessHours = []; //create an array to store the working hours
-          console.log(tempArray);
           for (var j = 0; j < temp["workingHours"].length; j++) {
             businesstemp = {
               //create a new business hour
@@ -252,6 +241,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
             }
             categoriesStr += categories[i]["name"]; //add the last human resource name to the string
           } else categoriesStr = "Défaut";
+          console.log(temp)
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"], //set the id
@@ -259,6 +249,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
             categoriesString: categoriesStr, //set the type
             businessHours: businessHours, //get the business hours
             categories:categoriesArray,
+            type: temp["type"], //set the type
           });
         }
       }
@@ -296,7 +287,7 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
               title: temp["title"], //set the title
               categoriesString: categoriesStr, //set the type
               categories:categoriesArray,
-              
+              type: temp["type"], //set the type
             });
           }
         }

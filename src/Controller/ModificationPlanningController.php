@@ -662,29 +662,51 @@ class ModificationPlanningController extends AbstractController
         foreach ($scheduledActivities as $scheduledActivity) {
             //Obtention du nombre de resources matérielles à renseigner pour cette activité
             $activitiesMaterialResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
+            
             $quantityMaterialResources = 0;
             $categoryMaterialResource = array();
-            foreach ($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId) {
+            if($activitiesMaterialResourcesByActivityId == null){
                 $categoryMaterialResource[] = array(
-                    'id' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getId(),
-                    'quantity' => $activityMaterialResourcesByActivityId->getQuantity(),
-                    'categoryname' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getCategoryname()
+                    'id' => "h-default",
+                    'quantity' => 0,
+                    'categoryname' => "Pas de Catégorie nécessaire"
                 );
-                $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResourcesByActivityId->getQuantity();
+                $quantityMaterialResources=1;
+            }
+            else{
+                foreach ($activitiesMaterialResourcesByActivityId as $activityMaterialResourcesByActivityId) {
+                    $categoryMaterialResource[] = array(
+                        'id' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getId(),
+                        'quantity' => $activityMaterialResourcesByActivityId->getQuantity(),
+                        'categoryname' => $activityMaterialResourcesByActivityId->getMaterialresourcecategory()->getCategoryname()
+                    );
+                    $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResourcesByActivityId->getQuantity();
+                }
             }
 
             //Obtention du nombre de resources Humaines à renseigner pour cette activité
             $activitiesHumanResourcesByActivityId = $doctrine->getRepository("App\Entity\ActivityHumanResource")->findBy(['activity' => $scheduledActivity->getActivity()->getId()]);
             $quantityHumanResources = 0;
             $categoryHumanResource = array();
-            foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
+            if($activitiesHumanResourcesByActivityId == null){
                 $categoryHumanResource[] = array(
-                    'id' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getId(),
-                    'quantity' => $activityHumanResourcesByActivityId->getQuantity(),
-                    'categoryname' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getCategoryname()
+                    'id' => "h-default",
+                    'quantity' => 0,
+                    'categoryname' => "Pas de Catégorie nécessaire"
                 );
-                $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
+                $quantityHumanResources=1;
             }
+            else{
+                foreach ($activitiesHumanResourcesByActivityId as $activityHumanResourcesByActivityId) {
+                    $categoryHumanResource[] = array(
+                        'id' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getId(),
+                        'quantity' => $activityHumanResourcesByActivityId->getQuantity(),
+                        'categoryname' => $activityHumanResourcesByActivityId->getHumanresourcecategory()->getCategoryname()
+                    );
+                    $quantityHumanResources = $quantityHumanResources + $activityHumanResourcesByActivityId->getQuantity();
+                }
+            }
+            
             //Tableau contenant toutes les ressources déja plannifiées pour une activité
             $scheduledActivitiesResourcesArray = array();
             //Recherche des ressources Humaines déja plannifiées 

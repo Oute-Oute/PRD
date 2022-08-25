@@ -173,7 +173,9 @@
   function getMessageNotFullyScheduled(scheduledActivity) {
     var message = "";
     scheduledActivity._def.resourceIds.forEach((resource) => {
-      if (resource == "h-default" || resource == "m-default") {
+      console.log(scheduledActivity)
+      console.log(scheduledActivity._def.extendedProps.categoryHumanResource)
+      if (resource == "h-default" && scheduledActivity._def.extendedProps.categoryHumanResource[0].quantity>0|| resource == "m-default" && scheduledActivity._def.extendedProps.categoryMaterialResource[0].quantity>0) {
         message = "L'activité n'a pas été allouée à toutes les resources dont elle a besoin."
       }
     })
