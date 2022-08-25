@@ -156,6 +156,15 @@ ul.ui-autocomplete {
     pointer-events:none;
 }
 
+#reset-working-hours-div{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  margin-left: 5px;
+}
+
+
 #load,#load-large,#load-path,#load-info-appt{
     position: absolute;
     display : block;
@@ -223,7 +232,7 @@ ul.ui-autocomplete {
 
   .wrapper {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     height: 100%;
     width: 100%;
   }
