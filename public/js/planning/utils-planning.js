@@ -312,7 +312,7 @@ function changePlanning() {
 /**
  * @brief This function is called when we want to go to the modification page
  */
-function modify(id = 1) {
+function modify(id) {
   var day = calendar.getDate().getDate(); //get the day
   var month = calendar.getDate().getMonth() + 1; //get the month (add 1 because it starts at 0)
   var year = calendar.getDate().getFullYear(); //get the year
@@ -323,7 +323,31 @@ function modify(id = 1) {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   dateStr = year + "-" + month + "-" + day + "T12:00:00"; //format the date fo FullCalendar
-  window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id); //goto the modification page with the date and user id
+
+  $.ajax({
+    type: 'POST',
+    url: '/GetModifications',
+    data: { idUser: id, dateModified: dateStr },
+    dataType: "json",
+    success: function (data) {
+        if(data.length > 0){
+          showAlertModif(data[0], data[1], id, dateStr)
+        }
+        else{
+          window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id);
+        }
+    },
+    error: function () {
+        console.log("error : can't access modifications");
+        window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id); //goto the modification page with the date and user id
+      }
+  });
+}
+
+function showAlertModif(username, date, userId, dateAlert){
+  document.getElementById("alert-body").innerHTML = "Une modification de " + username + " pour le " + date + " est déjà en cours, voulez-vous continuer ?"
+  document.getElementById("goto-modif-button").setAttribute('onclick', 'window.location.assign("/ModificationPlanning?date=' + dateAlert + '&id=' + userId + '")')
+  $("#alert-modif-modal").show()
 }
 
 /**

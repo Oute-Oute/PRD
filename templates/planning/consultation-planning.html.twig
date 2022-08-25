@@ -25,6 +25,8 @@
 	<script src="js/planning/consultation-planning.js"></script>
 	<script src="js/planning/utils-planning.js"></script>
 
+	{{include('planning/alert_modif_modal.html.twig')}}
+
 	{% for setting in settingsRepository %}
 		<input type="hidden" name="reloadTime" id="reloadTime" value='{{setting.getReloadtime}}'>
 	{% endfor %}
@@ -38,7 +40,7 @@
 			<td class="header-td">
 				{% if app.user != null %}
 					{% if app.user.roles[1] != 'Visiteur' %}
-						<button class="btn-calendar-edit" onclick="modify({% if app.user %}{{app.user.getId()}}{% else %}1{% endif %})">Modifier le planning</button>
+						<button class="btn-calendar-edit" onclick="modify({{app.user.getId()}})">Modifier le planning</button>
 					{% endif %}
 				{% endif %}
 				<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>

@@ -75,9 +75,7 @@ class ModificationPlanningController extends AbstractController
         $categoryMaterialResourceJSON = $this->getCategoryMaterialResourceJSON($doctrine); 
         $categoryHumanResourceJSON = $this->getCategoryHumanResourceJSON($doctrine); 
 
-        if ($this->alertModif($dateModified, $idUser, $doctrine, $settingsRepository)) {
-            $this->modificationAdd($dateModified, $idUser, $doctrine);
-        }
+        $this->modificationAdd($dateModified, $idUser, $doctrine);
 
         //On redirige sur la page html modification planning et on envoie toutes les données dont on a besoin
         return $this->render('planning/modification-planning.html.twig', [
@@ -331,11 +329,15 @@ class ModificationPlanningController extends AbstractController
     //This part manages the modification data
 
     /*
-     * This function verified if a modification for this date is already in progress
+     * This function verifies if a modification for this date is already in progress
      */
-    public function alertModif($dateModified, $idUser, $doctrine, $settingsRepository)
+    public function getModifications(ManagerRegistry $doctrine)
     {
+        $idUser = $_POST['idUser']; $dateModified = $_POST['dateModified'];
+
         $modificationRepository = $doctrine->getRepository("App\Entity\Modification");
+        $settingsRepository = $doctrine->getRepository("App\Entity\Settings");
+        
         $modifications = $modificationRepository->findAll();
 
         $dateModified = str_replace('T12:00:00', '', $dateModified);
@@ -370,16 +372,7 @@ class ModificationPlanningController extends AbstractController
                         $modificationRepository->remove($modification, true);
                     }
                     else {
-                        echo "<script>
-                            if(confirm('Une modification de ".$usernameModifiying." pour le ".$dateModified." est déjà en cours, voulez-vous continuer ?')){
-                                redirect = 1;
-                            }
-                            else{
-                                redirect = 0;
-                                window.location.assign('/ConsultationPlanning');
-                            }
-                        </script>";
-                        return "<script>document.write(redirect);</script>";
+                        return new JsonResponse([$usernameModifiying, $dateModified]);
                     }
                 } 
                 else {
@@ -389,7 +382,7 @@ class ModificationPlanningController extends AbstractController
             }
             $i++;
         }
-        return true;
+        return new JsonResponse([]);
     }
 
     /*
