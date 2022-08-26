@@ -355,7 +355,9 @@ class ModificationPlanningController extends AbstractController
             $modifArray[] = array(
                 'dateTimeModified' => ($modification->getDatetimemodification()->format('Y-m-d H:i:s')),
                 'dateModified' => ($modification->getDatemodified()->format('Y-m-d')),
-                'userId' => ($modification->getUser()->getId())
+                'userId' => ($modification->getUser()->getId()),
+                'firstname' => ($modification->getUser()->getFirstname()),
+                'lastname' => ($modification->getUser()->getLastname())
             );
             $usernameModifiying = $doctrine->getRepository("App\Entity\User")->findOneBy(['id' => $modifArray[$i]['userId']])->getUsername();
 
@@ -372,7 +374,7 @@ class ModificationPlanningController extends AbstractController
                         $modificationRepository->remove($modification, true);
                     }
                     else {
-                        return new JsonResponse([$usernameModifiying, $dateModified]);
+                        return new JsonResponse($modifArray);
                     }
                 } 
                 else {
@@ -382,6 +384,7 @@ class ModificationPlanningController extends AbstractController
             }
             $i++;
         }
+        dd($modifArray);
         return new JsonResponse([]);
     }
 

@@ -331,7 +331,8 @@ function modify(id) {
     dataType: "json",
     success: function (data) {
         if(data.length > 0){
-          showAlertModif(data[0], data[1], id, dateStr)
+          console.log(data)
+          showAlertModif(data, id, dateStr)
         }
         else{
           window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id);
@@ -344,8 +345,9 @@ function modify(id) {
   });
 }
 
-function showAlertModif(username, date, userId, dateAlert){
-  document.getElementById("alert-body").innerHTML = "Une modification de " + username + " pour le " + date + " est déjà en cours, voulez-vous continuer ?"
+function showAlertModif(data, userId, dateAlert){
+  console.log(data[0])
+  document.getElementById("alert-body").innerHTML = "Une modification de " + data[0].lastname +" "+ data[0].firstname + " pour le " + data[0].dateModified + " est déjà en cours, voulez-vous continuer ?"
   document.getElementById("goto-modif-button").setAttribute('onclick', 'window.location.assign("/ModificationPlanning?date=' + dateAlert + '&id=' + userId + '")')
   $("#alert-modif-modal").show()
 }
