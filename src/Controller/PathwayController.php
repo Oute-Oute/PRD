@@ -963,11 +963,13 @@ class PathwayController extends AbstractController
             return new JsonResponse('');
         }
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(["id"=>$id]);
-
+        
         $activities = $doctrine->getManager()->getRepository("App\Entity\Activity")->findBy(["pathway"=>$pathway]);
         $activityArray=[];
         foreach ($activities as $activity) {
-            $activityArray[] = $this->activityToArray($doctrine, $activity);
+            $HRCRequired = $doctrine->getManager()->getRepository("App\Entity\ActivityHumanResource")->findBy(["activity"=>$activity]);
+            $MRCRequired = $doctrine->getManager()->getRepository("App\Entity\ActivityMaterialResource")->findBy(["activity"=>$activity]);
+            $activityArray[] = $this->activityToArray($doctrine, $activity, $HRCRequired, $MRCRequired);
         }
         $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findAll();
         $arraySuccessor = [];
@@ -1010,7 +1012,9 @@ class PathwayController extends AbstractController
                 $listSuccessors = $activitiesSortedByLevel[$level][$i]['successor'];
                 for($j = 0; $j < count($listSuccessors); $j++){
                     $activityToAdd = $doctrine->getManager()->getRepository("App\Entity\Activity")->findOneBy(['id'=>$listSuccessors[$j]['idB']]);
-                    $activityToAddArray = $this->activityToArray($doctrine, $activityToAdd);
+                    $HRCRequired = $doctrine->getManager()->getRepository("App\Entity\ActivityHumanResource")->findBy(["activity"=>$activityToAdd]);
+                    $MRCRequired = $doctrine->getManager()->getRepository("App\Entity\ActivityMaterialResource")->findBy(["activity"=>$activityToAdd]);
+                    $activityToAddArray = $this->activityToArray($doctrine, $activityToAdd, $HRCRequired, $MRCRequired);
                     if(!isset($activitiesSortedByLevel[$level+1])){
                         $activitiesSortedByLevel[$level+1][] = $activityToAddArray;
                     }
@@ -1049,9 +1053,11 @@ class PathwayController extends AbstractController
         return $activities; 
     }
 
-    public function activityToArray(ManagerRegistry $doctrine, $activity){
+    public function activityToArray(ManagerRegistry $doctrine, $activity, $HRCRequired, $MRCRequired){
         $successors = $doctrine->getManager()->getRepository("App\Entity\Successor")->findBy(["activitya"=>$activity]);
         $arraySuccessor = [];
+        $arrayHRC = [];
+        $arrayMRC = [];
         foreach($successors as $successor){
             $arraySuccessor[] = [
                 'idB' => $successor->getActivityb()->getId(),
@@ -1059,11 +1065,25 @@ class PathwayController extends AbstractController
                 'delaymax' => $successor->getDelaymax(),
             ];
         }
+        foreach($HRCRequired as $HRC){
+            $arrayHRC[] = [
+                'categoryname' => $HRC->getHumanresourcecategory()->getCategoryname(),
+                'quantity' => $HRC->getQuantity(),
+            ];
+        }
+        foreach($MRCRequired as $MRC){
+            $arrayMRC[] = [
+                'categoryname' => $MRC->getMaterialresourcecategory()->getCategoryname(),
+                'quantity' => $MRC->getQuantity(),
+            ];
+        }
         $activityArray = [
             'id' => $activity->getId(),
             'name' => $activity->getActivityname(),
             'duration' => $activity->getDuration(),
             'successor' => $arraySuccessor,
+            'hrc' => $arrayHRC,
+            'mrc' => $arrayMRC
         ];
         return $activityArray;
     }

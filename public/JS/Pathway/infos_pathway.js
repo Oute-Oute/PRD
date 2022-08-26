@@ -111,32 +111,9 @@ function change_tab(id) {
  * Allows to draw activities of the pathway with a graph
  */
 function drawActivities(data){
+    console.log(data)
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
-
-    arrayActivityByLevel = Array();
- 
-    /*for(i = 0; i < data.length; i++){
-        for(j = 0; j < data[i].length; j++){
-            arrayActivityByLevel[i].push(data[i][j]['name'], j, data[i][j]['duration']);
-        }
-    }*/
-
-    // get the maximum of activities within one level, 
-    // used to print some br to have enough space to draw the graph
-    maxActivityByLevel = 0;
-    for(i = 0; i < data.length; i++){
-        if (maxActivityByLevel < data[i].length){
-            maxActivityByLevel = data[i].length;
-        }       
-    }
-
-    var divBr= document.getElementById('modal-br');
-    divBr.innerHTML = ""; // reset the previous br to prevent infinite growth of the modal
-    for(i = 0; i < 3; i++){
-        var br = document.createElement("br");
-        divBr.appendChild(br);
-    }
 
     // update flex basis to separate acitivies accordingly
     const style = document.createElement('style');
@@ -167,7 +144,7 @@ function drawActivities(data){
             // function createActivities(height, level, name, idActivity, duration){
             case 1:
                 height = 100/(nbActivity*2);
-                createActivities(height, i+1, data[i][0]['name'], data[i][0]['id'], data[i][0]['duration']);
+                createActivities(height, i+1, data[i][0]['name'], data[i][0]['id'], data[i][0]['duration'], data[i][0]['hrc'], data[i][0]['mrc']);
             break;
             default:
                 for(j = 0; j < nbActivity; j++){
@@ -190,7 +167,7 @@ function drawActivities(data){
                             height = 50/nbActivity;
                         }
                     }
-                    createActivities(height, i+1, data[i][j]['name'], data[i][j]['id'], data[i][j]['duration']);
+                    createActivities(height, i+1, data[i][j]['name'], data[i][j]['id'], data[i][j]['duration'], data[i][j]['hrc'], data[i][j]['mrc']);
                 }
             break;
         }
@@ -202,13 +179,13 @@ function drawActivities(data){
 /**
  * Allows to create new activities for a pathway
  */
-function createActivities(height, level, name, idActivity, duration){
+function createActivities(height, level, name, idActivity, duration, hrc, mrc){
     var divLevel = document.getElementById('content' + level);
 
     var div = document.createElement('DIV');
     div.setAttribute('id', 'activity'+ idActivity);
     div.classList.add("pathway-div-activity");
-    div.style.transform = 'translate(0%, -' + 100 + '%)';
+    //div.style.transform = 'translate(0%, -' + 100 + '%)';
 
     var divHeader = document.createElement('div');
     divHeader.classList.add("pathway-div-activity-header");
@@ -216,6 +193,7 @@ function createActivities(height, level, name, idActivity, duration){
 
     var p = document.createElement('p');
     p.style.fontSize = '80%';
+    p.style.textAlign = 'center'
     p.innerHTML = "durée : " + duration + "min"; 
 
     div.appendChild(divHeader); div.appendChild(p);
@@ -237,15 +215,84 @@ function createActivities(height, level, name, idActivity, duration){
                 l.show('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]});
             }
             else{
-                l.hide('draw', {duration: 500, timing: [0.58, 0, 0.42, 1]})
+                l.hide('draw', {duration: 400, timing: [0.58, 0, 0.42, 1]})
             }
-        }); 
+        });
+
+        var resources = document.createElement('DIV');
+        resources.setAttribute('id', 'resources'+ idActivity);
+        resources.style.fontSize = '80%'
+
+        var humanResources = document.createElement('DIV');
+
+        var humanCateg = document.createElement('p');
+        humanCateg.innerHTML = "Ressources humaines : ";
+        humanCateg.style.textDecoration = 'underline'
+        humanResources.appendChild(humanCateg)
+
+        var hResource = document.createElement('DIV');
+        for(i = 0; i < hrc.length; i++){
+            var hResourceLine = document.createElement('DIV');
+            hResourceLine.style.display = 'flex'
+            hResourceLine.style.justifyContent = "space-evenly"
+            var humanCategName = document.createElement('p');
+            humanCategName.innerHTML = hrc[i]['categoryname']
+            var humanQuantity = document.createElement('p');
+            humanQuantity.innerHTML = hrc[i]['quantity']
+            hResourceLine.appendChild(humanCategName)
+            hResourceLine.appendChild(humanQuantity)
+
+            var br = document.createElement('br')
+            hResource.appendChild(hResourceLine)
+        }
+        if(hrc.length == 0){
+            var noHumanCateg = document.createElement('p');
+            noHumanCateg.innerHTML = "Aucune"
+            noHumanCateg.style.textAlign = 'center'
+            hResource.appendChild(noHumanCateg)
+        }
+        humanResources.appendChild(hResource)
+
+        var materialResources = document.createElement('DIV');
+
+        var materialCateg = document.createElement('p');
+        materialCateg.innerHTML = "Ressources matérielles : "; 
+        materialCateg.style.textDecoration = 'underline'
+        materialResources.appendChild(materialCateg)
+
+        var mResource = document.createElement('DIV');
+        for(i = 0; i < mrc.length; i++){
+            var mResourceLine = document.createElement('DIV');
+            mResourceLine.style.display = 'flex'
+            mResourceLine.style.justifyContent = "space-evenly"
+            var materialCategName = document.createElement('p');
+            materialCategName.innerHTML = mrc[i]['categoryname']
+            var materialQuantity = document.createElement('p');
+            materialQuantity.innerHTML = mrc[i]['quantity']
+            mResourceLine.appendChild(materialCategName)
+            mResourceLine.appendChild(materialQuantity)
+
+            var br = document.createElement('br')
+            mResource.appendChild(mResourceLine)
+        }
+        if(mrc.length == 0){
+            var noMaterialCateg = document.createElement('p');
+            noMaterialCateg.innerHTML = "Aucune"
+            noMaterialCateg.style.textAlign = 'center'
+            mResource.appendChild(noMaterialCateg)
+        }
+        materialResources.appendChild(mResource)
+
+        resources.appendChild(humanResources);
+        resources.appendChild(materialResources);
+        div.appendChild(resources) 
     });
       
     div.addEventListener('mouseleave', (e) => {
         lines.forEach((l) => {
-            l.show('draw', {duration: 1500, timing: [0.58, 0, 0.42, 1]});
-        }); 
+            l.show('draw', {duration: 1000, timing: [0.58, 0, 0.42, 1]});
+        });
+        div.removeChild(document.getElementById('resources'+ idActivity))
     });
 }
 

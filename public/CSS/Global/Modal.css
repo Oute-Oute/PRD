@@ -260,17 +260,12 @@ ul.ui-autocomplete {
   }
 
   .pathway-div-activity{
-    max-width: 50%;
-    width: fit-content;
+    max-width: 65%;
     position: relative;
     padding: 5px 5px 5px 5px;
     border: solid;
     box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
     margin: 15px 0px;
-  }
-
-  .pathway-div-activity:hover{
-    background-color: #e5e5e5;
   }
 
   .pathway-div-activity-header{
