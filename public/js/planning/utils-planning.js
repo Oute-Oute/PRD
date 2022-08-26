@@ -346,7 +346,6 @@ function modify(id) {
 }
 
 function showAlertModif(data, userId, dateAlert){
-  console.log(data[0])
   document.getElementById("alert-body").innerHTML = "Une modification de " + data[0].lastname +" "+ data[0].firstname + " pour le " + data[0].dateModified + " est déjà en cours, voulez-vous continuer ?"
   document.getElementById("goto-modif-button").setAttribute('onclick', 'window.location.assign("/ModificationPlanning?date=' + dateAlert + '&id=' + userId + '")')
   $("#alert-modif-modal").show()
