@@ -280,6 +280,32 @@
 	</div>
 </div>
 
+<!-- error-fusion-modal -->
+
+	<div class="modal" id="error-fusion-modal">
+		<!-- div qui représente la modal -->
+		<div
+			class="modal-dialog">
+			<!-- permet d'afficher la modal en mode dialog -->
+			<div
+				class="modal-content">
+				<!-- permet de structurer le contenu de la modal -->
+				<div
+					class="modal-header">
+					<!-- sépare le header de la modal -->
+					<h2 class="modal-title">Erreur</h2>
+				</div>
+				<div class="modal-body">
+				Vous ne pouvez pas ajouter 2 fois une activité à la même ressource.</br>
+				La modification n'a pas été prise en compte
+				</div>
+				<div id='modal-add-footer' class="modal-footer">
+						<button type="button" class="btn-delete btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 <script>alertOnload();</script>
 {% endblock %}

@@ -496,21 +496,25 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
 
     eventDrop: function (event) {
       var modifyEvent = event.event;
-      updateEventsAppointment(modifyEvent)
-      calendar.getEvents().forEach((currentEvent) => {
-        currentEvent._def.ui.textColor = "#fff";
-        currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-        currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-        currentEvent.setEnd(currentEvent.end);
-      })
-      isUpdated = false;
-      console.log(calendar.getEvents())
-      for(let i = 0; i < calendar.getEvents().length; i++){
-        if(calendar.getEvents()[i]._def.publicId == "now"){
-          console.log("slt")
-          calendar.getEvents()[i].remove()
+      console.log(event.oldEvent._def)
+        updateEventsAppointment(modifyEvent)
+        calendar.getEvents().forEach((currentEvent) => {
+          currentEvent._def.ui.textColor = "#fff";
+          currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+          currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+          currentEvent.setEnd(currentEvent.end);
+        })
+        isUpdated = false;
+        console.log(calendar.getEvents())
+        for(let i = 0; i < calendar.getEvents().length; i++){
+          if(calendar.getEvents()[i]._def.publicId == "now"){
+            calendar.getEvents()[i].remove()
+          }
         }
-      }
+        if(event.oldEvent._def.resourceIds.length != event.event._def.resourceIds.length){
+          $("#error-fusion-modal").modal("show"); //open the window
+          undoEvent()
+        }
     },
     eventDragStart: function (event) {
       for(var i = 0; i < calendar.getResources().length; i++){
@@ -789,7 +793,7 @@ function clearArray(array) {
  * @brief This function is called when clicking on 'Retour en arrière button', recreate the calendar before  the last  modification
  */
 function undoEvent() {;
-  var zoom = document.getElementById('zoom').value;
+  var zoom = document.getElementById('zoom-value').value;
 
   if (historyEvents.length != 1) {
     createCalendar(headerResources, 'recreate', zoom);

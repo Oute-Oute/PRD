@@ -60,7 +60,6 @@ document.querySelectorAll("#header-type")[0].innerText=headerResources;
  */
 function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
   var events = JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " ")); //get the events from the hidden input
-  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input
@@ -208,7 +207,6 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       }
       break;
     case "Ressources Humaines": //if we want to display by the resources
-    console.log(resourcesToDisplay)
     if(resourcesToDisplay!=undefined){
       var tempArray=resourcesToDisplay
     }
@@ -217,7 +215,6 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
     }
       for (var i = 0; i < tempArray.length; i++) {
         var temp = tempArray[i]; //get the resources data
-        console.log(temp)
         if (calendar.getResourceById(temp["id"]) == null) {
           //if the resource is not already in the calendar
           var businessHours = []; //create an array to store the working hours
@@ -241,7 +238,6 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
             }
             categoriesStr += categories[i]["name"]; //add the last human resource name to the string
           } else categoriesStr = "Défaut";
-          console.log(temp)
           calendar.addResource({
             //add the resources to the calendar
             id: temp["id"], //set the id
