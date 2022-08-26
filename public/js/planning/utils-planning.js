@@ -71,10 +71,10 @@ function filterShow() {
     } else {
       var inputAll = document.createElement("input"); //create a input
       inputAll.type = "checkbox"; //set the type of the input to checkbox
-      inputAll.id = "all"; //set the name of the input to all
+      inputAll.id = "inputAll"; //set the name of the input to all
       var inputNothing = document.createElement("input"); //create a input
       inputNothing.type = "checkbox"; //set the type of the input to checkbox
-      inputNothing.id = "nothing"; //set the name of the input to nothing
+      inputNothing.id = "inputNothing"; //set the name of the input to nothing
       switch (headerResources) {
         case "Ressources Humaines":
           inputAll.onchange = function () {
@@ -198,60 +198,67 @@ function changeFilter(id, allCategories, type) {
   firstCreationFilter=false;
   var zoom = document.getElementById('zoom-value').value;
 
-  if(id=="all"){//if we want to select all the resources
-    if(document.getElementById('all').checked==true){//if the checkbox is checked'))
-      for (var i = 0; i < allCategories.length; i++) {
-        document.getElementById(allCategories[i]).checked=true;//set the checkbox to checked
+  if(id=="inputAll"){//if we want to select all the resources
+    console.log("inputAll");
+    console.log(document.getElementById('inputAll'))
+    if(document.getElementById('inputAll').checked==true){//if the checkbox is checked'
+      console.log("allChecked");
+      for(var i=0;i<allCategories.length;i++){
+        document.getElementById(allCategories[i]).checked=true;//set the checkbox to unchecked
       }
-      document.getElementById('nothing').checked=false;//set the checkbox to unchecked
+      document.getElementById('inputNothing').checked=false;//set the checkbox to unchecked
     }
   }
-  if(id=="nothing"){//if we want to deselect all the resources
-    if(document.getElementById('nothing').checked==true){//if the checkbox is checked'))
+  if(id=="inputNothing"){//if we want to deselect all the resources
+    console.log("inputNothing");
+    if(document.getElementById('inputNothing').checked==true){//if the checkbox is checked'
+      console.log("nothingChecked");
       for(var i=0;i<allCategories.length;i++){
         document.getElementById(allCategories[i]).checked=false;//set the checkbox to unchecked
       }
-      document.getElementById('all').checked=false;//set the checkbox to unchecked
+      document.getElementById('inputAll').checked=false;//set the checkbox to unchecked
     }
   }
-  switch (type) {
-    case "human"://if we want to filter by the human resources
-      for (var i = 0; i < allCategories.length; i++) {
-        if (document.getElementById(allCategories[i]).checked == true) {
-          if (humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
-            humanCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+  else{//if we want to select or deselect a resource
+    switch (type) {
+      case "human"://if we want to filter by the human resources
+        for (var i = 0; i < allCategories.length; i++) {
+          if (document.getElementById(allCategories[i]).checked == true) {
+            if (humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+              humanCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+            }
           }
-        }
-        if (document.getElementById(allCategories[i]).checked == false) {
-          if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
-            humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          if (document.getElementById(allCategories[i]).checked == false) {
+            if(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
+              humanCategoriesToDisplay.splice(humanCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+            }
           }
+          resources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
+          categoriesToDisplay = humanCategoriesToDisplay;
+          headerResources = "Ressources Humaines";
         }
-        resources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " "));
-        categoriesToDisplay = humanCategoriesToDisplay;
-        headerResources = "Ressources Humaines";
-      }
-      break;
-    case "material"://if we want to filter by the material resources
-      for (var i = 0; i < allCategories.length; i++) {
-        if (document.getElementById(allCategories[i]).checked == true) {
-          if (materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
-            materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+        break;
+      case "material"://if we want to filter by the material resources
+        for (var i = 0; i < allCategories.length; i++) {
+          if (document.getElementById(allCategories[i]).checked == true) {
+            if (materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id) == -1) {
+              materialCategoriesToDisplay.push(document.getElementById(allCategories[i]).id);
+            }
           }
-        }
-        if (document.getElementById(allCategories[i]).checked == false) {
-          if(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
-            materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+          if (document.getElementById(allCategories[i]).checked == false) {
+            if(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id)!=-1){
+              materialCategoriesToDisplay.splice(materialCategoriesToDisplay.indexOf(document.getElementById(allCategories[i]).id), 1);
+            }
           }
+          resources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
+          categoriesToDisplay = materialCategoriesToDisplay;
+          headerResources = "Ressources Matérielles";
         }
-        resources = JSON.parse(document.getElementById("material").value.replaceAll("3aZt3r", " "));
-        categoriesToDisplay = materialCategoriesToDisplay;
-        headerResources = "Ressources Matérielles";
-      }
-      break;
-  }
-      inputAll=document.getElementById("all");
-      inputNothing=document.getElementById("nothing");
+        break;
+    }
+      inputAll=document.getElementById("inputAll");
+      console.log(inputAll);
+      inputNothing=document.getElementById("inputNothing");
       if(categoriesToDisplay.length==allCategories.length){
 
         inputAll.checked = true; //set the checkbox to checked if all the resources are selected
@@ -265,6 +272,7 @@ function changeFilter(id, allCategories, type) {
         inputAll.checked = false; //set the checkbox to unchecked if all the resources are not selected
         inputNothing.checked = false; //set the checkbox to unchecked if all the resources are not selected
       }
+    }
   for (var i = 0; i < resources.length; i++) {
     for (var j = 0; j < resources[i]["categories"].length; j++) {
       if (categoriesToDisplay.indexOf(resources[i]["categories"][j]["name"]) != -1) {
@@ -331,7 +339,6 @@ function modify(id) {
     dataType: "json",
     success: function (data) {
         if(data.length > 0){
-          console.log(data)
           showAlertModif(data, id, dateStr)
         }
         else{
