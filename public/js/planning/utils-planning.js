@@ -75,6 +75,8 @@ function filterShow() {
       var inputNothing = document.createElement("input"); //create a input
       inputNothing.type = "checkbox"; //set the type of the input to checkbox
       inputNothing.id = "inputNothing"; //set the name of the input to nothing
+
+      allCategories.sort()
       switch (headerResources) {
         case "Ressources Humaines":
           inputAll.onchange = function () {
@@ -202,7 +204,6 @@ function changeFilter(id, allCategories, type) {
     console.log("inputAll");
     console.log(document.getElementById('inputAll'))
     if(document.getElementById('inputAll').checked==true){//if the checkbox is checked'
-      console.log("allChecked");
       for(var i=0;i<allCategories.length;i++){
         document.getElementById(allCategories[i]).checked=true;//set the checkbox to unchecked
       }
@@ -281,7 +282,6 @@ function changeFilter(id, allCategories, type) {
     }
   }
   createCalendar(headerResources, "create",zoom, resourcesToDisplay);
-
 }
 
 /**
