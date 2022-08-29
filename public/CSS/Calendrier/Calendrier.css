@@ -50,6 +50,11 @@ div#container {
   background: white;
   border-radius: 10px;
   box-shadow:10px 5px 5px grey;
+
+  left:35%;
+  max-height:400px;
+  overflow-y: scroll;
+  margin-top: 100px;
 }
 
 .fc-timeline-slot-frame, .fc-prev-button, .fc-button, .fc-button-primary{
@@ -308,7 +313,6 @@ a:hover{
   margin-right: 5%;
   z-index:1;
 }
-
 
 #alert-scheduled-tomorrow{
   width:100%;
