@@ -377,7 +377,7 @@ class ConsultationPlanningController extends AbstractController
                         'id' => $id,
                         'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
                         'categories' => ($materialCategoryArray),
-                        'type' => 1
+                        'type' => 0
 
 
                     );
@@ -394,7 +394,7 @@ class ConsultationPlanningController extends AbstractController
                     'name' => 'Aucune catégorie',
                 ),
             ),
-            'type' => 0
+            'type' => 1
         );
         unset($materialCategoryArray);
         //Conversion des données ressources en json
@@ -458,7 +458,7 @@ class ConsultationPlanningController extends AbstractController
                             'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
                             'categories' => ($categoriesArray),
                             'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
-                            'type' => 1
+                            'type' => 0
                         );
                         unset($HumanResourceArray);
                         $arrayId[]=$HumanResourceScheduled->getHumanresource()->getId();
@@ -486,7 +486,7 @@ class ConsultationPlanningController extends AbstractController
                 ),
             ),
             'workingHours' => $workingHoursEmpty,
-            'type' => 0
+            'type' => 1
         );
         //Conversion des données ressources en json
         $HumanResourceScheduledArrayJSON = new JsonResponse($HumanResourceScheduledArray);
