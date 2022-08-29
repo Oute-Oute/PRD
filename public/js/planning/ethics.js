@@ -259,7 +259,6 @@ function validEditComment(){//valid the edit of a comment
  * @param {*} event the event of the activity
  */
 function openActivityModal(type="new",event){
-  console.log(document.getElementById("buttonNewComment"))
   if(document.getElementById("buttonNewComment")!=null){
     document.getElementById("footerComments").removeChild(document.getElementById("buttonNewComment"));
   }
@@ -337,8 +336,6 @@ function openActivityModal(type="new",event){
         divContainerP.appendChild(p);
         let divImages = document.createElement('div')
         divImages.setAttribute('class', 'btns')
-        console.log(comments[i])
-        console.log(document.getElementById("OwnUsername").value)
         if(comments[i].authorusername == document.getElementById("OwnUsername").value){
           let imgEdit = new Image();
           imgEdit.src = '../../img/edit.svg'
@@ -396,7 +393,6 @@ function openActivityModal(type="new",event){
  */
 function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = undefined) {
   var events = JSON.parse(document.getElementById("events").value.replaceAll("3aZt3r", " ")); //get the events from the hidden input
-  console.log(events);
   if (document.getElementById("Date").value != null) {
     //if the date is not null (if the page is not the first load)
     dateStr = document.getElementById("Date").value; //get the date from the hidden input

@@ -111,7 +111,6 @@ function change_tab(id) {
  * Allows to draw activities of the pathway with a graph
  */
 function drawActivities(data){
-    console.log(data)
     var divContent = document.getElementById('divContent');
     divContent.innerHTML = ""; // reset the content
 
