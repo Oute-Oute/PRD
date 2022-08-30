@@ -76,6 +76,8 @@ function filterShow() {
       var inputNothing = document.createElement("input"); //create a input
       inputNothing.type = "checkbox"; //set the type of the input to checkbox
       inputNothing.id = "inputNothing"; //set the name of the input to nothing
+
+      allCategories.sort()
       switch (headerResources) {
         case "Ressources Humaines":
           inputAll.onchange = function () {
@@ -275,7 +277,6 @@ function changeFilter(id, allCategories, type) {
     }
   }
   createCalendar(headerResources, "create",zoom, resourcesToDisplay);
-
 }
 
 /**
