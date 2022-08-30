@@ -12,6 +12,7 @@ var listErrorMessages = {
   messageUnscheduledAppointment: messageUnscheduledAppointment,
   listScheduledAppointment: listScheduledAppointment
 };
+var calendarResources=[]
 var resourcesColumns = [{
   headerContent: "Nom", //set the label of the column
   field: "title", //set the field of the column
@@ -298,6 +299,7 @@ function displayModalModifyEvent() {
 
 function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
+  createResources(typeResource,resourcesToDisplay);
   var calendarEl = document.getElementById("calendar");
   var first;
   var listEvent;
@@ -365,7 +367,7 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
     selectConstraint: "businessHours", //set the select constraint to be business hours
     eventMinWidth: 1, //set the minimum width of the event
     resourceAreaColumns: resourcesColumns, //set the type of columns for the resources
-
+    resources: calendarResources,
     //modifie l'affichage de l'entête du calendar pour ne pas l'afficher
     headerToolbar: false,
 
@@ -490,109 +492,14 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
       }
     }
   });
-  switch (typeResource) {
-    case "Ressources Humaines": //if we want to display by the resources
-      if (resourcesToDisplay != undefined) {
-        var resourcesArray = resourcesToDisplay
-      }
-      else {
-        var resourcesArray = JSON.parse(
-          document.getElementById("human").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
-      }
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
-        var businessHours = []; //create an array to store the working hours
-        for (var j = 0; j < temp["workingHours"].length; j++) {
-          businesstemp = {
-            //create a new business hour
-            startTime: temp["workingHours"][j]["startTime"], //set the start time
-            endTime: temp["workingHours"][j]["endTime"], //set the end time
-            daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
-          };
-          businessHours.push(businesstemp); //add the business hour to the array
-        }
-        var categoriesStr = ""; //create a string with the human resources names
-        categories = temp["categories"];
-        var categoriesResourceArray = [];
-        for (let k = 0; k < categories.length - 1; k++) {
-          categoriesStr += categories[k]["name"] + ", ";
-          categoriesResourceArray.push(categories[k]["name"]);
-        }
-        categoriesStr += categories[categories.length - 1]["name"];
-        categoriesResourceArray.push(categories[categories.length - 1]["name"]);
-        calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"], //set the id
-          title: temp["title"], //set the title
-          categoriesString: categoriesStr, //set the type
-          businessHours: businessHours, //get the business hours
-          type: 1,
-          categories: categoriesResourceArray,
-        });
-        calendar.addResource({
-          id: "h-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
-      
-    }
-      break;
-    case "Ressources Matérielles": //if we want to display by the resources
-      if (resourcesToDisplay != undefined) {
-        var resourcesArray = resourcesToDisplay
-      }
-      else {
-        var resourcesArray = JSON.parse(
-          document.getElementById("material").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
-      }
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
-        var categoriesStr = ""; //create a string with the human resources names
-        categories = temp["categories"];
-        var categoriesResourceArray = [];
-        if (categories.length > 0) {
-          for (var j = 0; j < categories.length - 1; j++) {
-            //for each human resource except the last one
-            categoriesStr += categories[j]["name"] + ", "; //add the material resource name to the string with a ; and a space
-            categoriesResourceArray.push(categories[j]["name"]);
-          }
-          categoriesStr += categories[categories.length - 1]["name"]; //add the last material resource name to the string
-          categoriesResourceArray.push(categories[categories.length - 1]["name"]);
-          
-        } else categoriesStr = "Pas de Catégorie";
-        calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"],
-          categoriesString: categoriesStr, //set the type
-          title: temp["title"],
-          type: 1,
-          categories: categoriesResourceArray,
-
-        });
-        calendar.addResource({
-          id: "m-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
-        categoriesStr = "";
-      }
-      break;
-  }
+ 
   
 
   if (first == true) {
-    listEvents = JSON.parse(
-      document
-        .getElementById("listScheduledActivitiesJSON")
-        .value.replaceAll("3aZt3r", " ")
-    );
-  } else {
+    listEvents = JSON.parse(document.getElementById("listScheduledActivitiesJSON").value.replaceAll("3aZt3r", " "));
+    console.log(listEvents)
+  } 
+  else {
     let setEvents = [];
     var index = 0;
     listEvent.forEach((eventModify) => {
@@ -802,4 +709,91 @@ function countOccurencesInArray(val,array){
     }
   }
   return counter; 
+}
+
+function createResources(typeResource,resourcesToDisplay){
+  switch (typeResource) {
+    case "Ressources Humaines": //if we want to display by the resources
+      if (resourcesToDisplay != undefined) {
+        var resourcesArray = resourcesToDisplay
+      }
+      else {
+        var resourcesArray = JSON.parse(
+          document.getElementById("human").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the resources
+      }
+      for (var i = 0; i < resourcesArray.length; i++) {
+        var temp = resourcesArray[i]; //get the resources data
+        var categoriesStr = ""; //create a string with the human resources names
+        categories = temp["categories"];
+        var categoriesResourceArray = [];
+        for (let k = 0; k < categories.length - 1; k++) {
+          categoriesStr += categories[k]["name"] + ", ";
+          categoriesResourceArray.push(categories[k]["name"]);
+        }
+        categoriesStr += categories[categories.length - 1]["name"];
+        categoriesResourceArray.push(categories[categories.length - 1]["name"]);
+        calendarResources.push({
+          //add the resources to the calendar
+          id: temp["id"], //set the id
+          title: temp["title"], //set the title
+          categoriesString: categoriesStr, //set the type
+          businessHours: temp["businessHours"][0], //get the business hours
+          type: 1,
+          categories: categoriesResourceArray,
+        });
+        calendarResources.push({
+          id: "h-default",
+          title: "Aucune ressource allouée",
+          type: 0,
+          categoriesString: [["Aucune Catégorie"]],
+          categories: ["default"],
+        });
+      
+    }
+      break;
+    case "Ressources Matérielles": //if we want to display by the resources
+      if (resourcesToDisplay != undefined) {
+        var resourcesArray = resourcesToDisplay
+      }
+      else {
+        var resourcesArray = JSON.parse(
+          document.getElementById("material").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the resources
+      }
+      for (var i = 0; i < resourcesArray.length; i++) {
+        var temp = resourcesArray[i]; //get the resources data
+        var categoriesStr = ""; //create a string with the human resources names
+        categories = temp["categories"];
+        var categoriesResourceArray = [];
+        if (categories.length > 0) {
+          for (var j = 0; j < categories.length - 1; j++) {
+            //for each human resource except the last one
+            categoriesStr += categories[j]["name"] + ", "; //add the material resource name to the string with a ; and a space
+            categoriesResourceArray.push(categories[j]["name"]);
+          }
+          categoriesStr += categories[categories.length - 1]["name"]; //add the last material resource name to the string
+          categoriesResourceArray.push(categories[categories.length - 1]["name"]);
+          
+        } else categoriesStr = "Pas de Catégorie";
+        calendarResources.push({
+          //add the resources to the calendar
+          id: temp["id"],
+          categoriesString: categoriesStr, //set the type
+          title: temp["title"],
+          type: 1,
+          categories: categoriesResourceArray,
+
+        });
+        calendarResources.push({
+          id: "m-default",
+          title: "Aucune ressource allouée",
+          type: 0,
+          categoriesString: [["Aucune Catégorie"]],
+          categories: ["default"],
+        });
+        categoriesStr = "";
+      }
+      break;
+  }
 }
