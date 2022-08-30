@@ -60,20 +60,8 @@ class ModificationPlanningController extends AbstractController
 
         //define arrays for data needed by the JS file
         $listscheduledActivityJSON = $this->getScheduledActivityJSON($doctrine, $SAR, $dateModified);
-
-        $informationsByDateArray = $this->getInformationsByDateArray($doctrine, $dateModified);
-        $listAppointmentJSON = new JsonResponse($informationsByDateArray[0]);
-        $listActivitiesJSON = new JsonResponse($informationsByDateArray[1]);
-        $listSuccessorJSON = new JsonResponse($informationsByDateArray[2]);
-
         $listMaterialResourceJSON = $this->getMaterialResourcesJSON($doctrine);
         $listHumanResourceJSON = $this->getHumanResourcesJSON($doctrine);
-        $listActivityHumanResourcesJSON = $this->getActivityHumanResourcesJSON($doctrine);
-        $listActivityMaterialResourcesJSON = $this->getActivityMaterialResourcesJSON($doctrine);
-        $categoryOfMaterialResourceJSON = $this->getCategoryOfMaterialResourceJSON($doctrine);
-        $categoryOfHumanResourceJSON = $this->getCategoryOfHumanResourceJSON($doctrine);
-        $categoryMaterialResourceJSON = $this->getCategoryMaterialResourceJSON($doctrine); 
-        $categoryHumanResourceJSON = $this->getCategoryHumanResourceJSON($doctrine); 
 
         $this->modificationAdd($dateModified, $idUser, $doctrine);
 
@@ -86,15 +74,7 @@ class ModificationPlanningController extends AbstractController
             'listMaterialResourceJSON' => $listMaterialResourceJSON,
             'listHumanResourceJSON' => $listHumanResourceJSON,
             'listScheduledActivitiesJSON' => $listscheduledActivityJSON,
-            'listSuccessorsJSON' => $listSuccessorJSON,
-            'listActivitiesJSON' => $listActivitiesJSON,
-            'listAppointmentsJSON' => $listAppointmentJSON,
-            'listActivityHumanResourcesJSON' => $listActivityHumanResourcesJSON, //à simplifier : peut directement être mis dans les données de l'activité
-            'listActivityMaterialResourcesJSON' => $listActivityMaterialResourcesJSON, //à simplifier : peut directement être mis dans les données de l'activité
-            'categoryOfMaterialResourceJSON' => $categoryOfMaterialResourceJSON, //regarder si ce n'est pas possible de les mettres directement avec les ressources
-            'categoryOfHumanResourceJSON' => $categoryOfHumanResourceJSON, //regarder si ce n'est pas possible de les mettres directement avec les ressources
-            'categoryMaterialResourceJSON'=> $categoryMaterialResourceJSON,
-            'categoryHumanResourceJSON' => $categoryHumanResourceJSON,
+            
         ]);
     }
 
@@ -551,7 +531,8 @@ class ModificationPlanningController extends AbstractController
      */
     public function getHumanResourcesJSON(ManagerRegistry $doctrine)
     {
-        $humanResources = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
+        $humanResources = $doctrine->getRepository("App\Entity\HumanResource")
+        ->findBy(array(),array("humanresourcename" => "ASC"));
         $humanResourcesArray = array();
 
         if ($humanResources != null) {
@@ -584,7 +565,8 @@ class ModificationPlanningController extends AbstractController
      */
     public function getMaterialResourcesJSON(ManagerRegistry $doctrine)
     {
-        $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
+        $materialResources = $doctrine->getRepository("App\Entity\MaterialResource")
+        ->findBy(array(),array("materialresourcename" => "ASC"));
         $materialResourcesArray = array();
         if ($materialResources != null) {
             foreach ($materialResources as $materialResource) {
@@ -614,7 +596,7 @@ class ModificationPlanningController extends AbstractController
      * and return the data in a JSON format for JS
      * @return activitiesHumanResourcesArrayJSON an array in JSON format with all the data
      */
-    public function getActivityHumanResourcesJSON(ManagerRegistry $doctrine)
+    public function getActivityHumanResources(ManagerRegistry $doctrine)
     {
         $activitiesHumanResources = $doctrine->getRepository('App\Entity\ActivityHumanResource')->findAll();
         $activitiesHumanResourcesArray = array();
@@ -626,8 +608,7 @@ class ModificationPlanningController extends AbstractController
                 'quantity' => $activityHumanResources->getQuantity(),
             );
         }
-        $activitiesHumanResourcesArrayJSON = new JsonResponse($activitiesHumanResourcesArray);
-        return $activitiesHumanResourcesArrayJSON;
+        return $activitiesHumanResourcesArray;
     }
 
     /*
@@ -635,7 +616,7 @@ class ModificationPlanningController extends AbstractController
      * and return the data in a JSON format for JS
      * @return activitiesMaterialResourcesArrayJSON an array in JSON format with all the data
      */
-    public function getActivityMaterialResourcesJSON(ManagerRegistry $doctrine)
+    public function getActivityMaterialResources(ManagerRegistry $doctrine)
     {
         $activitiesMaterialResources = $doctrine->getRepository("App\Entity\ActivityMaterialResource")->findAll();
         $activitiesMaterialResourcesArray = array();
@@ -647,10 +628,8 @@ class ModificationPlanningController extends AbstractController
                 'quantity' => $activityMaterialResources->getQuantity(),
             );
         }
-        $activitiesMaterialResourcesArrayJSON = new JsonResponse($activitiesMaterialResourcesArray);
-        return $activitiesMaterialResourcesArrayJSON;
+        return $activitiesMaterialResourcesArray;
     }
-
     /*
      * This function set all data needed for create all event in fullcalendar corresponding to each scheduled activity
      * @return scheduledActivitiesArrayJSON an array in JSON format with all the data
@@ -785,7 +764,7 @@ class ModificationPlanningController extends AbstractController
      * This function recover all category of material resource from the database and return an array in JSON format for JS
      * @return categoryOfMaterialResourceArrayJSON an array in JSON format with all the data
      */
-    public function getCategoryOfMaterialResourceJSON(ManagerRegistry $doctrine)
+    public function getCategoryOfMaterialResource(ManagerRegistry $doctrine)
     {
         $categoryOfMaterialResources = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
         $categoryOfMaterialResourceArray = array();
@@ -797,15 +776,14 @@ class ModificationPlanningController extends AbstractController
                 'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()))
             );
         }
-        $categoryOfMaterialResourceArrayJSON = new JsonResponse($categoryOfMaterialResourceArray);
-        return $categoryOfMaterialResourceArrayJSON;
+        return $categoryOfMaterialResourceArray;
     }
 
     /*
      * This function recover all category of human resource from the database and return an array in JSON format for JS
      * @return categoryOfHumanResourceArrayJSON an array in JSON format with all the data
      */
-    public function getCategoryOfHumanResourceJSON(ManagerRegistry $doctrine)
+    public function getCategoryOfHumanResource(ManagerRegistry $doctrine)
     {
         $categoryOfHumanResources = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
         $categoryOfHumanResourceArray = array();
@@ -817,15 +795,14 @@ class ModificationPlanningController extends AbstractController
                 'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()))
             );
         }
-        $categoryOfHumanResourceArrayJSON = new JsonResponse($categoryOfHumanResourceArray);
-        return $categoryOfHumanResourceArrayJSON;
+        return $categoryOfHumanResourceArray;
     }
 
     /*
      * This function recover all category material resource from the database and return an array in JSON format for JS
      * @return materialResourcesCategoryArrayJSON an array in JSON format with all the data
      */
-    public function getCategoryMaterialResourceJSON(ManagerRegistry $doctrine)
+    public function getCategoryMaterialResource(ManagerRegistry $doctrine)
     {
         $materialResourcesCategory = $doctrine->getRepository("App\Entity\MaterialResourceCategory")->findAll();
         $materialResourcesCategoryArray = array();
@@ -833,18 +810,18 @@ class ModificationPlanningController extends AbstractController
         {
             $materialResourcesCategoryArray[] = array(
                 'idcategory' => $materialResourceCategory->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $materialResourceCategory->getCategoryname()))
+                'categoryname' => (str_replace(" ", "3aZt3r", $materialResourceCategory->getCategoryname())),
+                'resources'=>[]
             );
         }
-        $materialResourcesCategoryArrayJSON = new JsonResponse($materialResourcesCategoryArray);
-        return $materialResourcesCategoryArrayJSON;
+        return $materialResourcesCategoryArray;
     }
 
     /*
      * This function recover all category human resource from the database and return an array in JSON format for JS
      * @return humanResourcesCategoryArrayJSON an array in JSON format with all the data
      */
-    public function getCategoryHumanResourceJSON(ManagerRegistry $doctrine)
+    public function getCategoryHumanResource(ManagerRegistry $doctrine)
     {
         $humanResourcesCategory = $doctrine->getRepository("App\Entity\HumanResourceCategory")->findAll();
         $humanResourcesCategoryArray = array();
@@ -852,11 +829,11 @@ class ModificationPlanningController extends AbstractController
         {
             $humanResourcesCategoryArray[] = array(
                 'idcategory' => $humanResourceCategory->getId(),
-                'categoryname' => (str_replace(" ", "3aZt3r", $humanResourceCategory->getCategoryname()))
+                'categoryname' => (str_replace(" ", "3aZt3r", $humanResourceCategory->getCategoryname())),
+                'resources'=>[]
             );
         }
-        $humanResourcesCategoryArrayJSON = new JsonResponse($humanResourcesCategoryArray);
-        return $humanResourcesCategoryArrayJSON;
+        return $humanResourcesCategoryArray;
     }
  
 
@@ -1010,5 +987,51 @@ class ModificationPlanningController extends AbstractController
             array_push($unavailabityArray, $materialUnavailabity);
         }
         return $unavailabityArray;
+    }
+
+    public function GetAddPlanning(ManagerRegistry $doctrine){
+        $dateModified = $_POST['dateModified'];
+        return new JsonResponse($this->getInformationsByDateArray($doctrine, $dateModified));
+    }
+
+    public function GetAutoAddInfos(ManagerRegistry $doctrine){
+        $categoryMaterialResource=$this->getCategoryMaterialResource($doctrine);
+        $categoryHumanResource=$this->getCategoryHumanResource($doctrine);
+        $listActivityHumanResources = $this->getActivityHumanResources($doctrine);
+        $listActivityMaterialResources = $this->getActivityMaterialResources($doctrine);
+        $categoryOfHumanResource = $this->getCategoryOfHumanResource($doctrine);
+        $categoryOfMaterialResource = $this->getCategoryOfMaterialResource($doctrine); 
+        $data=array(
+            'categoryMaterialResource'=>$categoryMaterialResource,
+            'categoryHumanResource'=>$categoryHumanResource,
+            'listeActivityHumanResources'=>$listActivityHumanResources,
+            'listeActivityMaterialResources'=>$listActivityMaterialResources,
+            'categoryOfHumanResource'=>$categoryOfHumanResource,
+            'categoryOfMaterialResource'=>$categoryOfMaterialResource
+        );
+        return new JsonResponse($data);
+    }
+
+    public function GetErrorsInfos(ManagerRegistry $doctrine){
+        $dateModified = $_POST['dateModified'];
+        $categoryMaterialResource=$this->getCategoryMaterialResource($doctrine);
+        $categoryHumanResource=$this->getCategoryHumanResource($doctrine);
+        $listActivityHumanResources = $this->getActivityHumanResources($doctrine);
+        $listActivityMaterialResources = $this->getActivityMaterialResources($doctrine);
+        $categoryOfHumanResource = $this->getCategoryOfHumanResource($doctrine);
+        $categoryOfMaterialResource = $this->getCategoryOfMaterialResource($doctrine); 
+        $InfosByDate=$this->getInformationsByDateArray($doctrine, $dateModified);
+        $data=array(
+            'categoryMaterialResource'=>$categoryMaterialResource,
+            'categoryHumanResource'=>$categoryHumanResource,
+            'listeActivityHumanResources'=>$listActivityHumanResources,
+            'listeActivityMaterialResources'=>$listActivityMaterialResources,
+            'categoryOfHumanResource'=>$categoryOfHumanResource,
+            'categoryOfMaterialResource'=>$categoryOfMaterialResource,
+            'listeAppointments'=>$InfosByDate[0],
+            'listeActivity'=>$InfosByDate[1],
+            'listeSuccessors'=>$InfosByDate[2],
+        );
+        return new JsonResponse($data);
     }
 }

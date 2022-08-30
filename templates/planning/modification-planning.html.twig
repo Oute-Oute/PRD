@@ -16,10 +16,10 @@
 
 	<!-- insertion de bootstrap, jquery et fullcalendar-scheduler -->
 	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
-	<script src='js/fullcalendar-scheduler/lib/main.min.js'></script>
+	<script src='js/fullcalendar-scheduler/lib/main.min.js' ></script>
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
- 	<script src="js/popper.min.js"></script>  
-	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+ 	<script src="js/popper.min.js" ></script>  
+		<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
 	<script src="js/planning/utils-planning.js"></script>
 	<!-- insertion des fichier js et css spécifique à modification planning -->
 	<script src="js/planning/modification-planning.js"></script>
@@ -146,8 +146,6 @@
 					class="modal-body">
 					<!-- sépare le body de la modal -->
 					<input id="date" name="date" type="hidden" value={{currentdate}}>
-					<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listSuccessorsJSON.content}}>
-					<input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
 
 					<div
 						id="select-container-patient">
@@ -179,17 +177,17 @@
 
 <input type="hidden" id="material" value='{{listMaterialResourceJSON.content}}'/>
 <input type="hidden" id="human" value='{{listHumanResourceJSON.content}}'/>
-<input type='hidden' id="listeAppointments" name="listeAppointments" value='{{listAppointmentsJSON.content}}'>
 <input type="hidden" id="listScheduledActivitiesJSON" value='{{listScheduledActivitiesJSON.content}}'/>
 <input id="date" name="date" type="hidden" value={{currentdate}}>
-<input id="listeSuccessors" name="listeSuccessors" type='hidden' value={{listSuccessorsJSON.content}}>
-<input id="listeActivities" name="listeActivities" type='hidden' value={{listActivitiesJSON.content}}>
-<input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value={{listActivityHumanResourcesJSON.content}}>
-<input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value={{listActivityMaterialResourcesJSON.content}}>
-<input id="categoryOfMaterialResourceJSON" name="categoryOfMaterialResourceJSON" type='hidden' value={{categoryOfMaterialResourceJSON.content}}>
-<input id="categoryOfHumanResourceJSON" name="categoryOfHumanResourceJSON" type='hidden' value={{categoryOfHumanResourceJSON.content}}>
-<input id="categoryMaterialResourceJSON" name="categoryMaterialResourceJSON" type='hidden' value={{categoryMaterialResourceJSON.content}}>
-<input id="categoryHumanResourceJSON" name="categoryHumanResourceJSON" type='hidden' value={{categoryHumanResourceJSON.content}}>
+<input id="listeSuccessors" name="listeSuccessors" type='hidden' value="">
+<input id="listeActivity" name="listeActivity" type='hidden' value="">
+<input type='hidden' id="listeAppointments" name="listeAppointments" value="">
+<input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value="">
+<input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value="">
+<input id="categoryOfMaterialResource" name="categoryOfMaterialResourceJSON" type='hidden' value="">
+<input id="categoryOfHumanResource" name="categoryOfHumanResourceJSON" type='hidden' value="">
+<input id="categoryMaterialResource" name="categoryMaterialResourceJSON" type='hidden' value="">
+<input id="categoryHumanResource" name="categoryHumanResourceJSON" type='hidden' value="">
 
 {% for setting in settingsRepository %}
 	<input type="hidden" name="modifAlertTime" id="modifAlertTime" value='{{setting.getAlertmodificationtimer}}'>
@@ -204,7 +202,7 @@
 	<table class="header-ressource-consultation" style="font-size:medium;">
 		<td class="header-td">
 			<!-- bouton d'ajout d'un rendez-vous dans le planning -->
-			<button type="button" class="btn-calendar-edit" onclick="displayAddPathway()">Ajouter</button>
+			<button type="button" class="btn-calendar-edit" onclick="getDataAdd()">Ajouter</button>
 
 			<!-- filtre de l'affichage par catégorie -->
 			<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
@@ -229,6 +227,7 @@
 
 		<td class="header-td-right">
 			<div id='top-right-buttons'>
+			<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="GetDataErrors()" data-toggle="tooltip" data-placement="auto" value ="Verifier Erreurs"></input>
 				<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
@@ -307,5 +306,6 @@
 	</div>
 
 
-<script>alertOnload();</script>
+<script>alertOnload();
+firstCalendar();</script>
 {% endblock %}
