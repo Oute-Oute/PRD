@@ -2,6 +2,7 @@
  * @brief This function update list error messages 
  */
  function updateErrorMessages() {
+    //GetInfosErrors();
     var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
   
     listErrorMessages.messageUnscheduledAppointment = [];
@@ -264,7 +265,7 @@
     var listCategoryHumanResources = [];
   
     //recover all relation between categories and human resources
-    var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+    var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
   
     scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
       if (humanResource.substring(0, 5) == "human") { //check only the human resources
@@ -366,7 +367,7 @@
     var listCategoryMaterialResources = [];
   
     //recover all relation between categories and material resources
-    var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+    var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
   
     scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
       if (materialResource.substring(0, 8) == "material") { //check only the material resources
@@ -498,10 +499,10 @@
     if (getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == "") { //we can check the quantity only if it's not awring category
       var listCategoryOfResources;
       if (typeResources == "human") { //set the list category resources if it's a human resource
-        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
       }
       else { //set the list category resources if it's a material resource
-        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
       }
   
       var categoryQuantity = 0;
@@ -563,7 +564,7 @@
         }
       })
       if (categoryExist == false) { //if the category doesn't exist
-        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
         listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
           if (categoryOfResource.idcategory == categoryResourceId) { //if we find the good category
             //set the category name
@@ -581,7 +582,7 @@
         }
       })
       if (categoryExist == false) { //if the category doesn't exist
-        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
         listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
           if (categoryOfResource.idcategory == categoryResourceId) { //if we find the good category
             //set the category name
@@ -1311,3 +1312,55 @@
       scheduledActivity.setEnd(scheduledActivity.end);
     })
   }
+
+  function GetDataErrors(){
+    if(document.getElementById('listeActivityHumanResource').value==""){
+      console.log("if")
+      var dateStr=document.getElementById("date").value
+      $.ajax({
+        type: 'POST',
+        url: '/GetErrorsInfos',
+        data: {dateModified: dateStr },
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+          categoryHumanResource=data["categoryHumanResource"];
+          categoryMaterialResource=data["categoryMaterialResource"];
+          listeActivityHumanResource=data["listeActivityHumanResources"];
+          listeActivityMaterialResource=data["listeActivityMaterialResources"];
+          categoryOfHumanResource=data["categoryOfHumanResource"];
+          categoryOfMaterialResource=data["categoryOfMaterialResource"];
+          listeActivity=data["listeActivity"];
+          listeAppointments=data["listeAppointments"];
+          listeSuccessors=data["listeSuccessors"];
+          document.getElementById("listeActivityHumanResource").value =JSON.stringify(listeActivityHumanResource);
+          document.getElementById("listeActivityMaterialResource").value =JSON.stringify(listeActivityMaterialResource);
+          document.getElementById("categoryOfHumanResource").value =JSON.stringify(categoryOfHumanResource);
+          document.getElementById("categoryOfMaterialResource").value =JSON.stringify(categoryOfMaterialResource);
+          document.getElementById("categoryMaterialResource").value =JSON.stringify(categoryMaterialResource);
+          document.getElementById("categoryHumanResource").value =JSON.stringify(categoryHumanResource);
+          document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+          document.getElementById("listeActivity").value =JSON.stringify(listeActivity);
+          document.getElementById("listeSuccessors").value =JSON.stringify(listeSuccessors);
+          updateErrorMessages();
+          
+        },
+        error: function () {
+          console.log("error")
+          }
+      });
+    }
+      else{
+        console.log("else")
+          categoryHumanResource=JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
+          categoryMaterialResource=JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
+          listeActivityHumanResource=JSON.parse(document.getElementById("listeActivityHumanResource").value);
+          listeActivityMaterialResource=JSON.parse(document.getElementById("listeActivityMaterialResource").value);
+          categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll('3aZt3r',''));
+          categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll('3aZt3r',''));
+          listeActivity=JSON.parse(document.getElementById("listeActivity").value);
+          listeAppointments=JSON.parse(document.getElementById("listeAppointments").value);
+          listeSuccessors=JSON.parse(document.getElementById("listeSuccessors").value);
+          updateErrorMessages();
+      }
+    }
