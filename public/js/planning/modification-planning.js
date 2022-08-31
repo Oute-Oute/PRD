@@ -684,23 +684,6 @@ function verifyHistoryPush(array, idAppointment) {
   array.push({ events: calendar.getEvents(), idAppointment: idAppointment });   //push into the history of modifications
 }
 
-/**
- * This function works with autoAddPathway. 
- * Check the number of occurences of the value in an array. 
- * @param {*} val  value to check
- * @param {*} array arrray to look over
- * @returns  the number of the occurences. 
- */
-function countOccurencesInArray(val,array){
-  let counter=0; 
-  for(let i=0; i<array.length; i++){
-    if(array[i].idcategory==val){
-      counter++; 
-    }
-  }
-  return counter; 
-}
-
 function createResources(typeResource,resourcesToDisplay){
   var calendarResources=[];
   switch (typeResource) {
@@ -728,16 +711,10 @@ function createResources(typeResource,resourcesToDisplay){
           title: temp["title"], //set the title
           categoriesString: categoriesStr, //set the type
           businessHours: temp["businessHours"][0], //get the business hours
-          type: 1,
+          type: temp["type"],
           categories: categoriesResourceArray,
         });
-        calendarResources.push({
-          id: "h-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
+
       
     }
       break;
@@ -770,18 +747,10 @@ function createResources(typeResource,resourcesToDisplay){
           id: temp["id"],
           categoriesString: categoriesStr, //set the type
           title: temp["title"],
-          type: 1,
+          type: temp["type"],
           categories: categoriesResourceArray,
 
         });
-        calendarResources.push({
-          id: "m-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
-        categoriesStr = "";
       }
       break;
   }
