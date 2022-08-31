@@ -2,6 +2,7 @@
  * @brief This function update list error messages 
  */
  function updateErrorMessages() {
+    //GetInfosErrors();
     var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
   
     listErrorMessages.messageUnscheduledAppointment = [];
@@ -101,6 +102,13 @@
       }
     })
     updatePanelErrorMessages(); //update the panel error messages
+    let listCurrentEvent = calendar.getEvents();
+    listCurrentEvent.forEach((currentEvent) => {
+    currentEvent._def.ui.textColor = "#fff";
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+    currentEvent.setEnd(currentEvent.end);
+  });
   }
   
   /**
@@ -264,13 +272,14 @@
     var listCategoryHumanResources = [];
   
     //recover all relation between categories and human resources
-    var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+    var listCategoryOfHumanResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
   
     scheduledActivity._def.resourceIds.forEach((humanResource) => { //browse all resources related to the scheduled activity
       if (humanResource.substring(0, 5) == "human") { //check only the human resources
         var listCategoryOfHumanResource = [];
         var listWrongCategoriesOfHumanResource = [];
         var countValidCategory = 0;
+        listCategoryOfHumanResources=Object.values(listCategoryOfHumanResources);
         listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
           if (categoryOfHumanResource.idresource == humanResource) { //if we find a category of the human resource 
             if (getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human") == "") {
@@ -366,13 +375,14 @@
     var listCategoryMaterialResources = [];
   
     //recover all relation between categories and material resources
-    var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+    var listCategoryOfMaterialResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
   
     scheduledActivity._def.resourceIds.forEach((materialResource) => { //browse all resources related to the scheduled activity
       if (materialResource.substring(0, 8) == "material") { //check only the material resources
         var listCategoryOfMaterialResource = [];
         var listWrongCategoriesOfMaterialResource = [];
         var countValidCategory = 0;
+        listCategoryOfMaterialResources=Object.values(listCategoryOfMaterialResources);
         listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
           if (categoryOfMaterialResource.idresource == materialResource) { //if we find a category of the material resource 
             if (getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material") == "") {
@@ -498,10 +508,10 @@
     if (getMessageWrongCategory(scheduledActivity, categoryResourceId, typeResources) == "") { //we can check the quantity only if it's not awring category
       var listCategoryOfResources;
       if (typeResources == "human") { //set the list category resources if it's a human resource
-        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
       }
       else { //set the list category resources if it's a material resource
-        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+        listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
       }
   
       var categoryQuantity = 0;
@@ -563,7 +573,7 @@
         }
       })
       if (categoryExist == false) { //if the category doesn't exist
-        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll("3aZt3r", " "));
+        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll("3aZt3r", " "));
         listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
           if (categoryOfResource.idcategory == categoryResourceId) { //if we find the good category
             //set the category name
@@ -581,7 +591,7 @@
         }
       })
       if (categoryExist == false) { //if the category doesn't exist
-        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll("3aZt3r", " "));
+        var listCategoryOfResources = JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll("3aZt3r", " "));
         listCategoryOfResources.forEach((categoryOfResource) => { //browse all category of resource
           if (categoryOfResource.idcategory == categoryResourceId) { //if we find the good category
             //set the category name
@@ -692,8 +702,8 @@
     var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //recover all human resources
     humanResources.forEach((resource) => { //browse all human resources
       if (resource.id == humanResourceId) {
-        workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
-        workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+        workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.businessHours[0].startTime + ":00")
+        workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.businessHours[0].endTime + ":00")
         //if the human resource is not in working hours
         if (!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) &&
           new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)) {
@@ -1311,3 +1321,52 @@
       scheduledActivity.setEnd(scheduledActivity.end);
     })
   }
+
+  function GetDataErrors(){
+    if(document.getElementById('listeActivityHumanResource').value==""){
+      var dateStr=document.getElementById("date").value
+      $.ajax({
+        type: 'POST',
+        url: '/GetErrorsInfos',
+        data: {dateModified: dateStr },
+        dataType: "json",
+        success: function (data) {
+          categoryHumanResource=data["categoryHumanResource"];
+          categoryMaterialResource=data["categoryMaterialResource"];
+          listeActivityHumanResource=data["listeActivityHumanResources"];
+          listeActivityMaterialResource=data["listeActivityMaterialResources"];
+          categoryOfHumanResource=data["categoryOfHumanResource"];
+          categoryOfMaterialResource=data["categoryOfMaterialResource"];
+          listeActivity=data["listeActivity"];
+          listeAppointments=data["listeAppointments"];
+          listeSuccessors=data["listeSuccessors"];
+          document.getElementById("listeActivityHumanResource").value =JSON.stringify(listeActivityHumanResource);
+          document.getElementById("listeActivityMaterialResource").value =JSON.stringify(listeActivityMaterialResource);
+          document.getElementById("categoryOfHumanResource").value =JSON.stringify(categoryOfHumanResource);
+          document.getElementById("categoryOfMaterialResource").value =JSON.stringify(categoryOfMaterialResource);
+          document.getElementById("categoryMaterialResource").value =JSON.stringify(categoryMaterialResource);
+          document.getElementById("categoryHumanResource").value =JSON.stringify(categoryHumanResource);
+          document.getElementById("listeAppointments").value =JSON.stringify(listeAppointments);
+          document.getElementById("listeActivity").value =JSON.stringify(listeActivity);
+          document.getElementById("listeSuccessors").value =JSON.stringify(listeSuccessors);
+          updateErrorMessages();
+          
+        },
+        error: function () {
+          console.log("error")
+          }
+      });
+    }
+      else{
+          categoryHumanResource=JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
+          categoryMaterialResource=JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
+          listeActivityHumanResource=JSON.parse(document.getElementById("listeActivityHumanResource").value);
+          listeActivityMaterialResource=JSON.parse(document.getElementById("listeActivityMaterialResource").value);
+          categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll('3aZt3r',''));
+          categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll('3aZt3r',''));
+          listeActivity=JSON.parse(document.getElementById("listeActivity").value);
+          listeAppointments=JSON.parse(document.getElementById("listeAppointments").value);
+          listeSuccessors=JSON.parse(document.getElementById("listeSuccessors").value);
+          updateErrorMessages();
+      }
+    }

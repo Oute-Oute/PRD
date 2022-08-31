@@ -1,12 +1,14 @@
+var listeAppointments
+var listeActivity
+var listeSuccessors
+
+
 /**
  * Open the modal to Add a pathway
  */
 function displayAddPathway() {
-  let listeAppointments = JSON.parse(
-    document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")
-  );
-  let appointmentSelection = document.getElementById("select-appointment");
-
+  
+      let appointmentSelection = document.getElementById("select-appointment");
   //Reset all options from the list
   for (let i = appointmentSelection.options.length - 1; i >= 0; i--) {
     appointmentSelection.remove(i);
@@ -32,11 +34,6 @@ function displayAddPathway() {
 
   let filter = document.getElementById("filterId"); //get the filter
   filter.style.display = "none"; //hide the filter
-  while (filter.firstChild) {
-    //while there is something in the filter
-    filter.removeChild(filter.firstChild); //remove the old content
-  }
-
 }
 
 /**
@@ -46,12 +43,12 @@ function displayAddPathway() {
 function addPathway() {
   //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
-  var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
+  var listeActivities = JSON.parse(document.getElementById("listeActivity").value);
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
-  var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
   var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
   var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
-  var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r', ' '));
+  var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
   var appointmentid = document.getElementById("select-appointment").value;
 
 
@@ -63,9 +60,7 @@ function addPathway() {
       listeAppointments[i].scheduled = true;
     }
   }
-
-  document.getElementById("listeAppointments").value =
-    JSON.stringify(listeAppointments);
+  document.getElementById("listeAppointments").value = JSON.stringify(listeAppointments);
 
   //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
@@ -120,35 +115,34 @@ function addPathway() {
       var materialAlreadyScheduled = [];
       //Find for all Activities of the pathway, the number of Humanresources to define. 
       var categoryHumanResources = [];
-
+      listeActivitHumanResource=Object.values(listeActivitHumanResource);
       for (let j = 0; j < listeActivitHumanResource.length; j++) {
-        if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
-          for (let k = 0; k < categoryHumanResourceJSON.length; k++) {
-            if (listeActivitHumanResource[j].humanResourceCategoryId == categoryHumanResourceJSON[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j]) == false) {
-              humanAlreadyScheduled.push(listeActivitHumanResource[j]);
-              categoryHumanResources.push({ id: listeActivitHumanResource[j].humanResourceCategoryId, quantity: listeActivitHumanResource[j].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
+        if (listeActivitHumanResource[j][0].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryHumanResource.length; k++) {
+            if (listeActivitHumanResource[j][0].humanResourceCategoryId == categoryHumanResource[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j][0]) == false) {
+              humanAlreadyScheduled.push(listeActivitHumanResource[j][0]);
+              categoryHumanResources.push({ id: listeActivitHumanResource[j][0].humanResourceCategoryId, quantity: listeActivitHumanResource[j][0].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
             }
           }
-          quantityHumanResources += listeActivitHumanResource[j].quantity;
+          quantityHumanResources += listeActivitHumanResource[j][0].quantity;
         }
       }
-
+      
       var categoryMaterialResources = [];
-
+      listeActivityMaterialResource=Object.values(listeActivityMaterialResource);
       for (let j = 0; j < listeActivityMaterialResource.length; j++) {
         if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-          for (let k = 0; k < categoryMaterialResourceJSON.length; k++) {
-            if (listeActivityMaterialResource[j].materialResourceCategoryId == categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j]) == false) {
-              materialAlreadyScheduled.push(listeActivityMaterialResource[j]);
-              categoryMaterialResources.push({ id: listeActivityMaterialResource[j].materialResourceCategoryId, quantity: listeActivityMaterialResource[j].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
+          for (let k = 0; k < categoryMaterialResource.length; k++) {
+            if (listeActivityMaterialResource[j][0].materialResourceCategoryId == categoryMaterialResource[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j][0]) == false) {
+              materialAlreadyScheduled.push(listeActivityMaterialResource[j][0]);
+              categoryMaterialResources.push({ id: listeActivityMaterialResource[j][0].materialResourceCategoryId, quantity: listeActivityMaterialResource[j][0].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
             }
           }
-          quantityMaterialResources += listeActivityMaterialResource[j].quantity;
+          quantityMaterialResources += listeActivityMaterialResource[j][0].quantity;
         }
       }
 
       //Put the number of human resouorces in the ResourcesArray of the event
-
       for (let j = 0; j < quantityHumanResources; j++) {
         activityResourcesArray.push("h-default");
       }
@@ -251,8 +245,7 @@ function addPathway() {
   calendar.render();
 
   $("#add-planning-modal").modal("toggle");
-  updateErrorMessages();
-
+  
   calendar.getEvents().forEach((currentEvent) => {
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
@@ -655,5 +648,54 @@ function autoAddPathway(){
   else{
     document.getElementById('alert-scheduled-tomorrow').style.display='none';
     $("#add-planning-modal").modal("toggle");
+  }
+}
+
+function getDataAdd(){
+  if(document.getElementById('listeActivityHumanResource').value==""){
+    var dateStr=document.getElementById("date").value
+    $.ajax({
+      type: 'POST',
+      url: '/GetErrorsInfos',
+      data: {dateModified: dateStr },
+      dataType: "json",
+      success: function (data) {
+        document.getElementById("listeActivityHumanResource").value =JSON.stringify(data["listeActivityHumanResources"]);
+        document.getElementById("listeActivityMaterialResource").value =JSON.stringify(data["listeActivityMaterialResources"]);
+        document.getElementById("categoryOfHumanResource").value =JSON.stringify(data["categoryOfHumanResource"]);
+        document.getElementById("categoryOfMaterialResource").value =JSON.stringify(data["categoryOfMaterialResource"]);
+        document.getElementById("categoryMaterialResource").value =JSON.stringify(data["categoryMaterialResource"]);
+        document.getElementById("categoryHumanResource").value =JSON.stringify(data["categoryHumanResource"]);
+        document.getElementById("listeAppointments").value =JSON.stringify(data["listeAppointments"]);
+        document.getElementById("listeActivity").value =JSON.stringify(data["listeActivity"]);
+        document.getElementById("listeSuccessors").value =JSON.stringify(data["listeSuccessors"]);
+        categoryHumanResource=JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
+        categoryMaterialResource=JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
+        listeActivityHumanResource=JSON.parse(document.getElementById("listeActivityHumanResource").value.replaceAll('3aZt3r',' '));
+        listeActivityMaterialResource=JSON.parse(document.getElementById("listeActivityMaterialResource").value.replaceAll('3aZt3r',' '));
+        categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll('3aZt3r',' '));
+        categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll('3aZt3r',' '));
+        listeActivity=JSON.parse(document.getElementById("listeActivity").value.replaceAll('3aZt3r',' '));
+        listeAppointments=JSON.parse(document.getElementById("listeAppointments").value.replaceAll('3aZt3r',' '));
+        listeSuccessors=JSON.parse(document.getElementById("listeSuccessors").value.replaceAll('3aZt3r',' '));
+        displayAddPathway();
+        
+      },
+      error: function () {
+        console.log("error")
+        }
+    });
+  }
+  else{
+      categoryHumanResource=JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
+      categoryMaterialResource=JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
+      listeActivityHumanResource=JSON.parse(document.getElementById("listeActivityHumanResource").value.replaceAll('3aZt3r',' '));
+      listeActivityMaterialResource=JSON.parse(document.getElementById("listeActivityMaterialResource").value.replaceAll('3aZt3r',' '));
+      categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResource").value.replaceAll('3aZt3r',' '));
+      categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResource").value.replaceAll('3aZt3r',' '));
+      listeActivity=JSON.parse(document.getElementById("listeActivity").value.replaceAll('3aZt3r',' '));
+      listeAppointments=JSON.parse(document.getElementById("listeAppointments").value.replaceAll('3aZt3r',' '));
+      listeSuccessors=JSON.parse(document.getElementById("listeSuccessors").value.replaceAll('3aZt3r',' '));
+      displayAddPathway();
   }
 }

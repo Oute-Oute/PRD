@@ -47,10 +47,10 @@ function alertOnload() {
   setTimeout(showPopup, modifAlertTime);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function firstCalendar(){
   //Créer le calendar sous les conditions que l'on souhaite
   createCalendar(headerResources);
-});
+}
 
 function unshowDiv(id) {
   document.getElementById(id).style.display = "none";
@@ -174,7 +174,6 @@ function updateEventsAppointment(modifyEvent) {
   })
 
   verifyHistoryPush(historyEvents, -1);
-  updateErrorMessages();
 }
 
 /**
@@ -188,38 +187,7 @@ function showSelectDate() {
   selectContainerDate.style.display = "block";
 }
 
-//fonction qui permet de tester la mise à jour de la liste des events d'un appointment
-function updateEventsAppointment(modifyEvent) {
-  listeHumanResources = JSON.parse(document.getElementById('human').value.replaceAll('3aZt3r', ' '));
-  listeMaterialResources = JSON.parse(document.getElementById('material').value.replaceAll('3aZt3r', ' '));
-  //Ajoute la ressource allouée dans extendedProps -> human et material Resource afin d'afficher la ressource lorsque l'on clique sur l'event
-  clearArray(modifyEvent._def.extendedProps.humanResources);
-  clearArray(modifyEvent._def.extendedProps.materialResources)
-  for (let i = 0; i < modifyEvent._def.resourceIds.length; i++) {
-    if (modifyEvent._def.resourceIds[i] != 'h-default' && modifyEvent._def.resourceIds[i] != 'm-default' && modifyEvent._def.extendedProps.humanResources.includes(modifyEvent._def.resourceIds[i]) == false) {
-      for (let j = 0; j < listeHumanResources.length; j++) {
-        if (listeHumanResources[j].id == modifyEvent._def.resourceIds[i]) {
-          var humanArray = { id: modifyEvent._def.resourceIds[i], title: listeHumanResources[j].title }
-          modifyEvent._def.extendedProps.humanResources.push(humanArray);
-        }
-      }
-      for (let j = 0; j < listeMaterialResources.length; j++) {
-        if (listeMaterialResources[j].id == modifyEvent._def.resourceIds[i]) {
-          var materialArray = { id: modifyEvent._def.resourceIds[i], title: listeMaterialResources[j].title }
-          modifyEvent._def.extendedProps.materialResources.push(materialArray);
-        }
-      }
-    }
-  }
 
-  let listResource = [];
-  modifyEvent._def.resourceIds.forEach((resource) => {
-    listResource.push(resource)
-  })
-
-  verifyHistoryPush(historyEvents, -1);
-  updateErrorMessages();
-}
 
 function DisplayAppointmentInformation(eventClicked) {
   $("#modify-planning-modal").modal('hide');
@@ -329,6 +297,7 @@ function displayModalModifyEvent() {
 
 function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
+  calendarResources=createResources(typeResource,resourcesToDisplay);
   var calendarEl = document.getElementById("calendar");
   var first;
   var listEvent;
@@ -385,19 +354,18 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
     timeZone: "Europe/Paris",
 
     scrollTimeReset: false,
-    height: $(window).height() * 0.75,
-
+    height: $(window).height() * 0.70,
     //permet de modifier les events dans le calendar
     selectable: false,
     //eventConstraint:"businessHours",
     editable: true,
     eventDurationEditable: false,
-    handleWindowResize: true,
+    handleWindowResize: false,
     nowIndicator: true,
     selectConstraint: "businessHours", //set the select constraint to be business hours
     eventMinWidth: 1, //set the minimum width of the event
     resourceAreaColumns: resourcesColumns, //set the type of columns for the resources
-
+    resources: calendarResources,
     //modifie l'affichage de l'entête du calendar pour ne pas l'afficher
     headerToolbar: false,
 
@@ -482,42 +450,25 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         $("#material-resource-modified-event").val(materialResourcesNames); //set the material resources of the event
         $("#id-modified-event").val(id);
         $("#modify-planning-modal").modal("show"); //open the window
-        document.getElementById('eventClicked').value = JSON.stringify(event);
-        updateEventsAppointment(event)
-        calendar.getEvents().forEach((currentEvent) => {
-          currentEvent._def.ui.textColor = "#fff";
-          currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-          currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-          currentEvent.setEnd(currentEvent.end);
-        })
-        isUpdated = false;
+
       }
     },
 
     eventDrop: function (event) {
       var modifyEvent = event.event;
-      console.log(event.oldEvent._def)
         updateEventsAppointment(modifyEvent)
-        calendar.getEvents().forEach((currentEvent) => {
-          currentEvent._def.ui.textColor = "#fff";
-          currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-          currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-          currentEvent.setEnd(currentEvent.end);
-        })
+        modifyEvent._def.ui.textColor = "#fff";
+        modifyEvent._def.ui.backgroundColor = "#3788d8";
+        modifyEvent._def.ui.borderColor = "#3788d8";
+        modifyEvent.setEnd(modifyEvent.end);
         isUpdated = false;
-        console.log(calendar.getEvents())
-        for(let i = 0; i < calendar.getEvents().length; i++){
-          if(calendar.getEvents()[i]._def.publicId == "now"){
-            calendar.getEvents()[i].remove()
-          }
-        }
         if(event.oldEvent._def.resourceIds.length != event.event._def.resourceIds.length){
           $("#error-fusion-modal").modal("show"); //open the window
           undoEvent()
         }
     },
     eventDragStart: function (event) {
-      for(var i = 0; i < calendar.getResources().length; i++){
+      for(var i = 0; i < calendar.getResources().length; i=i+5){
         idNowIndicator.push("now"+i)
         calendar.addEvent(
           {
@@ -526,119 +477,26 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
             resourceId: calendar.getResources()[i].id,
             display: 'background',
             color: '#00f',
-            id: idNowIndicator[i],
+            id: "now"+i,
           }
         )
       }
     },
     eventDragStop: function (event) {
-      console.log(calendar.getEvents())
+      
       while(idNowIndicator.length != 0){
         calendar.getEventById(idNowIndicator[0]).remove()
         idNowIndicator.shift()
       }
     }
   });
-  switch (typeResource) {
-    case "Ressources Humaines": //if we want to display by the resources
-      if (resourcesToDisplay != undefined) {
-        var resourcesArray = resourcesToDisplay
-      }
-      else {
-        var resourcesArray = JSON.parse(
-          document.getElementById("human").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
-      }
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
-        var businessHours = []; //create an array to store the working hours
-        for (var j = 0; j < temp["workingHours"].length; j++) {
-          businesstemp = {
-            //create a new business hour
-            startTime: temp["workingHours"][j]["startTime"], //set the start time
-            endTime: temp["workingHours"][j]["endTime"], //set the end time
-            daysOfWeek: [temp["workingHours"][j]["day"]], //set the day
-          };
-          businessHours.push(businesstemp); //add the business hour to the array
-        }
-        var categoriesStr = ""; //create a string with the human resources names
-        categories = temp["categories"];
-        var categoriesArray = [];
-        for (let k = 0; k < categories.length - 1; k++) {
-          categoriesStr += categories[k]["name"] + ", ";
-          categoriesArray.push(categories[k]["name"]);
-        }
-        categoriesStr += categories[categories.length - 1]["name"];
-        categoriesArray.push(categories[categories.length - 1]["name"]);
-        calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"], //set the id
-          title: temp["title"], //set the title
-          categoriesString: categoriesStr, //set the type
-          businessHours: businessHours, //get the business hours
-          type: 1,
-          categories: categoriesArray,
-        });
-        calendar.addResource({
-          id: "h-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
-      }
-      break;
-    case "Ressources Matérielles": //if we want to display by the resources
-      if (resourcesToDisplay != undefined) {
-        var resourcesArray = resourcesToDisplay
-      }
-      else {
-        var resourcesArray = JSON.parse(
-          document.getElementById("material").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
-      }
-      for (var i = 0; i < resourcesArray.length; i++) {
-        var temp = resourcesArray[i]; //get the resources data
-        var categoriesStr = ""; //create a string with the human resources names
-        categories = temp["categories"];
-        var categoriesArray = [];
-        if (categories.length > 0) {
-          for (var j = 0; j < categories.length - 1; j++) {
-            //for each human resource except the last one
-            categoriesStr += categories[j]["name"] + ", "; //add the material resource name to the string with a ; and a space
-            categoriesArray.push(categories[j]["name"]);
-          }
-          categoriesStr += categories[categories.length - 1]["name"]; //add the last material resource name to the string
-          categoriesArray.push(categories[categories.length - 1]["name"]);
-        } else categoriesStr = "Pas de Catégorie";
-        calendar.addResource({
-          //add the resources to the calendar
-          id: temp["id"],
-          categoriesString: categoriesStr, //set the type
-          title: temp["title"],
-          type: 1,
-          categories: categoriesArray,
-
-        });
-        calendar.addResource({
-          id: "m-default",
-          title: "Aucune ressource allouée",
-          type: 0,
-          categoriesString: [["Aucune Catégorie"]],
-          categories: ["default"],
-        });
-        categoriesStr = "";
-      }
-      break;
-  }
+ 
+  
 
   if (first == true) {
-    listEvents = JSON.parse(
-      document
-        .getElementById("listScheduledActivitiesJSON")
-        .value.replaceAll("3aZt3r", " ")
-    );
-  } else {
+    listEvents = JSON.parse(document.getElementById("listScheduledActivitiesJSON").value.replaceAll("3aZt3r", " "));
+  } 
+  else {
     let setEvents = [];
     var index = 0;
     listEvent.forEach((eventModify) => {
@@ -692,17 +550,10 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
   }
   //affiche le calendar
   calendar.gotoDate(currentDate);
-
   calendar.render();
-  updateErrorMessages();
+  //updateErrorMessages();
 
-  let listCurrentEvent = calendar.getEvents();
-  listCurrentEvent.forEach((currentEvent) => {
-    currentEvent._def.ui.textColor = "#fff";
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    currentEvent.setEnd(currentEvent.end);
-  });
+
   isUpdated = true;
 }
 
@@ -798,12 +649,6 @@ function undoEvent() {;
   if (historyEvents.length != 1) {
     createCalendar(headerResources, 'recreate', zoom);
   }
-  calendar.getEvents().forEach((currentEvent) => {
-    currentEvent._def.ui.textColor = "#fff";
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    currentEvent.setEnd(currentEvent.end);
-  })
   isUpdated = false;
 }
 
@@ -854,4 +699,91 @@ function countOccurencesInArray(val,array){
     }
   }
   return counter; 
+}
+
+function createResources(typeResource,resourcesToDisplay){
+  var calendarResources=[];
+  switch (typeResource) {
+    case "Ressources Humaines": //if we want to display by the resources
+      if (resourcesToDisplay != undefined) {
+        var resourcesArray = resourcesToDisplay
+      }
+      else {
+        var resourcesArray = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //get the data of the resources
+      }
+      for (var i = 0; i < resourcesArray.length; i++) {
+        var temp = resourcesArray[i]; //get the resources data
+        var categoriesStr = ""; //create a string with the human resources names
+        categories = temp["categories"];
+        var categoriesResourceArray = [];
+        for (let k = 0; k < categories.length - 1; k++) {
+          categoriesStr += categories[k]["name"] + ", ";
+          categoriesResourceArray.push(categories[k]["name"]);
+        }
+        categoriesStr += categories[categories.length - 1]["name"];
+        categoriesResourceArray.push(categories[categories.length - 1]["name"]);
+        calendarResources.push({
+          //add the resources to the calendar
+          id: temp["id"], //set the id
+          title: temp["title"], //set the title
+          categoriesString: categoriesStr, //set the type
+          businessHours: temp["businessHours"][0], //get the business hours
+          type: 1,
+          categories: categoriesResourceArray,
+        });
+        calendarResources.push({
+          id: "h-default",
+          title: "Aucune ressource allouée",
+          type: 0,
+          categoriesString: [["Aucune Catégorie"]],
+          categories: ["default"],
+        });
+      
+    }
+      break;
+    case "Ressources Matérielles": //if we want to display by the resources
+      if (resourcesToDisplay != undefined) {
+        var resourcesArray = resourcesToDisplay
+      }
+      else {
+        var resourcesArray = JSON.parse(
+          document.getElementById("material").value.replaceAll("3aZt3r", " ")
+        ); //get the data of the resources
+      }
+      for (var i = 0; i < resourcesArray.length; i++) {
+        var temp = resourcesArray[i]; //get the resources data
+        var categoriesStr = ""; //create a string with the human resources names
+        categories = temp["categories"];
+        var categoriesResourceArray = [];
+        if (categories.length > 0) {
+          for (var j = 0; j < categories.length - 1; j++) {
+            //for each human resource except the last one
+            categoriesStr += categories[j]["name"] + ", "; //add the material resource name to the string with a ; and a space
+            categoriesResourceArray.push(categories[j]["name"]);
+          }
+          categoriesStr += categories[categories.length - 1]["name"]; //add the last material resource name to the string
+          categoriesResourceArray.push(categories[categories.length - 1]["name"]);
+          
+        } else categoriesStr = "Pas de Catégorie";
+        calendarResources.push({
+          //add the resources to the calendar
+          id: temp["id"],
+          categoriesString: categoriesStr, //set the type
+          title: temp["title"],
+          type: 1,
+          categories: categoriesResourceArray,
+
+        });
+        calendarResources.push({
+          id: "m-default",
+          title: "Aucune ressource allouée",
+          type: 0,
+          categoriesString: [["Aucune Catégorie"]],
+          categories: ["default"],
+        });
+        categoriesStr = "";
+      }
+      break;
+  }
+  return calendarResources;
 }

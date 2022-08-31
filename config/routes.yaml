@@ -45,6 +45,21 @@ ModificationDeleteOnUnload:
   controller: App\Controller\ModificationPlanningController::modificationDeleteOnUnload
   methods: [GET]
   
+GetAddPlanning:
+  path: /GetAddPlanning
+  controller: App\Controller\ModificationPlanningController::GetAddPlanning
+  methods: [POST]
+
+GetAutoAddInfos:
+  path: /GetAutoAddInfos
+  controller: App\Controller\ModificationPlanningController::GetAutoAddInfos
+  methods: [POST]
+
+GetErrorsInfos:
+  path: /GetErrorsInfos
+  controller: App\Controller\ModificationPlanningController::GetErrorsInfos
+  methods: [POST]
+
 Patients:
   path: /patients
   controller: App\Controller\PatientController::patientGet

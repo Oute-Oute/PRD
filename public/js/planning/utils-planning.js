@@ -20,12 +20,14 @@ function filterShow() {
   if (filter.style.display != "none") {
     //if the filter is already displayed
     filter.style.display = "none"; //hide the filter
-    while (filter.firstChild) {
-      //while there is something in the filter
-      filter.removeChild(filter.firstChild); //remove the old content
-    }
   }
   else {
+    filter.style.display = "inline-block"; //display the filter
+    if(firstCreationFilter){
+      while (filter.firstChild) {
+        //while there is something in the filter
+        filter.removeChild(filter.firstChild); //remove the old content
+      }
     var allCategories = []; //create an array to store the resources to display
     switch (headerResources) {
       case "Ressources Humaines": //if we want to display by the patients
@@ -40,7 +42,7 @@ function filterShow() {
             }
           }
         }
-        if (humanCategoriesToDisplay.length == 0 && firstCreationFilter) {
+        if (humanCategoriesToDisplay.length == 0) {
           humanCategoriesToDisplay=Object.values(allCategories);//copy all data in the array if it is empty
           firstCreationFilter=false;
         }
@@ -57,13 +59,12 @@ function filterShow() {
             }
           }
         }
-        if (materialCategoriesToDisplay.length == 0&&firstCreationFilter) {
+        if (materialCategoriesToDisplay.length ==0) {
           materialCategoriesToDisplay=Object.values(allCategories);//copy all data in the array if it is empty
           firstCreationFilter=false
         }
         break;
     }
-    filter.style.display = "inline-block"; //display the filter
     if (allCategories.length == 0) {
       //if there is no resource in the calendar
       var label = document.createElement("label"); //display a label
@@ -89,15 +90,12 @@ function filterShow() {
             changeFilter(this.id, allCategories, 'human'); //call the changeFilter function with the id of the resource
           };
           if(humanCategoriesToDisplay.length==allCategories.length){
-
             inputAll.checked = true; //set the checkbox to checked if all the resources are selected
           }
           if(humanCategoriesToDisplay.length==0){
-
             inputNothing.checked = true; //set the checkbox to checked if all the resources are selected
           }
           else if(humanCategoriesToDisplay.length!=allCategories.length && humanCategoriesToDisplay[0].length!=0){
-
             inputAll.checked = false; //set the checkbox to unchecked if all the resources are not selected
             inputNothing.checked = false; //set the checkbox to unchecked if all the resources are not selected
           }
@@ -136,6 +134,7 @@ function filterShow() {
         filter.appendChild(labelNothing); //add the label to the filter
         filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
         filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
+      }
       //for all the resources in the calendar
       for (var i = 0; i < allCategories.length; i++) {
         if (document.getElementById(allCategories[i]) == null) {
@@ -152,7 +151,7 @@ function filterShow() {
                 for (var j = 0; j < humanCategoriesToDisplay.length; j++) {
                   if (input.id == humanCategoriesToDisplay[j]||firstCreationFilter==true) {
                     input.checked = true; //set the checkbox to checked
-                    j = calendar.getResources().length - 1; //stop the loop
+                    j = humanCategoriesToDisplay.length; //stop the loop
                   }
                   else {
                     input.checked = false; //set the checkbox to unchecked
@@ -169,7 +168,7 @@ function filterShow() {
                 for (var j = 0; j < materialCategoriesToDisplay.length; j++) {
                   if (input.id == materialCategoriesToDisplay[j]||firstCreationFilter==true) {
                     input.checked = true; //set the checkbox to checked
-                    j = calendar.getResources().length - 1;
+                    j = materialCategoriesToDisplay.length;
                   }
                 }
               }
@@ -182,6 +181,7 @@ function filterShow() {
           filter.appendChild(label); //add the label to the filter
           filter.appendChild(document.createElement("br")); //add a br to the filter for display purpose
         }
+      
       }
     }
   }
@@ -202,8 +202,6 @@ function changeFilter(id, allCategories, type) {
   var zoom = document.getElementById('zoom-value').value;
 
   if(id=="inputAll"){//if we want to select all the resources
-    console.log("inputAll");
-    console.log(document.getElementById('inputAll'))
     if(document.getElementById('inputAll').checked==true){//if the checkbox is checked'
       for(var i=0;i<allCategories.length;i++){
         document.getElementById(allCategories[i]).checked=true;//set the checkbox to unchecked
@@ -212,15 +210,14 @@ function changeFilter(id, allCategories, type) {
     }
   }
   if(id=="inputNothing"){//if we want to deselect all the resources
-    console.log("inputNothing");
     if(document.getElementById('inputNothing').checked==true){//if the checkbox is checked'
-      console.log("nothingChecked");
       for(var i=0;i<allCategories.length;i++){
         document.getElementById(allCategories[i]).checked=false;//set the checkbox to unchecked
       }
       document.getElementById('inputAll').checked=false;//set the checkbox to unchecked
     }
   }
+
   else{//if we want to select or deselect a resource
     switch (type) {
       case "human"://if we want to filter by the human resources
@@ -259,7 +256,6 @@ function changeFilter(id, allCategories, type) {
         break;
     }
       inputAll=document.getElementById("inputAll");
-      console.log(inputAll);
       inputNothing=document.getElementById("inputNothing");
       if(categoriesToDisplay.length==allCategories.length){
 
@@ -282,6 +278,7 @@ function changeFilter(id, allCategories, type) {
       }
     }
   }
+  console.log(resourcesToDisplay);
   createCalendar(headerResources, "create",zoom, resourcesToDisplay);
 }
 
@@ -315,7 +312,6 @@ function changePlanning() {
 
   }
   document.querySelectorAll("#header-type")[0].innerText=headerResources;
-  firstCreationFilter=true;
 }
 
 /**
@@ -347,7 +343,6 @@ function modify(id) {
         }
     },
     error: function () {
-        console.log("error : can't access modifications");
         window.location.assign("/ModificationPlanning?date=" + dateStr + "&id=" + id); //goto the modification page with the date and user id
       }
   });
@@ -509,7 +504,6 @@ function categoryShow() {
       headerContent: "Catégories", //set the label of the column
       field: "categoriesString", //set the field of the column
     }]
-    createCalendar(headerResources,'create',zoom, resourcesToDisplay);
     calendar.setOption('resourceAreaWidth','25%');
     calendar.render()
   }
@@ -520,10 +514,10 @@ function categoryShow() {
       headerContent: "Nom", //set the label of the column
       field: "title", //set the field of the column
     }]
-    createCalendar(headerResources,'create',zoom, resourcesToDisplay);
     calendar.setOption('resourceAreaWidth','15%');
     calendar.render()
   }
+  calendar.setOption('resourceAreaColumns',resourcesColumns)
 
 }
 
