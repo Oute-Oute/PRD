@@ -112,9 +112,11 @@ function editAppointment(
   document.getElementById("wrong-edit-input").style.visibility = "hidden";
   document.getElementById("idappointment").value = idappointment;
   document.getElementById("autocompletePatientEdit").value = lastnamepatient + " " + firstnamepatient;
+  document.getElementById("patient-name").value = lastnamepatient + " " + firstnamepatient;
   document.getElementById("autocompletePathwayEdit").value = idpathway;
+  document.getElementById("pathway-hidden").value = idpathway;
   document.getElementById("dayAppointment").value = dayappointment
-  
+  document.getElementById("dayAppointment-hidden").value = dayappointment
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
