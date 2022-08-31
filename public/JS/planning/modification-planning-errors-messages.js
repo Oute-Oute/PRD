@@ -102,6 +102,13 @@
       }
     })
     updatePanelErrorMessages(); //update the panel error messages
+    let listCurrentEvent = calendar.getEvents();
+    listCurrentEvent.forEach((currentEvent) => {
+    currentEvent._def.ui.textColor = "#fff";
+    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
+    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
+    currentEvent.setEnd(currentEvent.end);
+  });
   }
   
   /**
@@ -272,6 +279,7 @@
         var listCategoryOfHumanResource = [];
         var listWrongCategoriesOfHumanResource = [];
         var countValidCategory = 0;
+        listCategoryOfHumanResources=Object.values(listCategoryOfHumanResources);
         listCategoryOfHumanResources.forEach((categoryOfHumanResource) => { //browse the relations between categories and human resources 
           if (categoryOfHumanResource.idresource == humanResource) { //if we find a category of the human resource 
             if (getMessageWrongCategory(scheduledActivity, categoryOfHumanResource.idcategory, "human") == "") {
@@ -374,6 +382,7 @@
         var listCategoryOfMaterialResource = [];
         var listWrongCategoriesOfMaterialResource = [];
         var countValidCategory = 0;
+        listCategoryOfMaterialResources=Object.values(listCategoryOfMaterialResources);
         listCategoryOfMaterialResources.forEach((categoryOfMaterialResource) => { //browse the relations between categories and material resources 
           if (categoryOfMaterialResource.idresource == materialResource) { //if we find a category of the material resource 
             if (getMessageWrongCategory(scheduledActivity, categoryOfMaterialResource.idcategory, "material") == "") {
@@ -693,8 +702,8 @@
     var humanResources = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //recover all human resources
     humanResources.forEach((resource) => { //browse all human resources
       if (resource.id == humanResourceId) {
-        workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].startTime + ":00")
-        workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.workingHours[0].endTime + ":00")
+        workingHoursStart = new Date(currentDateStr.split("T")[0] + " " + resource.businessHours[0].startTime + ":00")
+        workingHoursEnd = new Date(currentDateStr.split("T")[0] + " " + resource.businessHours[0].endTime + ":00")
         //if the human resource is not in working hours
         if (!(workingHoursStart <= new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) &&
           new Date(scheduledActivity.end.getTime() - 2 * 60 * 60 * 1000) <= workingHoursEnd)) {
@@ -1315,7 +1324,6 @@
 
   function GetDataErrors(){
     if(document.getElementById('listeActivityHumanResource').value==""){
-      console.log("if")
       var dateStr=document.getElementById("date").value
       $.ajax({
         type: 'POST',
@@ -1323,7 +1331,6 @@
         data: {dateModified: dateStr },
         dataType: "json",
         success: function (data) {
-          console.log(data);
           categoryHumanResource=data["categoryHumanResource"];
           categoryMaterialResource=data["categoryMaterialResource"];
           listeActivityHumanResource=data["listeActivityHumanResources"];
@@ -1351,7 +1358,6 @@
       });
     }
       else{
-        console.log("else")
           categoryHumanResource=JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
           categoryMaterialResource=JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
           listeActivityHumanResource=JSON.parse(document.getElementById("listeActivityHumanResource").value);

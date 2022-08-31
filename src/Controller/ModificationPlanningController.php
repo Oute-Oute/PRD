@@ -86,18 +86,16 @@ class ModificationPlanningController extends AbstractController
         //recover all informations from twig file
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
-        $listScheduledAppointments = json_decode($request->request->get("scheduled-appointments"));
+        $dateModified=$request->request->get("validation-date");
+        $listScheduledAppointments = $this->getInformationsByDateArray($doctrine, $dateModified)[0];
         $userId = $request->request->get("user-id");
         
         //update the new scheduled appointments
-        foreach($listScheduledAppointments as $oneScheduledAppointment)
+        foreach($listEvent as $oneEvent)
         {
-            if($oneScheduledAppointment->scheduled)
-            {
-                $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $oneScheduledAppointment->id]);
-                $appointment->setScheduled($oneScheduledAppointment->scheduled);
-                $appointmentRepository->add($appointment, true);
-            }
+            $appointment = $doctrine->getRepository("App\Entity\Appointment")->findOneBy(["id" => $oneEvent->extendedProps->appointment]);
+            $appointment->setScheduled(true);
+            $appointmentRepository->add($appointment, true);
         }
         
         //we associate the events and the resources for make a unique list

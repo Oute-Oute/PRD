@@ -216,6 +216,7 @@ function changeFilter(id, allCategories, type) {
       document.getElementById('inputAll').checked=false;//set the checkbox to unchecked
     }
   }
+
   else{//if we want to select or deselect a resource
     switch (type) {
       case "human"://if we want to filter by the human resources
@@ -276,6 +277,7 @@ function changeFilter(id, allCategories, type) {
       }
     }
   }
+  console.log(resourcesToDisplay);
   createCalendar(headerResources, "create",zoom, resourcesToDisplay);
 }
 

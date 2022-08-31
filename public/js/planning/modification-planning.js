@@ -12,7 +12,6 @@ var listErrorMessages = {
   messageUnscheduledAppointment: messageUnscheduledAppointment,
   listScheduledAppointment: listScheduledAppointment
 };
-var calendarResources=[]
 var resourcesColumns = [{
   headerContent: "Nom", //set the label of the column
   field: "title", //set the field of the column
@@ -175,7 +174,6 @@ function updateEventsAppointment(modifyEvent) {
   })
 
   verifyHistoryPush(historyEvents, -1);
-  updateErrorMessages();
 }
 
 /**
@@ -299,7 +297,7 @@ function displayModalModifyEvent() {
 
 function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay = undefined) {
   const height = document.querySelector("div").clientHeight;
-  createResources(typeResource,resourcesToDisplay);
+  calendarResources=createResources(typeResource,resourcesToDisplay);
   var calendarEl = document.getElementById("calendar");
   var first;
   var listEvent;
@@ -460,8 +458,8 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
       var modifyEvent = event.event;
         updateEventsAppointment(modifyEvent)
         modifyEvent._def.ui.textColor = "#fff";
-        modifyEvent._def.ui.backgroundColor = RessourcesAllocated(modifyEvent);
-        modifyEvent._def.ui.borderColor = RessourcesAllocated(modifyEvent);
+        modifyEvent._def.ui.backgroundColor = "#3788d8";
+        modifyEvent._def.ui.borderColor = "#3788d8";
         modifyEvent.setEnd(modifyEvent.end);
         isUpdated = false;
         if(event.oldEvent._def.resourceIds.length != event.event._def.resourceIds.length){
@@ -497,7 +495,6 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
 
   if (first == true) {
     listEvents = JSON.parse(document.getElementById("listScheduledActivitiesJSON").value.replaceAll("3aZt3r", " "));
-    console.log(listEvents)
   } 
   else {
     let setEvents = [];
@@ -553,17 +550,10 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
   }
   //affiche le calendar
   calendar.gotoDate(currentDate);
-
   calendar.render();
   //updateErrorMessages();
 
-  let listCurrentEvent = calendar.getEvents();
-  listCurrentEvent.forEach((currentEvent) => {
-    currentEvent._def.ui.textColor = "#fff";
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    currentEvent.setEnd(currentEvent.end);
-  });
+
   isUpdated = true;
 }
 
@@ -712,15 +702,14 @@ function countOccurencesInArray(val,array){
 }
 
 function createResources(typeResource,resourcesToDisplay){
+  var calendarResources=[];
   switch (typeResource) {
     case "Ressources Humaines": //if we want to display by the resources
       if (resourcesToDisplay != undefined) {
         var resourcesArray = resourcesToDisplay
       }
       else {
-        var resourcesArray = JSON.parse(
-          document.getElementById("human").value.replaceAll("3aZt3r", " ")
-        ); //get the data of the resources
+        var resourcesArray = JSON.parse(document.getElementById("human").value.replaceAll("3aZt3r", " ")); //get the data of the resources
       }
       for (var i = 0; i < resourcesArray.length; i++) {
         var temp = resourcesArray[i]; //get the resources data
@@ -796,4 +785,5 @@ function createResources(typeResource,resourcesToDisplay){
       }
       break;
   }
+  return calendarResources;
 }
