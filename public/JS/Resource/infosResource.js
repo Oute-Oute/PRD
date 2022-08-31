@@ -7,10 +7,8 @@ var idMR;
 function showInfosModalHuman(idHumanResource, resourceName) {
   document.getElementById("human-resource1").innerHTML = resourceName;
   document.getElementById("human-resource2").innerHTML = resourceName;
-  document.getElementById("human-resource3").innerHTML = resourceName;
   idHR = idHumanResource;
   var tableBody = document.getElementById("tbody-human-resource");
-  tableBody.innerHTML = "";
   date = new Date();
   getAjaxHumanResources(idHumanResource, date, tableBody);
   createCalendarResource("humanresource");
@@ -70,14 +68,11 @@ function showInfosModalHumanCateg(idHumanResourceCategory, resourceCategName) {
  */
 function showInfosModalMaterial(idMaterialResource, resourceName) {
   document.getElementById("material-resource1").innerHTML = resourceName;
-  document.getElementById("material-resource2").innerHTML = resourceName;
   idMR = idMaterialResource;
   var tableBody = document.getElementById("tbody-material-resource");
-  tableBody.innerHTML = "";
   date = new Date();
   getAjaxMaterialResources(idMaterialResource, date, tableBody);
   createCalendarResource("materialresource");
-  change_tab_material_infos("planning-mr");
   $("#infos-material-resource-modal").modal("show");
   document.getElementById("load-large").style.visibility = "visible";  
   document.getElementById("empty-planning").style.visibility = "hidden";
@@ -133,7 +128,6 @@ function getAjaxHumanResources(idHumanResource, date, tableBody) {
     data: { idHumanResource: idHumanResource, date: dateStr },
     dataType: "json",
     success: function (data) {
-      tableResource(tableBody, data["categories"], "humanresource");
       addToCalendar(data);
     },
     error: function () {
@@ -149,7 +143,6 @@ function getAjaxMaterialResources(idMaterialResource, date, tableBody) {
     data: { idMaterialResource: idMaterialResource, date: dateStr },
     dataType: "json",
     success: function (data) {
-      tableResource(tableBody, data["categories"], "materialresource");
       addToCalendar(data);
     },
     error: function () {
@@ -165,14 +158,8 @@ function tableResource(tableBody, data, switch_param) {
     var td = document.createElement("TD");
     td.setAttribute("colspan", 5);
     switch (switch_param) {
-      case "humanresource":
-        td.append("Pas de catégorie associée à cette ressource !");
-        break;
       case "humanresourcecategory":
         td.append("Pas de ressource associée à cette catégorie !");
-        break;
-      case "materialresource":
-        td.append("Pas de catégorie associée à cette ressource !");
         break;
       case "materialresourcecategory":
         td.append("Pas de ressource associée à cette catégorie !");
@@ -185,14 +172,8 @@ function tableResource(tableBody, data, switch_param) {
       tableBody.appendChild(tr);
       var td = document.createElement("TD");
       switch (switch_param) {
-        case "humanresource":
-          td.append(data[i]["humanresourcecategory"]);
-          break;
         case "humanresourcecategory":
           td.append(data[i]["humanresource"]);
-          break;
-        case "materialresource":
-          td.append(data[i]["materialresourcecategory"]);
           break;
         case "materialresourcecategory":
           td.append(data[i]["materialresource"]);
@@ -405,19 +386,11 @@ function change_tab_human_infos(id) {
     case "planning-infos":
       planning.style.display = "block";
       workinghours.style.display = "none";
-      categories.style.display = "none";
       document.getElementById("modal-dialog").style.maxWidth = "1000px";
       break;
     case "workinghours":
       planning.style.display = "none";
       workinghours.style.display = "block";
-      categories.style.display = "none";
-      document.getElementById("modal-dialog").style.maxWidth = "600px";
-      break;
-    case "categoriesbyresource":
-      planning.style.display = "none";
-      workinghours.style.display = "none";
-      categories.style.display = "block";
       document.getElementById("modal-dialog").style.maxWidth = "600px";
       break;
   }
@@ -450,30 +423,7 @@ function change_tab_human_categ_infos(id) {
 }
 
 
-/**
- * Allows to change the selected tab in the modal infos of a material resource
- */
-function change_tab_material_infos(id) {
-  document.getElementById("planning-mr").className = "notselected";
-  document.getElementById("categoriesbyresource").className = "notselected";
-  document.getElementById(id).className = "selected";
 
-  let planning = document.getElementById("material-resource-planning");
-  let categories = document.getElementById("material-resource-categories");
-
-  switch (id) {
-    case "planning-mr":
-      planning.style.display = "block";
-      categories.style.display = "none";
-      document.getElementById("modal-dialog").style.maxWidth = "1000px";
-      break;
-    case "categoriesbyresource":
-      planning.style.display = "none";
-      categories.style.display = "block";
-      document.getElementById("modal-dialog").style.maxWidth = "600px";
-      break;
-  }
-}
 
 function change_tab_material_categ_infos(id) {
   liHeader = document.getElementsByClassName("header-material-category");
@@ -525,6 +475,9 @@ function createCalendarResource(type) {
     selectable: false, //set the calendar to be selectable
     editable: false, //set the calendar not to be editable
     allDaySlot: false,
+    slotEventOverlap: true,
+    slotDuration: "00:20:00",
+    slotMinTime: "06:00:00",
     headerToolbar: {
       left: "",
       center: "",

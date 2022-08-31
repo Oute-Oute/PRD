@@ -20,7 +20,9 @@
 .modal-dialog {
     max-width: 600px;
 }
-
+.modal-large {
+    max-width: 1000px;
+}
 /* ------------------ POUR TOUS LES FORMULAIRES ------------------*/
 /* Input pour tous les formulaires */
 .input {
