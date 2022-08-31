@@ -107,13 +107,13 @@ class AppointmentController extends AbstractController
         if ($param["earliestappointmenttime"] != "") {
             $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         } else {
-            $earliestappointmenttime = \DateTime::createFromFormat('H:i', "00:00");
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', "06:00");
         }
         if ($param["latestappointmenttime"] != "") {
 
             $latestappointmenttime = \DateTime::createFromFormat('H:i', $param['latestappointmenttime']);
         } else {
-            $latestappointmenttime = \DateTime::createFromFormat('H:i', "23:59");
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', "22:00");
         }
         // Création du rendez-vous
         $appointment = new Appointment();

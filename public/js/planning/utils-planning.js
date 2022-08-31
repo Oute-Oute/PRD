@@ -8,6 +8,7 @@
 
 var humanCategoriesToDisplay = [];
 var materialCategoriesToDisplay = [];
+var resourcesToDisplay = [];
 var firstCreationFilter=true;
 var reloadTime = 600000;
 
@@ -196,7 +197,7 @@ function filterShow() {
 function changeFilter(id, allCategories, type) {
   var resources = [];
   var categoriesToDisplay = [];
-  var resourcesToDisplay = [];
+  resourcesToDisplay=[];
   firstCreationFilter=false;
   var zoom = document.getElementById('zoom-value').value;
 
@@ -508,7 +509,7 @@ function categoryShow() {
       headerContent: "Catégories", //set the label of the column
       field: "categoriesString", //set the field of the column
     }]
-    createCalendar(headerResources,'create',zoom);
+    createCalendar(headerResources,'create',zoom, resourcesToDisplay);
     calendar.setOption('resourceAreaWidth','25%');
     calendar.render()
   }
@@ -519,7 +520,7 @@ function categoryShow() {
       headerContent: "Nom", //set the label of the column
       field: "title", //set the field of the column
     }]
-    createCalendar(headerResources,'create',zoom);
+    createCalendar(headerResources,'create',zoom, resourcesToDisplay);
     calendar.setOption('resourceAreaWidth','15%');
     calendar.render()
   }
