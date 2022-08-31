@@ -362,7 +362,6 @@ class ModificationPlanningController extends AbstractController
             }
             $i++;
         }
-        dd($modifArray);
         return new JsonResponse([]);
     }
 
@@ -378,7 +377,6 @@ class ModificationPlanningController extends AbstractController
         // Pour le développement, on n'ajoute pas dans la bdd si on est pas connecté
         // A enlever plus tard car on est censé être connecté
         if (!$user) {
-            //dd($user, "Erreur, vous n'êtes pas connecté !");
         } else {
             //$userRepository->add($user, true);
 
@@ -548,11 +546,34 @@ class ModificationPlanningController extends AbstractController
                     'id' => $idResource,
                     'title' => (str_replace(" ", "3aZt3r", $humanResource->getHumanresourcename())),
                     'businessHours' => ($this->getWorkingHours($doctrine, $humanResource)),
-                    'categories' => $categoriesArray
+                    'categories' => $categoriesArray,
+                    'type'=>1,
 
                 );
+                
             }
         }
+        $workingHoursEmpty=array();
+        for($i=0;$i<7;$i++){
+            $workingHoursEmpty[]=array(
+                'day' => $i,
+                'startTime' => "00:00",
+                'endTime' => "23:59",
+
+            );
+        }
+        $humanResourcesArray[] = array(
+            'id' => 'h-default',
+            'title' => 'Aucune ressource',
+            'categories' => array(
+                array(
+                    'id' => '0',
+                    'name' => 'Aucune catégorie',
+                ),
+            ),
+            'businessHours' => $workingHoursEmpty,
+            'type' => 0
+        );
         //Conversion des données ressources en json
         $humanResourcesArrayJson = new JsonResponse($humanResourcesArray);
         return $humanResourcesArrayJson;
@@ -582,11 +603,22 @@ class ModificationPlanningController extends AbstractController
                 $materialResourcesArray[] = array(
                     'id' =>$idResource,
                     'title' => (str_replace(" ", "3aZt3r", $materialResource->getMaterialresourcename())),
-                    'categories' => $categoriesArray
+                    'categories' => $categoriesArray,
+                    'type'=>1,
                 );
             }
         }
-        
+        $materialResourcesArray[] = array(
+            'id' => 'm-default',
+            'title' => 'Aucune ressource',
+            'categories' => array(
+                array(
+                    'id' => '0',
+                    'name' => 'Aucune catégorie',
+                ),
+            ),
+            'type' => 0
+        );
         //Conversion des données ressources en json
         $materialResourcesArrayJson = new JsonResponse($materialResourcesArray);
         return $materialResourcesArrayJson;
@@ -795,6 +827,7 @@ class ModificationPlanningController extends AbstractController
                 'appointment' => $idAppointment,
                 'activity' => $idActivity,
                 'patient' => $scheduledActivity->getAppointment()->getPatient()->getLastname() . " " . $scheduledActivity->getAppointment()->getPatient()->getFirstname(),
+                'idPatient'=>$scheduledActivity->getAppointment()->getPatient()->getId(),
                 'pathway' => ($scheduledActivity->getAppointment()->getPathway()->getPathwayname()),
                 'materialResources' => ($scheduledActivitiesMaterialResourceArray),
                 'humanResources' => ($scheduledActivitesHumanResourcesArray),
