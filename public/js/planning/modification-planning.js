@@ -404,22 +404,32 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         var categoryHumanResources = "";
         if (event.event._def.extendedProps.categoryHumanResource.length != 0) {
           for (let i = 0; i < event.event._def.extendedProps.categoryHumanResource.length; i++) {
+            if(event.event._def.extendedProps.categoryHumanResource[i].quantity != 0){
             categoryHumanResources = categoryHumanResources + event.event._def.extendedProps.categoryHumanResource[i].quantity + ' ' + event.event._def.extendedProps.categoryHumanResource[i].categoryname + ';'
           }
-        }
         else {
-          categoryHumanResources = "L'activité ne nécéssite aucune ressource humaine";
+          categoryHumanResources = "Pas de ressource à allouer";
+        }
+        }
+      }
+        else {
+          categoryHumanResources = "Pas de ressource à allouer";
         }
 
 
         var categoryMaterialResources = "";
         if (event.event._def.extendedProps.categoryMaterialResource.length != 0) {
           for (let i = 0; i < event.event._def.extendedProps.categoryMaterialResource.length; i++) {
+            if(event.event._def.extendedProps.categoryMaterialResource[i].quantity != 0){
             categoryMaterialResources = categoryMaterialResources + event.event._def.extendedProps.categoryMaterialResource[i].quantity + ' ' + event.event._def.extendedProps.categoryMaterialResource[i].categoryname + ';'
           }
+          else {
+            categoryMaterialResources = "Pas de ressource à allouer";
+          }
+        }
         }
         else {
-          categoryMaterialResources = "L'activité ne nécéssite aucune ressource materielle";
+          categoryMaterialResources = "Pas de ressource à allouer";
         }
 
         var materialResources = activity.extendedProps.materialResources; //get the material resources of the event
@@ -440,7 +450,8 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
         }
 
         //set data to display in the modal window
-        $("#start-modified-event").val(start.toISOString().substring(11, 19)); //set the start date of the event
+        $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
+        $("#end").val(activity.end.toISOString().substring(11, 19)); //set the end date of the event
         document.getElementById("show-modified-event-title").innerHTML = activity.title; //set the title of the event
         $("#parcours-modified-event").val(activity.extendedProps.pathway); //set the pathway of the event
         $("#patient-modified-event").val(activity.extendedProps.patient); //set the patient of the event
@@ -553,7 +564,7 @@ function createCalendar(typeResource, useCase, slotDuration, resourcesToDisplay 
   calendar.render();
   //updateErrorMessages();
 
-
+  document.getElementById("load-large").style.visibility = "hidden";
   isUpdated = true;
 }
 

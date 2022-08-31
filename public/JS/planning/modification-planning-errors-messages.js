@@ -108,6 +108,7 @@
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
+    document.getElementById("load-large").style.visibility = "hidden";
   });
   }
   
@@ -1323,6 +1324,7 @@
   }
 
   function GetDataErrors(){
+    document.getElementById("load-large").style.visibility = "visible";
     if(document.getElementById('listeActivityHumanResource').value==""){
       var dateStr=document.getElementById("date").value
       $.ajax({

@@ -39,6 +39,7 @@ function displayAddPathway() {
 
   let filter = document.getElementById("filterId"); //get the filter
   filter.style.display = "none"; //hide the filter
+  document.getElementById("load-large").style.visibility = "hidden";
 }
 
 /**
@@ -46,6 +47,7 @@ function displayAddPathway() {
  * Add All the Activities from a choosen appointment in the Calendar
  */
 function addPathway() {
+  document.getElementById("load-large").style.visibility = "visible";
   //Get databases informations to add the activities appointment on the calendar
   var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
   var listeActivities = JSON.parse(document.getElementById("listeActivity").value);
@@ -251,16 +253,13 @@ function addPathway() {
 
   $("#add-planning-modal").modal("toggle");
   
-  calendar.getEvents().forEach((currentEvent) => {
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    currentEvent.setEnd(currentEvent.end);
-  })
+ 
   isUpdated = false;
+  document.getElementById("load-large").style.visibility = "hidden";
 }
 
 function autoAddAllPathway(){
-   
+  document.getElementById("load-large").style.visibility = "visible";
     do{
        //Refreshing menu select-appointment
        displayAddPathway();
@@ -276,6 +275,7 @@ function autoAddAllPathway(){
        autoAddPathway(); 
       
      } while(selectAppointment.options.length!=1); //while there are still pathways to be planed
+     document.getElementById("load-large").style.visibility = "hidden";
    }
    
 /**
@@ -283,7 +283,7 @@ function autoAddAllPathway(){
 */
 function autoAddPathway(){
   //Get databases informations to add the activities appointment on the calendar
-  
+  document.getElementById("load-large").style.visibility = "visible";
   var appointmentid = document.getElementById("select-appointment").value;
   var hResource=JSON.parse(document.getElementById("human").value.replaceAll('3aZt3r',''));
   var workingHours = [];
@@ -685,11 +685,7 @@ function autoAddPathway(){
   } while (successorsActivitiesA.length != 0);
   verifyHistoryPush(historyEvents, appointmentid);
   calendar.render();
-  calendar.getEvents().forEach((currentEvent) => {
-    currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
-    currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
-    currentEvent.setEnd(currentEvent.end);
-  })
+  
   isUpdated = false;
   if(eventScheduledTomorrow==true){
     document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
@@ -699,9 +695,11 @@ function autoAddPathway(){
     document.getElementById('alert-scheduled-tomorrow').style.display='none';
     $("#add-planning-modal").modal("toggle");
   }
+  document.getElementById("load-large").style.visibility = "hidden";
 }
 
 function getDataAdd(){
+  document.getElementById("load-large").style.visibility = "visible";
   if(document.getElementById('listeActivityHumanResource').value==""){
     var dateStr=document.getElementById("date").value
     $.ajax({
