@@ -298,7 +298,6 @@ function autoAddPathway(){
       listeAppointments[i].scheduled = true;
     }
   }
-
   document.getElementById("listeAppointments").value =
     JSON.stringify(listeAppointments);
 
@@ -409,7 +408,6 @@ function autoAddPathway(){
             }
           };
         }
-        //console.log(categoryHumanResources[j].id, nbResourceOfcategory)
 
         var counterNbResourceOfCategory=0; 
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
@@ -432,6 +430,12 @@ function autoAddPathway(){
                   allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || 
                   allEvents[allEventsIterator]._def.resourceIds.includes('h-default') &&
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
+                  allEvents[allEventsIterator].start.getTime()<=(endTime) &&
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) ||
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
                   allEvents[allEventsIterator].start.getTime()<=(endTime) &&
                   allEvents[allEventsIterator].end.getTime()>=(endTime)){
                     slotAlreadyScheduled=true;
@@ -479,7 +483,6 @@ function autoAddPathway(){
       for(let j=0; j<humanResources.length; j++){
         activityResourcesArray.push(humanResources[j]);
       }
-      //console.log(humanResources)
 
       //get the good material resources for this activity
       var categoryMaterialResources = [];
@@ -516,7 +519,7 @@ function autoAddPathway(){
         var counterNbResourceOfCategory=0; 
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
         for(let categoryOfMaterialResourceIt=0;categoryOfMaterialResourceIt<categoryOfMR.length; categoryOfMaterialResourceIt++){
-          var allEvents=calendar.getEvents(); 
+          var allEvents=calendar.getEvents();
           var slotAlreadyScheduled=false;
           if(categoryMaterialResources[j].id==categoryOfMR[categoryOfMaterialResourceIt].idcategory || categoryMaterialResources[j].id==''){ 
             if(countResources<categoryMaterialResources[j].quantity){
@@ -533,6 +536,12 @@ function autoAddPathway(){
                   allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || 
                   allEvents[allEventsIterator]._def.resourceIds.includes('m-default') && 
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
+                  allEvents[allEventsIterator].start.getTime()<=(endTime) &&
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) ||
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
                   allEvents[allEventsIterator].start.getTime()<=(endTime) &&
                   allEvents[allEventsIterator].end.getTime()>=(endTime)){
                   slotAlreadyScheduled=true;
@@ -585,7 +594,9 @@ function autoAddPathway(){
         pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
         categoryMaterialResource: categoryMaterialResources,
         categoryHumanResource: categoryHumanResources,
+        patientId: appointment.idPatient[0].id.split('_')[1]
       });
+      console.log(categoryHumanResources, categoryMaterialResources)
     }
     var successorsActivitiesA = [];
     //On reset le tableau successorsActivitiesA
