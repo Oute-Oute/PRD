@@ -1,7 +1,12 @@
 var listeAppointments
 var listeActivity
 var listeSuccessors
-
+var categoryHumanResource
+var categoryMaterialResource
+var listeActivityHumanResource
+var listeActivityMaterialResource
+var categoryOfHumanResource
+var categoryOfMaterialResource
 
 /**
  * Open the modal to Add a pathway
@@ -46,7 +51,7 @@ function addPathway() {
   var listeActivities = JSON.parse(document.getElementById("listeActivity").value);
   var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
   var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResource').value.replaceAll('3aZt3r', ' '));
-  var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
+  var listeActivityHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
   var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
   var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResource').value.replaceAll('3aZt3r', ' '));
   var appointmentid = document.getElementById("select-appointment").value;
@@ -98,11 +103,11 @@ function addPathway() {
 
   var activitiesA = [];
   //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
-  var allActivtiesA = [];
+  var allActivitiesA = [];
   for (let i = 0; i < firstActivitiesPathway.length; i++) {
     let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
     activitiesA.push(activityA);
-    allActivtiesA.push(firstActivitiesPathway[i].id);
+    allActivitiesA.push(firstActivitiesPathway[i].id);
   }
   do {
 
@@ -115,16 +120,16 @@ function addPathway() {
       var materialAlreadyScheduled = [];
       //Find for all Activities of the pathway, the number of Humanresources to define. 
       var categoryHumanResources = [];
-      listeActivitHumanResource=Object.values(listeActivitHumanResource);
-      for (let j = 0; j < listeActivitHumanResource.length; j++) {
-        if (listeActivitHumanResource[j][0].activityId == activitiesA[i].activity.id) {
+      listeActivityHumanResource=Object.values(listeActivityHumanResource);
+      for (let j = 0; j < listeActivityHumanResource.length; j++) {
+        if (listeActivityHumanResource[j][0].activityId == activitiesA[i].activity.id) {
           for (let k = 0; k < categoryHumanResource.length; k++) {
-            if (listeActivitHumanResource[j][0].humanResourceCategoryId == categoryHumanResource[k].idcategory && humanAlreadyScheduled.includes(listeActivitHumanResource[j][0]) == false) {
-              humanAlreadyScheduled.push(listeActivitHumanResource[j][0]);
-              categoryHumanResources.push({ id: listeActivitHumanResource[j][0].humanResourceCategoryId, quantity: listeActivitHumanResource[j][0].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
+            if (listeActivityHumanResource[j][0].humanResourceCategoryId == categoryHumanResource[k].idcategory && humanAlreadyScheduled.includes(listeActivityHumanResource[j][0]) == false) {
+              humanAlreadyScheduled.push(listeActivityHumanResource[j][0]);
+              categoryHumanResources.push({ id: listeActivityHumanResource[j][0].humanResourceCategoryId, quantity: listeActivityHumanResource[j][0].quantity, categoryname: categoryHumanResource[k].categoryname })
             }
           }
-          quantityHumanResources += listeActivitHumanResource[j][0].quantity;
+          quantityHumanResources += listeActivityHumanResource[j][0].quantity;
         }
       }
       
@@ -135,7 +140,7 @@ function addPathway() {
           for (let k = 0; k < categoryMaterialResource.length; k++) {
             if (listeActivityMaterialResource[j][0].materialResourceCategoryId == categoryMaterialResource[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j][0]) == false) {
               materialAlreadyScheduled.push(listeActivityMaterialResource[j][0]);
-              categoryMaterialResources.push({ id: listeActivityMaterialResource[j][0].materialResourceCategoryId, quantity: listeActivityMaterialResource[j][0].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
+              categoryMaterialResources.push({ id: listeActivityMaterialResource[j][0].materialResourceCategoryId, quantity: listeActivityMaterialResource[j][0].quantity, categoryname: categoryMaterialResource[k].categoryname })
             }
           }
           quantityMaterialResources += listeActivityMaterialResource[j][0].quantity;
@@ -222,11 +227,11 @@ function addPathway() {
     for (let i = 0; i < successorsActivitiesA.length; i++) {
       for (let j = 0; j < listeActivities.length; j++) {
         if (successorsActivitiesA[i].activityB == listeActivities[j].id) {
-          for (let k = 0; k < allActivtiesA.length; k++) {
-            if (allActivtiesA.includes(listeActivities[j].id) == false) {
+          for (let k = 0; k < allActivitiesA.length; k++) {
+            if (allActivitiesA.includes(listeActivities[j].id) == false) {
               let activityA = { activity: listeActivities[j], delaymin: successorsActivitiesA[i].delaymin }
               activitiesA.push(activityA);
-              allActivtiesA.push(listeActivities[j].id);
+              allActivitiesA.push(listeActivities[j].id);
             }
           }
         }
@@ -278,22 +283,13 @@ function autoAddAllPathway(){
 */
 function autoAddPathway(){
   //Get databases informations to add the activities appointment on the calendar
-  var listeSuccessors = JSON.parse(document.getElementById("listeSuccessors").value);
-  var listeActivities = JSON.parse(document.getElementById("listeActivities").value);
-  var listeAppointments = JSON.parse(document.getElementById("listeAppointments").value);
-  var categoryMaterialResourceJSON = JSON.parse(document.getElementById('categoryMaterialResourceJSON').value.replaceAll('3aZt3r', ' '));
-  var listeActivitHumanResource = JSON.parse(document.getElementById("listeActivityHumanResource").value);
-  var listeActivityMaterialResource = JSON.parse(document.getElementById("listeActivityMaterialResource").value);
-  var categoryHumanResourceJSON = JSON.parse(document.getElementById('categoryHumanResourceJSON').value.replaceAll('3aZt3r', ' '));
+  
   var appointmentid = document.getElementById("select-appointment").value;
-  var categoryOfHumanResource=JSON.parse(document.getElementById("categoryOfHumanResourceJSON").value.replaceAll('3aZt3r',''));
-  var categoryOfMaterialResource=JSON.parse(document.getElementById("categoryOfMaterialResourceJSON").value.replaceAll('3aZt3r',''));
   var hResource=JSON.parse(document.getElementById("human").value.replaceAll('3aZt3r',''));
   var workingHours = [];
   for (let i = 0; i < hResource.length; i++) {
-    workingHours[hResource[i]['id']] = {'start' : hResource[i]['workingHours'][0]['startTime'], 'end' : hResource[i]['workingHours'][0]['endTime']}
+    workingHours[hResource[i]['id']] = {'start' : hResource[i]['businessHours'][0]['startTime'], 'end' : hResource[i]['businessHours'][0]['endTime']}
   }
-
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
@@ -314,12 +310,12 @@ function autoAddPathway(){
 
   //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
-  for (let i = 0; i < listeActivities.length; i++) {
+  for (let i = 0; i < listeActivity.length; i++) {
     if (
-      "pathway-" + listeActivities[i]["idPathway"] ==
+      "pathway-" + listeActivity[i]["idPathway"] ==
       appointment["idPathway"][0].id
     ) {
-      activitiesInPathwayAppointment.push(listeActivities[i]);
+      activitiesInPathwayAppointment.push(listeActivity[i]);
     }
   }
 
@@ -340,14 +336,38 @@ function autoAddPathway(){
 
   var activitiesA = [];
   //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
-  var allActivtiesA = [];
+  var allActivitiesA = [];
   for (let i = 0; i < firstActivitiesPathway.length; i++) {
     let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
     activitiesA.push(activityA);
-    allActivtiesA.push(firstActivitiesPathway[i].id);
+    allActivitiesA.push(firstActivitiesPathway[i].id);
   }
 
   var eventScheduledTomorrow=false; 
+
+  var listeActivityHR=Object.values(listeActivityHumanResource)
+  for (let j = 0; j < listeActivityHR.length; j++){
+    listeActivityHR[j] = listeActivityHR[j][0]
+  }
+  var listeActivityMR=Object.values(listeActivityMaterialResource)
+  for (let j = 0; j < listeActivityMR.length; j++){
+    listeActivityMR[j] = listeActivityMR[j][0]
+  }
+
+  var tempCategoryOfHR = Object.values(categoryOfHumanResource)
+  var categoryOfHR = new Array()
+  for (let j = 0; j < tempCategoryOfHR.length; j++){
+    for(let k = 0; k < tempCategoryOfHR[j].length; k++){
+      categoryOfHR.push({'idcategory': tempCategoryOfHR[j][k].idcategory, 'idresource': tempCategoryOfHR[j][k].idresource, 'categoryname': tempCategoryOfHR[j][k].categoryname})
+    }
+  }
+  var tempCategoryOfMR = Object.values(categoryOfMaterialResource)
+  var categoryOfMR = new Array()
+  for (let j = 0; j < tempCategoryOfMR.length; j++){
+    for(let k = 0; k < tempCategoryOfMR[j].length; k++){
+      categoryOfMR.push({'idcategory': tempCategoryOfMR[j][k].idcategory, 'idresource': tempCategoryOfMR[j][k].idresource, 'categoryname': tempCategoryOfMR[j][k].categoryname})
+    }
+  }
 
   do {
 
@@ -359,44 +379,51 @@ function autoAddPathway(){
       //Find for all Activities of the pathway, the number of Humanresources to define. 
       var categoryHumanResources = [];
       
-      for (let j = 0; j < listeActivitHumanResource.length; j++) {
-        if (listeActivitHumanResource[j].activityId == activitiesA[i].activity.id) {
-          for (let k = 0; k < categoryHumanResourceJSON.length; k++) {
-            if (listeActivitHumanResource[j].humanResourceCategoryId == categoryHumanResourceJSON[k].idcategory &&
-                humanAlreadyScheduled.includes(listeActivitHumanResource[j]) == false) {
-              humanAlreadyScheduled.push(listeActivitHumanResource[j]);
-              categoryHumanResources.push({ id: listeActivitHumanResource[j].humanResourceCategoryId, quantity: listeActivitHumanResource[j].quantity, categoryname: categoryHumanResourceJSON[k].categoryname })
+      for (let j = 0; j < listeActivityHR.length; j++) {
+        if (listeActivityHR[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryHumanResource.length; k++) {
+            if (listeActivityHR[j].humanResourceCategoryId == categoryHumanResource[k].idcategory &&
+                humanAlreadyScheduled.includes(listeActivityHR[j]) == false) {
+              humanAlreadyScheduled.push(listeActivityHR[j]);
+              categoryHumanResources.push({ id: listeActivityHR[j].humanResourceCategoryId, quantity: listeActivityHR[j].quantity, categoryname: categoryHumanResource[k].categoryname })
             }
           }
         }
       }
+      
       if(categoryHumanResources.length == 0){
         categoryHumanResources.push({ id: '', quantity : 1, categoryname: 'h-default'})
       }
       //get the good human resources for this activity
-      var humanResources=[];
+      var humanResources=[];  
       for(let j=0; j<categoryHumanResources.length; j++){
         let countResources=0;
         if(categoryHumanResources[j].id == ''){
           var nbResourceOfcategory = 1
         }
         else{
-          var nbResourceOfcategory=countOccurencesInArray(categoryHumanResources[j].id,categoryOfHumanResource); 
+          var nbResourceOfcategory = 0
+          for (k = 0; k < categoryOfHR.length; k++) {
+            if (categoryHumanResources[j].id == categoryOfHR[k].idcategory) {
+              nbResourceOfcategory++
+            }
+          };
         }
+        //console.log(categoryHumanResources[j].id, nbResourceOfcategory)
 
         var counterNbResourceOfCategory=0; 
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
-        for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHumanResource.length; categoryOfHumanResourceIt++){
+        for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHR.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents();
           var slotAlreadyScheduled=false;
-          if(categoryHumanResources[j].id==categoryOfHumanResource[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id==''){
+          if(categoryHumanResources[j].id==categoryOfHR[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id==''){
             if(countResources<categoryHumanResources[j].quantity){
               for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
                 //if the resources is from the category and free at this time during all the activity
-                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource) && 
+                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && 
                   allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
                   allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || 
-                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHumanResource[categoryOfHumanResourceIt].idresource) && 
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && 
                   allEvents[allEventsIterator].start.getTime()<=(endTime) &&
                   allEvents[allEventsIterator].end.getTime()>=(endTime) ||
                   allEvents[allEventsIterator]._def.resourceIds.includes('h-default') &&
@@ -411,8 +438,8 @@ function autoAddPathway(){
                 }
               }
               var startDate = new Date(); endDate = new Date()
-              startTimeSplit = workingHours[categoryOfHumanResource[categoryOfHumanResourceIt].idresource]['start'].split(':')
-              endTimeSplit = workingHours[categoryOfHumanResource[categoryOfHumanResourceIt].idresource]['end'].split(':')
+              startTimeSplit = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource]['start'].split(':')
+              endTimeSplit = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource]['end'].split(':')
               startDate.setDate(PathwayBeginDate.getDate())
               startDate.setHours(startTimeSplit[0])
               startDate.setMinutes(startTimeSplit[1])
@@ -421,14 +448,14 @@ function autoAddPathway(){
               endDate.setHours(endTimeSplit[0])
               endDate.setMinutes(endTimeSplit[1])
               endDate.setSeconds(0)
+
               if(slotAlreadyScheduled==false && categoryHumanResources[j].id==''){
                 humanResources.push('h-default')
                 countResources++;
               }
-              
               if(slotAlreadyScheduled==false && categoryHumanResources[j].id!='' && startDate.getTime() + 2*60*60000 <= PathwayBeginDate.getTime() && endDate.getTime()+ 2*60*60000 >= endTime){
-                  humanResources.push(categoryOfHumanResource[categoryOfHumanResourceIt].idresource);
-                  countResources++;
+                humanResources.push(categoryOfHR[categoryOfHumanResourceIt].idresource);
+                countResources++;
               }
 
               if(slotAlreadyScheduled || (categoryHumanResources[j].id!='' && !(startDate.getTime() + 2*60*60000 <= PathwayBeginDate.getTime() && endDate.getTime()+ 2*60*60000 >= endTime))){
@@ -452,18 +479,19 @@ function autoAddPathway(){
       for(let j=0; j<humanResources.length; j++){
         activityResourcesArray.push(humanResources[j]);
       }
+      //console.log(humanResources)
 
       //get the good material resources for this activity
       var categoryMaterialResources = [];
 
       
-      for (let j = 0; j < listeActivityMaterialResource.length; j++) {
-        if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
-          for (let k = 0; k < categoryMaterialResourceJSON.length; k++) {
+      for (let j = 0; j < listeActivityMR.length; j++) {
+        if (listeActivityMR[j].activityId == activitiesA[i].activity.id) {
+          for (let k = 0; k < categoryMaterialResource.length; k++) {
             //if the resources is from the category and free at this time during all the activity
-            if (listeActivityMaterialResource[j].materialResourceCategoryId == categoryMaterialResourceJSON[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j]) == false) {
-              materialAlreadyScheduled.push(listeActivityMaterialResource[j]);
-              categoryMaterialResources.push({ id: listeActivityMaterialResource[j].materialResourceCategoryId, quantity: listeActivityMaterialResource[j].quantity, categoryname: categoryMaterialResourceJSON[k].categoryname })
+            if (listeActivityMR[j].materialResourceCategoryId == categoryMaterialResource[k].idcategory && materialAlreadyScheduled.includes(listeActivityMR[j]) == false) {
+              materialAlreadyScheduled.push(listeActivityMR[j]);
+              categoryMaterialResources.push({ id: listeActivityMR[j].materialResourceCategoryId, quantity: listeActivityMR[j].quantity, categoryname: categoryMaterialResource[k].categoryname })
             }
           }
         }
@@ -478,20 +506,25 @@ function autoAddPathway(){
           var nbResourceOfcategory = 1
         }
         else{
-          var nbResourceOfcategory=countOccurencesInArray(categoryMaterialResources[j].id,categoryOfMaterialResource); 
+          var nbResourceOfcategory = 0
+          for (k = 0; k < categoryOfMR.length; k++) {
+            if (categoryMaterialResources[j].id == categoryOfMR[k].idcategory) {
+              nbResourceOfcategory++
+            }
+          };
         }
         var counterNbResourceOfCategory=0; 
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
-        for(let categoryOfMaterialResourceIt=0;categoryOfMaterialResourceIt<categoryOfMaterialResource.length; categoryOfMaterialResourceIt++){
+        for(let categoryOfMaterialResourceIt=0;categoryOfMaterialResourceIt<categoryOfMR.length; categoryOfMaterialResourceIt++){
           var allEvents=calendar.getEvents(); 
           var slotAlreadyScheduled=false;
-          if(categoryMaterialResources[j].id==categoryOfMaterialResource[categoryOfMaterialResourceIt].idcategory || categoryMaterialResources[j].id==''){ 
+          if(categoryMaterialResources[j].id==categoryOfMR[categoryOfMaterialResourceIt].idcategory || categoryMaterialResources[j].id==''){ 
             if(countResources<categoryMaterialResources[j].quantity){
               for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
-                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource)==true &&
+                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource)==true &&
                   allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) &&
                   allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) ||
-                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource)==true &&
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource)==true &&
                   allEvents[allEventsIterator].start.getTime()<=(endTime) &&
                   allEvents[allEventsIterator].end.getTime()>=(endTime) ||
                   allEvents[allEventsIterator]._def.resourceIds.includes('m-default') &&
@@ -510,7 +543,7 @@ function autoAddPathway(){
                 countResources++;
               }
               if(slotAlreadyScheduled == false && categoryMaterialResources[j].id !=''){
-                materialResources.push(categoryOfMaterialResource[categoryOfMaterialResourceIt].idresource); 
+                materialResources.push(categoryOfMR[categoryOfMaterialResourceIt].idresource); 
                 countResources++; 
               }
               if(slotAlreadyScheduled){
@@ -599,13 +632,13 @@ function autoAddPathway(){
 
     //Put activitiesA into AllActivitiesA and ActivitiesB in ActivitiesA
     for (let i = 0; i < successorsActivitiesA.length; i++) {
-      for (let j = 0; j < listeActivities.length; j++) {
-        if (successorsActivitiesA[i].activityB == listeActivities[j].id) {
-          for (let k = 0; k < allActivtiesA.length; k++) {
-            if (allActivtiesA.includes(listeActivities[j].id) == false) {
-              let activityA = { activity: listeActivities[j], delaymin: successorsActivitiesA[i].delaymin }
+      for (let j = 0; j < listeActivity.length; j++) {
+        if (successorsActivitiesA[i].activityB == listeActivity[j].id) {
+          for (let k = 0; k < allActivitiesA.length; k++) {
+            if (allActivitiesA.includes(listeActivity[j].id) == false) {
+              let activityA = { activity: listeActivity[j], delaymin: successorsActivitiesA[i].delaymin }
               activitiesA.push(activityA);
-              allActivtiesA.push(listeActivities[j].id);
+              allActivitiesA.push(listeActivity[j].id);
             }
           }
         }
@@ -633,8 +666,6 @@ function autoAddPathway(){
   } while (successorsActivitiesA.length != 0);
   verifyHistoryPush(historyEvents, appointmentid);
   calendar.render();
-  updateErrorMessages();
-
   calendar.getEvents().forEach((currentEvent) => {
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
