@@ -169,8 +169,8 @@ function createCalendar(typeResource,useCase, slotDuration,resourcesToDisplay = 
       } else materialResourcesNames = "Aucune ressource associée";
 
       //set data to display in the modal window
-      $("#start").val(start.toISOString().substring(0, 19)); //set the start date of the event
-      $("#end").val(end.toISOString().substring(0, 19)); //set the end date of the event
+      $("#start").val(start.toISOString().substring(11, 19)); //set the start date of the event
+      $("#end").val(end.toISOString().substring(11, 19)); //set the end date of the event
       document.getElementById("show-title").innerHTML = activity.title; //set the title of the event
       $("#parcours").val(activity.extendedProps.pathway); //set the pathway of the event
       $("#patient").val(activity.extendedProps.patient); //set the patient of the event

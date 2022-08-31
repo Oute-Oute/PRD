@@ -40,18 +40,19 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-title">Modifier
-						<span id="show-modified-event-title"></span>
+					<h2 class="modal-title"><span id="show-modified-event-title"></span>
 					</h2>
 				</div>
 				<div class="modal-body">
-					<label class="label-event">Début de l'activité
-					</label>
 					<div class="input-container onWhite">
 						<!-- création d'input caché permettant de transmettre des informations entre le php, le twig et le js -->
 						<input id="id-modified-event" name="id-modified-event" type="hidden">
 
-						<input class="input-modal-date" type="time" id="start-modified-event" name="start-modified-event" required>
+						<label class="label-event">Horaires de l'activité :
+					</label>
+					<div class="input-container onWhite">
+						<input class="input-modal-date" type="time" id="start" name="start" disabled>
+						<input class="input-modal-date" type="time" id="end" name="end" disabled>
 						</br>
 						<label class="label-event">Parcours :</label>
 						</br>
@@ -83,7 +84,6 @@
 
 						<!-- bouton permettant de fermer la modal ou de valider les modification -->
 						<input type="hidden" id="eventClicked"/> 
-						<button type="button" class="btn-consult btn-secondary" onclick="DisplayAppointmentInformation(eventClicked.value)">Informations sur le parcours</button>
 						<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Annuler</button>
 						<button type="submit" class="btn-valide btn-secondary" onclick="modifyEvent()">Valider</button>
 					</div>
@@ -199,6 +199,7 @@
 	<h1>Modification du Planning</h1>
 		  
 	<div id="calendar-container" class="calendar-container">
+	<div id="load-large"></div>
 	<table class="header-ressource-consultation" style="font-size:medium;">
 		<td class="header-td">
 			<!-- bouton d'ajout d'un rendez-vous dans le planning -->
@@ -227,7 +228,7 @@
 
 		<td class="header-td-right">
 			<div id='top-right-buttons'>
-			<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="GetDataErrors()" data-toggle="tooltip" data-placement="auto" value ="Verifier Erreurs"></input>
+			<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="GetDataErrors()" data-toggle="tooltip" data-placement="auto" value ="Vérifier Erreurs"></input>
 				<input type="button" id='button-top-right' class="btn-calendar-edit" onclick="undoEvent()" data-toggle="tooltip" data-placement="auto" title="Ctrl + Z" value ="Retour en Arrière"></input>
 				{% if app.user %}
 					{% set userIdentifier = app.user.getUserIdentifier() %}
