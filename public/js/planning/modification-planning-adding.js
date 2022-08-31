@@ -357,14 +357,16 @@ function autoAddPathway(){
   var categoryOfHR = new Array()
   for (let j = 0; j < tempCategoryOfHR.length; j++){
     for(let k = 0; k < tempCategoryOfHR[j].length; k++){
-      categoryOfHR.push({'idcategory': tempCategoryOfHR[j][k].idcategory, 'idresource': tempCategoryOfHR[j][k].idresource, 'categoryname': tempCategoryOfHR[j][k].categoryname})
+      categoryOfHR.push({'idcategory': tempCategoryOfHR[j][k].idcategory, 'idresource': tempCategoryOfHR[j][k].idresource,
+                          'categoryname': tempCategoryOfHR[j][k].categoryname, 'resourcename': tempCategoryOfHR[j][k].resourcename})
     }
   }
   var tempCategoryOfMR = Object.values(categoryOfMaterialResource)
   var categoryOfMR = new Array()
   for (let j = 0; j < tempCategoryOfMR.length; j++){
     for(let k = 0; k < tempCategoryOfMR[j].length; k++){
-      categoryOfMR.push({'idcategory': tempCategoryOfMR[j][k].idcategory, 'idresource': tempCategoryOfMR[j][k].idresource, 'categoryname': tempCategoryOfMR[j][k].categoryname})
+      categoryOfMR.push({'idcategory': tempCategoryOfMR[j][k].idcategory, 'idresource': tempCategoryOfMR[j][k].idresource,
+                          'categoryname': tempCategoryOfMR[j][k].categoryname, 'resourcename': tempCategoryOfMR[j][k].resourcename})
     }
   }
 
@@ -454,11 +456,11 @@ function autoAddPathway(){
               endDate.setSeconds(0)
 
               if(slotAlreadyScheduled==false && categoryHumanResources[j].id==''){
-                humanResources.push('h-default')
+                humanResources.push({'id' : 'h-default', 'title' : ''})
                 countResources++;
               }
               if(slotAlreadyScheduled==false && categoryHumanResources[j].id!='' && startDate.getTime() + 2*60*60000 <= PathwayBeginDate.getTime() && endDate.getTime()+ 2*60*60000 >= endTime){
-                humanResources.push(categoryOfHR[categoryOfHumanResourceIt].idresource);
+                humanResources.push({'id' : categoryOfHR[categoryOfHumanResourceIt].idresource, 'title' : categoryOfHR[categoryOfHumanResourceIt].resourcename});
                 countResources++;
               }
 
@@ -481,7 +483,7 @@ function autoAddPathway(){
       }
       //pushing into the resources array of FullCalendar
       for(let j=0; j<humanResources.length; j++){
-        activityResourcesArray.push(humanResources[j]);
+        activityResourcesArray.push(humanResources[j].id);
       }
 
       //get the good material resources for this activity
@@ -548,11 +550,11 @@ function autoAddPathway(){
                 }
               }
               if(slotAlreadyScheduled==false && categoryMaterialResources[j].id==''){
-                materialResources.push('m-default')
+                materialResources.push({'id' : 'm-default', 'title' : ''})
                 countResources++;
               }
               if(slotAlreadyScheduled == false && categoryMaterialResources[j].id !=''){
-                materialResources.push(categoryOfMR[categoryOfMaterialResourceIt].idresource); 
+                materialResources.push({'id' : categoryOfMR[categoryOfMaterialResourceIt].idresource, 'title' : categoryOfMR[categoryOfMaterialResourceIt].resourcename}); 
                 countResources++; 
               }
               if(slotAlreadyScheduled){
@@ -573,7 +575,14 @@ function autoAddPathway(){
       }
 
       for(let j=0; j<materialResources.length; j++){
-        activityResourcesArray.push(materialResources[j]); 
+        activityResourcesArray.push(materialResources[j].id); 
+      }
+
+      if(categoryHumanResources[0].categoryname == "h-default"){
+        categoryHumanResources[0].quantity = 0
+      }
+      if(categoryMaterialResources[0].categoryname == "m-default"){
+        categoryMaterialResources[0].quantity = 0
       }
       //counting for the ids of events
       countAddEvent++;
@@ -596,7 +605,6 @@ function autoAddPathway(){
         categoryHumanResource: categoryHumanResources,
         patientId: appointment.idPatient[0].id.split('_')[1]
       });
-      console.log(categoryHumanResources, categoryMaterialResources)
     }
     var successorsActivitiesA = [];
     //On reset le tableau successorsActivitiesA

@@ -857,7 +857,8 @@ class ModificationPlanningController extends AbstractController
             $categoryOfMaterialResourceArray[$key][] = array(
                 'idcategory' => $categoryOfMaterialResource->getMaterialresourcecategory()->getId(),
                 'idresource' => $key,
-                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname()))
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresourcecategory()->getCategoryname())),
+                'resourcename' => (str_replace(" ", "3aZt3r", $categoryOfMaterialResource->getMaterialresource()->getMaterialresourcename()))
             );
         }
         return $categoryOfMaterialResourceArray;
@@ -877,7 +878,8 @@ class ModificationPlanningController extends AbstractController
             $categoryOfHumanResourceArray[$key][] = array(
                 'idcategory' => $categoryOfHumanResource->getHumanresourcecategory()->getId(),
                 'idresource' => $key,
-                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname()))
+                'categoryname' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresourcecategory()->getCategoryname())),
+                'resourcename' => (str_replace(" ", "3aZt3r", $categoryOfHumanResource->getHumanresource()->getHumanresourcename()))
             );
         }
         return $categoryOfHumanResourceArray;
