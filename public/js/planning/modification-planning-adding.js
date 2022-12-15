@@ -34,6 +34,11 @@ function displayAddPathway() {
       nbOptions++;
     }
   }
+  let timeBegin=document.getElementById("timeBegin");
+  console.log(listeAppointments)
+  var earliestappointmenttime = listeAppointments[0].earliestappointmenttime.replaceAll("1970-01-01T", "").substring(0, 16);
+  console.log(earliestappointmenttime)
+  timeBegin.value = earliestappointmenttime;
 
   $("#add-planning-modal").modal("show");
 
