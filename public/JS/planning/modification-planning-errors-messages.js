@@ -43,8 +43,8 @@
                   scheduledActivityAlreadyExist = true;
   
                   //update the data
-                  existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity), //set error message for not fully scheduled
-                    existingScheduledActivity.messageAppointmentActivityAlreadyScheduled = getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity);
+                  existingScheduledActivity.messageNotFullyScheduled = getMessageNotFullyScheduled(scheduledActivity); //set error message for not fully scheduled
+                  existingScheduledActivity.messageAppointmentActivityAlreadyScheduled = getMessageAppointmentActivityAlreadyScheduled(listScheduledActivities, scheduledActivity);
                   existingScheduledActivity.messageDelay = getMessageDelay(listScheduledActivities, scheduledActivity); //set error message for delay
                   existingScheduledActivity.listCategoryHumanResources = getListCategoryHumanResources(scheduledActivity); //set data for category human resources
                   existingScheduledActivity.listHumanResources = getListHumanResources(scheduledActivity); //set data for human resources
@@ -200,7 +200,7 @@
     listScheduledActivities.forEach((appointmentScheduledActivity) => {
       if (appointmentScheduledActivity._def.extendedProps.appointment == scheduledActivity._def.extendedProps.appointment && scheduledActivity._def.publicId != appointmentScheduledActivity._def.publicId) {
         if ((scheduledActivity.start > appointmentScheduledActivity.start && scheduledActivity.start < appointmentScheduledActivity.end) || (scheduledActivity.end > appointmentScheduledActivity.start && scheduledActivity.end < appointmentScheduledActivity.end) || (scheduledActivity.start <= appointmentScheduledActivity.start && scheduledActivity.end >= appointmentScheduledActivity.end)) {
-          messages.push(appointmentScheduledActivity.title + " est déjà programé sur le même créneau.");
+          messages.push(appointmentScheduledActivity.title + " est déjà programé sur le même créneau pour "+appointmentScheduledActivity._def.extendedProps.patient);
         }
       }
     })
@@ -786,8 +786,7 @@
   
   
       }
-  
-      for (let i = 0; i < listErrorMessages.listScheduledAppointment.length; i++) {                                       //All Appointments of the day
+      for (let i = 0; i < listErrorMessages.listScheduledAppointment.length; i++) {                     //All Appointments of the day
         if (repertoryErrors.repertory.includes(i)) {                      //if the Appointment[i] has an error we have to display it
           var indexAppointment = repertoryErrors.repertory.indexOf(i);    //usefull to display activities 
           var div = document.createElement('div');                      //Creating the div for the Appointment
@@ -1080,13 +1079,16 @@
       var repertorySAErrorId = [];
       for (let listeSAiterator = 0; listeSAiterator < listErrorMessages.listScheduledAppointment[i].listScheduledActivity.length; listeSAiterator++) {
         var errorInScheduledActivity = false;
-  
         //messageDelay
         if (listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageDelay != '') {
           errorInappointment = true;
           errorInScheduledActivity = true;
         }
-  
+
+        if(listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageAppointmentActivityAlreadyScheduled != '') {
+          errorInappointment = true;
+          errorInScheduledActivity = true;
+        }
         if (listErrorMessages.listScheduledAppointment[i].listScheduledActivity[listeSAiterator].messageNotFullyScheduled != '') {
           errorInappointment = true;
           errorInScheduledActivity = true;
