@@ -141,7 +141,8 @@ class AppointmentController extends AbstractController
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway-hidden"]]);
         $dayappointment = \DateTime::createFromFormat('d/m/Y H:i:s', str_replace(" ","",$param['dayappointment']).' '."00:00:00");
-
+        echo($param['dayappointment']);
+        echo($dayappointment->format('d/m/Y H:i:s'));
         if ($param["earliestappointmenttime"] != "") {
             $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         } else {

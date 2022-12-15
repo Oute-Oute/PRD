@@ -417,7 +417,7 @@ function filterAppointment(selected) {
       infos.append('Informations');
       var edit=document.createElement('button');
       edit.setAttribute('class','btn-edit btn-secondary');
-      edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment.replaceAll("/","-")+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
+      edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
       edit.append('Editer');
       var deleteButton=document.createElement('button');
       deleteButton.setAttribute('class','btn-delete btn-secondary');
