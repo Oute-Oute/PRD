@@ -35,9 +35,12 @@ function displayAddPathway() {
     }
   }
   let timeBegin=document.getElementById("timeBegin");
-  console.log(listeAppointments)
+  if(listeAppointments.length>0){
   var earliestappointmenttime = listeAppointments[0].earliestappointmenttime.replaceAll("1970-01-01T", "").substring(0, 16);
-  console.log(earliestappointmenttime)
+  }
+  else{
+    var earliestappointmenttime = "08:00";
+  }
   timeBegin.value = earliestappointmenttime;
 
   $("#add-planning-modal").modal("show");
@@ -112,6 +115,7 @@ function addPathway() {
   //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
   var allActivitiesA = [];
   for (let i = 0; i < firstActivitiesPathway.length; i++) {
+    console.log(firstActivitiesPathway[i])
     let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
     activitiesA.push(activityA);
     allActivitiesA.push(firstActivitiesPathway[i].id);
@@ -119,6 +123,7 @@ function addPathway() {
   do {
 
     //Creating Activities in FullCalendar
+    console.log("Activities A : " + activitiesA);
     for (let i = 0; i < activitiesA.length; i++) {
       var quantityHumanResources = 0;
       var quantityMaterialResources = 0;
@@ -139,6 +144,9 @@ function addPathway() {
           quantityHumanResources += listeActivityHumanResource[j][0].quantity;
         }
       }
+      if(quantityHumanResources==0){
+        quantityHumanResources=1;
+      }
       
       var categoryMaterialResources = [];
       listeActivityMaterialResource=Object.values(listeActivityMaterialResource);
@@ -152,6 +160,9 @@ function addPathway() {
           }
           quantityMaterialResources += listeActivityMaterialResource[j][0].quantity;
         }
+      }
+      if(quantityMaterialResources==0){
+        quantityMaterialResources=1;
       }
 
       //Put the number of human resouorces in the ResourcesArray of the event
@@ -263,7 +274,7 @@ function addPathway() {
   document.getElementById("load-large").style.visibility = "hidden";
 }
 
-function autoAddAllPathway(){
+function autoAddAllPathway(iteration=0){
   document.getElementById("load-large").style.visibility = "visible";
     do{
        //Refreshing menu select-appointment
@@ -277,16 +288,31 @@ function autoAddAllPathway(){
        var selectionAppointmentValue=[]; 
        selectionAppointmentValue.push(selectAppointment.value);
        //call the adding pathway function
-       autoAddPathway(); 
+       autoAddPathway(iteration); 
       
      } while(selectAppointment.options.length!=1); //while there are still pathways to be planed
+     var appointment;
+     var appointmentid = document.getElementById("select-appointment").value;
+     var allScheduled = true;
+     if(iteration==0){
+     for (let i = 0; i < listeAppointments.length; i++) {
+      if (listeAppointments[i]["id"] == appointmentid && listeAppointments[i].scheduled == false) {
+        appointment = listeAppointments[i];
+        allScheduled = false;
+      }
+    }
+    if(allScheduled==false){
+      autoAddAllPathway(1);
+    }
+  }
      document.getElementById("load-large").style.visibility = "hidden";
+     console.log("All pathways are planed")
    }
    
 /**
 * Add Automatically a pathway with good resources (resources that are in the category of resources)
 */
-function autoAddPathway(){
+function autoAddPathway(iteration=0){
   //Get databases informations to add the activities appointment on the calendar
   document.getElementById("load-large").style.visibility = "visible";
   var appointmentid = document.getElementById("select-appointment").value;
@@ -298,7 +324,7 @@ function autoAddPathway(){
   //Get the appointment choosed by user and the place of the appointment in the listAppointment
   var appointment;
   for (let i = 0; i < listeAppointments.length; i++) {
-    if (listeAppointments[i]["id"] == appointmentid) {
+    if (listeAppointments[i]["id"] == appointmentid ) {
       appointment = listeAppointments[i];
       listeAppointments[i].scheduled = true;
     }
@@ -309,9 +335,8 @@ function autoAddPathway(){
   //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
   var PathwayBeginDate = new Date(
-    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime() +2*60*60000
+    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime()
   );
-
   //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivity.length; i++) {
@@ -384,7 +409,6 @@ function autoAddPathway(){
       var materialAlreadyScheduled = [];
       //Find for all Activities of the pathway, the number of Humanresources to define. 
       var categoryHumanResources = [];
-      
       for (let j = 0; j < listeActivityHR.length; j++) {
         if (listeActivityHR[j].activityId == activitiesA[i].activity.id) {
           for (let k = 0; k < categoryHumanResource.length; k++) {
@@ -415,22 +439,51 @@ function autoAddPathway(){
             }
           };
         }
-
         var counterNbResourceOfCategory=0; 
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
         for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHR.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents();
           var slotAlreadyScheduled=false;
           if(categoryHumanResources[j].id==categoryOfHR[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id==''){
-            if(countResources<categoryHumanResources[j].quantity){
+            if(countResources<categoryHumanResources[j].quantity){  
               for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
-                //if the resources is from the category and free at this time during all the activity
-                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && 
-                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
-                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || 
-                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && 
-                  allEvents[allEventsIterator].start.getTime()<=(endTime) &&
-                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||
+
+              
+                //if the resources is from the category and not free at this time during all the activity
+                 if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(endTime) && //si le debut de l'activité est avant la fin de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||//si la fin de l'activité est apres la fin de l'evenement
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()==(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()==(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  (PathwayBeginDate.getTime())<=allEvents[allEventsIterator].start.getTime() && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) &&
+                  allEvents[allEventsIterator].start.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  
+
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) &&
+                  (endTime)<=allEvents[allEventsIterator].start.getTime() || //si la fin de l'activité est apres le debut de l'evenement
+
+                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
                   allEvents[allEventsIterator]._def.resourceIds.includes('h-default') &&
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
                   allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
@@ -439,37 +492,82 @@ function autoAddPathway(){
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
                   allEvents[allEventsIterator].start.getTime()<=(endTime) &&
                   allEvents[allEventsIterator].end.getTime()>=(endTime) ||
-                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
-                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
-                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) ||
-                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] &&
-                  allEvents[allEventsIterator].start.getTime()<=(endTime) &&
-                  allEvents[allEventsIterator].end.getTime()>=(endTime)){
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()<=(endTime) && //si le debut de l'activité est avant la fin de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||//si la fin de l'activité est apres la fin de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()>=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                  allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
+                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                  allEvents[allEventsIterator].end.getTime()<=(endTime) //si la fin de l'activité est apres le debut de l'evenement
+                  ){
                     slotAlreadyScheduled=true;
+                }
+                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()==(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()==(endTime)  //si la fin de l'activité est apres le debut de l'evenement
+                ){
+                  console.log(categoryOfHR[categoryOfHumanResourceIt].idresource)
+                  console.log("slot already scheduled")
+                  slotAlreadyScheduled=true;
                 }
               }
               var startDate = new Date(); endDate = new Date()
               startTimeSplit = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource]['start'].split(':')
               endTimeSplit = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource]['end'].split(':')
               startDate.setDate(PathwayBeginDate.getDate())
-              startDate.setHours(startTimeSplit[0])
+              startDate.setFullYear(PathwayBeginDate.getFullYear())
+              startDate.setMonth(PathwayBeginDate.getMonth())
+              startDate.setUTCHours(startTimeSplit[0])
               startDate.setMinutes(startTimeSplit[1])
               startDate.setSeconds(0)
               endDate.setDate(PathwayBeginDate.getDate())
-              endDate.setHours(endTimeSplit[0])
+              endDate.setFullYear(PathwayBeginDate.getFullYear())
+              endDate.setMonth(PathwayBeginDate.getMonth())
+              if(iteration==0){
+              endDate.setUTCHours(endTimeSplit[0])
               endDate.setMinutes(endTimeSplit[1])
               endDate.setSeconds(0)
+              }else{
+                console.log("test")
+                endDate.setUTCHours(23)
+                endDate.setMinutes(59)
+                endDate.setSeconds(59)
+              }
+              var nextDay = new Date();
+              nextDay.setDate(PathwayBeginDate.getDate()+1)
+              nextDay.setFullYear(PathwayBeginDate.getFullYear())
+              nextDay.setMonth(PathwayBeginDate.getMonth())
+              nextDay.setUTCHours(0)
+              nextDay.setMinutes(0)
+              nextDay.setSeconds(0)
+              
 
               if(slotAlreadyScheduled==false && categoryHumanResources[j].id==''){
                 humanResources.push({'id' : 'h-default', 'title' : ''})
                 countResources++;
               }
-              if(slotAlreadyScheduled==false && categoryHumanResources[j].id!='' && startDate.getTime() + 2*60*60000 <= PathwayBeginDate.getTime() && endDate.getTime()+ 2*60*60000 >= endTime){
+              if(slotAlreadyScheduled==false && categoryHumanResources[j].id!='' && startDate.getTime()<= PathwayBeginDate.getTime() && endDate.getTime()>= endTime){
                 humanResources.push({'id' : categoryOfHR[categoryOfHumanResourceIt].idresource, 'title' : categoryOfHR[categoryOfHumanResourceIt].resourcename});
                 countResources++;
               }
-
-              if(slotAlreadyScheduled || (categoryHumanResources[j].id!='' && !(startDate.getTime() + 2*60*60000 <= PathwayBeginDate.getTime() && endDate.getTime()+ 2*60*60000 >= endTime))){
+              if(endDate.getTime()>=nextDay.getTime()){
+                break;
+              }
+              if(slotAlreadyScheduled || (categoryHumanResources[j].id!='' && !(startDate.getTime() <= PathwayBeginDate.getTime() && endDate.getTime() >= endTime))){
                 //check the other ressources of the same category at the same time
                 if(counterNbResourceOfCategory<nbResourceOfcategory){
                   counterNbResourceOfCategory++; 
@@ -592,13 +690,23 @@ function autoAddPathway(){
       //counting for the ids of events
       countAddEvent++;
       //Add one event in the Calendar
+      var start;
+      var end;
+      if(PathwayBeginDate.getTimezoneOffset()==-120){
+        start=PathwayBeginDate.getTime()
+        end=PathwayBeginDate.getTime()
+      }
+      else{
+        start=PathwayBeginDate.getTime()
+        end=PathwayBeginDate.getTime()
+      }
       var event = calendar.addEvent({
         id: "new" + countAddEvent,
         description: "",
         resourceIds: activityResourcesArray,
         title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
-        start: PathwayBeginDate.getTime() + activitiesA[i].delaymin * 60000,
-        end: PathwayBeginDate.getTime() + activitiesA[i].activity.duration * 60000,
+        start: start + activitiesA[i].delaymin * 60000,
+        end: end + activitiesA[i].activity.duration * 60000,
         patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
         appointment: appointment.id,
         activity: activitiesA[i].activity.id,
@@ -694,6 +802,13 @@ function autoAddPathway(){
   isUpdated = false;
   if(eventScheduledTomorrow==true){
     document.getElementById('alert-scheduled-tomorrow').style.display='block'; 
+    var appointmentid = document.getElementById("select-appointment").value;
+    for (let i = 0; i < listeAppointments.length; i++) {
+      if (listeAppointments[i]["id"] == appointmentid) {
+        appointment = listeAppointments[i];
+        listeAppointments[i].scheduled = false;
+      }
+    }
     undoEvent(); 
   }
   else{
@@ -701,6 +816,7 @@ function autoAddPathway(){
     $("#add-planning-modal").modal("toggle");
   }
   document.getElementById("load-large").style.visibility = "hidden";
+console.log(calendar.getEvents());
 }
 
 function getDataAdd(){
