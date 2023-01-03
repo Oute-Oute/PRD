@@ -244,14 +244,14 @@
                     message = "Il n'y a pas de délai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " alors qu'il devrait être au minimum de " + successor.delaymin + " minutes.";
                   }
                   else {
-                    message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est inférieur au délai minimum de " + successor.delaymin + " minutes.";
+                    message = "Le delai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est inférieur au délai minimum de " + successor.delaymin + " minutes.";
                   }
                 }
                 messages.push(message);
               }
               if (duration > successor.delaymax) {
                 //if the delay is longer, we set an error message
-                var message = "Le delay entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est supèrieur au délai maximum de " + successor.delaymax + " minutes.";
+                var message = "Le delai entre " + scheduledActivity._def.title + " et " + scheduledActivityB._def.title + " est de " + duration + " minutes ce qui est supèrieur au délai maximum de " + successor.delaymax + " minutes.";
                 messages.push(message);
               }
             }
