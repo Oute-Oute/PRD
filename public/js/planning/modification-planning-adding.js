@@ -36,7 +36,6 @@ function displayAddPathway() {
       if(nbOptions==0){
         timeBegin=document.getElementById("timeBegin");
         if(listeAppointments[i].earliestappointmenttime!="1970-01-01T00:00:00"){
-          console.log(listeAppointments)
         var earliestappointmenttime = listeAppointments[i].earliestappointmenttime.replaceAll("1970-01-01T", "").substring(0, 16);
         }
         else{
@@ -48,8 +47,6 @@ function displayAddPathway() {
   }
   
   timeBegin.value = earliestappointmenttime;
-  console.log(timeBegin.value)
-  console.log(earliestappointmenttime)
 
   $("#add-planning-modal").modal("show");
 
@@ -339,15 +336,12 @@ function autoAddPathway(iteration=0){
 
   //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
-  console.log(PathwayBeginTime);
   var PathwayBeginDate =
     new Date(currentDateStr);
-  console.log(PathwayBeginDate);
   PathwayBeginDate.setUTCHours(PathwayBeginTime.split(":")[0]);
   PathwayBeginDate.setMinutes(PathwayBeginTime.split(":")[1]);
   PathwayBeginDate.setSeconds(0);
 
-  console.log(PathwayBeginDate);
   //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivity.length; i++) {
@@ -455,7 +449,6 @@ function autoAddPathway(iteration=0){
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
         for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHR.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents();
-          console.log(allEvents)
           var slotAlreadyScheduled=false;
           if(categoryHumanResources[j].id==categoryOfHR[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id==''){
             if(countResources<categoryHumanResources[j].quantity){  
@@ -583,7 +576,6 @@ function autoAddPathway(iteration=0){
                   counterNbResourceOfCategory++; 
                   //change the begin date to see if ressources are free 20 minutes later
                   if(counterNbResourceOfCategory==nbResourceOfcategory){
-                    console.log('change the begin date to see if ressources are free 20 minutes later')
                     PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 5*60000);
                     //do the same iteration
                     j--;
@@ -739,8 +731,6 @@ function autoAddPathway(iteration=0){
         start=PathwayBeginDate.getTime()
         end=PathwayBeginDate.getTime()
       }
-      console.log(PathwayBeginDate)
-      console.log(start)
       var event = calendar.addEvent({
         id: "new" + countAddEvent,
         description: "",
