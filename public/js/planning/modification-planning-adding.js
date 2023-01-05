@@ -404,6 +404,7 @@ function autoAddPathway(iteration=0){
 
     //Creating Activities in FullCalendar
     for (let i = 0; i < activitiesA.length; i++) {
+      var isSlotPossible = true;
       var activityResourcesArray = [];
       var humanAlreadyScheduled = [];
       var materialAlreadyScheduled = [];
@@ -542,7 +543,6 @@ function autoAddPathway(iteration=0){
               endDate.setMinutes(endTimeSplit[1])
               endDate.setSeconds(0)
               }else{
-                console.log("test")
                 endDate.setUTCHours(23)
                 endDate.setMinutes(59)
                 endDate.setSeconds(59)
@@ -629,12 +629,41 @@ function autoAddPathway(iteration=0){
           if(categoryMaterialResources[j].id==categoryOfMR[categoryOfMaterialResourceIt].idcategory || categoryMaterialResources[j].id==''){ 
             if(countResources<categoryMaterialResources[j].quantity){
               for(allEventsIterator=0; allEventsIterator<allEvents.length; allEventsIterator++){
-                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource)==true &&
-                  allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) &&
-                  allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) ||
-                  allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource)==true &&
-                  allEvents[allEventsIterator].start.getTime()<=(endTime) &&
-                  allEvents[allEventsIterator].end.getTime()>=(endTime) ||
+                if(allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) || //si la fin de l'activité est apres le debut de l'evenement
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()>=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()<=(endTime) && //si le debut de l'activité est avant la fin de l'evenement
+                allEvents[allEventsIterator].end.getTime()>=(endTime) ||//si la fin de l'activité est apres la fin de l'evenement
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].start.getTime()==(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()==(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                (PathwayBeginDate.getTime())<=allEvents[allEventsIterator].start.getTime() && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()>=(endTime) &&
+                allEvents[allEventsIterator].start.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                
+
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) &&
+                (endTime)<=allEvents[allEventsIterator].start.getTime() || //si la fin de l'activité est apres le debut de l'evenement
+
+                allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
+                allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
+                allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
+                
                   allEvents[allEventsIterator]._def.resourceIds.includes('m-default') &&
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
                   allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
@@ -666,8 +695,7 @@ function autoAddPathway(iteration=0){
                   counterNbResourceOfCategory++; 
                   //change the begin date to see if ressources are free 20 minutes later
                   if(counterNbResourceOfCategory==nbResourceOfcategory){
-                    PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 5*60000);
-                    j--;
+                    isSlotPossible=false;
                     break;  
                   }
                 }   
@@ -676,7 +704,7 @@ function autoAddPathway(iteration=0){
           }
         }
       }
-
+      if(isSlotPossible){
       for(let j=0; j<materialResources.length; j++){
         activityResourcesArray.push(materialResources[j].id); 
       }
@@ -718,6 +746,11 @@ function autoAddPathway(iteration=0){
         categoryHumanResource: categoryHumanResources,
         patientId: appointment.idPatient[0].id.split('_')[1]
       });
+      }
+      else{
+        PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 5*60000);
+        i--;
+      }
     }
     var successorsActivitiesA = [];
     //On reset le tableau successorsActivitiesA
@@ -868,3 +901,4 @@ function getDataAdd(){
       displayAddPathway();
   }
 }
+  
