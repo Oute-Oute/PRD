@@ -43,3 +43,4 @@ var/cache/dev/profiler/index.csv
 var/cache/dev/url_generating_routes.php
 var/cache/dev/url_matching_routes.php
 var/log/dev.log
+var/database.sqlite-journal
