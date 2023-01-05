@@ -21,6 +21,8 @@ function displayAddPathway() {
 
   //Add all non shculed appointments into the list
   var nbOptions = 0;
+  var firstAppointmentInList = 0;
+  var timeBegin
   for (let i = 0; i < listeAppointments.length; i++) {
     if (listeAppointments[i].scheduled == false) {
       appointmentSelection.options[nbOptions] = new Option(
@@ -31,17 +33,23 @@ function displayAddPathway() {
         listeAppointments[i].idPathway[0].title,
         listeAppointments[i].id
       );
+      if(nbOptions==0){
+        timeBegin=document.getElementById("timeBegin");
+        if(listeAppointments[i].earliestappointmenttime!="1970-01-01T00:00:00"){
+          console.log(listeAppointments)
+        var earliestappointmenttime = listeAppointments[i].earliestappointmenttime.replaceAll("1970-01-01T", "").substring(0, 16);
+        }
+        else{
+          var earliestappointmenttime = "00:00";
+        }
+      }
       nbOptions++;
     }
   }
-  let timeBegin=document.getElementById("timeBegin");
-  if(listeAppointments.length>0){
-  var earliestappointmenttime = listeAppointments[0].earliestappointmenttime.replaceAll("1970-01-01T", "").substring(0, 16);
-  }
-  else{
-    var earliestappointmenttime = "08:00";
-  }
+  
   timeBegin.value = earliestappointmenttime;
+  console.log(timeBegin.value)
+  console.log(earliestappointmenttime)
 
   $("#add-planning-modal").modal("show");
 
@@ -115,7 +123,6 @@ function addPathway() {
   //Array that stock all Activities A to be sure that we dont push the same activity A two times. 
   var allActivitiesA = [];
   for (let i = 0; i < firstActivitiesPathway.length; i++) {
-    console.log(firstActivitiesPathway[i])
     let activityA = { activity: firstActivitiesPathway[i], delaymin: 0 };
     activitiesA.push(activityA);
     allActivitiesA.push(firstActivitiesPathway[i].id);
@@ -123,7 +130,6 @@ function addPathway() {
   do {
 
     //Creating Activities in FullCalendar
-    console.log("Activities A : " + activitiesA);
     for (let i = 0; i < activitiesA.length; i++) {
       var quantityHumanResources = 0;
       var quantityMaterialResources = 0;
@@ -306,7 +312,6 @@ function autoAddAllPathway(iteration=0){
     }
   }
      document.getElementById("load-large").style.visibility = "hidden";
-     console.log("All pathways are planed")
    }
    
 /**
@@ -334,9 +339,15 @@ function autoAddPathway(iteration=0){
 
   //Date of the begining of the pathway 
   var PathwayBeginTime = document.getElementById("timeBegin").value;
-  var PathwayBeginDate = new Date(
-    new Date(currentDateStr.substring(0, 10) + " " + PathwayBeginTime).getTime()
-  );
+  console.log(PathwayBeginTime);
+  var PathwayBeginDate =
+    new Date(currentDateStr);
+  console.log(PathwayBeginDate);
+  PathwayBeginDate.setUTCHours(PathwayBeginTime.split(":")[0]);
+  PathwayBeginDate.setMinutes(PathwayBeginTime.split(":")[1]);
+  PathwayBeginDate.setSeconds(0);
+
+  console.log(PathwayBeginDate);
   //Get activities of the pathway
   var activitiesInPathwayAppointment = [];
   for (let i = 0; i < listeActivity.length; i++) {
@@ -444,6 +455,7 @@ function autoAddPathway(iteration=0){
         var endTime=PathwayBeginDate.getTime()+activitiesA[i].activity.duration * 60000;
         for(let categoryOfHumanResourceIt=0;categoryOfHumanResourceIt<categoryOfHR.length; categoryOfHumanResourceIt++){
           var allEvents=calendar.getEvents();
+          console.log(allEvents)
           var slotAlreadyScheduled=false;
           if(categoryHumanResources[j].id==categoryOfHR[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id==''){
             if(countResources<categoryHumanResources[j].quantity){  
@@ -521,8 +533,6 @@ function autoAddPathway(iteration=0){
                 allEvents[allEventsIterator].start.getTime()==(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
                 allEvents[allEventsIterator].end.getTime()==(endTime)  //si la fin de l'activité est apres le debut de l'evenement
                 ){
-                  console.log(categoryOfHR[categoryOfHumanResourceIt].idresource)
-                  console.log("slot already scheduled")
                   slotAlreadyScheduled=true;
                 }
               }
@@ -573,6 +583,7 @@ function autoAddPathway(iteration=0){
                   counterNbResourceOfCategory++; 
                   //change the begin date to see if ressources are free 20 minutes later
                   if(counterNbResourceOfCategory==nbResourceOfcategory){
+                    console.log('change the begin date to see if ressources are free 20 minutes later')
                     PathwayBeginDate=new Date(PathwayBeginDate.getTime() + 5*60000);
                     //do the same iteration
                     j--;
@@ -663,7 +674,7 @@ function autoAddPathway(iteration=0){
                 allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfMR[categoryOfMaterialResourceIt].idresource) && //si la ressource est dans la categorie
                 allEvents[allEventsIterator].end.getTime()>=(PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
                 allEvents[allEventsIterator].end.getTime()<=(endTime) || //si la fin de l'activité est apres le debut de l'evenement
-                
+
                   allEvents[allEventsIterator]._def.resourceIds.includes('m-default') &&
                   allEvents[allEventsIterator]._def.extendedProps.appointment == appointment.id &&
                   allEvents[allEventsIterator].start.getTime()<=(PathwayBeginDate.getTime()) && 
@@ -728,12 +739,14 @@ function autoAddPathway(iteration=0){
         start=PathwayBeginDate.getTime()
         end=PathwayBeginDate.getTime()
       }
+      console.log(PathwayBeginDate)
+      console.log(start)
       var event = calendar.addEvent({
         id: "new" + countAddEvent,
         description: "",
         resourceIds: activityResourcesArray,
         title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
-        start: start + activitiesA[i].delaymin * 60000,
+        start: start,
         end: end + activitiesA[i].activity.duration * 60000,
         patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
         appointment: appointment.id,
@@ -849,7 +862,6 @@ function autoAddPathway(iteration=0){
     $("#add-planning-modal").modal("toggle");
   }
   document.getElementById("load-large").style.visibility = "hidden";
-console.log(calendar.getEvents());
 }
 
 function getDataAdd(){
