@@ -360,6 +360,11 @@ GetAppointmentsFromMaterialResourceId:
   controller: App\Controller\MaterialResourceController::GetAppointmentFromMaterialResourceId
   methods: [GET]
 
+Statistics:
+  path: /statistics
+  controller: App\Controller\StatisticsController::index
+  methods: [GET]
+
 Ethics:
   path: /ethics
   controller: App\Controller\EthicsController::index
