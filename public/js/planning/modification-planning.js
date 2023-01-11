@@ -6,12 +6,7 @@ var currentDateStr = $_GET("date").replaceAll("%3A", ":");
 var currentDate = new Date(currentDateStr);
 var timerAlert;
 var modifAlertTime = 480000;
-var messageUnscheduledAppointment = [];
-var listScheduledAppointment = [];
-var listErrorMessages = {
-  messageUnscheduledAppointment: messageUnscheduledAppointment,
-  listScheduledAppointment: listScheduledAppointment
-};
+
 var resourcesColumns = [{
   headerContent: "Nom", //set the label of the column
   field: "title", //set the field of the column
