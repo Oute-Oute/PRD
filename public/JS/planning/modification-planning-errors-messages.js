@@ -1,10 +1,16 @@
+var messageUnscheduledAppointment = [];
+var listScheduledAppointment = [];
+var listErrorMessages = {
+  messageUnscheduledAppointment: messageUnscheduledAppointment,
+  listScheduledAppointment: listScheduledAppointment
+};
+stats=false;
 /**
  * @brief This function update list error messages 
  */
  function updateErrorMessages() {
     //GetInfosErrors();
     var listScheduledActivities = calendar.getEvents(); //recover all events from the calendar
-  
     listErrorMessages.messageUnscheduledAppointment = [];
     var listAppointments = JSON.parse(document.getElementById("listeAppointments").value.replaceAll("3aZt3r", " ")); //recover all appointments
     listAppointments.forEach((currentAppointment) => { //browse all appointments
@@ -101,6 +107,7 @@
         }
       }
     })
+    if(stats!=true){
     updatePanelErrorMessages(); //update the panel error messages
     let listCurrentEvent = calendar.getEvents();
     listCurrentEvent.forEach((currentEvent) => {
@@ -108,9 +115,15 @@
     currentEvent._def.ui.backgroundColor = RessourcesAllocated(currentEvent);
     currentEvent._def.ui.borderColor = RessourcesAllocated(currentEvent);
     currentEvent.setEnd(currentEvent.end);
-    document.getElementById("load-large").style.visibility = "hidden";
+    //document.getElementById("load-large").style.visibility = "hidden";
   });
   }
+  else{
+    listErrors=repertoryListErrors();
+    numberOfErrors=listErrors.count
+    getNumberOFErrors(numberOfErrors);
+  }
+}
   
   /**
    * @brief This function return an error message if the appointment starts too early, return "" if we have no problem.
@@ -743,7 +756,7 @@
     while (nodesNotification.length != 3) {                                                                         //the 3 first div are not notifications
       document.getElementById('lateral-panel-bloc').removeChild(nodesNotification[nodesNotification.length - 1]);  //Removing div 
     }
-    var repertoryErrors = repertoryListErrors();                   //Get the repertory of errors 
+    var repertoryErrors = repertoryListErrors();     
     if (repertoryErrors.count != 0) {
       updateColorErrorButton(true);                                     //Updating the color of the button "erreurs"
       //add div for unscheduled appointment
@@ -1326,7 +1339,7 @@
   }
 
   function GetDataErrors(){
-    document.getElementById("load-large").style.visibility = "visible";
+    //document.getElementById("load-large").style.visibility = "visible";
     if(document.getElementById('listeActivityHumanResource').value==""){
       var dateStr=document.getElementById("date").value
       $.ajax({
