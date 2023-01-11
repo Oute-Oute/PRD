@@ -38,15 +38,18 @@ class StatisticsController extends AbstractController
         $dateFormatted=date_create($date);
         $dateFormatted->format('Y-F-d');
         $dateStr=str_replace($english_months, $french_months,$dateFormatted->format('d F Y'));
-        $this->getDisplayedActivitiesJSON($doctrine,$SAR);
+        $getDisplayedActivitiesJSON=$this->getDisplayedActivitiesJSON($doctrine,$SAR);
         $humanResourcesSheduledJSON=$this->getHumanResourceScheduledJSON($doctrine);
         $materialResourcesSheduledJSON=$this->getMaterialResourceScheduledJSON($doctrine);
+        $appointmentsJSON=$this->getAppointmentsJSON($doctrine);
         return $this->render('statistics/index.html.twig', [
             'controller_name' => 'StatisticsController',
             'currentdate' => $date,
             'dateFormatted' => $dateStr,
             'getHumanResourceScheduledJSON' => $humanResourcesSheduledJSON,
             'getMaterialResourceScheduledJSON' => $materialResourcesSheduledJSON,
+            'getAppointmentsJSON' => $appointmentsJSON,
+            'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
         ]);
     }
 
@@ -226,7 +229,7 @@ class StatisticsController extends AbstractController
                             'id' => $id,
                             'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
                             'categories' => ($categoriesArray),
-                            //'workingHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
+                            'businessHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
                             'type' => 0
                         );
                         unset($HumanResourceArray);
@@ -254,12 +257,34 @@ class StatisticsController extends AbstractController
                     'name' => 'Aucune catégorie',
                 ),
             ),
-            'workingHours' => $workingHoursEmpty,
+            'businessHours' => $workingHoursEmpty,
             'type' => 1
         );
         //Conversion des données ressources en json
         $HumanResourceScheduledArrayJSON = new JsonResponse($HumanResourceScheduledArray);
         return $HumanResourceScheduledArrayJSON;
+    }
+        /*
+     * @brief This function is the getter of the working hours to display from the database.
+     * @param ManagerRegistry $doctrine
+     * @return array of the resource's data
+     */
+    public function getWorkingHours(ManagerRegistry $doctrine, $resource)
+    {
+        //recuperation du pathway depuis la base de données
+        $setOfWorkingHours = $doctrine->getRepository("App\Entity\WorkingHours")->findBy(array('humanresource' => $resource));
+        $workingHoursArray = array();
+        foreach ($setOfWorkingHours as $workingHours) {
+            $dayWorkingHours = $workingHours->getDayweek();
+            //ajout des données du pathway dans un tableau
+            $workingHoursArray[] = array(
+                'day' => $dayWorkingHours,
+                'startTime' => ($workingHours->getStarttime()->format('H:i')),
+                'endTime' => ($workingHours->getEndtime()->format('H:i')),
+
+            );
+        }
+        return $workingHoursArray;
     }
 
     public function getMaterialResourceScheduledJSON(ManagerRegistry $doctrine)
@@ -316,6 +341,38 @@ class StatisticsController extends AbstractController
         //Conversion des données ressources en json
         $MaterialResourceScheduledArrayJSON = new JsonResponse($MaterialResourceScheduledArray);
         return $MaterialResourceScheduledArrayJSON;
+    }
+
+    public function getAppointmentsJSON(ManagerRegistry $doctrine)
+    {
+        //recuperation de la date dont on veut le planning
+        global $date;
+        $dateTime = new \DateTime($date);
+        //recuperartion des appointments du jour depuis la base de données
+        $appointments = $doctrine->getRepository("App\Entity\Appointment")
+            ->findBy(array('dayappointment' => $dateTime));
+        //Creation d'un tableau pour stocker les données des appointments
+
+        $appointmentArray = array();
+        foreach ($appointments as $appointment) {
+            $businessHours = array(
+                'startTime' => $appointment->getEarliestappointmenttime()->format('H:i'),
+                'endTime' => $appointment->getLatestappointmenttime()->format('H:i'),
+            );
+            $appointmentArray[] = array(
+                'id' => (str_replace(" ", "3aZt3r", $appointment->getId())),
+                'day' => ($appointment->getDayappointment()->format('Y-m-d')),
+                'earliestappointmenttime' => ($appointment->getEarliestappointmenttime()),
+                'latestappointmenttime' => ($appointment->getLatestappointmenttime()),
+                'scheduled' => $appointment->isScheduled(),
+                //'patient' => $this->getPatient($doctrine, $appointment->getPatient()->getId(), $businessHours),
+                //'pathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+
+            );
+        }
+        //Conversion des données ressources en json
+        $appointmentArrayJSON = new JsonResponse($appointmentArray);
+        return $appointmentArrayJSON;
     }
 
 }

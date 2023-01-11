@@ -19,15 +19,29 @@
 {% block javascripts %}
 	<script src="js/stats/statistics.js"></script>
     <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="js/jquery-ui/jquery-ui.min.js"></script>  
+    <script src="js/jquery-ui/jquery-ui.min.js"></script>
+	<script src='js/fullcalendar-scheduler/lib/main.min.js'></script>  
+	<link href='js/fullcalendar-scheduler/lib/main.css' rel='stylesheet'/>
+	<script src="js/planning/modification-planning-errors-messages.js"></script>
 {% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
 		{% endif %}
 {% endblock %}
 
 {% block body %}
-
-					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
-					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
+	<input type="hidden" id="appointments" value='{{getAppointmentsJSON.content}}'/>
+	<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
+	<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
+	<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
+	<input id="date" name="date" type="hidden" value={{currentdate}}>
+	<input id="listeSuccessors" name="listeSuccessors" type='hidden' value="">
+	<input id="listeActivity" name="listeActivity" type='hidden' value="">
+	<input type='hidden' id="listeAppointments" name="listeAppointments" value="">
+	<input id="listeActivityHumanResource" name="listeActivityHumanResource" type="hidden" value="">
+	<input id="listeActivityMaterialResource" name="listeActivityMaterialResource" type='hidden' value="">
+	<input id="categoryOfMaterialResource" name="categoryOfMaterialResourceJSON" type='hidden' value="">
+	<input id="categoryOfHumanResource" name="categoryOfHumanResourceJSON" type='hidden' value="">
+	<input id="categoryMaterialResource" name="categoryMaterialResourceJSON" type='hidden' value="">
+	<input id="categoryHumanResource" name="categoryHumanResourceJSON" type='hidden' value="">
 	<div class="index">
 		<div class="all-container" id="all">
 		<div class="top">
@@ -60,13 +74,13 @@
 			Nombre de ressources humaines : 
 			</td>
 			<td class="td-left-center" id="numberOfHR">
-			50
+			Chargement...
 			</td>
 			<td class="td-right-center">
 			Temps d'attente minimum (en minutes) : 
 			<td>
 			<td class="td-right">
-			50
+			Chargement...
 			</td>
 		</tr>
 		<tr class="line-2">
@@ -74,35 +88,35 @@
 			Nombre de ressources matérielles : 
 			</td>
 			<td class="td-left-center" id="numberOfMR">
-			50
+			Chargement...
 			</td>
 			<td class="td-right-center">
 			Temps d'attente moyen (en minutes) : 
 			<td>
 			<td class="td-right">
-			50
+			Chargement...
 			</td>
 		</tr>
 		<tr class="line-3">
 			<td class="td-left">
 			Nombre de patients : 
 			</td>
-			<td class="td-left-center">
-			50
+			<td class="td-left-center" id="numberOfPatients">
+			Chargement...
 			</td>
 			<td class="td-right-center">
 			Temps d'attente maximum (en minutes) : 
 			<td>
 			<td class="td-right">
-			50
+			Chargement...
 			</td>
 		</tr>
 		<tr class="line-4">
 			<td class="td-left">
 			Nombre d'erreur de planification sur la journée :
 			</td>
-			<td class="td-left-center">
-			50
+			<td class="td-left-center" id="numberOfErrors">
+			Chargement...
 			</td>
 		</tr>
 		<tr class="line-5">
@@ -160,8 +174,7 @@
 
 
 </div>
-<table id="toptable">
-	<tr 
+<div id='calendar' hidden></div>	
 </div>
 
 	{% endblock %}
