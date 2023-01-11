@@ -42,6 +42,7 @@ class StatisticsController extends AbstractController
         $humanResourcesSheduledJSON=$this->getHumanResourceScheduledJSON($doctrine);
         $materialResourcesSheduledJSON=$this->getMaterialResourceScheduledJSON($doctrine);
         $appointmentsJSON=$this->getAppointmentsJSON($doctrine);
+        $waitingTimes=$this->getWaitingTimes($doctrine);
         return $this->render('statistics/index.html.twig', [
             'controller_name' => 'StatisticsController',
             'currentdate' => $date,
@@ -375,4 +376,35 @@ class StatisticsController extends AbstractController
         return $appointmentArrayJSON;
     }
 
+    public function getWaitingTimes(ManagerRegistry $doctrine){
+        global $displayedActivities;
+        if(sizeof($displayedActivities)>0){
+            $waitingTimes=array();
+            $incrementWaitingTimes=0;
+            $activitiesByAppointment=array();
+            foreach ($displayedActivities as $displayedActivity){
+                $activitiesByAppointment[$displayedActivity->getAppointment()->getId()][]=$displayedActivity;
+                }
+                    
+                    foreach ($activitiesByAppointment as $appointment){
+                        for($i=0;$i<sizeof($appointment)-1;$i++){
+                            $end=$appointment[$i]->getEndTime()->format('H:i:s');
+                            $start=$appointment[$i+1]->getStartTime()->format('H:i:s');
+                            $endTime=new \DateTime($end);
+                            $startTime=new \DateTime($start);
+                            $inter=$endTime->diff($startTime);
+                            $hour=$inter->format("%H");
+                            $min=$inter->format("%I");
+                            $waitingTime=$hour*60+$min;
+                            $waitingTimes[$incrementWaitingTimes]=$waitingTime;
+                            $incrementWaitingTimes++;
+                    }
+                    }
+            }
+        else{
+            $waitingTime="Aucune activité programmée";
+        }
+        $waitingTimesJSON = new JsonResponse($waitingTimes);
+        return $waitingTimesJSON;
+    } 
 }
