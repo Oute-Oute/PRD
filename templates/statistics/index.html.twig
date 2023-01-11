@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
     <link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">  
 	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Stats/stats.css') }}">
 	
 {% endblock %}
 {% block javascripts %}
@@ -26,7 +27,7 @@
 {% block body %}
 	<div class="index">
 		<div class="all-container" id="all">
-	<div class="top">
+		<div class="top">
 		<table class="header-ressource-consultation" style="font-size:medium;">
 			<td class="header-td">
 				<h1>Statistiques</h1>
@@ -49,6 +50,112 @@
 				
 			</td>
 		</table>
+		</div>
+		<table class="table-stats">
+		<tr class="line-1">
+			<td class="td-left">
+			Nombre de ressources humaines : 
+			</td>
+			<td class="td-left-center">
+			50
+			</td>
+			<td class="td-right-center">
+			Temps d'attente minimum (en minutes) : 
+			<td>
+			<td class="td-right">
+			50
+			</td>
+		</tr>
+		<tr class="line-2">
+			<td class="td-left">
+			Nombre de ressources matérielles : 
+			</td>
+			<td class="td-left-center">
+			50
+			</td>
+			<td class="td-right-center">
+			Temps d'attente moyen (en minutes) : 
+			<td>
+			<td class="td-right">
+			50
+			</td>
+		</tr>
+		<tr class="line-3">
+			<td class="td-left">
+			Nombre de patients : 
+			</td>
+			<td class="td-left-center">
+			50
+			</td>
+			<td class="td-right-center">
+			Temps d'attente maximum (en minutes) : 
+			<td>
+			<td class="td-right">
+			50
+			</td>
+		</tr>
+		<tr class="line-4">
+			<td class="td-left">
+			Nombre d'erreur de planification sur la journée :
+			</td>
+			<td class="td-left-center">
+			50
+			</td>
+		</tr>
+		<tr class="line-5">
+			<td class="td-left">
+			Taux d'occupation des ressources :
+		</td>
+		</table>
+		<table class="table-resources">
+		<tr class="header-table">
+		<td class="td-resource-column">
+		Ressources
+		</td>
+		<td class="td-first-hour-column">
+		6h-9h
+		</td>
+		<td class="td-second-hour-column">
+		9h-12h
+		</td>
+		<td class="td-third-hour-column">
+		12h-15h
+		</td>
+		<td class="td-fourth-hour-column">
+		15h-18h
+		</td>
+		<td class="td-fifth-hour-column">
+		18h-21h
+		</td>
+		<td class="td-total-column">
+		Total
+		</td>
+		</tr>
+		<tr class="content-resources">
+		<td class="td-resource-column">
+		Dr. Jean
+		</td>
+		<td class="td-first-hour-column">
+		25%
+		</td>
+		<td class="td-second-hour-column">
+		33%
+		</td>
+		<td class="td-third-hour-column">
+		16%
+		</td>
+		<td class="td-fourth-hour-column">
+		25%
+		</td>
+		<td class="td-fifth-hour-column">
+		0%
+		</td>
+		<td class="td-total-column">
+		100%
+		</td>
+		</table>
+
+
 </div>
 <table id="toptable">
 	<tr 

@@ -1,0 +1,73 @@
+.table-stats,.table-resources{
+    width: 100%;
+    margin: 0 0 1em 0;
+    /*font-weight: bold;*/
+    font-size: larger;
+}
+.td-left{
+    text-align: left;
+    width: 35%;
+    padding: 5pt;
+}
+.td-left-center{
+    text-align: left;
+    width: 15%;
+}
+.td-right{
+    text-align: left;
+    width: 15%;
+}
+.td-right-center{
+    text-align: left;
+    width: 35%;
+}
+
+.table-resources{
+    border-collapse: collapse;
+    border-width: 2pt;
+    border-style: solid;
+    border-color: #000000;
+}
+.header-table,.td-resource-column,.td-first-hour-column,.td-second-hour-column,.td-third-hour-column,.td-fourth-hour-column,.td-fifth-hour-column,.td-total-column{
+    border-collapse: collapse;
+    border-width: 1pt;
+    border-style: solid;
+    border-color: #000000;
+}
+
+.td-resource-column{
+    text-align: center;
+    width: 22%;
+    padding: 5pt;
+}
+
+.td-first-hour-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.td-second-hour-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.td-third-hour-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.td-fourth-hour-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.td-fifth-hour-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.td-total-column{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
