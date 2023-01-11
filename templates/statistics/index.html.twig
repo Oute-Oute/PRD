@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des patients
+{% block title %}Statistiques
 {% endblock %}
 {% block stylesheets %}
 	<!-- insertion de bootstrap et jquery -->
@@ -25,6 +25,9 @@
 {% endblock %}
 
 {% block body %}
+
+					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
+					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
 	<div class="index">
 		<div class="all-container" id="all">
 		<div class="top">
@@ -56,7 +59,7 @@
 			<td class="td-left">
 			Nombre de ressources humaines : 
 			</td>
-			<td class="td-left-center">
+			<td class="td-left-center" id="numberOfHR">
 			50
 			</td>
 			<td class="td-right-center">
@@ -70,7 +73,7 @@
 			<td class="td-left">
 			Nombre de ressources matérielles : 
 			</td>
-			<td class="td-left-center">
+			<td class="td-left-center" id="numberOfMR">
 			50
 			</td>
 			<td class="td-right-center">

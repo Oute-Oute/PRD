@@ -1,3 +1,22 @@
+document.addEventListener("DOMContentLoaded", function () {
+getNumberOfHR();
+getNumberOfMR();
+});
+
+
+
+function getNumberOfHR(){
+  hr=JSON.parse(document.getElementById("human").value)
+  console.log(hr)
+  document.getElementById("numberOfHR").innerHTML=hr.length-1
+}
+
+function getNumberOfMR(){
+  mr=JSON.parse(document.getElementById("material").value)
+  console.log(mr)
+  document.getElementById("numberOfMR").innerHTML=mr.length-1
+}
+
 /**
  * @brief This function is called when we want to change the date of the page
  */
@@ -83,3 +102,4 @@ function newDate() {
   function changeDate(dateStr){
     window.location.assign("/statistics?date=" +dateStr)
   }
+
