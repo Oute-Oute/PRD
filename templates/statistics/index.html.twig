@@ -32,6 +32,7 @@
 	<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
 	<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
 	<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
+	<input type="hidden" id="waitingTimes" value='{{waitingTimes.content}}'/>
 	<input id="date" name="date" type="hidden" value={{currentdate}}>
 	<input id="listeSuccessors" name="listeSuccessors" type='hidden' value="">
 	<input id="listeActivity" name="listeActivity" type='hidden' value="">
@@ -77,9 +78,9 @@
 			Chargement...
 			</td>
 			<td class="td-right-center">
-			Temps d'attente minimum (en minutes) : 
+			Temps d'attente minimum : 
 			<td>
-			<td class="td-right">
+			<td class="td-right" id="minWaitingTime">
 			Chargement...
 			</td>
 		</tr>
@@ -91,9 +92,9 @@
 			Chargement...
 			</td>
 			<td class="td-right-center">
-			Temps d'attente moyen (en minutes) : 
+			Temps d'attente moyen : 
 			<td>
-			<td class="td-right">
+			<td class="td-right" id="meanWaitingTime">
 			Chargement...
 			</td>
 		</tr>
@@ -105,9 +106,9 @@
 			Chargement...
 			</td>
 			<td class="td-right-center">
-			Temps d'attente maximum (en minutes) : 
+			Temps d'attente maximum : 
 			<td>
-			<td class="td-right">
+			<td class="td-right" id="maxWaitingTime">
 			Chargement...
 			</td>
 		</tr>

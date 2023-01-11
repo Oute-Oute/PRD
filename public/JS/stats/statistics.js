@@ -23,6 +23,7 @@ getNumberOfPatients();
 createCalendar("Ressources Humaines", "stats", "00:20:00");
 stats=true;
 GetDataErrors()
+getWaitingTimes()
 });
 
 
@@ -44,7 +45,15 @@ function getNumberOfPatients(){
 function getNumberOFErrors(numberOfErrors){
   document.getElementById("numberOfErrors").innerHTML=numberOfErrors
 }
-
+function getWaitingTimes(){
+  waitingTimes=JSON.parse(document.getElementById("waitingTimes").value)
+  min=waitingTimes.minimum
+  max=waitingTimes.maximum
+  mean=Math.round(waitingTimes.mean)
+  document.getElementById("minWaitingTime").innerHTML=min+" minutes"
+  document.getElementById("maxWaitingTime").innerHTML=max+" minutes"
+  document.getElementById("meanWaitingTime").innerHTML=mean+" minutes"
+}
 
 
 /**

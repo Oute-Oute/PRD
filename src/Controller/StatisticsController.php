@@ -51,6 +51,7 @@ class StatisticsController extends AbstractController
             'getMaterialResourceScheduledJSON' => $materialResourcesSheduledJSON,
             'getAppointmentsJSON' => $appointmentsJSON,
             'getDisplayedActivitiesJSON' => $getDisplayedActivitiesJSON,
+            'waitingTimes' => $waitingTimes,
         ]);
     }
 
@@ -400,11 +401,26 @@ class StatisticsController extends AbstractController
                             $incrementWaitingTimes++;
                     }
                     }
+                    $minimum=min($waitingTimes);
+                    $maximum=max($waitingTimes);
+                    $mean=array_sum($waitingTimes)/sizeof($waitingTimes);
+
+                    $waitingResults=array(
+                        'minimum'=>$minimum,
+                        'maximum'=>$maximum,
+                        'mean'=>$mean
+                    );
+                    $waitingTimeJSON=new JsonResponse($waitingResults);
+                    return $waitingTimeJSON;
             }
         else{
-            $waitingTime="Aucune activité programmée";
+            $waitingResults=array(
+                'minimum'=>"Aucune activité programmée",
+                'maximum'=>"Aucune activité programmée",
+                'mean'=>"Aucune activité programmée"
+            );
+            $waitingTimeJSON=new JsonResponse($waitingResults);
+            return $waitingTimeJSON;
         }
-        $waitingTimesJSON = new JsonResponse($waitingTimes);
-        return $waitingTimesJSON;
     } 
 }
