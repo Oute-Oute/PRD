@@ -45,8 +45,9 @@ function displayAddPathway() {
       nbOptions++;
     }
   }
-  
+  if (timeBegin != undefined) {
   timeBegin.value = earliestappointmenttime;
+  }
 
   $("#add-planning-modal").modal("show");
 
