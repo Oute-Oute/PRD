@@ -34,6 +34,7 @@
 	<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
 	<input type="hidden" id="waitingTimes" value='{{waitingTimes.content}}'/>
 	<input id="date" name="date" type="hidden" value={{currentdate}}>
+	<input id="occupancyRates" name="occupancyRates" type='hidden' value='{{occupancyRates.content}}'>
 	<input id="listeSuccessors" name="listeSuccessors" type='hidden' value="">
 	<input id="listeActivity" name="listeActivity" type='hidden' value="">
 	<input type='hidden' id="listeAppointments" name="listeAppointments" value="">
@@ -53,8 +54,6 @@
 				<td class="header-td-center">
 					<input required type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('consultation')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
 				</td>
-				<div id="filterId" class="filter-container" style="display:none; left:30%">
-				</div>
 			
 			<td class="header-td-right">
 				<div class="date-button">
@@ -65,6 +64,7 @@
 					<button id="previousButton" class="btn-calendar-edit" onclick="NextDay('consultation')" title="Aller au jour d'après">
 						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
 					</button>
+				</div>
 				
 			</td>
 		</table>
@@ -126,9 +126,14 @@
 		</td>
 		</table>
 		<table class="table-resources">
-		<tr class="header-table">
+		<thead class="header-table">
 		<td class="td-resource-column">
-		Ressources
+		<select class="btn-calendar-edit" id="selectResources" onchange="changeResources()" style>
+					<option selected value="rh">Ressources humaines</option>
+					<option value="rm">Ressources matérielles</option>
+					<option value="rm">Catégories de ressources humaines</option>
+					<option value="rm">Catégories de ressources matérielles</option>
+				</select>
 		</td>
 		<td class="td-first-hour-column">
 		6h-9h
@@ -148,30 +153,37 @@
 		<td class="td-total-column">
 		Total
 		</td>
-		</tr>
+		</thead>
+		<tbody id="resourcesTable">
 		<tr class="content-resources">
 		<td class="td-resource-column">
-		Dr. Jean
+		Chargement...
 		</td>
 		<td class="td-first-hour-column">
-		25%
+		Chargement...
 		</td>
 		<td class="td-second-hour-column">
-		33%
+		Chargement...
 		</td>
 		<td class="td-third-hour-column">
-		16%
+		Chargement...
 		</td>
 		<td class="td-fourth-hour-column">
-		25%
+		Chargement...
 		</td>
 		<td class="td-fifth-hour-column">
-		0%
+		Chargement...
 		</td>
 		<td class="td-total-column">
-		100%
+		Chargement...
 		</td>
+		</tr>
+		</tbody>
 		</table>
+		<div id="noResources" class="noResourcesMessage" hidden>
+		Aucune ressource planifiée
+		</div>
+
 
 
 </div>

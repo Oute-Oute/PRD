@@ -24,11 +24,10 @@
 
 .table-resources{
     border-collapse: collapse;
-    border-width: 2pt;
     border-style: solid;
     border-color: #000000;
 }
-.header-table,.td-resource-column,.td-first-hour-column,.td-second-hour-column,.td-third-hour-column,.td-fourth-hour-column,.td-fifth-hour-column,.td-total-column{
+.header-table,.td-resource-column,.td-first-hour-column,.td-second-hour-column,.td-third-hour-column,.td-fourth-hour-column,.td-fifth-hour-column,.td-total-column,.occupancy-cell{
     border-collapse: collapse;
     border-width: 1pt;
     border-style: solid;
@@ -70,4 +69,14 @@
     text-align: center;
     width: 13%;
     padding: 5pt;
+}
+.occupancy-cell{
+    text-align: center;
+    width: 13%;
+    padding: 5pt;
+}
+.noResourcesMessage{
+    text-align: center;
+    font-weight: bold;
+    font-size: larger;
 }

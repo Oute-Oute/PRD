@@ -23,7 +23,8 @@ getNumberOfPatients();
 createCalendar("Ressources Humaines", "stats", "00:20:00");
 stats=true;
 GetDataErrors()
-getWaitingTimes()
+getWaitingTimes() 
+getoccupancyRates("RH")
 });
 
 
@@ -61,6 +62,80 @@ function getWaitingTimes(){
   document.getElementById("maxWaitingTime").innerHTML=max+" minutes"
   document.getElementById("meanWaitingTime").innerHTML=mean+" minutes"
   }
+}
+function changeResources(){
+  console.log(document.getElementById("selectResources").options)
+  selected=document.getElementById("selectResources").options[document.getElementById("selectResources").selectedIndex].text;
+  if (selected=="Ressources humaines"){
+    getoccupancyRates("RH")
+  }
+  else if (selected=="Ressources matérielles"){
+    getoccupancyRates("RM")
+  }
+
+}
+
+function getoccupancyRates(type){
+  rates=JSON.parse(document.getElementById("occupancyRates").value)
+  if(type=="RH"){
+    rates=rates.humanResources
+  }
+  else if(type=="RM"){
+    rates=rates.materialResources
+  }
+  var trs = document.querySelectorAll('#resourcesTable tr:not(.headerPatient)');
+  for(let i=0; i<trs.length; i++){
+          trs[i].style.display='none';
+  }
+  console.log(rates)
+  if(rates!="Aucune ressource planifiée"){
+    document.getElementById("noResources").hidden=true
+    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
+      if(rates[i]!=undefined){
+        table=document.getElementById('resourcesTable');
+        var tr=document.createElement('tr');
+        tr.className="occupancy-row";
+        table.appendChild(tr);
+        var resourcename=document.createElement('td');
+        resourcename.className="occupancy-cell";
+        resourcename.innerHTML=rates[i].title;
+        tr.appendChild(resourcename);
+        occupancy=rates[i].occupancy
+        var firstSlot=document.createElement('td');
+        firstSlot.className="occupancy-cell";
+        firstSlot.innerHTML=(Math.round((occupancy[0].occupancy/180)*100)+"%");
+        tr.appendChild(firstSlot);
+        var secondSlot=document.createElement('td');
+        secondSlot.className="occupancy-cell";
+        secondSlot.innerHTML=(Math.round((occupancy[1].occupancy/180)*100)+"%");
+        tr.appendChild(secondSlot);
+        var thirdSlot=document.createElement('td');
+        thirdSlot.className="occupancy-cell";
+        thirdSlot.innerHTML=(Math.round((occupancy[2].occupancy/180)*100)+"%");
+        tr.append(thirdSlot);
+        var fourthSlot=document.createElement('td');
+        fourthSlot.className="occupancy-cell";
+        fourthSlot.innerHTML=(Math.round((occupancy[3].occupancy/180)*100)+"%");
+        tr.appendChild(fourthSlot);
+        var fifthSlot=document.createElement('td');
+        fifthSlot.className="occupancy-cell";
+        fifthSlot.innerHTML=(Math.round((occupancy[4].occupancy/180)*100)+"%");
+        tr.appendChild(fifthSlot);
+        var totalSlot=document.createElement('td');
+        totalSlot.className="occupancy-cell";
+        var totalOccupancy=0;
+        for(j=0;j<5;j++){
+          totalOccupancy+=occupancy[j].occupancy
+        }
+        totalSlot.innerHTML=(Math.round((totalOccupancy/900)*100)+"%");
+        tr.appendChild(totalSlot);  
+      }
+    }
+  }
+    else{
+      console.log("no resources")
+      document.getElementById("noResources").hidden=false;
+    }
 }
 
 
