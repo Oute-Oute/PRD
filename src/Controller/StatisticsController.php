@@ -415,9 +415,9 @@ class StatisticsController extends AbstractController
             }
         else{
             $waitingResults=array(
-                'minimum'=>"Aucune activité programmée",
-                'maximum'=>"Aucune activité programmée",
-                'mean'=>"Aucune activité programmée"
+                'minimum'=>"Aucune activité planifiée",
+                'maximum'=>"Aucune activité planifiée",
+                'mean'=>"Aucune activité planifiée"
             );
             $waitingTimeJSON=new JsonResponse($waitingResults);
             return $waitingTimeJSON;

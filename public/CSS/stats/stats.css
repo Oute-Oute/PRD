@@ -13,13 +13,13 @@
     text-align: left;
     width: 15%;
 }
-.td-right{
-    text-align: left;
-    width: 15%;
-}
 .td-right-center{
     text-align: left;
-    width: 35%;
+    width: 30%;
+}
+.td-right{
+    text-align: left;
+    width: 20%;
 }
 
 .table-resources{

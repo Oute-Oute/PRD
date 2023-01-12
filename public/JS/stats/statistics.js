@@ -1,4 +1,4 @@
-var currentDateStr = $_GET("date").replaceAll("%3A", ":");
+var currentDateStr = $_GET("date");
 var numberOfErrors=0;
 function $_GET(param) {
   var vars = {};
@@ -50,9 +50,17 @@ function getWaitingTimes(){
   min=waitingTimes.minimum
   max=waitingTimes.maximum
   mean=Math.round(waitingTimes.mean)
+  if(min=="Aucune activité planifiée"){
+    document.getElementById("minWaitingTime").innerHTML=waitingTimes.minimum
+    document.getElementById("maxWaitingTime").innerHTML=waitingTimes.maximum
+    document.getElementById("meanWaitingTime").innerHTML=waitingTimes.mean
+
+  }
+  else{
   document.getElementById("minWaitingTime").innerHTML=min+" minutes"
   document.getElementById("maxWaitingTime").innerHTML=max+" minutes"
   document.getElementById("meanWaitingTime").innerHTML=mean+" minutes"
+  }
 }
 
 
