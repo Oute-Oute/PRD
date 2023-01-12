@@ -64,7 +64,6 @@ function getWaitingTimes(){
   }
 }
 function changeResources(){
-  console.log(document.getElementById("selectResources").options)
   selected=document.getElementById("selectResources").options[document.getElementById("selectResources").selectedIndex].text;
   if (selected=="Ressources humaines"){
     getoccupancyRates("RH")
@@ -72,22 +71,75 @@ function changeResources(){
   else if (selected=="Ressources matérielles"){
     getoccupancyRates("RM")
   }
-
+  else if(selected=="Catégories de ressources humaines"){
+    getoccupancyRates("CRH")
+  }
+  else if(selected=="Catégories de ressources matérielles"){
+    getoccupancyRates("CRM")
+  }
 }
 
 function getoccupancyRates(type){
   rates=JSON.parse(document.getElementById("occupancyRates").value)
+  console.log(rates)
   if(type=="RH"){
     rates=rates.humanResources
   }
   else if(type=="RM"){
     rates=rates.materialResources
   }
+  else if(type=="CRH"){
+    categoriesRates=[]
+    console.log(rates)
+    rates=rates.humanResources
+    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
+      if(rates[i]!=undefined){
+        console.log(rates[i].categories)
+        for(j=0;j<rates[i].categories.length;j++){
+          console.log(rates[i].categories[j].name)
+          if(!categoriesRates.includes(rates[i].categories[j].name)){
+            categoriesRates.push(rates[i].categories[j].name)
+        }
+      }
+    }
+  }
+  console.log(categoriesRates)
+  categoriesRates.forEach(category => {
+    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
+      if(rates[i]!=undefined){
+        console.log(rates[i].categories)
+        for(j=0;j<rates[i].categories.length;j++){
+          console.log(rates[i].categories[j].name)
+          if(rates[i].categories[j].name==category){
+            console.log(rates[i].occupancy)
+            category.push(rates[i].occupancyRate)
+            console.log(category)
+        }
+      }
+      }
+    }
+
+  });
+}
+  else if(type=="CRM"){
+    categoriesRates=[]
+    rates=rates.materialResources
+    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
+      if(rates[i]!=undefined){
+        for(j=0;j<rates[i].categories.length;j++){
+          if(!categoriesRates.includes(rates[i].categories[j].name)){
+            categoriesRates.push(rates[i].categories[j].name)
+        }
+      }
+    }
+  }
+  console.log(categoriesRates)
+}
+
   var trs = document.querySelectorAll('#resourcesTable tr:not(.headerPatient)');
   for(let i=0; i<trs.length; i++){
           trs[i].style.display='none';
   }
-  console.log(rates)
   if(rates!="Aucune ressource planifiée"){
     document.getElementById("noResources").hidden=true
     for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
