@@ -27,7 +27,7 @@
     border-style: solid;
     border-color: #000000;
 }
-.header-table,.td-resource-column,.td-first-hour-column,.td-second-hour-column,.td-third-hour-column,.td-fourth-hour-column,.td-fifth-hour-column,.td-total-column,.occupancy-cell{
+.header-table,.td-resource-column,.td-first-hour-column,.td-second-hour-column,.td-third-hour-column,.td-fourth-hour-column,.occupancy-cell{
     border-collapse: collapse;
     border-width: 1pt;
     border-style: solid;
@@ -60,15 +60,29 @@
     width: 13%;
     padding: 5pt;
 }
-.td-fifth-hour-column{
+.td-fifth-hour-column,.occupancy-fifth-cell{
     text-align: center;
     width: 13%;
     padding: 5pt;
+    border-collapse: collapse;
+    border-width: 1pt;
+    border-color: #000000;
+    border-left-style:solid;
+    border-right-style:none;
+    border-top-style:solid;
+    border-bottom-style:solid;
 }
-.td-total-column{
+.td-total-column,.occupancy-total-cell{
     text-align: center;
     width: 13%;
-    padding: 5pt;
+    padding: 5pt;    
+    border-collapse: collapse;
+    border-width: 1pt;
+    border-color: #000000;
+    border-left:double 3px black ;
+    border-right-style:solid;
+    border-top-style:solid;
+    border-bottom-style:solid;
 }
 .occupancy-cell{
     text-align: center;
