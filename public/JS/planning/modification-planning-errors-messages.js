@@ -146,7 +146,14 @@ stats=false;
     listScheduledActivities.forEach((scheduledActivity) => { //browse all events
       if (scheduledActivity._def.extendedProps.appointment == appointmentId) { //if the scheduled activity is related to the appointment
         //we check if the start time is earlier than the earliest appointment time
-        if (new Date(scheduledActivity.start.getTime() - 2 * 60 * 60 * 1000) < earliestAppointmentDate) {
+        console.log(scheduledActivity.start.getTimezoneOffset())
+        if(scheduledActivity.start.getTimezoneOffset() == 120){
+          offset=2;
+        }
+        else{
+          offset=1;
+        }
+        if (new Date(scheduledActivity.start.getTime() - offset * 60 * 60 * 1000) < earliestAppointmentDate) {
           //if it's earlier, we set an error message
           message.push(scheduledActivity._def.title + " commence avant " + earliestAppointmentDate.getHours().toString().padStart(2, "0") + ":" + earliestAppointmentDate.getMinutes().toString().padStart(2, "0") + " qui est l'heure d'arrivée au plus tôt du patient. ");
         }
@@ -1339,6 +1346,7 @@ stats=false;
   }
 
   function GetDataErrors(){
+    console.log(calendar.getEvents())
     //document.getElementById("load-large").style.visibility = "visible";
     if(document.getElementById('listeActivityHumanResource').value==""){
       var dateStr=document.getElementById("date").value
