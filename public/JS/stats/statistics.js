@@ -130,16 +130,16 @@ function getoccupancyRates(type){
         fourthSlot.innerHTML=(Math.round(((occupancies[3].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(fourthSlot);
         var fifthSlot=document.createElement('td');
-        fifthSlot.className="occupancy-cell";
+        fifthSlot.className="occupancy-fifth-cell";
         fifthSlot.innerHTML=(Math.round(((occupancies[4].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(fifthSlot);
         var totalSlot=document.createElement('td');
-        totalSlot.className="occupancy-cell";
+        totalSlot.className="occupancy-total-cell";
         var totalOccupancy=0;
         for(j=0;j<5;j++){
           totalOccupancy+=occupancies[j].occupancy
         }
-        totalSlot.innerHTML=(Math.round((totalOccupancy/900)*100)+"%");
+        totalSlot.innerHTML=(Math.round(((totalOccupancy/numberOfResources)/900)*100)+"%");
         tr.appendChild(totalSlot);  
       }
     }

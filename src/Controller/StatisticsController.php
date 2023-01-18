@@ -569,7 +569,6 @@ class StatisticsController extends AbstractController
                     
                     foreach($materialResourcesByActivity as $materialResource){
                         $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
-
                         foreach($materialResources[$materialResource->getId()]['categories'] as $category){
                             for($i=0; $i<sizeof($materialCategories); $i++){
                                 if($materialCategories[$i]["title"] == $category["name"]){
@@ -682,7 +681,7 @@ class StatisticsController extends AbstractController
 
                 } else if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getStarttime() < $nineam && $displayedActivity->getEndtime() > $nineam) {
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($nineam);
+                        $duration=$displayedActivity->getStartTime()->diff($nineam);
                         $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$nineam->diff($displayedActivity->getEndTime());
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
@@ -698,7 +697,7 @@ class StatisticsController extends AbstractController
 
                     }
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($nineam);
+                        $duration=$displayedActivity->getStartTime()->diff($nineam);
                         $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$nineam->diff($displayedActivity->getEndTime());
                         $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
