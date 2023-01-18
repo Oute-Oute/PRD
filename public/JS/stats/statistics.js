@@ -89,51 +89,10 @@ function getoccupancyRates(type){
     rates=rates.materialResources
   }
   else if(type=="CRH"){
-    categoriesRates=[]
-    console.log(rates)
-    rates=rates.humanResources
-    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
-      if(rates[i]!=undefined){
-        console.log(rates[i].categories)
-        for(j=0;j<rates[i].categories.length;j++){
-          console.log(rates[i].categories[j].name)
-          if(!categoriesRates.includes(rates[i].categories[j].name)){
-            categoriesRates.push(rates[i].categories[j].name)
-        }
-      }
-    }
-  }
-  console.log(categoriesRates)
-  categoriesRates.forEach(category => {
-    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
-      if(rates[i]!=undefined){
-        console.log(rates[i].categories)
-        for(j=0;j<rates[i].categories.length;j++){
-          console.log(rates[i].categories[j].name)
-          if(rates[i].categories[j].name==category){
-            console.log(rates[i].occupancy)
-            category.push(rates[i].occupancyRate)
-            console.log(category)
-        }
-      }
-      }
-    }
-
-  });
+    rates=rates.humanCategories
 }
   else if(type=="CRM"){
-    categoriesRates=[]
-    rates=rates.materialResources
-    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
-      if(rates[i]!=undefined){
-        for(j=0;j<rates[i].categories.length;j++){
-          if(!categoriesRates.includes(rates[i].categories[j].name)){
-            categoriesRates.push(rates[i].categories[j].name)
-        }
-      }
-    }
-  }
-  console.log(categoriesRates)
+    rates=rates.materialCategories
 }
 
   var trs = document.querySelectorAll('#resourcesTable tr:not(.headerPatient)');
@@ -142,7 +101,7 @@ function getoccupancyRates(type){
   }
   if(rates!="Aucune ressource planifiée"){
     document.getElementById("noResources").hidden=true
-    for(i=0;i<Object.keys(rates)[Object.keys(rates).length-1];i++){
+    for(i=0;i<=Object.keys(rates)[Object.keys(rates).length-1];i++){
       if(rates[i]!=undefined){
         table=document.getElementById('resourcesTable');
         var tr=document.createElement('tr');
@@ -152,32 +111,33 @@ function getoccupancyRates(type){
         resourcename.className="occupancy-cell";
         resourcename.innerHTML=rates[i].title;
         tr.appendChild(resourcename);
-        occupancy=rates[i].occupancy
+        occupancies=rates[i].occupancies
+        numberOfResources=rates[i].numberOfResources
         var firstSlot=document.createElement('td');
         firstSlot.className="occupancy-cell";
-        firstSlot.innerHTML=(Math.round((occupancy[0].occupancy/180)*100)+"%");
+        firstSlot.innerHTML=(Math.round(((occupancies[0].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(firstSlot);
         var secondSlot=document.createElement('td');
         secondSlot.className="occupancy-cell";
-        secondSlot.innerHTML=(Math.round((occupancy[1].occupancy/180)*100)+"%");
+        secondSlot.innerHTML=(Math.round(((occupancies[1].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(secondSlot);
         var thirdSlot=document.createElement('td');
         thirdSlot.className="occupancy-cell";
-        thirdSlot.innerHTML=(Math.round((occupancy[2].occupancy/180)*100)+"%");
+        thirdSlot.innerHTML=(Math.round(((occupancies[2].occupancy/numberOfResources)/180)*100)+"%");
         tr.append(thirdSlot);
         var fourthSlot=document.createElement('td');
         fourthSlot.className="occupancy-cell";
-        fourthSlot.innerHTML=(Math.round((occupancy[3].occupancy/180)*100)+"%");
+        fourthSlot.innerHTML=(Math.round(((occupancies[3].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(fourthSlot);
         var fifthSlot=document.createElement('td');
         fifthSlot.className="occupancy-cell";
-        fifthSlot.innerHTML=(Math.round((occupancy[4].occupancy/180)*100)+"%");
+        fifthSlot.innerHTML=(Math.round(((occupancies[4].occupancy/numberOfResources)/180)*100)+"%");
         tr.appendChild(fifthSlot);
         var totalSlot=document.createElement('td');
         totalSlot.className="occupancy-cell";
         var totalOccupancy=0;
         for(j=0;j<5;j++){
-          totalOccupancy+=occupancy[j].occupancy
+          totalOccupancy+=occupancies[j].occupancy
         }
         totalSlot.innerHTML=(Math.round((totalOccupancy/900)*100)+"%");
         tr.appendChild(totalSlot);  
@@ -185,7 +145,6 @@ function getoccupancyRates(type){
     }
   }
     else{
-      console.log("no resources")
       document.getElementById("noResources").hidden=false;
     }
 }

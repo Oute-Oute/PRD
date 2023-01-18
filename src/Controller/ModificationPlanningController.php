@@ -113,13 +113,14 @@ class ModificationPlanningController extends AbstractController
         //on parcours la liste des évènement plannifié qui viennent d'être modifiés
         foreach ($listScheduledEvent as $event) 
         {
+            var_dump($event[0]->start);
             //on instancie un booléen pour savoir si l'évènement est déjà en bdd ou non
             $scheduledActivityExist = false;
 
             //on parcours la liste des évènement programmés déjà stocké en bdd
             foreach ($listScheduledActivity as $scheduledActivity) {
                 if ($event[0]->extendedProps->type == "activity") {
-                    //si l'évènement modifié correspond à un évènement déjà enregistré en bdd, alors on le met à jour
+                   //si l'évènement modifié correspond à un évènement déjà enregistré en bdd, alors on le met à jour
                     if ($scheduledActivity->getId() == $event[0]->id) {
                         //on précise au booléen que l'évènement modifié existe déjà et qu'on a pas à le créer
                         $scheduledActivityExist = true;

@@ -437,7 +437,12 @@ class StatisticsController extends AbstractController
         $threepm = new \DateTime($dateStr . '15:00:00');
         $sixpm = new \DateTime($dateStr . '18:00:00');
         $ninepm = new \DateTime($dateStr . '21:00:00');
-        $arrayId = array();
+        $humanId=array();
+        $materialId=array();
+        $humanCategoriesId = array();
+        $materialCategoriesId = array();
+        $humanCategories= array();
+        $materialCategories = array();
         $occupancyArray = array();
         $occupancyArray[0] = array(
             'creneau' => '6h-9h',
@@ -467,162 +472,344 @@ class StatisticsController extends AbstractController
                 $HumanResourceScheduleds = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findBy(array("scheduledactivity" => $displayedActivity));
                 foreach ($HumanResourceScheduleds as $HumanResourceScheduled) {
                     $humanResourcesByActivity[$displayedActivity->getId()]= $HumanResourceScheduled->getHumanresource();
-                    if (!in_array($HumanResourceScheduled->getHumanresource()->getId(), $arrayId)) {
+                    if (!in_array($HumanResourceScheduled->getHumanresource()->getId(), $humanId)) {
 
                         $categories = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findBy(array('humanresource' => $HumanResourceScheduled->getHumanresource()));
                         $categoriesArray = array();
                         foreach ($categories as $category) {
-                            $categoriesArray[] = array(
-                                'id' => $category->getId(),
-                                'name' => $category->getHumanResourceCategory()->getCategoryname()
-                            );
+                            if(!in_array($category->getHumanResourceCategory()->getId(), $humanCategoriesId)){
+                                $humanCategoriesId[] = $category->getHumanResourceCategory()->getId();
+                                $categoriesArray[] = array(
+                                    'id' => $category->getId(),
+                                    'name' => $category->getHumanResourceCategory()->getCategoryname()
+                                );
+                                $humanCategories[] = array(
+                                    'id' => $category->getHumanResourceCategory()->getId(),
+                                    'title' => $category->getHumanResourceCategory()->getCategoryname(),
+                                    'occupancies' => $occupancyArray,
+                                    'numberOfResources' => 1
+                                );
+
+                            }
+                    else{
+                        $id=array_search($category->getHumanResourceCategory()->getId(), array_column($humanCategories, 'id'));
+                        $humanCategories[$id]['numberOfResources']++;
+                    }
                         }
                         $id = $HumanResourceScheduled->getHumanresource()->getId();
                         $id = "humanresource_" . $id;
                         $humanResources[$HumanResourceScheduled->getHumanresource()->getId()] = array(
                             'id' => $id,
                             'title' => ($HumanResourceScheduled->getHumanresource()->getHumanresourcename()),
-                            'categories' => ($categoriesArray),
+                            'categories' => $categoriesArray,
                             'businessHours' => ($this->getWorkingHours($doctrine, $HumanResourceScheduled->getHumanresource())),
                             'type' => 0,
-                            'occupancy' => $occupancyArray
+                            'occupancies' => $occupancyArray,
+                            'numberOfResources' => 1
                         );
                         unset($HumanResourceArray);
-                        $arrayId[] = $HumanResourceScheduled->getHumanresource()->getId();
+                        $humanId[] = $HumanResourceScheduled->getHumanresource()->getId();
                     }
                 }
                 $MaterialResourceScheduleds = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findBy(array("scheduledactivity" => $displayedActivity));
-                foreach ($MaterialResourceScheduleds as $MaterialResourceScheduled) {
-                    $materialResourcesByActivity[$displayedActivity->getId()] = $MaterialResourceScheduled->getMaterialresource();
-                    $materialCategories = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $MaterialResourceScheduled->getMaterialresource()));
-                    $materialCategoryArray = array();
-                    foreach ($materialCategories as $materialCategory) {
-                        $materialCategoryArray[] = array(
-                            'id' => $materialCategory->getId(),
-                            'name' => $materialCategory->getMaterialResourceCategory()->getCategoryname(),
+                foreach($MaterialResourceScheduleds as $MaterialResourceScheduled){
+                    $materialResourcesByActivity[$displayedActivity->getId()]= $MaterialResourceScheduled->getMaterialresource();
+                    if (!in_array($MaterialResourceScheduled->getMaterialresource()->getId(), $materialId)) {
+                        $categories = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findBy(array('materialresource' => $MaterialResourceScheduled->getMaterialresource()));
+                        $categoriesArray = array();
+                        foreach ($categories as $category) {
+                            if(!in_array($category->getMaterialResourceCategory()->getId(), $materialCategoriesId)){
+                                $materialCategoriesId[] = $category->getMaterialResourceCategory()->getId();
+                                $categoriesArray[] = array(
+                                    'id' => $category->getId(),
+                                    'name' => $category->getMaterialResourceCategory()->getCategoryname()
+                                );
+                                $materialCategories[] = array(
+                                    'id' => $category->getMaterialResourceCategory()->getId(),
+                                    'title' => $category->getMaterialResourceCategory()->getCategoryname(),
+                                    'occupancies' => $occupancyArray,
+                                    'numberOfResources' => 1
+                                );
+                            }
+                            else{
+                                $id=array_search($category->getMaterialResourceCategory()->getId(), array_column($materialCategories, 'id'));
+                                $materialCategories[$id]['numberOfResources']++;
+                            }
+                        }
+                        $id = $MaterialResourceScheduled->getMaterialresource()->getId();
+                        $id = "materialresource_" . $id;
+                        $materialResources[$MaterialResourceScheduled->getMaterialresource()->getId()] = array(
+                            'id' => $id,
+                            'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
+                            'categories' => $categoriesArray,
+                            'type' => 1,
+                            'occupancies' => $occupancyArray,
+                            'numberOfResources' => 1
                         );
+                        unset($MaterialResourceArray);
+                        $materialId[] = $MaterialResourceScheduled->getMaterialresource()->getId();
                     }
-                    $id = $MaterialResourceScheduled->getMaterialresource()->getId();
-                    $id = "materialresource_" . $id;
-                    $materialResources[$MaterialResourceScheduled->getMaterialresource()->getId()] = array(
-                        'id' => $id,
-                        'title' => ($MaterialResourceScheduled->getMaterialresource()->getMaterialresourcename()),
-                        'categories' => ($materialCategoryArray),
-                        'type' => 0,
-                        'occupancy' => $occupancyArray
-                    );
-
-
                 }
+
+
                 if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getEndtime() <= $nineam) {
+                    //var_dump($displayedActivity->getStarttime());
+                    $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $humanResources[$humanResource->getId()]['occupancy'][0]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
+                        
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
+                    
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $materialResources[$materialResource->getId()]['occupancy'][0]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
 
 
                 } else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getEndtime() <= $twelvepm) {
+                    $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $humanResources[$humanResource->getId()]['occupancy'][1]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $materialResources[$materialResource->getId()]['occupancy'][1]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getEndtime() <= $threepm) {
+                    $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $humanResources[$humanResource->getId()]['occupancy'][2]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $materialResources[$materialResource->getId()]['occupancy'][2]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getEndtime() <= $sixpm) {
+                    $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $humanResources[$humanResource->getId()]['occupancy'][3]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $materialResources[$materialResource->getId()]['occupancy'][3]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $sixpm && $displayedActivity->getEndtime() <= $ninepm) {
+                    $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
                     foreach($humanResourcesByActivity as $humanResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $humanResources[$humanResource->getId()]['occupancy'][4]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][4]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][4]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
                     foreach($materialResourcesByActivity as $materialResource){
-                        $duration=$displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                        $materialResources[$materialResource->getId()]['occupancy'][4]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][4]['occupancy'] += ($duration->i+$duration->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][4]['occupancy'] += ($duration->i+$duration->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getStarttime() < $nineam && $displayedActivity->getEndtime() > $nineam) {
                     foreach($humanResourcesByActivity as $humanResource){
                         $duration=$displayedActivity->getEndtime()->diff($nineam);
-                        $humanResources[$humanResource->getId()]['occupancy'][0]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$nineam->diff($displayedActivity->getEndTime());
-                        $humanResources[$humanResource->getId()]['occupancy'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $humanCategories[$i]["occupancies"][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
 
                     }
                     foreach($materialResourcesByActivity as $materialResource){
                         $duration=$displayedActivity->getEndtime()->diff($nineam);
-                        $materialResources[$materialResource->getId()]['occupancy'][0]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$nineam->diff($displayedActivity->getEndTime());
-                        $materialResources[$materialResource->getId()]['occupancy'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $materialCategories[$i]["occupancies"][1]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getStarttime() < $twelvepm && $displayedActivity->getEndtime() > $twelvepm) {
                     foreach($humanResourcesByActivity as $humanResource){
                         $duration=$displayedActivity->getStarttime()->diff($twelvepm);
-                        $humanResources[$humanResource->getId()]['occupancy'][1]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$twelvepm->diff($displayedActivity->getEndTime());
-                        $humanResources[$humanResource->getId()]['occupancy'][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $humanCategories[$i]["occupancies"][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
 
                     }
                     foreach($materialResourcesByActivity as $materialResource){
                         $duration=$displayedActivity->getStarttime()->diff($twelvepm);
-                        $materialResources[$materialResource->getId()]['occupancy'][1]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$twelvepm->diff($displayedActivity->getEndTime());
-                        $materialResources[$materialResource->getId()]['occupancy'][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $materialCategories[$i]["occupancies"][2]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getStarttime() < $threepm && $displayedActivity->getEndtime() > $threepm) {
                     foreach($humanResourcesByActivity as $humanResource){
                         $duration=$displayedActivity->getStarttime()->diff($threepm);
-                        $humanResources[$humanResource->getId()]['occupancy'][2]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$threepm->diff($displayedActivity->getEndTime());
-                        $humanResources[$humanResource->getId()]['occupancy'][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $humanCategories[$i]["occupancies"][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
 
                     }
                     foreach($materialResourcesByActivity as $materialResource){
                         $duration=$displayedActivity->getStarttime()->diff($threepm);
-                        $materialResources[$materialResource->getId()]['occupancy'][2]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$threepm->diff($displayedActivity->getEndTime());
-                        $materialResources[$materialResource->getId()]['occupancy'][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $materialCategories[$i]["occupancies"][3]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getStarttime() < $sixpm && $displayedActivity->getEndtime() > $sixpm) {
                     foreach($humanResourcesByActivity as $humanResource){
                         $duration=$displayedActivity->getStarttime()->diff($sixpm);
-                        $humanResources[$humanResource->getId()]['occupancy'][3]['occupancy'] += ($duration->i+$duration->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$sixpm->diff($displayedActivity->getEndTime());
-                        $humanResources[$humanResource->getId()]['occupancy'][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $humanResources[$humanResource->getId()]['occupancies'][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($humanResources[$humanResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($humanCategories); $i++){
+                                if($humanCategories[$i]["title"] == $category["name"]){
+                                    $humanCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $humanCategories[$i]["occupancies"][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
 
                     }
                     foreach($materialResourcesByActivity as $materialResource){
                         $duration=$displayedActivity->getStarttime()->diff($sixpm);
-                        $materialResources[$materialResource->getId()]['occupancy'][3]['occupancy'] += ($duration->i+$duration->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i+$duration->h*60);
                         $durationbis=$sixpm->diff($displayedActivity->getEndTime());
-                        $materialResources[$materialResource->getId()]['occupancy'][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                        $materialResources[$materialResource->getId()]['occupancies'][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+
+                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){
+                            for($i=0; $i<sizeof($materialCategories); $i++){
+                                if($materialCategories[$i]["title"] == $category["name"]){
+                                    $materialCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i+$duration->h*60);
+                                    $materialCategories[$i]["occupancies"][4]['occupancy'] += ($durationbis->i+$durationbis->h*60);
+                                }
+                            }
+                        }
                     }
 
                 } else {
@@ -634,13 +821,17 @@ class StatisticsController extends AbstractController
             }
             $results=array(
                 'humanResources' => $humanResources,
-                'materialResources' => $materialResources
+                'materialResources' => $materialResources,
+                'humanCategories' => $humanCategories,
+                'materialCategories' => $materialCategories,
             );
         }
         else{
             $results=array(
                 'humanResources' => "Aucune ressource planifiée",
-                'materialResources' => "Aucune ressource planifiée"
+                'materialResources' => "Aucune ressource planifiée",
+                'humanCategories' => "Aucune ressource planifiée",
+                'materialCategories' => "Aucune ressource planifiée",
             );
         }
         $resultsJSON=new JsonResponse($results);
