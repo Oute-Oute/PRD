@@ -724,6 +724,12 @@ function autoAddPathway(iteration=0){
       //Add one event in the Calendar
       var start;
       var end;
+      console.log(PathwayBeginDate.getTimezoneOffset())
+      console.log(PathwayBeginDate)
+      if(PathwayBeginDate.getTimezoneOffset()==-60){
+        start=PathwayBeginDate.getTime()+3600000
+        end=PathwayBeginDate.getTime()+3600000
+      }
       if(PathwayBeginDate.getTimezoneOffset()==-120){
         start=PathwayBeginDate.getTime()
         end=PathwayBeginDate.getTime()
