@@ -166,9 +166,54 @@
 					<div id='modal-add-footer' class="modal-footer">
 						<button type="submit" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
 						<button type="submit" class="btn-valide btn secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
-						<button type="submit" class="btn-valide btn secondary" onclick="autoAddAllPathway(0)">Mode Automatique</button> 
+						<button type="submit" class="btn-valide btn secondary" onclick="autoAddAllPathway(0)">Planificateur Interne</button> 
+						<button type="submit" class="btn-valide btn secondary" onclick="externalPlanner()">Planificateur Externe</button> 
 					</div>
 					<div id='alert-scheduled-tomorrow' class="alert alert-danger" role="alert">Erreur ! Le rendez-vous se termine au lendemain.</div>	
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="auto-add-modal">
+		<!-- div qui représente la modal -->
+		<div
+			class="modal-dialog">
+			<!-- permet d'afficher la modal en mode dialog -->
+			<div
+				class="modal-content">
+				<!-- permet de structurer le contenu de la modal -->
+				<div
+					class="modal-header">
+					<!-- sépare le header de la modal -->
+					<h2 class="modal-title">Mode Automatique</h2>
+					<button type="button" class="btn-close" aria-label="Close"  data-bs-dismiss="modal"></button>
+				</div>
+				<div
+					class="modal-body">
+					<!-- sépare le body de la modal -->
+					<input id="date" name="date" type="hidden" value={{currentdate}}>
+					<table id="autoPlanner" class="autoPlannerTable">
+					<tr>
+					<th> Exporter les données à plannifier</th>
+					<th class="border-left"> Importer les données plannifiées</th>
+					</tr>
+					<tr class="emptyline">
+					<td></td>
+					<td class="border-left"></td>
+					</tr>
+					<tr>
+					<td>
+
+					<button type="submit" class="btn-valide btn-secondary" onclick="exportData()">Enregistrer le fichier</button>
+					</td>
+					<td class="border-left">
+					<input type="file" id="file" name="file" accept=".msrcmp.sol" required>
+					<button type="submit" class="btn-valide btn secondary" onclick="importData()">Importer le fichier</button> 
+					</td >
+					</tr>
+					</table>
 				</div>
 			</form>
 		</div>

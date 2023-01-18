@@ -56,6 +56,10 @@ function displayAddPathway() {
   document.getElementById("load-large").style.visibility = "hidden";
 }
 
+function externalPlanner(){
+  $("#auto-add-modal").modal("show");
+}
+
 /**
  * This function is called when clicking on the button 'Valider' into Add Modal. 
  * Add All the Activities from a choosen appointment in the Calendar
@@ -724,8 +728,6 @@ function autoAddPathway(iteration=0){
       //Add one event in the Calendar
       var start;
       var end;
-      console.log(PathwayBeginDate.getTimezoneOffset())
-      console.log(PathwayBeginDate)
       if(PathwayBeginDate.getTimezoneOffset()==-60){
         start=PathwayBeginDate.getTime()+3600000
         end=PathwayBeginDate.getTime()+3600000

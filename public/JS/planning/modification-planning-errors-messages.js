@@ -146,7 +146,6 @@ stats=false;
     listScheduledActivities.forEach((scheduledActivity) => { //browse all events
       if (scheduledActivity._def.extendedProps.appointment == appointmentId) { //if the scheduled activity is related to the appointment
         //we check if the start time is earlier than the earliest appointment time
-        console.log(scheduledActivity.start.getTimezoneOffset())
         if(scheduledActivity.start.getTimezoneOffset() == 120){
           offset=2;
         }
@@ -1346,7 +1345,6 @@ stats=false;
   }
 
   function GetDataErrors(){
-    console.log(calendar.getEvents())
     //document.getElementById("load-large").style.visibility = "visible";
     if(document.getElementById('listeActivityHumanResource').value==""){
       var dateStr=document.getElementById("date").value
