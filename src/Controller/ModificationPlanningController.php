@@ -10,6 +10,7 @@ use App\Repository\AppointmentRepository;
 use App\Repository\MaterialResourceScheduledRepository;
 use App\Repository\HumanResourceScheduledRepository;
 use App\Repository\ModificationRepository;
+use App\Repository\ActivityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,7 +71,6 @@ class ModificationPlanningController extends AbstractController
             'currentdate' => $dateModified,
             'dateFormatted' => $dateModifiedStringFormat,
             'settingsRepository' => $settingsRepository,
-
             'listMaterialResourceJSON' => $listMaterialResourceJSON,
             'listHumanResourceJSON' => $listHumanResourceJSON,
             'listScheduledActivitiesJSON' => $listscheduledActivityJSON,
@@ -81,13 +81,13 @@ class ModificationPlanningController extends AbstractController
     /*
      * This method recover all informations from modification planning and update database
      */
-    public function modificationPlanningValidation(Request $request, AppointmentRepository $appointmentRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
+    public function modificationPlanningValidation(Request $request, AppointmentRepository $appointmentRepository,ActivityRepository $activityRepository, ScheduledActivityRepository $scheduledActivityRepository, HumanResourceScheduledRepository $humanResourceScheduledRepository, MaterialResourceScheduledRepository $materialResourceScheduledRepository, ManagerRegistry $doctrine, EntityManagerInterface $entityManager)
     {
         //recover all informations from twig file
         $listEvent = json_decode($request->request->get("events"));
         $listResource = json_decode($request->request->get("list-resource"));
         $dateModified=$request->request->get("validation-date");
-        $listScheduledAppointments = $this->getInformationsByDateArray($doctrine, $dateModified)[0];
+        $listScheduledAppointments = $this->getInformationsByDateArray($doctrine, $dateModified,$activityRepository)[0];
         $userId = $request->request->get("user-id");
         
         //update the new scheduled appointments
@@ -472,7 +472,7 @@ class ModificationPlanningController extends AbstractController
      * This function recover all the appointments for a date given and return the data in a JSON format for JS
      * @return appointmentsArrayJSON an array in JSON format with all the data
      */
-    public function getInformationsByDateArray(ManagerRegistry $doctrine, $date)
+    public function getInformationsByDateArray(ManagerRegistry $doctrine, $date,ActivityRepository $activityRepository)
     {
         $date = new \DateTime(date('Y-m-d', strtotime(substr($date, 0, 10))));
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(['dayappointment' => $date]);
@@ -506,7 +506,7 @@ class ModificationPlanningController extends AbstractController
                 'latestappointmenttime' => $latestappointmenttime,
                 'dayappointment' => $appointment->getDayappointment()->format('Y:m:d'),
                 'idPatient' => $this->getPatient($doctrine, $appointment->getPatient()->getId()),
-                'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId()),
+                'idPathway' => $this->getPathway($doctrine, $appointment->getPathway()->getId(),$activityRepository),
                 'scheduled' => $appointment->isScheduled(),
             );
         }
@@ -957,17 +957,79 @@ class ModificationPlanningController extends AbstractController
      * This function recover a pathway by his identifier from the database and return an array with the data
      * @return pathwayArray an array with all data related to it
      */
-    public function getPathway(ManagerRegistry $doctrine, $id)
+    public function getPathway(ManagerRegistry $doctrine, $id, ActivityRepository $activityRepository)
     {
         //recuperation du pathway depuis la base de données
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findOneBy(array('id' => $id));
         $pathwayArray = array();
         $idpath = $pathway->getId();
+        $activities= $activityRepository->findBy(array('pathway' => $idpath));
+        $activitiesArray = array();
+        $activitiesMaterialResources = $this->getActivityMaterialResources($doctrine);
+        $activitiesHumanResources = $this->getActivityHumanResources($doctrine);
+        foreach($activities as $activity){
+            $key=$activity->getId();
+            //Obtention du nombre de resources matérielles à renseigner pour cette activité        
+            $quantityMaterialResources = 0;
+            $categoryMaterialResource = array();
+            if(!array_key_exists($key, $activitiesMaterialResources)){
+                $categoryMaterialResource[] = array(
+                    'id' => "h-default",
+                    'quantity' => 0,
+                    'categoryname' => "Pas de Catégorie nécessaire"
+                );
+                $quantityMaterialResources=1;
+            }
+            else{
+                foreach ($activitiesMaterialResources[$key] as $activityMaterialResources) {
+                    $categoryMaterialResource[] = array(
+                        'id' => $activityMaterialResources["materialResourceCategoryId"],
+                        'quantity' => $activityMaterialResources["quantity"],
+                        'categoryname' => $activityMaterialResources["name"]
+                    );
+                    $quantityMaterialResources = $quantityMaterialResources + $activityMaterialResources["quantity"];
+                    unset($activityMaterialResources[$key]);
+                }
+                
+            }
+
+            //Obtention du nombre de resources Humaines à renseigner pour cette activité
+            $quantityHumanResources = 0;
+            $categoryHumanResource = array();
+            if(!array_key_exists($key, $activitiesHumanResources)){
+                $categoryHumanResource[] = array(
+                    'id' => "h-default",
+                    'quantity' => 0,
+                    'categoryname' => "Pas de Catégorie nécessaire"
+                );
+                $quantityHumanResources=1;
+            }
+            else{
+                foreach ($activitiesHumanResources[$key] as $activityHumanResources) {
+                    $categoryHumanResource[] = array(
+                        'id' => $activityHumanResources["humanResourceCategoryId"],
+                        'quantity' => $activityHumanResources["quantity"],
+                        'categoryname' => $activityHumanResources["name"]
+                    );
+                    $quantityHumanResources = $quantityHumanResources + $activityHumanResources["quantity"];
+                }
+            }
+            $successorsArray = array();
+            $activitiesArray[] = array(
+                'id' => $activity->getId(),
+                'title' => $activity->getActivityname(),
+                'duration' => $activity->getDuration(),
+                'materialResources' => $categoryMaterialResource,
+                'humanResources' => $categoryHumanResource,
+                'successors' =>$this->getSuccessorsArray($successorsArray, $doctrine, $activity->getId()),
+            );
+        }
         $idpath = "pathway-" . $idpath; //formatage pour fullcalendar
         //ajout des données du pathway dans un tableau
         $pathwayArray[] = array(
             'id' => $idpath,
-            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname()))
+            'title' => (str_replace(" ", "3aZt3r", $pathway->getPathwayname())),
+            'activities' => $activitiesArray
         );
         return $pathwayArray;
     }
@@ -1077,9 +1139,9 @@ class ModificationPlanningController extends AbstractController
         return $unavailabityArray;
     }
 
-    public function GetAddPlanning(ManagerRegistry $doctrine){
+    public function GetAddPlanning(ManagerRegistry $doctrine,ActivityRepository $activityRepository){
         $dateModified = $_POST['dateModified'];
-        return new JsonResponse($this->getInformationsByDateArray($doctrine, $dateModified));
+        return new JsonResponse($this->getInformationsByDateArray($doctrine, $dateModified,$activityRepository));
     }
 
     public function GetAutoAddInfos(ManagerRegistry $doctrine){
@@ -1100,7 +1162,7 @@ class ModificationPlanningController extends AbstractController
         return new JsonResponse($data);
     }
 
-    public function GetErrorsInfos(ManagerRegistry $doctrine){
+    public function GetErrorsInfos(ManagerRegistry $doctrine,ActivityRepository $activityRepository){
         $dateModified = $_POST['dateModified'];
         $categoryMaterialResource=$this->getCategoryMaterialResource($doctrine);
         $categoryHumanResource=$this->getCategoryHumanResource($doctrine);
@@ -1108,7 +1170,7 @@ class ModificationPlanningController extends AbstractController
         $listActivityMaterialResources = $this->getActivityMaterialResources($doctrine);
         $categoryOfHumanResource = $this->getCategoryOfHumanResource($doctrine);
         $categoryOfMaterialResource = $this->getCategoryOfMaterialResource($doctrine); 
-        $InfosByDate=$this->getInformationsByDateArray($doctrine, $dateModified);
+        $InfosByDate=$this->getInformationsByDateArray($doctrine, $dateModified,$activityRepository);
         $data=array(
             'categoryMaterialResource'=>$categoryMaterialResource,
             'categoryHumanResource'=>$categoryHumanResource,
