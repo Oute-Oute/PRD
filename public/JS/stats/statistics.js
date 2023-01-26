@@ -1,5 +1,20 @@
+/**
+ * @file statistics.js
+ * @fileoverview This file contains the functions used to display the statistics page.
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
+
 var currentDateStr = $_GET("date");
 var numberOfErrors=0;
+
+/**
+ * @function $_GET
+ * @brief This function is called when we want the value in the url
+ * @param {*} param the value to get
+ * @returns the value of the param
+ */
 function $_GET(param) {
   var vars = {};
   window.location.href.replace(location.hash, "").replace(
@@ -16,6 +31,20 @@ function $_GET(param) {
   return vars;
 }
 
+/**
+ * @function document.addEventListener
+ * @brief This function is called when the page is loaded
+ * @param {string} "DOMContentLoaded" The event is fired when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+ * @param {function} function () This function is called when the page is loaded
+ * @description This function is called when the page is loaded. It calls the functions to get the number of HR, MR, patients, the calendar, the errors and the waiting times and to display them.
+ * @see getNumberOfHR
+ * @see getNumberOfMR
+ * @see getNumberOfPatients
+ * @see getWaitingTimes
+ * @see getoccupancyRates
+ * @see createCalendar
+ * @see GetDataErrors 
+*/
 document.addEventListener("DOMContentLoaded", function () {
 getNumberOfHR();
 getNumberOfMR();
@@ -28,124 +57,192 @@ getoccupancyRates("RH")
 });
 
 
-
+/**
+ * @function getNumberOfHR
+ * @brief This function is called when we want the number of HR
+ * @description This function is called when we want the number of HR. It gets the number of HR from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
 function getNumberOfHR(){
   hr=JSON.parse(document.getElementById("human").value)
   document.getElementById("numberOfHR").innerHTML=hr.length-1
 }
 
+/**
+ * @function getNumberOfMR
+ * @brief This function is called when we want the number of MR
+ * @description This function is called when we want the number of MR. It gets the number of MR from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
 function getNumberOfMR(){
   mr=JSON.parse(document.getElementById("material").value)
   document.getElementById("numberOfMR").innerHTML=mr.length-1
 }
 
+/**
+ * @function getNumberOfPatients
+ * @brief This function is called when we want the number of patients
+ * @description This function is called when we want the number of patients. It gets the number of patients from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
 function getNumberOfPatients(){
   appointments=JSON.parse(document.getElementById("appointments").value)
   document.getElementById("numberOfPatients").innerHTML=appointments.length
 }
+
+/**
+ * @function geetNumberOfErrors
+ * @brief This function is called when we want the number of errors
+ * @param {int} numberOfErrors the number of errors
+ * @description This function is called when we want the number of errors. It gets the number of errors from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
 function getNumberOFErrors(numberOfErrors){
   document.getElementById("numberOfErrors").innerHTML=numberOfErrors
 }
+
+/**
+ * @function getWaitingTimes
+ * @brief This function is called when we want the waiting times
+ * @description This function is called when we want the waiting times. It gets the waiting times from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ */
 function getWaitingTimes(){
-  waitingTimes=JSON.parse(document.getElementById("waitingTimes").value)
-  min=waitingTimes.minimum
-  max=waitingTimes.maximum
-  mean=Math.round(waitingTimes.mean)
-  if(min=="Aucune activité planifiée"){
-    document.getElementById("minWaitingTime").innerHTML=waitingTimes.minimum
-    document.getElementById("maxWaitingTime").innerHTML=waitingTimes.maximum
-    document.getElementById("meanWaitingTime").innerHTML=waitingTimes.mean
+  waitingTimes=JSON.parse(document.getElementById("waitingTimes").value)//get the waiting times from the database
+  min=waitingTimes.minimum//get the minimum waiting time
+  max=waitingTimes.maximum//get the maximum waiting time
+  mean=Math.round(waitingTimes.mean)//get the mean waiting time
+  if(min=="Aucune activité planifiée"){//if there is no activity planned
+    document.getElementById("minWaitingTime").innerHTML=waitingTimes.minimum//display the message "Aucune activité planifiée"
+    document.getElementById("maxWaitingTime").innerHTML=waitingTimes.maximum//display the message "Aucune activité planifiée"
+    document.getElementById("meanWaitingTime").innerHTML=waitingTimes.mean//display the message "Aucune activité planifiée"
 
   }
-  else{
-  document.getElementById("minWaitingTime").innerHTML=min+" minutes"
-  document.getElementById("maxWaitingTime").innerHTML=max+" minutes"
-  document.getElementById("meanWaitingTime").innerHTML=mean+" minutes"
+  else{//if there is an activity planned
+  document.getElementById("minWaitingTime").innerHTML=min+" minutes"//display the minimum waiting time
+  document.getElementById("maxWaitingTime").innerHTML=max+" minutes"//display the maximum waiting time
+  document.getElementById("meanWaitingTime").innerHTML=mean+" minutes"//display the mean waiting time
   }
 }
+
+/**
+ * @function changeResources
+ * @brief This function is called when we want to change the resources displayed in the table
+ * @description This function is called when we want to change the resources use in the table. It calls the function @see getoccupancyRates with the type of the resources we want to display.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ * @see getoccupancyRates
+ */
 function changeResources(){
   selected=document.getElementById("selectResources").options[document.getElementById("selectResources").selectedIndex].text;
-  if (selected=="Ressources humaines"){
-    getoccupancyRates("RH")
+  if (selected=="Ressources humaines"){//if we want to display the human resources
+    getoccupancyRates("RH")//call the function getoccupancyRates with the type "RH"
   }
-  else if (selected=="Ressources matérielles"){
-    getoccupancyRates("RM")
+  else if (selected=="Ressources matérielles"){//if we want to display the material resources
+    getoccupancyRates("RM")//call the function getoccupancyRates with the type "RM"
   }
-  else if(selected=="Catégories de ressources humaines"){
-    getoccupancyRates("CRH")
+  else if(selected=="Catégories de ressources humaines"){//if we want to display the human categories
+    getoccupancyRates("CRH")//call the function getoccupancyRates with the type "CRH"
   }
-  else if(selected=="Catégories de ressources matérielles"){
-    getoccupancyRates("CRM")
+  else if(selected=="Catégories de ressources matérielles"){//if we want to display the material categories
+    getoccupancyRates("CRM")//call the function getoccupancyRates with the type "CRM"
   }
 }
 
+/**
+ * @function getoccupancyRates
+ * @brief This function is called when we want the occupancy rates
+ * @param {string} type the type of the resources we want to display from @see changeResources
+ * @description This function is called when we want the occupancy rates. It gets the occupancy rates from the database and display it.
+ * @returns void
+ * @author Thomas Blumstein
+ * @version 1.0
+ * @since 2020-12-01
+ * @see changeResources
+ */
 function getoccupancyRates(type){
-  rates=JSON.parse(document.getElementById("occupancyRates").value)
-  console.log(rates)
-  if(type=="RH"){
-    rates=rates.humanResources
+  rates=JSON.parse(document.getElementById("occupancyRates").value)//get the occupancy rates from the database
+  if(type=="RH"){//if we want to display the human resources
+    rates=rates.humanResources//get the human resources rates from the json
   }
-  else if(type=="RM"){
-    rates=rates.materialResources
+  else if(type=="RM"){//if we want to display the material resources
+    rates=rates.materialResources//get the material resources rates from the json
   }
-  else if(type=="CRH"){
-    rates=rates.humanCategories
+  else if(type=="CRH"){//if we want to display the human categories
+    rates=rates.humanCategories//get the human categories rates from the json
 }
-  else if(type=="CRM"){
-    rates=rates.materialCategories
+  else if(type=="CRM"){//if we want to display the material categories
+    rates=rates.materialCategories//get the material categories rates from the json
 }
 
-  var trs = document.querySelectorAll('#resourcesTable tr:not(.headerPatient)');
+  var trs = document.querySelectorAll('#resourcesTable tr:not(.headerPatient)');//get all the rows of the table
   for(let i=0; i<trs.length; i++){
-          trs[i].style.display='none';
+          trs[i].style.display='none';//hide all the previous rows
   }
-  if(rates!="Aucune ressource planifiée"){
-    document.getElementById("noResources").hidden=true
-    for(i=0;i<=Object.keys(rates)[Object.keys(rates).length-1];i++){
-      if(rates[i]!=undefined){
-        table=document.getElementById('resourcesTable');
-        var tr=document.createElement('tr');
-        tr.className="occupancy-row";
-        table.appendChild(tr);
-        var resourcename=document.createElement('td');
-        resourcename.className="occupancy-cell";
-        resourcename.innerHTML=rates[i].title;
-        tr.appendChild(resourcename);
-        occupancies=rates[i].occupancies
-        numberOfResources=rates[i].numberOfResources
-        var firstSlot=document.createElement('td');
-        firstSlot.className="occupancy-cell";
-        firstSlot.innerHTML=(Math.round(((occupancies[0].occupancy/numberOfResources)/180)*100)+"%");
-        tr.appendChild(firstSlot);
-        var secondSlot=document.createElement('td');
-        secondSlot.className="occupancy-cell";
-        secondSlot.innerHTML=(Math.round(((occupancies[1].occupancy/numberOfResources)/180)*100)+"%");
-        tr.appendChild(secondSlot);
-        var thirdSlot=document.createElement('td');
-        thirdSlot.className="occupancy-cell";
-        thirdSlot.innerHTML=(Math.round(((occupancies[2].occupancy/numberOfResources)/180)*100)+"%");
-        tr.append(thirdSlot);
-        var fourthSlot=document.createElement('td');
-        fourthSlot.className="occupancy-cell";
-        fourthSlot.innerHTML=(Math.round(((occupancies[3].occupancy/numberOfResources)/180)*100)+"%");
-        tr.appendChild(fourthSlot);
-        var fifthSlot=document.createElement('td');
-        fifthSlot.className="occupancy-fifth-cell";
-        fifthSlot.innerHTML=(Math.round(((occupancies[4].occupancy/numberOfResources)/180)*100)+"%");
-        tr.appendChild(fifthSlot);
-        var totalSlot=document.createElement('td');
-        totalSlot.className="occupancy-total-cell";
-        var totalOccupancy=0;
-        for(j=0;j<5;j++){
-          totalOccupancy+=occupancies[j].occupancy
+  if(rates!="Aucune ressource planifiée"){//if there is a resource planned
+    document.getElementById("noResources").hidden=true//hide the message "Aucune ressource planifiée"
+    for(i=0;i<=Object.keys(rates)[Object.keys(rates).length-1];i++){//for each resource
+      if(rates[i]!=undefined){//if the resource exists
+        table=document.getElementById('resourcesTable');//get the table
+        var tr=document.createElement('tr');//create a new row
+        tr.className="occupancy-row";//add the class occupancy-row
+        table.appendChild(tr);//add the row to the table
+        var resourcename=document.createElement('td');//create a new cell
+        resourcename.className="occupancy-cell";//add the class occupancy-cell
+        resourcename.innerHTML=rates[i].title;//add the name of the resource
+        tr.appendChild(resourcename);//add the cell to the row
+        occupancies=rates[i].occupancies//get the occupancies of the resource
+        numberOfResources=rates[i].numberOfResources//get the number of resources
+        var firstSlot=document.createElement('td');//create a new cell
+        firstSlot.className="occupancy-cell";//add the class occupancy-cell
+        firstSlot.innerHTML=(Math.round(((occupancies[0].occupancy/numberOfResources)/180)*100)+"%");//add the occupancy rate of the first slot
+        tr.appendChild(firstSlot);//add the cell to the row
+        var secondSlot=document.createElement('td');//create a new cell
+        secondSlot.className="occupancy-cell";//add the class occupancy-cell
+        secondSlot.innerHTML=(Math.round(((occupancies[1].occupancy/numberOfResources)/180)*100)+"%");//add the occupancy rate of the second slot
+        tr.appendChild(secondSlot);//add the cell to the row
+        var thirdSlot=document.createElement('td');//create a new cell
+        thirdSlot.className="occupancy-cell";//add the class occupancy-cell
+        thirdSlot.innerHTML=(Math.round(((occupancies[2].occupancy/numberOfResources)/180)*100)+"%");//add the occupancy rate of the third slot
+        tr.append(thirdSlot);//add the cell to the row
+        var fourthSlot=document.createElement('td');//create a new cell
+        fourthSlot.className="occupancy-cell";//add the class occupancy-cell
+        fourthSlot.innerHTML=(Math.round(((occupancies[3].occupancy/numberOfResources)/180)*100)+"%");//add the occupancy rate of the fourth slot
+        tr.appendChild(fourthSlot);//add the cell to the row
+        var fifthSlot=document.createElement('td');//create a new cell
+        fifthSlot.className="occupancy-fifth-cell";//add the class occupancy-fifth-cell
+        fifthSlot.innerHTML=(Math.round(((occupancies[4].occupancy/numberOfResources)/180)*100)+"%");//add the occupancy rate of the fifth slot
+        tr.appendChild(fifthSlot);//add the cell to the row
+        var totalSlot=document.createElement('td');//create a new cell
+        totalSlot.className="occupancy-total-cell";//add the class occupancy-total-cell
+        var totalOccupancy=0;//create a variable to store the total occupancy
+        for(j=0;j<5;j++){//for each slot
+          totalOccupancy+=occupancies[j].occupancy//add the occupancy of the slot to the total occupancy
         }
-        totalSlot.innerHTML=(Math.round(((totalOccupancy/numberOfResources)/900)*100)+"%");
-        tr.appendChild(totalSlot);  
+        totalSlot.innerHTML=(Math.round(((totalOccupancy/numberOfResources)/900)*100)+"%");//add the total occupancy rate
+        tr.appendChild(totalSlot);  //add the cell to the row
       }
     }
   }
-    else{
-      document.getElementById("noResources").hidden=false;
+    else{//if there is no resource
+      document.getElementById("noResources").hidden=false;//display the message "Aucune ressource planifiée"
     }
 }
 
