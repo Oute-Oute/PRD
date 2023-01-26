@@ -1,74 +1,75 @@
-
-
 /*  ------------------ SURCHARGE CLASSE BOOTSTRAP------------------ */
 .modal-body {
-  display: flex;
-  flex-direction: column;
-  align-items: self-start;
-  width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: self-start;
+	width: 100%;
 }
 
 .modal-footer {
-  width: 100%;
+	width: 100%;
 }
 
 .modal-body-select-day {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .modal-dialog {
-    max-width: 800px;
+	max-width: 800px;
 }
+
 .modal-large {
-    max-width: 1000px;
+	max-width: 1000px;
 }
+
 /* ------------------ POUR TOUS LES FORMULAIRES ------------------*/
 /* Input pour tous les formulaires */
 .input {
-    height: 35px;
-    border-radius: 10px;
-    border-width: 1px;
-    width: 100%;
+	height: 35px;
+	border-radius: 10px;
+	border-width: 1px;
+	width: 100%;
 }
+
 /* Label pour tous les formulaires */
 .label {
-    margin: 0px;
-    margin-top: 10px;
-    font-weight: 600;
+	margin: 0px;
+	margin-top: 10px;
+	font-weight: 600;
 }
 
 
 /* ------------------FORMULAIRE PATHWAY ------------------ */
 div#edit--activities-container {
-    margin-bottom:20px;
+	margin-bottom: 20px;
 }
 
 /* classe représentant un champ contenant une activité  */
 div.form-field {
-    display : flex;
-    flex-direction: column;
-    /*align-items: center;*/
-    justify-content: center;
-    /*border: 1px solid lightgray;*/
-    /*border-top-left-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	/*align-items: center;*/
+	justify-content: center;
+	/*border: 1px solid lightgray;*/
+	/*border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;*/
-    /*margin: 10px 10px; */
-    /*background-color: #fff;*/
-    padding: 1px;
+	/*margin: 10px 10px; */
+	/*background-color: #fff;*/
+	padding: 1px;
 
 }
 
 /* nom d'une activité */
 .input-activity {
-    height:35px;
-    margin: 0;
-    /*border-top-left-radius: 10px;
+	height: 35px;
+	margin: 0;
+	/*border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;*/
-    border-radius: 10px;
-    border: 1px solid lightgray;
-    width: 100%;
-    margin: 1px;
+	border-radius: 10px;
+	border: 1px solid lightgray;
+	width: 100%;
+	margin: 1px;
 }
 
 /* durée d'un activité 
@@ -81,243 +82,264 @@ div.form-field .input-duration {
 
 /* texte dans un champ de formulaire */
 div.form-field input#label {
-    /*border-right: 1px solid lightgray;*/
-    margin: 0;
-    border: none;
-    cursor: default;
-    height: 35px;
+	/*border-right: 1px solid lightgray;*/
+	margin: 0;
+	border: none;
+	cursor: default;
+	height: 35px;
 }
+
 div.form-field input#label:focus-visible {
-    outline: none;
+	outline: none;
 }
+
 input[type="text"]:disabled {
-   /* background: #fff;*/
+	/* background: #fff;*/
 }
- /* image (delete) */
-div.form-field img{
-    width:20px;
-    cursor: pointer;
-    margin: 0px 6px;
+
+/* image (delete) */
+div.form-field img {
+	width: 20px;
+	cursor: pointer;
+	margin: 0px 6px;
 }
- 
+
 div.form-field select {
-    height: 35px;
-    border-radius: 15px; 
-    min-width: 300px;
-   /* margin: 10px 15px;*/
-    padding-left: 15px;
+	height: 35px;
+	border-radius: 15px;
+	min-width: 300px;
+	/* margin: 10px 15px;*/
+	padding-left: 15px;
 }
 
 div.activities-container {
-    width: 85%
+	width: 85%
 }
 
 p.label {
-    margin: 0px;
-    font-weight: 900;
+	margin: 0px;
+	font-weight: 900;
 }
 
 #working-hours-parent {
-    display : flex;
-    flex-direction : row;
-    height : 250px;
-    padding : 0 15%;
-    margin-bottom : 10px;
+	display: flex;
+	flex-direction: row;
+	height: 250px;
+	padding: 0 15%;
+	margin-bottom: 10px;
 
 }
 
 ul.ui-autocomplete {
-    z-index: 1100;
+	z-index: 1100;
 }
+
 #working-hours-label {
-    display : flex;
-    flex-direction : column;
-    width : 33%;
-    height : 100%;
-    justify-content: space-between;
+	display: flex;
+	flex-direction: column;
+	width: 33%;
+	height: 100%;
+	justify-content: space-between;
 }
 
-#working-hours-input-begin, #working-hours-input-begin-edit, #working-hours-infos-begin{
-    display : flex;
-    flex-direction : column;
-    width : 33%;
-    height : 100%;
-    justify-content: space-between;
+#working-hours-input-begin,
+#working-hours-input-begin-edit,
+#working-hours-infos-begin {
+	display: flex;
+	flex-direction: column;
+	width: 33%;
+	height: 100%;
+	justify-content: space-between;
 }
 
-#working-hours-input-end , #working-hours-input-end-edit, #working-hours-infos-end{
-    display : flex;
-    flex-direction : column;
-    width : 33%;
-    height : 100%;
-    justify-content: space-between;
-    margin-left : 10px;
+#working-hours-input-end,
+#working-hours-input-end-edit,
+#working-hours-infos-end {
+	display: flex;
+	flex-direction: column;
+	width: 33%;
+	height: 100%;
+	justify-content: space-between;
+	margin-left: 10px;
 }
 
-#working-hours-infos-begin input, #working-hours-infos-end input{
-    pointer-events:none;
+#working-hours-infos-begin input,
+#working-hours-infos-end input {
+	pointer-events: none;
 }
 
-#reset-working-hours-div{
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
-  margin-left: 5px;
+#reset-working-hours-div {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	justify-content: space-between;
+	margin-left: 5px;
 }
 
 
-#load,#load-large,#load-path,#load-info-appt{
-    position: absolute;
-    display : block;
-    justify-content: center;
-    z-index:9999;
-    border: 16px solid #bdc3c7;
-    width: 100px;
-    height: 100px;
-    border-top-color: #1abc9c;
-    border-bottom-color: #3498db;
-    border-radius: 50%;
-    animation: chargeur 4s linear infinite;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-  }
-
-  @keyframes chargeur {
-    0%{
-      transform: rotate(0deg) scale(1);
-      border-top-color: grey;
-      border-bottom-color: grey;
-    }
-    25%{
-      border-top-color: grey;
-      border-bottom-color: grey;
-    }
-    50% {
-       transform: rotate(360deg) scale(1.15);
-      border-top-color: grey;
-      border-bottom-color: grey;
-    }
-    75%{
-      border-top-color: grey;
-      border-bottom-color: grey;
-    }
-    100%{
-       transform: rotate(720deg) scale(1);
-      border-top-color: grey;
-      border-bottom-color: grey;
-    }
-    
-  }
-  .input-modal, .input-modal-date{  
-    margin-left: 5%;
-    margin-bottom: 5px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
-    color: black;
-  }
-  .input-modal{
-    width: 100%;
-  }
-  
-  .input-modal-date{
-    display: inline;
-  }
-  
-  .label-event{
-    text-decoration: underline ;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-
-  .wrapper {
-    display: flex;
-    flex-wrap: nowrap;
-    height: 100%;
-    width: 100%;
-  }
-  
-  .block {
-    flex-basis: 20%;
-  }
-
-  .leader-line {
-    z-index: 10000;
-  }
-  
-  #empty-planning{
-    position: absolute;
-    display : block;
-    justify-content: center;
-    z-index :1000;
-    width: fit-content;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    font-size: 30px;
-    color: #91989c;
-    font-weight: bold;
-  }
-
-  .pathway-div-activity{
-    max-width: 65%;
-    position: relative;
-    padding: 5px 5px 5px 5px;
-    border: solid;
-    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
-    margin: 15px 0px;
-  }
-
-  .pathway-div-activity-header{
-    font-size: 80%;
-    font-weight: bold;
-    text-align: center;
-    padding-top: 5px;
-    pointer-events: none;
-  }
-
-  .pathway-div-activity-graph{
-    float: left;
-    padding: 5px 5px 5px 5px;
-    margin: 2px 50px 50px 50px;
-    border: solid;
-    box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
-    width: fit-content;
-    height: fit-content;
-    position: absolute;
-    resize: both;
-  }
-
-  .pathway-div-activity-graph > p{
-    pointer-events: none;
-  }
-
-  .wrapper-graph {
-    flex-wrap: wrap;
-    height: 100%;
-    width: 81%;
-    box-shadow: 0px 0px 10px lightgrey;
-    border-radius: 10px;
-  }
-
-  #modal-body-graph{
-    height:500px;
-    display:flex;
-    justify-content: space-between;
-    flex-direction: row;
-  }
-  
-.autoPlannerTable{
-  width: 100%;
-  margin: 0 0 1em 0;
-  text-align: center;
+#load,
+#load-large,
+#load-path,
+#load-info-appt {
+	position: absolute;
+	display: block;
+	justify-content: center;
+	z-index: 9999;
+	border: 16px solid #bdc3c7;
+	width: 100px;
+	height: 100px;
+	border-top-color: #1abc9c;
+	border-bottom-color: #3498db;
+	border-radius: 50%;
+	animation: chargeur 4s linear infinite;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
-.border-left{
-  width:50%;
-  border-left: 1px solid rgb(0, 0, 0);
+
+@keyframes chargeur {
+	0% {
+		transform: rotate(0deg) scale(1);
+		border-top-color: grey;
+		border-bottom-color: grey;
+	}
+
+	25% {
+		border-top-color: grey;
+		border-bottom-color: grey;
+	}
+
+	50% {
+		transform: rotate(360deg) scale(1.15);
+		border-top-color: grey;
+		border-bottom-color: grey;
+	}
+
+	75% {
+		border-top-color: grey;
+		border-bottom-color: grey;
+	}
+
+	100% {
+		transform: rotate(720deg) scale(1);
+		border-top-color: grey;
+		border-bottom-color: grey;
+	}
+
 }
-.emptyline{
-  height: 2.5em;
+
+.input-modal,
+.input-modal-date {
+	margin-left: 5%;
+	margin-bottom: 5px;
+	background-color: white;
+	border-radius: 5px;
+	box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+	color: black;
+}
+
+.input-modal {
+	width: 100%;
+}
+
+.input-modal-date {
+	display: inline;
+}
+
+.label-event {
+	text-decoration: underline;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.wrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	height: 100%;
+	width: 100%;
+}
+
+.block {
+	flex-basis: 20%;
+}
+
+.leader-line {
+	z-index: 10000;
+}
+
+#empty-planning {
+	position: absolute;
+	display: block;
+	justify-content: center;
+	z-index: 1000;
+	width: fit-content;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 30px;
+	color: #91989c;
+	font-weight: bold;
+}
+
+.pathway-div-activity {
+	max-width: 65%;
+	position: relative;
+	padding: 5px 5px 5px 5px;
+	border: solid;
+	box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+	margin: 15px 0px;
+}
+
+.pathway-div-activity-header {
+	font-size: 80%;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 5px;
+	pointer-events: none;
+}
+
+.pathway-div-activity-graph {
+	float: left;
+	padding: 5px 5px 5px 5px;
+	margin: 2px 50px 50px 50px;
+	border: solid;
+	box-shadow: rgba(149, 157, 165, 0.5) 0px 8px 10px;
+	width: fit-content;
+	height: fit-content;
+	position: absolute;
+	resize: both;
+}
+
+.pathway-div-activity-graph>p {
+	pointer-events: none;
+}
+
+.wrapper-graph {
+	flex-wrap: wrap;
+	height: 100%;
+	width: 81%;
+	box-shadow: 0px 0px 10px lightgrey;
+	border-radius: 10px;
+}
+
+#modal-body-graph {
+	height: 500px;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+}
+
+.autoPlannerTable {
+	width: 100%;
+	margin: 0 0 1em 0;
+	text-align: center;
+}
+
+.border-left {
+	width: 50%;
+	border-left: 1px solid rgb(0, 0, 0);
+}
+
+.emptyline {
+	height: 2.5em;
 }
