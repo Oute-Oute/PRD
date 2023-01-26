@@ -1043,31 +1043,34 @@ function exportData() {
 		activities.forEach(activity => {
 
 			activityResources = [];
+			resourcesQuantities = [];
 			activity["materialResources"].forEach(material => {
 				if (material["id"] != "h-default") {
-					activityResources.push("material_" + material["id"]);//we add the id of the material to the list of materials of the activity
+					key= "material_" + material["id"];
+					activityResources.push({[key]  : material["quantity"]});//we add the id of the material to the list of materials of the activity
 				}
 				else {
-					activityResources.push("material_0");//we add the id of the material to the list of materials of the activity
+					activityResources.push({"material_0" : material["quantity"]});//we add the id of the material to the list of materials of the activity
 				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
-					activityResources.push("human_" + human["id"]);//we add the id of the human to the list of humans of the activity
+					key= "human_" + human["id"];
+					activityResources.push({[key]  :  human["quantity"]});//we add the id of the human to the list of humans of the activity
 				}
 				else {
-					activityResources.push("human_0");//we add the id of the human to the list of humans of the activity
+					activityResources.push({human_0 :  human["quantity"]});//we add the id of the human to the list of humans of the activity
 				}
 			});
 			fileContent += activity["duration"];//we add the duration of the activity to the file
 			categories.forEach(category => {
-				inActivity = false;//if the category is in the activity or not
+				inActivity = 0;//if the category is in the activity or not
 				activityResources.forEach(activityResource => {
-					if (category["idcategorie"] == activityResource) {
-						inActivity = true;//set to true if the category is in the activity
+					if (category["idcategorie"] == Object.keys(activityResource)[0]) {
+						inActivity =activityResource[Object.keys(activityResource)[0]];//set to the number of resources of the category in the activity
 					}
 				})
-				fileContent += +inActivity + "\t";//add 1 if the category is in the activity, 0 otherwise
+				fileContent += inActivity + "\t";//add 1 if the category is in the activity, 0 otherwise
 			})
 			//we add the data of the successors of the activity to end of the line
 			fileContent += activity["successors"].length + "\t";//we add the number of successors of the activity to the file
