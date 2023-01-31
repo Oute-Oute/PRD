@@ -941,14 +941,14 @@ function externalPlanner() {
 	});
 	resources = hResource.concat(mResource);//we add the human and material resources to the resources array
 	categoryHumanResource.forEach(categorie => {
-		categorie["idcategorie"] = "human_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
+		categorie["idcategory"] = "human_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
 	categoryMaterialResource.forEach(categorie => {
-		categorie["idcategorie"] = "material_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
+		categorie["idcategory"] = "material_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
-	categories.push({ idcategorie: "human_0", categoryname: "Aucune Catégorie", idcategory: "human_0", })//we add the "no category" category to the categories array
-	categories.push({ idcategorie: "material_0", categoryname: "Aucune Catégorie", idcategory: "material_0", })//we add the "no category" category to the categories array
+	categories.push({ idcategory: "human_0", categoryname: "Aucune Catégorie", idcategory: "human_0", })//we add the "no category" category to the categories array
+	categories.push({ idcategory: "material_0", categoryname: "Aucune Catégorie", idcategory: "material_0", })//we add the "no category" category to the categories array
 
 	listAppointmentsWithActivities = [];
 
@@ -985,7 +985,7 @@ function exportData() {
 		categories.forEach(category => {
 			inResource = false;
 			categoriesOfResources.forEach(categoryOfResource => {
-				if (category["idcategorie"] == categoryOfResource["id"]) {
+				if (category["idcategory"] == categoryOfResource["id"]) {
 					inResource = true;
 				}
 			})
@@ -1030,7 +1030,7 @@ function exportData() {
 		categories.forEach(category => {
 			inActivity = false;//if the category is in the appointment or not
 			resourcesPerAppointment.forEach(categoryPerAppointment => {
-				if (category["idcategorie"] == categoryPerAppointment) {
+				if (category["idcategory"] == categoryPerAppointment) {
 					inActivity = true;//set to true if the category is in the appointment
 				}
 			})
@@ -1046,27 +1046,33 @@ function exportData() {
 			resourcesQuantities = [];
 			activity["materialResources"].forEach(material => {
 				if (material["id"] != "h-default") {
+					console.log(material)
 					key= "material_" + material["id"];
 					activityResources.push({[key]  : material["quantity"]});//we add the id of the material to the list of materials of the activity
 				}
 				else {
-					activityResources.push({"material_0" : material["quantity"]});//we add the id of the material to the list of materials of the activity
+					activityResources.push({"material_0" : 1});//we add the id of the material to the list of materials of the activity
 				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
+					console.log(human)
 					key= "human_" + human["id"];
 					activityResources.push({[key]  :  human["quantity"]});//we add the id of the human to the list of humans of the activity
 				}
 				else {
-					activityResources.push({human_0 :  human["quantity"]});//we add the id of the human to the list of humans of the activity
+					activityResources.push({human_0 :  1});//we add the id of the human to the list of humans of the activity
 				}
 			});
-			fileContent += activity["duration"];//we add the duration of the activity to the file
+			fileContent += activity["duration"] + "\t";//we add the duration of the activity to the file
+			console.log(activityResources)
+			console.log(categories)
 			categories.forEach(category => {
-				inActivity = 0;//if the category is in the activity or not
+				
+			inActivity = 0;//if the category is in the activity or not
 				activityResources.forEach(activityResource => {
-					if (category["idcategorie"] == Object.keys(activityResource)[0]) {
+					if (category["idcategory"] == Object.keys(activityResource)[0]) {
+						console.log(Object.keys(activityResource)[0])
 						inActivity =activityResource[Object.keys(activityResource)[0]];//set to the number of resources of the category in the activity
 					}
 				})
