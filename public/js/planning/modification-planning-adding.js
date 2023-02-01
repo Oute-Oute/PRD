@@ -7,6 +7,8 @@ var listeActivityHumanResource
 var listeActivityMaterialResource
 var categoryOfHumanResource
 var categoryOfMaterialResource
+var resources
+var categories
 
 /**
  * Open the modal to Add a pathway
@@ -914,6 +916,21 @@ function getDataAdd() {
 		displayAddPathway();
 	}
 }
+
+/**
+ * @function CloseImportModal
+ * @brief Function that is called when the user wants to close the import modal
+ * @description Due to an unknow error, the modal is not closing when the button dismiss the modal. Instead, this function is used to close the modal.
+ * @returns {void}
+ * @version 1.0
+ * @since 1.0
+ * @author Thomas Blumstein
+ */
+function CloseImportModal() {
+	$("#error-import-modal").modal("toggle");
+	$("#error-import-modal").modal("toggle");
+}
+
 /**
  * @function externalPlanner
  * @brief Function that is called when the user wants to use the external planner
@@ -949,8 +966,6 @@ function externalPlanner() {
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
 	categories.push({ idcategory: "human_0", categoryname: "Aucune Catégorie", idcategory: "human_0", })//we add the "no category" category to the categories array
 	categories.push({ idcategory: "material_0", categoryname: "Aucune Catégorie", idcategory: "material_0", })//we add the "no category" category to the categories array
-
-	listAppointmentsWithActivities = [];
 
 	$("#auto-add-modal").modal("show");//we display the modal to use the external planner
 }
@@ -1047,33 +1062,33 @@ function exportData() {
 			activity["materialResources"].forEach(material => {
 				if (material["id"] != "h-default") {
 					console.log(material)
-					key= "material_" + material["id"];
-					activityResources.push({[key]  : material["quantity"]});//we add the id of the material to the list of materials of the activity
+					key = "material_" + material["id"];
+					activityResources.push({ [key]: material["quantity"] });//we add the id of the material to the list of materials of the activity
 				}
 				else {
-					activityResources.push({"material_0" : 1});//we add the id of the material to the list of materials of the activity
+					activityResources.push({ "material_0": 1 });//we add the id of the material to the list of materials of the activity
 				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
 					console.log(human)
-					key= "human_" + human["id"];
-					activityResources.push({[key]  :  human["quantity"]});//we add the id of the human to the list of humans of the activity
+					key = "human_" + human["id"];
+					activityResources.push({ [key]: human["quantity"] });//we add the id of the human to the list of humans of the activity
 				}
 				else {
-					activityResources.push({human_0 :  1});//we add the id of the human to the list of humans of the activity
+					activityResources.push({ human_0: 1 });//we add the id of the human to the list of humans of the activity
 				}
 			});
 			fileContent += activity["duration"] + "\t";//we add the duration of the activity to the file
 			console.log(activityResources)
 			console.log(categories)
 			categories.forEach(category => {
-				
-			inActivity = 0;//if the category is in the activity or not
+
+				inActivity = 0;//if the category is in the activity or not
 				activityResources.forEach(activityResource => {
 					if (category["idcategory"] == Object.keys(activityResource)[0]) {
 						console.log(Object.keys(activityResource)[0])
-						inActivity =activityResource[Object.keys(activityResource)[0]];//set to the number of resources of the category in the activity
+						inActivity = activityResource[Object.keys(activityResource)[0]];//set to the number of resources of the category in the activity
 					}
 				})
 				fileContent += inActivity + "\t";//add 1 if the category is in the activity, 0 otherwise
@@ -1125,10 +1140,96 @@ function exportData() {
  * @author Thomas Blumstein
  */
 function importData() {
-	file=document.getElementById("file");
-	fr=new FileReader();
-	fr.onload=function(){
-		console.log(fr.result);
+	filepicker = document.getElementById("filepicker");
+	date = document.getElementById("date").value;//we get the date of the appointment
+	date = date.replace("T12:00:00", "");//we remove the time of the date
+	console.log(date)
+	error = 0
+	fr = new FileReader();
+	fileContent = "";
+	fileName = filepicker.files[0].name
+	console.log(fileName.includes(date))
+	if (!fileName.includes(date)) {
+		error = 1
 	}
-	fr.readAsText(file.files[0]);
+	console.log(fileName)
+	fr.onload = function () {
+		fileContent = fr.result;
+		console.log(fileContent)
+		i = 0;
+		words = [];
+		appointments = []
+		lines = fileContent.split("\r\n");
+		//numberOfCategories = categories.length;
+		numberOfCategories = 8 // TODO: remove this line
+		console.log(numberOfCategories)
+
+		lines.forEach(line => {
+			if (line != "" && line.split("\t").length == 3 || line.split("\t").length == numberOfCategories + 1 && error == 0) {
+				words[i] = line.split("\t");
+			}
+			else if (line != "" && line.split("\t").length != numberOfCategories + 1 && line.split("\t").length != 3 && error == 0) {
+				error = 2
+			}
+			i++;
+		})
+		if (error == 0) {
+			words.forEach(word => {
+				word.forEach(w => {
+					if (isNaN(w)) {
+						error = 3
+					}
+				})
+				if (word.length != 3 && error == 0) {
+					for (i = 1; i < word.length; i++) {
+						if (word[i] != "1" && word[i] != "0") {
+							error = 4
+						}
+					}
+
+				}
+			})
+			i = 0
+			j = 0
+			while (i < words.length && error == 0) {
+				appointment = []
+				while (words[i] != undefined && error == 0) {
+					appointment.push(words[i])
+					i++
+				}
+				appointments.push(appointment)
+				i++
+				j++
+			}
+			if(appointments.length !=listeAppointments.length && error == 0){
+				error = 5
+			}
+		}
+		console.log(appointments)
+		if (error != 0) {
+			switch (error) {
+				case 1:
+					document.getElementById("error-import").innerHTML = "Le fichier ne correspond pas à la date voulue. </br> Veuillez vérifier le fichier."
+					break;
+				case 2:
+					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le nombre de catégories dans le fichier, </br> il doit y avoir "
+					+ numberOfCategories + " catégories pour chaque activité. </br> Veuillez vérifier le fichier."
+					break;
+				case 3:
+					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le format du fichier, </br> il doit y avoir que des nombres dans le fichier. </br> Veuillez vérifier le fichier."
+					break;
+				case 4:
+					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le format du fichier, </br> Au moins une ressource est utilisée plus d'une fois par la même activité. </br> Veuillez vérifier le fichier."
+					break;
+				case 5:
+					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le nombre d'activités dans le fichier, il doit y avoir " 
+					+ listeAppointments.length + " activités. </br> Veuillez vérifier le fichier."
+					break;
+			}					
+				alert=document.getElementById("error-import-modal")
+			alert.style.display="block"
+			
+		}
+	}
+	fr.readAsText(filepicker.files[0]);
 }
