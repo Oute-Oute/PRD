@@ -209,7 +209,7 @@
 					<button type="submit" class="btn-valide btn-secondary" onclick="exportData()">Enregistrer le fichier</button>
 					</td>
 					<td class="border-left">
-					<input type="file" id="file" name="file" accept=".msrcmp.sol" required>
+					<input type="file" id="filepicker" name="filepicker" accept=".msrcmp.sol" required>
 					<button type="submit" class="btn-valide btn secondary" onclick="importData()">Importer le fichier</button> 
 					</td >
 					</tr>
@@ -242,7 +242,6 @@
 <div style="width:100%;">
 
 	<h1>Modification du Planning</h1>
-		  
 	<div id="calendar-container" class="calendar-container">
 	<div id="load-large"></div>
 	<table class="header-ressource-consultation" style="font-size:medium;">
@@ -346,6 +345,32 @@
 				</div>
 				<div id='modal-add-footer' class="modal-footer">
 						<button type="button" class="btn-delete btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- error-import-modal -->
+
+	<div class="modal" id="error-import-modal">
+		<!-- div qui représente la modal -->
+		<div
+			class="modal-dialog">
+			<!-- permet d'afficher la modal en mode dialog -->
+			<div
+				class="modal-content">
+				<!-- permet de structurer le contenu de la modal -->
+				<div
+					class="modal-header">
+					<!-- sépare le header de la modal -->
+					<h2 class="modal-title">Le fichier est invalide</h2>
+					<button type="button" class="btn-close" aria-label="Close" onclick="CloseImportModal()"></button>
+				</div>
+				<div id="error-import" class="modal-body">
+				Erreur sur le fichier importé
+				</div>
+				<div id='modal-add-footer' class="modal-footer">
+						<button type="button" class="btn-delete btn-secondary" onclick="CloseImportModal()">Fermer</button>
 				</div>
 			</div>
 		</div>
