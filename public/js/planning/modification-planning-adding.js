@@ -958,12 +958,11 @@ function externalPlanner() {
 	});
 	resources = hResource.concat(mResource);//we add the human and material resources to the resources array
 	resources.forEach(resource => {
-		if(resource["id"] == "h-default" || resource["id"] == "m-default"){//if the resource is the default resource, we remove it from the array
-			index= resources.indexOf(resource);
+		if (resource["id"] == "h-default" || resource["id"] == "m-default") {//if the resource is the default resource, we remove it from the array
+			index = resources.indexOf(resource);
 			resources.splice(index, 1);
 		}
 	});
-	console.log(resources)
 	categoryHumanResource.forEach(categorie => {
 		categorie["idcategory"] = "human_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
@@ -1060,27 +1059,22 @@ function exportData() {
 			resourcesQuantities = [];
 			activity["materialResources"].forEach(material => {
 				if (material["id"] != "h-default") {
-					console.log(material)
 					key = "material_" + material["id"];
 					activityResources.push({ [key]: material["quantity"] });//we add the id of the material to the list of materials of the activity
 				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
-					console.log(human)
 					key = "human_" + human["id"];
 					activityResources.push({ [key]: human["quantity"] });//we add the id of the human to the list of humans of the activity
 				}
 			});
 			fileContent += activity["duration"] + "\t";//we add the duration of the activity to the file
-			console.log(activityResources)
-			console.log(categories)
 			categories.forEach(category => {
 
 				inActivity = 0;//if the category is in the activity or not
 				activityResources.forEach(activityResource => {
 					if (category["idcategory"] == Object.keys(activityResource)[0]) {
-						console.log(Object.keys(activityResource)[0])
 						inActivity = activityResource[Object.keys(activityResource)[0]];//set to the number of resources of the category in the activity
 					}
 				})
@@ -1136,16 +1130,13 @@ function importData() {
 	filepicker = document.getElementById("filepicker");
 	date = document.getElementById("date").value;//we get the date of the appointment
 	date = date.replace("T12:00:00", "");//we remove the time of the date
-	console.log(date)
 	error = 0
 	fr = new FileReader();
 	fileContent = "";
 	fileName = filepicker.files[0].name
-	console.log(fileName.includes(date))
 	if (!fileName.includes(date)) {
 		error = 1
 	}
-	console.log(fileName)
 	fr.onload = function () {
 		fileContent = fr.result;
 		console.log(fileContent)
@@ -1153,15 +1144,13 @@ function importData() {
 		words = [];
 		appointments = []
 		lines = fileContent.split("\r\n");
-		//numberOfCategories = categories.length;
-		numberOfCategories = 8 // TODO: remove this line
-		console.log(numberOfCategories)
-
+		numberOfResources = resources.length;
+		//numberOfResources = 8 // TODO: remove this test line
 		lines.forEach(line => {
-			if (line != "" && line.split("\t").length == 3 || line.split("\t").length == numberOfCategories + 1 && error == 0) {
+			if (line != "" && line.split("\t").length == 3 || line.split("\t").length == numberOfResources + 1 && error == 0) {
 				words[i] = line.split("\t");
 			}
-			else if (line != "" && line.split("\t").length != numberOfCategories + 1 && line.split("\t").length != 3 && error == 0) {
+			else if (line != "" && line.split("\t").length != numberOfResources + 1 && line.split("\t").length != 3 && error == 0) {
 				error = 2
 			}
 			i++;
@@ -1173,6 +1162,7 @@ function importData() {
 						error = 3
 					}
 				})
+
 				if (word.length != 3 && error == 0) {
 					for (i = 1; i < word.length; i++) {
 						if (word[i] != "1" && word[i] != "0") {
@@ -1182,47 +1172,137 @@ function importData() {
 
 				}
 			})
-			i = 0
-			j = 0
-			while (i < words.length && error == 0) {
-				appointment = []
-				while (words[i] != undefined && error == 0) {
-					appointment.push(words[i])
-					i++
-				}
-				appointments.push(appointment)
+		}
+		i = 0
+		j = 0
+		while (i < words.length && error == 0) {
+			appointment = []
+			while (words[i] != undefined && error == 0) {
+				appointment.push(words[i])
 				i++
-				j++
 			}
-			if(appointments.length !=listeAppointments.length && error == 0){
-				error = 5
+			appointments.push(appointment)
+			i++
+			j++
+		}
+		if (appointments.length != listeAppointments.length && error == 0) {
+			error = 5 //TODO : uncomment this line
+		}
+		console.log(listeAppointments)
+		for (i = 0; i < appointments.length; i++) {
+			if (appointments[i].length - 1 != listeAppointments[i]["idPathway"][0]["activities"].length && error == 0) {
+				console.log(appointments[i].length - 1)
+				console.log(listeAppointments[i]["idPathway"][0]["activities"].length)
+				error = 6
 			}
 		}
 		console.log(appointments)
 		if (error != 0) {
+			errorImport = document.getElementById("error-import")
 			switch (error) {
 				case 1:
-					document.getElementById("error-import").innerHTML = "Le fichier ne correspond pas à la date voulue. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Le fichier ne correspond pas à la date voulue. </br> Veuillez vérifier le fichier."
 					break;
 				case 2:
-					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le nombre de catégories dans le fichier, </br> il doit y avoir "
-					+ numberOfCategories + " catégories pour chaque activité. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Il y a une erreur sur le nombre de catégories dans le fichier. </br> Il doit y avoir "
+						+ numberOfResources + " ressources possibles dans le fichier. </br> Veuillez vérifier le fichier."
 					break;
 				case 3:
-					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le format du fichier, </br> il doit y avoir que des nombres dans le fichier. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Il y a une erreur sur le format du fichier. </br> Il doit y avoir que des nombres dans le fichier. </br> Veuillez vérifier le fichier."
 					break;
 				case 4:
-					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le format du fichier, </br> Au moins une ressource est utilisée plus d'une fois par la même activité. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Il y a une erreur sur le format du fichier. </br> Au moins une ressource est utilisée plus d'une fois par la même activité. </br> Veuillez vérifier le fichier."
 					break;
 				case 5:
-					document.getElementById("error-import").innerHTML = "Il y a une erreur sur le nombre d'activités dans le fichier, il doit y avoir " 
-					+ listeAppointments.length + " activités. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Il y a une erreur sur le nombre de rendez-vous dans le fichier, il doit y avoir "
+						+ listeAppointments.length + " rendez-vous. </br> Veuillez vérifier le fichier."
 					break;
-			}					
-				alert=document.getElementById("error-import-modal")
-			alert.style.display="block"
-			
+				case 6:
+					errorImport.innerHTML = "Il y a une erreur sur le nombre d'activités d'au moins un rendez-vous. </br> Veuillez vérifier le fichier."
+					break;
+			}
+			alert = document.getElementById("error-import-modal")
+			alert.style.display = "block"
 		}
+		else {
+			countAddEvent = 0
+			console.log(resources)
+			for (i = 0; i < appointments.length; i++) {
+				appFromList = listeAppointments[i]
+				//console.log(appFromList)
+				//console.log(appointments[i])
+				for (j = 1; j < appointments[i].length; j++) {
+					startTime = appointments[i][j][0]
+					hour = Math.floor(startTime / 60)
+					if (hour < 10) {
+						hour = "0" + hour
+					}
+					minute = startTime % 60
+					if (minute < 10) {
+						minute = "0" + minute
+					}
+					start = new Date(date + "T" + hour + ":" + minute + ":00")
+					activityResourcesArray = []
+					appointment.forEach(app => {
+						console.log(app)
+						for(k = 1; k < app.length; k++){
+							console.log(app[k])
+							if (app[k] == 1) {
+								activityResourcesArray.push(resources[k-1]["id"])
+								console.log(activityResourcesArray)
+							}
+						}
+					})
+					console.log(appFromList["idPathway"][0]["activities"][j - 1])
+					calendar.addEvent({
+						id: "new" + countAddEvent,
+						description: "",
+						resourceIds: activityResourcesArray,
+						title: appFromList["idPathway"][0]["activities"][j - 1]["title"],
+						start: start,
+						end: new Date(start.getTime() + appFromList["idPathway"][0]["activities"][j - 1]["duration"] * 60000),
+						patient: appFromList["idPatient"][0]["lastname"] + " " + appFromList["idPatient"][0]["firstname"],
+						appointment: appFromList["id"],
+						activity: appFromList["idPathway"][0]["activities"][j - 1]["id"],
+						type: "activity",
+						//humanResources: humanResources,
+						//materialResources: materialResources,
+						pathway: appFromList["idPathway"][0]["title"],
+						//categoryMaterialResources: categoryMaterialResources,
+						//categoryHumanResources: categoryHumanResources,
+						patientId: appFromList["idPatient"][0]["id"].split('_')[1],
+					})
+					countAddEvent++
+					console.log(activityResourcesArray)
+					while(activityResourcesArray.length > 0){
+						activityResourcesArray.pop()
+					}
+					console.log(activityResourcesArray)
+				}
+			}
+		}
+		console.log(calendar.getEvents())
+		$("#auto-add-modal").modal("hide")
+		$("#add-planning-modal").modal("hide")
 	}
 	fr.readAsText(filepicker.files[0]);
+
 }
+// var event = calendar.addEvent({
+// 	id: "new" + countAddEvent,
+// 	description: "",
+// 	resourceIds: activityResourcesArray,
+// 	title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
+// 	start: start,
+// 	end: end + activitiesA[i].activity.duration * 60000,
+// 	patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
+// 	appointment: appointment.id,
+// 	activity: activitiesA[i].activity.id,
+// 	type: "activity",
+// 	humanResources: humanResources,
+// 	materialResources: materialResources,
+// 	pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
+// 	categoryMaterialResource: categoryMaterialResources,
+// 	categoryHumanResource: categoryHumanResources,
+// 	patientId: appointment.idPatient[0].id.split('_')[1]
+// });
