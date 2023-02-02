@@ -957,6 +957,13 @@ function externalPlanner() {
 		});
 	});
 	resources = hResource.concat(mResource);//we add the human and material resources to the resources array
+	resources.forEach(resource => {
+		if(resource["id"] == "h-default" || resource["id"] == "m-default"){//if the resource is the default resource, we remove it from the array
+			index= resources.indexOf(resource);
+			resources.splice(index, 1);
+		}
+	});
+	console.log(resources)
 	categoryHumanResource.forEach(categorie => {
 		categorie["idcategory"] = "human_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
@@ -964,8 +971,6 @@ function externalPlanner() {
 		categorie["idcategory"] = "material_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
-	categories.push({ idcategory: "human_0", categoryname: "Aucune Catégorie", idcategory: "human_0", })//we add the "no category" category to the categories array
-	categories.push({ idcategory: "material_0", categoryname: "Aucune Catégorie", idcategory: "material_0", })//we add the "no category" category to the categories array
 
 	$("#auto-add-modal").modal("show");//we display the modal to use the external planner
 }
@@ -1027,16 +1032,10 @@ function exportData() {
 				if (material["id"] != "h-default") {
 					materialPerAppointment.push("material_" + material["id"]);//we add the id of the material to the list of materials of the appointment
 				}
-				else {
-					materialPerAppointment.push("material_0");//we add the id of the material to the list of materials of the appointment
-				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
 					humanPerAppointment.push("human_" + human["id"]);//we add the id of the human to the list of humans of the appointment
-				}
-				else {
-					humanPerAppointment.push("human_0");//we add the id of the human to the list of humans of the appointment
 				}
 
 			});
@@ -1065,18 +1064,12 @@ function exportData() {
 					key = "material_" + material["id"];
 					activityResources.push({ [key]: material["quantity"] });//we add the id of the material to the list of materials of the activity
 				}
-				else {
-					activityResources.push({ "material_0": 1 });//we add the id of the material to the list of materials of the activity
-				}
 			});
 			activity["humanResources"].forEach(human => {
 				if (human["id"] != "h-default") {
 					console.log(human)
 					key = "human_" + human["id"];
 					activityResources.push({ [key]: human["quantity"] });//we add the id of the human to the list of humans of the activity
-				}
-				else {
-					activityResources.push({ human_0: 1 });//we add the id of the human to the list of humans of the activity
 				}
 			});
 			fileContent += activity["duration"] + "\t";//we add the duration of the activity to the file
