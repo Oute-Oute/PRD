@@ -942,14 +942,14 @@ function CloseImportModal() {
  * 
  */
 function externalPlanner() {
-	var hResource = JSON.parse(document.getElementById("human").value.replaceAll('3aZt3r', ''));//get the human resources 
+	var hResource = JSON.parse(document.getElementById("human").value.replaceAll('3aZt3r', ' '));//get the human resources 
 	hResource.forEach(resource => {
 		cat = resource["categories"];
 		cat.forEach(categorie => {
 			categorie["id"] = "human_" + categorie["id"]; //foreach resources, we add the type of resource to the id of the category to avoid confilct between human and material resources
 		});
 	});
-	var mResource = JSON.parse(document.getElementById("material").value.replaceAll('3aZt3r', ''));
+	var mResource = JSON.parse(document.getElementById("material").value.replaceAll('3aZt3r', ' '));
 	mResource.forEach(resource => {
 		cat = resource["categories"];
 		cat.forEach(categorie => {
@@ -972,6 +972,7 @@ function externalPlanner() {
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
 
 	$("#auto-add-modal").modal("show");//we display the modal to use the external planner
+	console.log(resources)
 }
 
 /**
@@ -1226,12 +1227,12 @@ function importData() {
 		}
 		else {
 			countAddEvent = 0
-			console.log(resources)
 			for (i = 0; i < appointments.length; i++) {
 				appFromList = listeAppointments[i]
 				for (j = 1; j < appointments[i].length; j++) {
 					startTime = appointments[i][j][0]
 					hour = Math.floor(startTime / 60)
+					
 					if (hour < 10) {
 						hour = "0" + hour
 					}
@@ -1240,13 +1241,24 @@ function importData() {
 						minute = "0" + minute
 					}
 					start = new Date(date + "T" + hour + ":" + minute + ":00")
-					
+					if(start.getTimezoneOffset() == -120){
+						start = new Date(start.getTime() + 2*60*60*1000)
+					}
+					else if(start.getTimezoneOffset() == -60){
+						start = new Date(start.getTime() + 1*60*60*1000)
+					}
 					activityResourcesArray = []
-					console.log(appointments[i][j])
-					console.log(appFromList)
+					humanResourcesArray= []
+					materialResourcesArray = []
 					for (k = 1; k < appointments[i][j].length; k++) {
 						if (appointments[i][j][k] == "1") {
 							activityResourcesArray.push(resources[k - 1]["id"])
+							if(resources[k - 1]["id"].includes("human")){
+								humanResourcesArray.push(resources[k - 1])
+							}
+							else{
+								materialResourcesArray.push(resources[k - 1])
+							}
 						}
 					}
 
@@ -1261,11 +1273,11 @@ function importData() {
 						appointment: appFromList["id"],
 						activity: appFromList["idPathway"][0]["activities"][j - 1]["id"],
 						type: "activity",
-						//humanResources: humanResources,
-						//materialResources: materialResources,
+						humanResources: humanResourcesArray,
+						materialResources: materialResourcesArray,
 						pathway: appFromList["idPathway"][0]["title"],
-						//categoryMaterialResources: categoryMaterialResources,
-						//categoryHumanResources: categoryHumanResources,
+						categoryMaterialResource: appFromList["idPathway"][0]["activities"][j - 1]['materialResources'],
+						categoryHumanResource: appFromList["idPathway"][0]["activities"][j - 1]['humanResources'],
 						patientId: appFromList["idPatient"][0]["id"].split('_')[1],
 					})
 					activityResourcesArray = []
@@ -1273,7 +1285,8 @@ function importData() {
 				}
 			}
 		}
-		console.log(activityResourcesArray)
+		console.log(appointments)
+		console.log(listeAppointments)
 		console.log(calendar.getEvents())
 		$("#auto-add-modal").modal("hide")
 		$("#add-planning-modal").modal("hide")
