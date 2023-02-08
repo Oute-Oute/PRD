@@ -1229,8 +1229,6 @@ function importData() {
 			console.log(resources)
 			for (i = 0; i < appointments.length; i++) {
 				appFromList = listeAppointments[i]
-				//console.log(appFromList)
-				//console.log(appointments[i])
 				for (j = 1; j < appointments[i].length; j++) {
 					startTime = appointments[i][j][0]
 					hour = Math.floor(startTime / 60)
@@ -1242,18 +1240,16 @@ function importData() {
 						minute = "0" + minute
 					}
 					start = new Date(date + "T" + hour + ":" + minute + ":00")
+					
 					activityResourcesArray = []
-					appointment.forEach(app => {
-						console.log(app)
-						for(k = 1; k < app.length; k++){
-							console.log(app[k])
-							if (app[k] == 1) {
-								activityResourcesArray.push(resources[k-1]["id"])
-								console.log(activityResourcesArray)
-							}
+					console.log(appointments[i][j])
+					console.log(appFromList)
+					for (k = 1; k < appointments[i][j].length; k++) {
+						if (appointments[i][j][k] == "1") {
+							activityResourcesArray.push(resources[k - 1]["id"])
 						}
-					})
-					console.log(appFromList["idPathway"][0]["activities"][j - 1])
+					}
+
 					calendar.addEvent({
 						id: "new" + countAddEvent,
 						description: "",
@@ -1272,15 +1268,12 @@ function importData() {
 						//categoryHumanResources: categoryHumanResources,
 						patientId: appFromList["idPatient"][0]["id"].split('_')[1],
 					})
+					activityResourcesArray = []
 					countAddEvent++
-					console.log(activityResourcesArray)
-					while(activityResourcesArray.length > 0){
-						activityResourcesArray.pop()
-					}
-					console.log(activityResourcesArray)
 				}
 			}
 		}
+		console.log(activityResourcesArray)
 		console.log(calendar.getEvents())
 		$("#auto-add-modal").modal("hide")
 		$("#add-planning-modal").modal("hide")
