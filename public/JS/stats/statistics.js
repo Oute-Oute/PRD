@@ -3,7 +3,6 @@
  * @fileoverview This file contains the functions used to display the statistics page.
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  */
 
 var currentDateStr = $_GET("date");
@@ -64,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  */
 function getNumberOfHR() {
 	hr = JSON.parse(document.getElementById("human").value)
@@ -78,7 +76,6 @@ function getNumberOfHR() {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  */
 function getNumberOfMR() {
 	mr = JSON.parse(document.getElementById("material").value)
@@ -92,7 +89,6 @@ function getNumberOfMR() {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  */
 function getNumberOfPatients() {
 	appointments = JSON.parse(document.getElementById("appointments").value)
@@ -107,7 +103,6 @@ function getNumberOfPatients() {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  */
 function getNumberOFErrors(numberOfErrors) {
 	document.getElementById("numberOfErrors").innerHTML = numberOfErrors
@@ -119,18 +114,35 @@ function getNumberOFErrors(numberOfErrors) {
  * @description This function is called when we want the waiting times. It gets the waiting times from the database and display it.
  * @returns void
  * @author Thomas Blumstein
- * @version 1.0
- * @since 2020-12-01
+ * @version 2.0
  */
 function getWaitingTimes() {
-	waitingTimes = JSON.parse(document.getElementById("waitingTimes").value)//get the waiting times from the database
-	min = waitingTimes.minimum//get the minimum waiting time
-	max = waitingTimes.maximum//get the maximum waiting time
-	mean = Math.round(waitingTimes.mean)//get the mean waiting time
-	if (min == "Aucune activité planifiée") {//if there is no activity planned
-		document.getElementById("minWaitingTime").innerHTML = waitingTimes.minimum//display the message "Aucune activité planifiée"
-		document.getElementById("maxWaitingTime").innerHTML = waitingTimes.maximum//display the message "Aucune activité planifiée"
-		document.getElementById("meanWaitingTime").innerHTML = waitingTimes.mean//display the message "Aucune activité planifiée"
+	eventsByAppointment = []
+	calendar.getEvents().forEach(event => {
+		if (eventsByAppointment[event.extendedProps.appointment] == undefined)
+			eventsByAppointment[event.extendedProps.appointment] = []
+		eventsByAppointment[event.extendedProps.appointment].push(event)
+	})
+	waitingTimesArray = []
+	eventsByAppointment.forEach(appointment => {
+		if (appointment != undefined) {
+			appointment.sort((a, b) => (a.start > b.start) ? 1 : -1)
+			for (i = 0; i < appointment.length - 1; i++) {
+				diff =  appointment[i + 1].start-appointment[i].end
+				diff=diff/1000/60
+				waitingTimesArray.push(diff)
+			}
+		}
+	})
+	console.log(waitingTimesArray.length)
+	min = Math.min(...waitingTimesArray)//get the minimum waiting time
+	max = Math.max(...waitingTimesArray)//get the maximum waiting time
+	mean = Math.round(waitingTimesArray.reduce((a, b) => a + b, 0) / waitingTimesArray.length)//get the mean waiting time
+	console.log(min, max, mean)
+	if (waitingTimesArray.length==0) {//if there is no activity planned
+		document.getElementById("minWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"
+		document.getElementById("maxWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"
+		document.getElementById("meanWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"
 
 	}
 	else {//if there is an activity planned
@@ -147,7 +159,6 @@ function getWaitingTimes() {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  * @see getoccupancyRates
  */
 function changeResources() {
@@ -174,7 +185,6 @@ function changeResources() {
  * @returns void
  * @author Thomas Blumstein
  * @version 1.0
- * @since 2020-12-01
  * @see changeResources
  */
 function getoccupancyRates(type) {
