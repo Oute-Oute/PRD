@@ -972,7 +972,6 @@ function externalPlanner() {
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
 
 	$("#auto-add-modal").modal("show");//we display the modal to use the external planner
-	console.log(resources)
 }
 
 /**
@@ -1140,7 +1139,6 @@ function importData() {
 	}
 	fr.onload = function () {
 		fileContent = fr.result;
-		console.log(fileContent)
 		i = 0;
 		words = [];
 		appointments = []
@@ -1189,15 +1187,11 @@ function importData() {
 		if (appointments.length != listeAppointments.length && error == 0) {
 			error = 5 //TODO : uncomment this line
 		}
-		console.log(listeAppointments)
 		for (i = 0; i < appointments.length; i++) {
 			if (appointments[i].length - 1 != listeAppointments[i]["idPathway"][0]["activities"].length && error == 0) {
-				console.log(appointments[i].length - 1)
-				console.log(listeAppointments[i]["idPathway"][0]["activities"].length)
 				error = 6
 			}
 		}
-		console.log(appointments)
 		if (error != 0) {
 			errorImport = document.getElementById("error-import")
 			switch (error) {
@@ -1230,22 +1224,22 @@ function importData() {
 			for (i = 0; i < appointments.length; i++) {
 				appFromList = listeAppointments[i]
 				for (j = 1; j < appointments[i].length; j++) {
-					startTime = appointments[i][j][0]
-					hour = Math.floor(startTime / 60)
+					endTime = appointments[i][j][0]
+					hour = Math.floor(endTime / 60)
 					
 					if (hour < 10) {
 						hour = "0" + hour
 					}
-					minute = startTime % 60
+					minute = endTime % 60
 					if (minute < 10) {
 						minute = "0" + minute
 					}
-					start = new Date(date + "T" + hour + ":" + minute + ":00")
-					if(start.getTimezoneOffset() == -120){
-						start = new Date(start.getTime() + 2*60*60*1000)
+					end = new Date(date + "T" + hour + ":" + minute + ":00")
+					if(end.getTimezoneOffset() == -120){
+						end = new Date(end.getTime() + 2*60*60*1000)
 					}
-					else if(start.getTimezoneOffset() == -60){
-						start = new Date(start.getTime() + 1*60*60*1000)
+					else if(end.getTimezoneOffset() == -60){
+						end = new Date(end.getTime() + 1*60*60*1000)
 					}
 					activityResourcesArray = []
 					humanResourcesArray= []
@@ -1267,8 +1261,8 @@ function importData() {
 						description: "",
 						resourceIds: activityResourcesArray,
 						title: appFromList["idPathway"][0]["activities"][j - 1]["title"],
-						start: start,
-						end: new Date(start.getTime() + appFromList["idPathway"][0]["activities"][j - 1]["duration"] * 60000),
+						start: new Date(end.getTime() - appFromList["idPathway"][0]["activities"][j - 1]["duration"] * 60000),
+						end: end,
 						patient: appFromList["idPatient"][0]["lastname"] + " " + appFromList["idPatient"][0]["firstname"],
 						appointment: appFromList["id"],
 						activity: appFromList["idPathway"][0]["activities"][j - 1]["id"],
@@ -1285,9 +1279,6 @@ function importData() {
 				}
 			}
 		}
-		console.log(appointments)
-		console.log(listeAppointments)
-		console.log(calendar.getEvents())
 		$("#auto-add-modal").modal("hide")
 		$("#add-planning-modal").modal("hide")
 	}
