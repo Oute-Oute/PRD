@@ -40,7 +40,6 @@ function externalPlanner() {
 			}
 			event._def.resourceIds.forEach(resource => {
 				for (i = 0; i < resources.length; i++) {
-
 					startBusinessHour = resources[i]["businessHours"][0]["startTime"].split(":")
 					endBusinessHour = resources[i]["businessHours"][0]["endTime"].split(":")
 					startBusinessTime = parseInt(startBusinessHour[0]) * 60 + parseInt(startBusinessHour[1])
@@ -48,39 +47,38 @@ function externalPlanner() {
 					if (resources[i]["id"] != 'h-default' && resources[i]["id"] != 'm-default') {
 						if (resources[i]["id"] == resource && startTime >= startBusinessTime && endTime <= endBusinessTime) {
 							currentDate = document.getElementById("date").value;//we get the date of the appointment
-							currentDate = currentDate.replaceAll("T12:00:00", "")
-							currentDate = currentDate.split("-")
-							currentDateInDays = currentDate[0] * 365 + currentDate[1] * 30 + currentDate[2]
-							eventStartDate = event.start.toISOString()
-							eventStartDate = eventStartDate.split("T")
-							eventStartDate = eventStartDate[0].split("-")
-							eventStartInDays = eventStartDate[0] * 365 + eventStartDate[1] * 30 + eventStartDate[2]
-							eventEndDate = event.end.toISOString()
-							eventEndDate = eventEndDate.split("T")
-							eventEndDate = eventEndDate[0].split("-")
-							eventEndInDays = eventEndDate[0] * 365 + eventEndDate[1] * 30 + eventEndDate[2]
-
+							currentDate = currentDate.replaceAll("T12:00:00", "")//we remove the time
+							currentDate = currentDate.split("-")//we split the date to get the year, month and day
+							currentDateInDays = currentDate[0] * 365 + currentDate[1] * 30 + currentDate[2]//we convert the date to days
+							eventStartDate = event.start.toISOString()//we get the start date of the event
+							eventStartDate = eventStartDate.split("T")//we split the datetime to get the date
+							eventStartDate = eventStartDate[0].split("-")//we split the date to get the year, month and day
+							eventStartInDays = eventStartDate[0] * 365 + eventStartDate[1] * 30 + eventStartDate[2]//we convert the date to days
+							eventEndDate = event.end.toISOString()//we get the end date of the event
+							eventEndDate = eventEndDate.split("T")//we split the datetime to get the date
+							eventEndDate = eventEndDate[0].split("-")//we split the date to get the year, month and day
+							eventEndInDays = eventEndDate[0] * 365 + eventEndDate[1] * 30 + eventEndDate[2]//we convert the date to days
 							removeFirst = false
 							removeLast = false
-							if (eventStartInDays < currentDateInDays && currentDateInDays < eventEndInDays) {
+							if (eventStartInDays < currentDateInDays && currentDateInDays < eventEndInDays) {//if the event surround the current date, we remove the resource from the resources array
 								resources.splice(i, 1)
 								break;
 							}
-							else if (currentDateInDays == eventStartInDays && currentDateInDays != eventEndInDays) {
+							else if (currentDateInDays == eventStartInDays && currentDateInDays != eventEndInDays) {//if the event start on the current date and finish after
 								eventStartHour = event.start.getHours()
 								eventEndHour = 23
 								eventStartMinute = event.start.getMinutes()
 								eventEndMinute = 59
-								removeLast = true
+								removeLast = true//we remove the last event of the resource (the resource is not available after the event)
 							}
-							else if (currentDateInDays != eventStartInDays && currentDateInDays == eventEndInDays) {
+							else if (currentDateInDays != eventStartInDays && currentDateInDays == eventEndInDays) {//if the event start before the current date and finish on the current date
 								eventEndHour = event.end.getHours()
 								eventEndMinute = event.end.getMinutes()
 								eventStartHour = "00"
 								eventStartMinute = "00"
-								removeFirst = true
+								removeFirst = true//we remove the first event of the resource (the resource is not available before the event)
 							}
-							else {
+							else {//if the event start and finish on the current date
 								eventStartMinute = event.start.getMinutes()
 								eventEndMinute = event.end.getMinutes()
 								if (eventStartMinute < 10) {
@@ -92,43 +90,40 @@ function externalPlanner() {
 								eventStartHour = event.start.getHours()
 								eventEndHour = event.end.getHours()
 							}
-							if (event.start.getTimezoneOffset() == -120) {
+							if (event.start.getTimezoneOffset() == -120) {//correct the time if the timezone is UTC+2
 								eventStartHour -= 2
 								eventEndHour -= 2
 							}
-							else {
+							else {//correct the time if the timezone is UTC+1
 								eventStartHour -= 1
 								eventEndHour -= 1
 							}
-							if (eventStartHour < 10) {
+							if (eventStartHour < 10) {//add a 0 if the hour is less than 10
 								eventStartHour = "0" + eventStartHour
 							}
-							if (eventEndHour < 10) {
+							if (eventEndHour < 10) {//add a 0 if the hour is less than 10
 								eventEndHour = "0" + eventEndHour
 							}
-
+							//we create a copy of the resource and we change the business hours of the resource
 							if (resources[i]["businessHours"][0]["startTime"] != eventStartHour + ":" + eventStartMinute) {
 								resourceCopy = JSON.parse(JSON.stringify(resources[i]))
 								resourceCopy["businessHours"][0]["startTime"] = eventEndHour + ":" + eventEndMinute
 								resources[i]["businessHours"][0]["endTime"] = eventStartHour + ":" + eventStartMinute
 								resources.push(resourceCopy)
 							}
-							else {
+							else {//if the resource is not available before the event, we change the business hours of the resource
 								resources[i]["businessHours"][0]["startTime"] = eventEndHour + ":" + eventEndMinute
 							}
-							if (removeFirst) {
+							if (removeFirst) {//if the resource is not available before the end of the event, we remove the first event of the resource
 								resources.splice(i, 1)
 							}
-							if (removeLast) {
+							if (removeLast) {//if the resource is not available after the start of the event, we remove the last event of the resource
 								resources.splice(resources.length - 1, 1)
 							}
-
 							break;
 						}
 					}
-
 				}
-
 			})
 		})
 	}
@@ -146,7 +141,6 @@ function externalPlanner() {
 		categorie["idcategory"] = "material_" + categorie["idcategory"]//foreach categories, we add the type of resource to the id of the category to avoid confilct between human and material resources
 	});
 	categories = categoryHumanResource.concat(categoryMaterialResource);//we add the human and material categories to the categories array
-
 	$("#auto-add-modal").modal("show");//we display the modal to use the external planner
 }
 
@@ -213,7 +207,6 @@ function exportData() {
 				if (human["id"] != "h-default") {
 					humanPerAppointment.push("human_" + human["id"]);//we add the id of the human to the list of humans of the appointment
 				}
-
 			});
 		})
 		resourcesPerAppointment = humanPerAppointment.concat(materialPerAppointment);//we add the list of humans and materials of the appointment to the list of resources of the appointment
@@ -231,7 +224,6 @@ function exportData() {
 		successorsPerAppointment = [];
 		//we add the data of each activity of the appointment to the file
 		activities.forEach(activity => {
-
 			activityResources = [];
 			resourcesQuantities = [];
 			activity["materialResources"].forEach(material => {
@@ -248,7 +240,6 @@ function exportData() {
 			});
 			fileContent += activity["duration"] + "\t";//we add the duration of the activity to the file
 			categories.forEach(category => {
-
 				inActivity = 0;//if the category is in the activity or not
 				activityResources.forEach(activityResource => {
 					if (category["idcategory"] == Object.keys(activityResource)[0]) {
@@ -312,7 +303,7 @@ function importData() {
 	fileContent = "";
 	fileName = filepicker.files[0].name
 	if (!fileName.includes(date)) {
-		error = 1
+		error = 1//there is an error on the file name
 	}
 	fr.onload = function () {
 		fileContent = fr.result;
@@ -327,7 +318,7 @@ function importData() {
 				words[i] = line.split("\t");
 			}
 			else if (line != "" && line.split("\t").length != numberOfResources + 1 && line.split("\t").length != 3 && error == 0) {
-				error = 2
+				error = 2//there is an error on the file content
 			}
 			i++;
 		})
@@ -335,17 +326,15 @@ function importData() {
 			words.forEach(word => {
 				word.forEach(w => {
 					if (isNaN(w)) {
-						error = 3
+						error = 3//there is an error on the file content
 					}
 				})
-
 				if (word.length != 3 && error == 0) {
 					for (i = 1; i < word.length; i++) {
 						if (word[i] != "1" && word[i] != "0") {
-							error = 4
+							error = 4//there is an error on the file content
 						}
 					}
-
 				}
 			})
 		}
@@ -362,16 +351,16 @@ function importData() {
 			j++
 		}
 		if (appointments.length != listeAppointments.length && error == 0) {
-			error = 5 //TODO : uncomment this line
+			error = 5//there is an error on the number of appointments
 		}
 		for (i = 0; i < appointments.length; i++) {
 			if (appointments[i].length - 1 != listeAppointments[i]["idPathway"][0]["activities"].length && error == 0) {
-				error = 6
+				error = 6//there is an error on the number of activities
 			}
 		}
-		if (error != 0) {
+		if (error != 0) {//if there is an error
 			errorImport = document.getElementById("error-import")
-			switch (error) {
+			switch (error) {//we display the correct error
 				case 1:
 					errorImport.innerHTML = "Le fichier ne correspond pas à la date voulue. </br> Veuillez vérifier le fichier."
 					break;
@@ -395,21 +384,23 @@ function importData() {
 			alert = document.getElementById("error-import-modal")
 			alert.style.display = "block"
 		}
-		else {
+		else {//if there is no error
 			countAddEvent = 0
-			for (i = 0; i < appointments.length; i++) {
+			for (i = 0; i < appointments.length; i++) {//for each appointment
 				appFromList = listeAppointments[i]
-				for (j = 1; j < appointments[i].length; j++) {
+				for (j = 1; j < appointments[i].length; j++) {//for each activity of the appointment
 					endTime = appointments[i][j][0]
 					hour = Math.floor(endTime / 60)
-
+					//format the hour
 					if (hour < 10) {
 						hour = "0" + hour
 					}
+					//format the minutes
 					minute = endTime % 60
 					if (minute < 10) {
 						minute = "0" + minute
 					}
+					//correct the time zone
 					end = new Date(date + "T" + hour + ":" + minute + ":00")
 					if (end.getTimezoneOffset() == -120) {
 						end = new Date(end.getTime() + 2 * 60 * 60 * 1000)
@@ -417,21 +408,22 @@ function importData() {
 					else if (end.getTimezoneOffset() == -60) {
 						end = new Date(end.getTime() + 1 * 60 * 60 * 1000)
 					}
+					//get the resources of the event
 					activityResourcesArray = []
 					humanResourcesArray = []
 					materialResourcesArray = []
 					for (k = 1; k < appointments[i][j].length; k++) {
 						if (appointments[i][j][k] == "1") {
-							activityResourcesArray.push(resources[k - 1]["id"])
+							activityResourcesArray.push(resources[k - 1]["id"])//set the resources of the event
 							if (resources[k - 1]["id"].includes("human")) {
-								humanResourcesArray.push(resources[k - 1])
+								humanResourcesArray.push(resources[k - 1])//set the human resources of the event (for the details)
 							}
 							else {
-								materialResourcesArray.push(resources[k - 1])
+								materialResourcesArray.push(resources[k - 1])//set the material resources of the event (for the details)
 							}
 						}
 					}
-
+					//create the event and add it to the calendar
 					calendar.addEvent({
 						id: "new" + countAddEvent,
 						description: "",
@@ -459,7 +451,6 @@ function importData() {
 			for (let i = appointmentSelection.options.length - 1; i >= 0; i--) {
 				appointmentSelection.options.remove(i);
 			}
-			
 			//set All the event to "Scheduled"
 			for (let i = 0; i < listeAppointments.length; i++) {
 				listeAppointments[i].scheduled = true;
@@ -470,25 +461,4 @@ function importData() {
 		$("#add-planning-modal").modal("hide")
 	}
 	fr.readAsText(filepicker.files[0]);
-	
-
-
 }
-// var event = calendar.addEvent({
-// 	id: "new" + countAddEvent,
-// 	description: "",
-// 	resourceIds: activityResourcesArray,
-// 	title: activitiesA[i].activity.name.replaceAll("3aZt3r", " "),
-// 	start: start,
-// 	end: end + activitiesA[i].activity.duration * 60000,
-// 	patient: appointment.idPatient[0].lastname + " " + appointment.idPatient[0].firstname,
-// 	appointment: appointment.id,
-// 	activity: activitiesA[i].activity.id,
-// 	type: "activity",
-// 	humanResources: humanResources,
-// 	materialResources: materialResources,
-// 	pathway: appointment.idPathway[0].title.replaceAll("3aZt3r", " "),
-// 	categoryMaterialResource: categoryMaterialResources,
-// 	categoryHumanResource: categoryHumanResources,
-// 	patientId: appointment.idPatient[0].id.split('_')[1]
-// });
