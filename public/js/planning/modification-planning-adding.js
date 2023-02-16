@@ -598,7 +598,7 @@ function autoAddPathway(iteration = 0) {
 									counterNbResourceOfCategory++;
 									//change the begin date to see if ressources are free 20 minutes later
 									if (counterNbResourceOfCategory == nbResourceOfcategory) {
-										PathwayBeginDate = new Date(PathwayBeginDate.getTime() + 5 * 60000);
+										PathwayBeginDate = new Date(PathwayBeginDate.getTime() + 1 * 60000);
 										//do the same iteration
 										j--;
 										break;
