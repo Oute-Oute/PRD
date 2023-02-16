@@ -1,0 +1,71 @@
+.test-container {
+    text-align: center;
+    display: block;
+    border: none;
+    padding: 1%;
+    width: 25%;
+    min-width: fit-content;
+    height: fit-content;
+    background-color: #F2EFE9;
+    position: relative;
+    border-radius: 20px;
+    box-shadow: 0px 0px 7px #4c4c4c;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.test-data {
+    font-weight: normal;
+    font-size: 1em;
+    text-align: center;
+}
+
+.test-line {
+
+}
+
+.test-cell {
+    font-weight: normal;
+    font-size: 1em;
+    text-align: center;
+    width: 50%;
+}
+
+.bin:hover{
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0px 0px 7px #505050;
+}
+
+.bin-cell{
+    vertical-align: bottom;
+    text-align: right;
+}
+
+.all-tests-container{
+    height:80%
+}
+.all-tests{
+    overflow: auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+}
+
+
+.tests-column {
+    width: 25%;
+    align-items: center;
+}
+
+body{
+    overflow:hidden
+}
+
+#all-header-test {
+    display: block;
+    height: 20%;
+    overflow: hidden;
+}

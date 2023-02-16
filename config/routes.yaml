@@ -365,6 +365,11 @@ Statistics:
   controller: App\Controller\StatisticsController::index
   methods: [GET]
 
+Tests:
+  path: /tests
+  controller: App\Controller\TestsController::index
+  methods: [GET]
+
 Ethics:
   path: /ethics
   controller: App\Controller\EthicsController::index

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tests
+{% endblock %}
+{% block stylesheets %}
+	<!-- insertion de bootstrap et jquery -->
+	<script src="js/bootstrap/bootstrap.min.js" integrity="sha384-3nhVhzgkAiK+aRAouB5S914cEx9yGFCeToSirPZfaTPyy6g+RbDkzkmojJymfCBY sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 sha256-SUzPu+ewjZCj6CtwVs9sNh6Q/LMFi1w1RZ9TxpKmVkE=" crossorigin="anonymous"></script>
+	<!-- insertion des fichier js et css spécifique à modification planning -->
+	<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/IndexCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Tests/test.css') }}">
+	<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
+	<link rel="stylesheet" href="{{ asset('CSS/Calendrier/Calendrier.css') }}">
+
+{% endblock %}
+{% block javascripts %}
+	<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+	<script src="js/jquery-ui/jquery-ui.min.js"></script>
+    <script src="js/Tests/test.js"></script>
+	{% if app.user == null %}
+		<script type="text/javascript">
+			document.location.href = "/"
+		</script>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<div class="index">
+		<div class="all-container" id="all-header-test">
+			<div class="top">
+				<table class="header-ressource-consultation" style="font-size:medium;">
+			<td class="header-td">
+				<h1>Tests</h1>
+				</td>
+			<td class="header-td-right">
+				<div class="date-button">
+					<button id="previousButton" class="btn-calendar-edit" onclick="NewTest()" title="Aller au jour d'après">
+						Nouveau Test
+					</button>
+				</div>
+				
+			</td>
+		</table>
+			</div>
+		</div>
+		<div class="all-tests-container" id="all">
+        <div class="all-tests" id="all-tests">
+        </div>
+
+{{ include ('Tests/modal_popup.html.twig') }}
+		{% endblock %}
