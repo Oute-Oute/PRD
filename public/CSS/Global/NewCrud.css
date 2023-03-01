@@ -18,35 +18,41 @@
 }
 
 
-button#btn-add-activity:hover {
+button#btn-add-activity:hover {}
 
-}
 #title-pathway {
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
-#title-pathway div{
+
+#title-pathway div {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-#title-pathway div img{
+
+#title-pathway div img {
     width: 60px;
     height: 60px;
     cursor: pointer;
 }
-#title-pathway div p{
+
+#title-pathway div p {
     margin: 0;
 }
+
 div#container-btn-add-activity {
     margin-top: 20px;
-    width:100%; 
-    display: flex; 
+    width: 100%;
+    display: flex;
     justify-content: center;
 }
+
 /* fieldset qui contient la liste activités*/
-fieldset#fs-add-activity, #fs-add-human-category, #fs-add-material-category {
+fieldset#fs-add-activity,
+#fs-add-human-category,
+#fs-add-material-category {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -60,13 +66,15 @@ fieldset#fs-add-activity, #fs-add-human-category, #fs-add-material-category {
     width: 50%;
 }
 
-fieldset#fs-add-pathway, #fs-add-human-category, #fs-add-material-category {
+fieldset#fs-add-pathway,
+#fs-add-human-category,
+#fs-add-material-category {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: scroll;
-    margin: 15px 0px; 
+    margin: 15px 0px;
     padding: 5px;
 }
 
@@ -78,8 +86,8 @@ fieldset#fs-add-pathway button#btn-add-pathway {
     display: inline-block;
     transition: all 0.3s ease 0s;
     color: #404040;
-    background : none;
-    border : 1px solid black;
+    background: none;
+    border: 1px solid black;
     margin-top: 5px;
 }
 
@@ -91,8 +99,8 @@ fieldset#fs-add-human-category button#btn-add-category {
     display: inline-block;
     transition: all 0.3s ease 0s;
     color: #404040;
-    background : none;
-    border : 1px solid black;
+    background: none;
+    border: 1px solid black;
     margin-top: 5px;
 }
 
@@ -104,8 +112,8 @@ fieldset#fs-add-material-category button#btn-add-category {
     display: inline-block;
     transition: all 0.3s ease 0s;
     color: #404040;
-    background : none;
-    border : 1px solid black;
+    background: none;
+    border: 1px solid black;
     margin-top: 5px;
 }
 
@@ -115,17 +123,17 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
 
 
 
-#categories-container{
-    display : flex;
-    flex-direction : column;
+#categories-container {
+    display: flex;
+    flex-direction: column;
 
 }
 
 
 
 
-#lgd-working-hours{
-    margin-left : 100px;
+#lgd-working-hours {
+    margin-left: 100px;
 }
 
 #unavailabilities-human-container {
@@ -140,7 +148,7 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     justify-content: center;
 }
 
-#unavailabilities-human-container div input{
+#unavailabilities-human-container div input {
     margin: 15px;
 }
 
@@ -149,6 +157,7 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     flex-direction: column;
     width: 50%;
 }
+
 #btn-show-targets {
     background-color: var(--main-blue);
     color: white;
@@ -158,8 +167,28 @@ fieldset#fs-add-pathway button#btn-add-pathway:hover {
     margin-top: 15px;
     width: 100%;
 }
+
 #pathway-form-top {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+#begin,
+#end {
+    line-height: normal;
+}
+
+#quantity-auto,
+#quantity {
+    display: flex;
+    align-content: center;
+}
+
+#quantity-auto {
+    padding: 0 15%
+}
+
+#quantity {
+    width: 55%
 }

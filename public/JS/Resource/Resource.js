@@ -558,3 +558,12 @@ function resetWorkingHours(day, page) {
     inputBegin[day].value = ""
     inputEnd[day].value = ""
 }
+
+function showAutoHumanModalForm() {
+    console.log("showAutoHumanModalForm")
+    $('#auto-human-resource-modal').modal("show");
+}
+
+function showAutoMaterialModalForm() {
+    $('#auto-material-resource-modal').modal("show");
+}

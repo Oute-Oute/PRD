@@ -1,0 +1,54 @@
+<!-- add-patient-modal -->
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+{% endblock %}
+<div class="modal" id="auto-material-resource-modal">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Ajouter automatiquement des ressources humaines</h2>
+			</div>
+
+			<form action="{{ path('HumanResPost') }}" method="post">
+				<div
+					class="modal-body">
+					<!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+					<input style="display:none;" name="nbCategory" id="nbCategory">
+					<fieldset id="fs-add-human-category">
+						<legend>Choisissez les catégories de votre ressource</legend>
+
+						<div id="categories-container">
+							{% for material_resource_category in material_resources_categories %}
+								<div>
+									<input value='{{material_resource_category.id }}' type="checkbox" id="category" name="category">
+									<label id="lbl-category">{{ material_resource_category.categoryname }}</label>
+								</div>
+							{% else %}
+								<p>
+									Pas de catégories créées !
+								</p>
+							{% endfor %}
+						</div>
+					</fieldset>
+				</div>
+				<fieldset id="fs-add-quantity">
+					<legend id="">Choisissez la quantité de ressources</legend>
+					<div id='quantity-auto'>
+						<div id="quantity">
+							<input type="number" id="quantity" name="quantity" min="1" max="100" value="1" placeholder="Quantité">
+						</div>
+
+					</div>
+				</fieldset>
+				<div class="modal-footer">
+					<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+					<button type="button" onclick="humanResourceVerify()" class="btn-valide btn-secondary">
+						Ajouter
+					</button>
+					<button id='btn-none-add-human-resource' style="display : none" type="submit"></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
