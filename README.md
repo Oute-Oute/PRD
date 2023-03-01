@@ -1,9 +1,9 @@
 # Guide d'installation : Outil de planification des parcours de soins
 *Ce fichier est un .md, c'est à dire qu'il est rédigé en markdown et nécéssite d'être ouvert comme tel, et non pas dans un bloc-note.*
 
-| Version | Date       | Auteur       |
-| ------- | ---------- | ------------ |
-| 1.0     | 2023.03.01 | LEBERT Allan |
+| Version | Date       | Auteur           |
+| ------- | ---------- | ---------------- |
+| 1.0     | 2023.03.01 | BLUMSTEIN Thomas |
 
 ## Sommaire
 <!-- TOC -->
