@@ -47,7 +47,7 @@ function addAppointment() {
 /**
  * Allows to get the targets filtered by month
  */
-function getTargetsbyMonth(date,pathwayName) {
+function getTargetsbyMonth(date, pathwayName) {
   dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   $.ajax({
     type: 'POST',
@@ -55,10 +55,10 @@ function getTargetsbyMonth(date,pathwayName) {
     data: { pathway: pathwayName, date: dateStr },
     dataType: "json",
     success: function (data) {
-      if(data[0]['pathway'].length == 0){
+      if (data[0]['pathway'].length == 0) {
         document.getElementById("empty-parcours").style.visibility = "visible";
       }
-      else{
+      else {
         document.getElementById("empty-parcours").style.visibility = "hidden";
       }
       addTargetsToCalendar(data[0]["targets"]);
@@ -74,7 +74,7 @@ function getTargetsbyMonth(date,pathwayName) {
 function openDayModale(type) {
   var dateToGet = new Date();
   if (type == "new") {
-  var pathwayName= $('#autocompletePathwayAdd').val();
+    var pathwayName = $('#autocompletePathwayAdd').val();
   }
   if (type == "edit") {
     var pathwayName = $('#autocompletePathwayEdit').val();
@@ -253,7 +253,7 @@ function PreviousMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(newDate,document.getElementById("pathwayHidden").value)
+  getTargetsbyMonth(newDate, document.getElementById("pathwayHidden").value)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -279,7 +279,7 @@ function NextMonth() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(newDate,document.getElementById("pathwayHidden").value)
+  getTargetsbyMonth(newDate, document.getElementById("pathwayHidden").value)
   calendar.gotoDate(newDate)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -300,7 +300,7 @@ function Today() {
     month = "0" + month;
   } //if the month is less than 10, add a 0 before to fit with DateTime format
   calendar.removeAllEvents();
-  getTargetsbyMonth(today,document.getElementById("pathwayHidden").value)
+  getTargetsbyMonth(today, document.getElementById("pathwayHidden").value)
   calendar.gotoDate(today)
   document.getElementById('load').style.visibility = "visible";
 }
@@ -313,79 +313,80 @@ function showAppointment(id) {
   $.ajax({
     type: 'POST',
     url: '/ajaxInfosAppointment',
-    data: { id:id },
+    data: { id: id },
     dataType: "json",
     success: function (data) {
       document.getElementById('infos-appointment-title').textContent = data[0].patientLastname + " " + data[0].patientFirstname + " : " + data[0].pathwayName;
-      if(data[0].activities.length == 0){
+      if (data[0].activities.length == 0) {
         document.getElementById('infos-appointment-unscheduled').hidden = false;
         document.getElementById("calendar-infos-appointment").hidden = true;
       }
-      else{
+      else {
         document.getElementById('infos-appointment-unscheduled').hidden = true;
         document.getElementById("calendar-infos-appointment").hidden = false;
         var calendarEl = document.getElementById("calendar-infos-appointment"); //create the calendar variable
 
         //create the calendar
         calendar = new FullCalendar.Calendar(calendarEl, {
-        schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
-        initialView: "timeGridDay", //set the format of the calendar
-        locale: "frLocale", //set the language in french
-        timeZone: "Europe/Paris", //set the timezone for France
-        selectable: false, //set the calendar to be selectable
-        editable: false, //set the calendar not to be editable
-        allDaySlot: false,
-        nowIndicator: true,
-        contentHeight: "500px",
-        headerToolbar: {
-          start: null,
-          center: "title",
-          end: null,
-        },
-        eventDisplay: "block",
-        eventBackgroundColor: '#3788d8',
-        eventDidMount: function (info) {
-          $(info.el).tooltip({
-            title: info.event.extendedProps.description,
-            placement: "top",
-            trigger: "hover",
-            container: "body",
-          });
-        },
+          schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives", //we use a non commercial license
+          initialView: "timeGridDay", //set the format of the calendar
+          locale: "frLocale", //set the language in french
+          timeZone: "Europe/Paris", //set the timezone for France
+          selectable: false, //set the calendar to be selectable
+          editable: false, //set the calendar not to be editable
+          allDaySlot: false,
+          nowIndicator: true,
+          contentHeight: "500px",
+          headerToolbar: {
+            start: null,
+            center: "title",
+            end: null,
+          },
+          eventDisplay: "block",
+          eventBackgroundColor: '#3788d8',
+          eventDidMount: function (info) {
+            $(info.el).tooltip({
+              title: info.event.extendedProps.description,
+              placement: "top",
+              trigger: "hover",
+              container: "body",
+            });
+          },
         });
-        day=data[0]["dayAppointment"]
-        calendar.gotoDate(day+"T12:00:00");
-        activities=data[0]["activities"];
-        for(var i = 0; i < activities.length; i++){
+        day = data[0]["dayAppointment"]
+        calendar.gotoDate(day + "T12:00:00");
+        activities = data[0]["activities"];
+        for (var i = 0; i < activities.length; i++) {
           calendar.addEvent({
-            start: day+"T"+activities[i]['startTime'],
-            end: day+"T"+activities[i]['endTime'],
+            start: day + "T" + activities[i]['startTime'],
+            end: day + "T" + activities[i]['endTime'],
             title: activities[i]['activity'],
             description: activities[i]['activity']
-            })
-          }
-          calendar.addEvent({
-            start: day+"T00:00:00",
-            end: day+"T"+data[0]["earliestAppointmentTime"],
-            description: "Patient Absent",
-            display: 'background',
-            color: '#000000'
           })
+        }
+        calendar.addEvent({
+          start: day + "T00:00:00",
+          end: day + "T" + data[0]["earliestAppointmentTime"],
+          description: "Patient Absent",
+          display: 'background',
+          color: '#000000'
+        })
 
-          calendar.addEvent({
-            end: day+"T23:59:59",
-            start: day+"T"+data[0]["latestAppointmentTime"],
-            description: "Patient Absent",
-            display: 'background',
-            color: '#000000'})
+        calendar.addEvent({
+          end: day + "T23:59:59",
+          start: day + "T" + data[0]["latestAppointmentTime"],
+          description: "Patient Absent",
+          display: 'background',
+          color: '#000000'
+        })
         calendar.render(); //render the calendar
       }
-  document.getElementById('load-info-appt').style.visibility = "hidden";
+      document.getElementById('load-info-appt').style.visibility = "hidden";
     },
-      error: function (data) {
-      },
-    
-    });
+    error: function (data) {
+    },
+
+  });
   $('#infos-appointment-modal').modal("show");
 }
 
@@ -393,70 +394,77 @@ function showAppointment(id) {
  * Allows to filter patients to not display all at the same time
  */
 function filterAppointment(selected) {
-  if(selected.id!="notfound"){
+  if (selected.id != "notfound") {
     var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
-      for(let i=0; i<trs.length; i++){
-              trs[i].style.display='none';
-      }
-      table=document.getElementById('appointmentTable');
-      var tr=document.createElement('tr');
-      table.appendChild(tr);
-      var name=document.createElement('td');
-      name.append(selected.lastname+" "+selected.firstname);
-      tr.appendChild(name);
-      var pathway=document.createElement('td');
-      pathway.append(selected.pathway);
-      tr.appendChild(pathway);
-      var dayAppointment=document.createElement('td');
-      dayAppointment.append(selected.dayappointment);
-      tr.appendChild(dayAppointment);
-      var buttons=document.createElement('td');
-      var infos=document.createElement('button');
-      infos.setAttribute('class','btn-infos btn-secondary');
-      infos.setAttribute('onclick','showAppointment('+selected.id+')');
-      infos.append('Informations');
-      var edit=document.createElement('button');
-      edit.setAttribute('class','btn-edit btn-secondary');
-      edit.setAttribute('onclick','editAppointment('+selected.id+',"'+selected.lastname+'","'+selected.firstname+'","'+selected.pathway+'","'+selected.dayappointment+'","'+selected.earliestappointmenttime+'","'+selected.latestappointmenttime+'")');
-      edit.append('Editer');
-      var deleteButton=document.createElement('button');
-      deleteButton.setAttribute('class','btn-delete btn-secondary');
-      deleteButton.append('Supprimer');
-      deleteButton.setAttribute('onclick','showPopup('+selected.id+')');
-      buttons.appendChild(infos);
-      buttons.appendChild(edit);
-      buttons.appendChild(deleteButton);
-      tr.appendChild(buttons);
-
-      paginator=document.getElementById('paginator');
-      paginator.style.display='none';
+    for (let i = 0; i < trs.length; i++) {
+      trs[i].style.display = 'none';
     }
+    table = document.getElementById('appointmentTable');
+    var tr = document.createElement('tr');
+    table.appendChild(tr);
+    var name = document.createElement('td');
+    name.append(selected.lastname + " " + selected.firstname);
+    tr.appendChild(name);
+    var pathway = document.createElement('td');
+    pathway.append(selected.pathway);
+    tr.appendChild(pathway);
+    var dayAppointment = document.createElement('td');
+    dayAppointment.append(selected.dayappointment);
+    tr.appendChild(dayAppointment);
+    var buttons = document.createElement('td');
+    var infos = document.createElement('button');
+    infos.setAttribute('class', 'btn-infos btn-secondary');
+    infos.setAttribute('onclick', 'showAppointment(' + selected.id + ')');
+    infos.append('Informations');
+    var edit = document.createElement('button');
+    edit.setAttribute('class', 'btn-edit btn-secondary');
+    edit.setAttribute('onclick', 'editAppointment(' + selected.id + ',"' + selected.lastname + '","' + selected.firstname + '","' + selected.pathway + '","' + selected.dayappointment + '","' + selected.earliestappointmenttime + '","' + selected.latestappointmenttime + '")');
+    edit.append('Editer');
+    var deleteButton = document.createElement('button');
+    deleteButton.setAttribute('class', 'btn-delete btn-secondary');
+    deleteButton.append('Supprimer');
+    deleteButton.setAttribute('onclick', 'showPopup(' + selected.id + ')');
+    buttons.appendChild(infos);
+    buttons.appendChild(edit);
+    buttons.appendChild(deleteButton);
+    tr.appendChild(buttons);
+
+    paginator = document.getElementById('paginator');
+    paginator.style.display = 'none';
+  }
 }
 
 /**
  * Allows to display all patients without any filter
  */
- function displayAll() {
+function displayAll() {
   var trs = document.querySelectorAll('#tableAppointment tr:not(.headerAppointment)');
   var input = document.getElementById('autocompleteInputPatientName');
-  if(input.value == ''){
-  for(let i=0; i<trs.length; i++){
-      if(trs[i].style.display == 'none'){
-          trs[i].style.display='table-row';
+  if (input.value == '') {
+    for (let i = 0; i < trs.length; i++) {
+      if (trs[i].style.display == 'none') {
+        trs[i].style.display = 'table-row';
       }
-      else if(trs[i].className != 'original'){
-          trs[i].remove()
+      else if (trs[i].className != 'original') {
+        trs[i].remove()
       }
+    }
+    paginator = document.getElementById('paginator');
+    paginator.style.display = '';
   }
-  paginator=document.getElementById('paginator');
-  paginator.style.display='';
-}
 }
 
 /**
  * Allows to display a popup to confirm the deletion of an appointment
  */
-function showPopup(id){
+function showPopup(id) {
   document.getElementById("form-appointment-delete").action = "/appointment/" + id + "/delete"
   $('#modal-popup').modal('show')
+}
+
+function CreateAuto() {
+  $("#auto-modal").modal("show");
+}
+function hideAuto() {
+  $("#auto-modal").modal("hide");
 }

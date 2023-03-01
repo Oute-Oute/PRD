@@ -1,0 +1,234 @@
+/* --- TOP of the page --- */
+
+
+
+/* --- BODY of the page --- */
+div#pathway-form-body {
+    display: flex;
+    width: 100%;
+    height: 50%;
+    justify-content: space-between;
+    margin: 20px 0px;
+}
+
+/* title of different section of the body */
+div#pathway-form-body .title {
+    margin: 20px;
+}
+
+/* Left part of the body */
+div#create-activity-container {
+    width: 50%;
+    box-shadow: 0px 0px 10px lightgray;
+    padding: 10px 20px;
+    border-radius: 10px;
+    height: 550px;
+}
+
+/* button to add an activity to the pathway */
+button#btn-add-activity {
+    color: #37BC9B;
+    background: none;
+    border: 1px solid #37BC9B;
+}
+
+button#btn-add-activity:hover {
+    background: rgb(220 225 233);
+}
+
+/* button to confirm the editing of an activity in the pathway */
+button#btn-confirm-activity {
+    color: #37BC9B;
+    background: none;
+    border: 1px solid #37BC9B;
+}
+
+/* button to cancel the editing of an activity in the pathway */
+button#btn-cancel-activity {
+    color: #DA4353;
+    background: none;
+    border: 1px solid #DA4353;
+
+}
+
+
+/* Right part of the body */
+
+/* div wich contains the title and the list of the part "activities list" */
+div#activities-list {
+    width: 40%;
+    box-shadow: 0px 0px 10px lightgray;
+    padding: 10px 0px;
+    border-radius: 10px;
+}
+
+#title-height {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+/* button to open the successors modal*/
+button#btn-show-activities {
+    color: #37BC9B;
+    background: none;
+    border: 1px solid #37BC9B;
+}
+
+button#btn-show-activities:hover {
+    background: rgb(220 225 233);
+}
+
+/* to store all the activities */
+div#activities-list #list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px solid lightgray;
+}
+
+/* represents one activity */
+.div-activity {
+    margin: 5px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid lightgray;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 50px;
+    height: 50px;
+    max-height: 150px;
+    position: relative;
+    font-size: 115%;
+}
+
+.div-activity .container-p {
+    max-height: 99%;
+    position: relative;
+    width: 100%;
+    overflow-y: auto;
+}
+
+/* text of the activity */
+.div-activity .container-p p {
+    width: 80%;
+    padding: 10px;
+    margin: 0px;
+}
+
+/* btns for edit / remove an activity from the list */
+.div-activity .btns {
+    position: absolute;
+    right: 25px;
+}
+
+/* Modification resource in an activity in a pathway */
+
+#div-edit-activity {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgrey;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: #fff;
+    width: 100%;
+}
+
+/* button to select the resources you want to display human / material */
+#infos-rdv {
+    display: flex;
+    border-bottom: 1px solid lightgrey;
+    padding: 5px
+}
+
+.label-barre {
+    display: flex;
+    width: 10%;
+    font-size: 120%;
+    justify-content: center;
+}
+
+.label-rdv {
+    display: flex;
+    width: 45%;
+    font-size: 120%;
+    justify-content: center;
+}
+
+
+/* contains the resource list of the pathway */
+#div-resources {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    height: 100%;
+    position: relative;
+    padding: 10px;
+    overflow-y: scroll;
+    max-height: 150px;
+    height: 100px;
+}
+
+.div-resources-h {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+}
+
+.div-resources-m {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+}
+
+/* div to add a resource (with the select) */
+#div-add-resources {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    border-top-right-radius: 10px;
+    align-items: center;
+    height: 35px;
+    background-color: #fff;
+}
+
+
+#div-add-resources select {
+    width: 70%;
+    border: none;
+    height: 100%;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+#div-add-resources input {
+    width: 30%;
+    border: none;
+    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+    height: 100%;
+
+}
+
+.add_app {
+    width: 100%;
+    height: 100%;
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    background-color: transparent;
+    cursor: pointer;
+    color: #919191;
+    font-size: 100%;
+    padding: 2%;
+}
+
+/* --- BOTTOM of the page --- */

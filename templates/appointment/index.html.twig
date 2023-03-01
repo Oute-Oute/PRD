@@ -30,6 +30,7 @@
 
 		<!-- bouton pour l'ajout d'un nouveau rendez-vous -->
 		<button type="button" class="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
+		<button type="button" class="btn-add" onclick="CreateAuto()">Gérer les rendez-vous</button>
 
 		<div><input type="text" id="autocompleteInputPatientName" onkeyup="displayAll()" placeholder="Rechercher">
 		<i>3 caractères minimum</i></div>
@@ -80,6 +81,7 @@
 	</div>
 </div>
 {{ include ('appointment/add_appointment.html.twig') }}
+{{ include ('appointment/modal-auto.html.twig') }}
 {{ include ('appointment/edit_appointment.html.twig') }}
 {{ include ('appointment/show_appointment.html.twig') }}
 {{ include ('appointment/select_day.html.twig')}}

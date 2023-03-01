@@ -1,0 +1,61 @@
+<!-- add-appointment-modal -->
+<link rel="stylesheet" href="{{ asset('CSS/Appointment/modal_auto.css') }}">
+<link rel="stylesheet" href="{{ asset('CSS/Global/Modal.css') }}">
+
+<div class="modal" id="auto-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Gestion des rendez-vous</h2>
+			</div>
+			<form action="{{ path('AppointmentAdd') }}" method="post" onsubmit="return lookAutocompletes()">
+
+				<div class="modal-content" style="padding:20px;">
+					<div class="appointment-list">
+						<div id="div-edit-activity">
+							<div id="infos-rdv">
+								<label class="label-rdv">
+									Parcours
+								</label>
+								<label class="label-barre">|</label>
+
+								<label class="label-rdv">
+
+									Quantité
+								</label>
+							</div>
+							<div id="div-resources">
+								<ul id="list-resources"></ul>
+							</div>
+						</div>
+					</div>
+					<div id="add" class="add_app">
+						<div id="div-add-resources">
+							<select id="select-resources" title="Choisissez le nom de la ressource"></select>
+							<input oninput="preventForTarget(this)" id="resource-nb" min="0" placeholder="Qte" type="number" title="Choisissez la quantité de la ressource">
+						</input>
+						<img onclick="addResources()" src="../img/plus.png" class="plus-button" title="Ajouter la ressource">
+					</img>
+				</div>
+				<label class="label" for='earliestappointmenttime'>
+					Heure d'arrivée au plus tôt
+				</label>
+				<input class="input" type='time' name='earliestappointmenttime'>
+			</br>
+			<div class="flex-col">
+				<label class="label" for='latestappointmenttime'>
+					Heure de fin au plus tard
+				</label>
+				<input class="input" type='time' name='latestappointmenttime'>
+			</div>
+		</div>
+
+	</br>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn-delete btn-secondary" onclick="hideAuto()">Annuler</button>
+	<button type="submit" class="btn-valide btn-secondary">
+		Ajouter
+	</button>
+</div></div></form></div></div></div><script>$("#autocompletePatientAdd").autocomplete({source: tagsPatients});
+$("#autocompletePathwayAdd").autocomplete({source: tagsPathways});</script>
