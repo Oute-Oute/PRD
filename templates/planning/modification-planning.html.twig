@@ -165,10 +165,10 @@
 					</div>
 
 					<div id='modal-add-footer' class="modal-footer">
-						<button type="submit" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
-						<button type="submit" class="btn-valide btn secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
-						<button type="submit" class="btn-valide btn secondary" onclick="autoAddAllPathway(0)">Planificateur Interne</button> 
-						<button type="submit" class="btn-valide btn secondary" onclick="externalPlanner()">Planificateur Externe</button> 
+						<button id="add-button" class="btn-valide btn-secondary" onclick="addPathway()">Ajouter</button>
+						<button id="auto-add-button" class="btn-valide btn-secondary" onclick="autoAddPathway()">Ajouter Automatiquement</button> 
+						<button id="internal-button" class="btn-valide btn-secondary" onclick="autoAddAllPathway(0)">Planificateur Interne</button> 
+						<button id="external-button" class="btn-valide btn-secondary" onclick="externalPlanner()">Planificateur Externe</button> 
 					</div>
 					<div id='alert-scheduled-tomorrow' class="alert alert-danger" role="alert">Erreur ! Le rendez-vous se termine au lendemain.</div>	
 				</div>

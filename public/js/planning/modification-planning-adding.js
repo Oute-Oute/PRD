@@ -49,6 +49,17 @@ function displayAddPathway() {
 	if (timeBegin != undefined) {
 		timeBegin.value = earliestappointmenttime;
 	}
+	if (appointmentSelection.length == 0) {
+		add = document.getElementById("add-button");
+		auto_add = document.getElementById("auto-add-button");
+		internal = document.getElementById("internal-button");
+		external = document.getElementById("external-button");
+		add.disabled = true;
+		auto_add.disabled = true;
+		internal.disabled = true;
+		external.disabled = true;
+
+	}
 
 	$("#add-planning-modal").modal("show");
 
@@ -158,6 +169,8 @@ function addPathway() {
 			var categoryMaterialResources = [];
 			listeActivityMaterialResource = Object.values(listeActivityMaterialResource);
 			for (let j = 0; j < listeActivityMaterialResource.length; j++) {
+
+				//console.log(listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id)
 				if (listeActivityMaterialResource[j].activityId == activitiesA[i].activity.id) {
 					for (let k = 0; k < categoryMaterialResource.length; k++) {
 						if (listeActivityMaterialResource[j][0].materialResourceCategoryId == categoryMaterialResource[k].idcategory && materialAlreadyScheduled.includes(listeActivityMaterialResource[j][0]) == false) {
@@ -458,23 +471,24 @@ function autoAddPathway(iteration = 0) {
 					var allEvents = calendar.getEvents();
 					var slotAlreadyScheduled = false;
 					if (categoryHumanResources[j].id == categoryOfHR[categoryOfHumanResourceIt].idcategory || categoryHumanResources[j].id == '') {
-						businnesStart=workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource].start
-						businnesEnd=workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource].end
-						businessStartDate = new Date(currentDateStr.split("T")[0]+" "+businnesStart)
-						businessEndDate = new Date(currentDateStr.split("T")[0]+" "+businnesEnd)
-						if(businessStartDate.getTimezoneOffset()==-120){
-							businessStartDate.setHours(businessStartDate.getHours()+2)
-							businessEndDate.setHours(businessEndDate.getHours()+2)
+						businnesStart = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource].start
+						businnesEnd = workingHours[categoryOfHR[categoryOfHumanResourceIt].idresource].end
+						businessStartDate = new Date(currentDateStr.split("T")[0] + " " + businnesStart)
+						businessEndDate = new Date(currentDateStr.split("T")[0] + " " + businnesEnd)
+						if (businessStartDate.getTimezoneOffset() == -120) {
+							businessStartDate.setHours(businessStartDate.getHours() + 2)
+							businessEndDate.setHours(businessEndDate.getHours() + 2)
 						}
-						else{
-							businessStartDate.setHours(businessStartDate.getHours()+1)
-							businessEndDate.setHours(businessEndDate.getHours()+1)
+						else {
+							businessStartDate.setHours(businessStartDate.getHours() + 1)
+							businessEndDate.setHours(businessEndDate.getHours() + 1)
 						}
 						if (countResources < categoryHumanResources[j].quantity) {
-							if(PathwayBeginDate.getTime()<businessStartDate.getTime() && businessEndDate.getTime()>endTime){
+							if (PathwayBeginDate.getTime() < businessStartDate.getTime() && businessEndDate.getTime() > endTime) {
 								slotAlreadyScheduled = true;
 							}
 							for (allEventsIterator = 0; allEventsIterator < allEvents.length; allEventsIterator++) {
+
 								//if the resources is from the category and not free at this time during all the activity
 								if (allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
 									allEvents[allEventsIterator].start.getTime() <= (PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
@@ -539,8 +553,8 @@ function autoAddPathway(iteration = 0) {
 									allEvents[allEventsIterator]._def.extendedProps.patientId == appointment.idPatient[0].id.split('_')[1] && //si la ressource est dans la categorie
 									allEvents[allEventsIterator].end.getTime() >= (PathwayBeginDate.getTime()) && //si le debut de l'activité est avant le debut de l'evenement
 									allEvents[allEventsIterator].end.getTime() <= (endTime) //si la fin de l'activité est apres le debut de l'evenement
-									
-									) {
+
+								) {
 									slotAlreadyScheduled = true;
 								}
 								if (allEvents[allEventsIterator]._def.resourceIds.includes(categoryOfHR[categoryOfHumanResourceIt].idresource) && //si la ressource est dans la categorie
@@ -579,13 +593,12 @@ function autoAddPathway(iteration = 0) {
 							nextDay.setMinutes(0)
 							nextDay.setSeconds(0)
 
-
 							if (slotAlreadyScheduled == false && categoryHumanResources[j].id == '') {
 								humanResources.push({ 'id': 'h-default', 'title': '' })
 								countResources++;
 							}
 
-							if (slotAlreadyScheduled == false && categoryHumanResources[j].id != '' && startDate.getTime() <= PathwayBeginDate.getTime() && endDate.getTime() <= endTime) {
+							if (slotAlreadyScheduled == false && categoryHumanResources[j].id != '' && startDate.getTime() <= PathwayBeginDate.getTime() && endDate.getTime() >= endTime) {
 								humanResources.push({ 'id': categoryOfHR[categoryOfHumanResourceIt].idresource, 'title': categoryOfHR[categoryOfHumanResourceIt].resourcename });
 								countResources++;
 							}
@@ -606,7 +619,7 @@ function autoAddPathway(iteration = 0) {
 								}
 							}
 						}
-					//}
+						//}
 					}
 				}
 			}
