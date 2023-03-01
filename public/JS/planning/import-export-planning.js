@@ -422,6 +422,22 @@ function importData() {
 								materialResourcesArray.push(resources[k - 1])//set the material resources of the event (for the details)
 							}
 						}
+
+						//check if dafault resources needed
+						humans = appFromList["idPathway"][0]["activities"][j - 1]["humanResources"]
+						materials = appFromList["idPathway"][0]["activities"][j - 1]["materialResources"]
+						humans.forEach(human => {
+							if (human["id"] == "h-default") {
+								humanResourcesArray.push("h-default")
+								activityResourcesArray.push("h-default")
+							}
+						});
+						materials.forEach(material => {
+							if (material["id"] == "m-default") {
+								materialResourcesArray.push("m-default")
+								activityResourcesArray.push("m-default")
+							}
+						})
 					}
 					//create the event and add it to the calendar
 					calendar.addEvent({
