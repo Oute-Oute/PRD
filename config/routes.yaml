@@ -389,3 +389,18 @@ AjaxEthicsEditComment:
   path: /ajaxEthicsEditComment
   controller: App\Controller\EthicsController::editComment
   methods: [POST]
+
+AppointmentAutoAdd:
+  path: /appointmentAutoAdd
+  controller: App\Controller\AppointmentController::autoAddAppointment
+  methods: [POST]
+
+HRAutoAdd:
+  path: /HRAutoAdd
+  controller : App\Controller\HumanResourceController::autoAddHR
+  methods: [POST]
+
+MRAutoAdd:
+  path: /MRAutoAdd
+  controller : App\Controller\MaterialResourceController::autoAddMR
+  methods: [POST]
