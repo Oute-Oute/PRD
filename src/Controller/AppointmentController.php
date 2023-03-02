@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Appointment;
 use App\Entity\Pathway;
+use App\Entity\Patient;
 use App\Repository\AppointmentRepository;
 use App\Repository\PathwayRepository;
+use App\Repository\PatientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +24,7 @@ class AppointmentController extends AbstractController
      * @brief Allows to get appointments
      * 
      */
-    public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine,Request $request, PaginatorInterface $paginator): Response
+    public function appointmentGet(AppointmentRepository $appointmentRepository, ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): Response
     {
 
         global $date;
@@ -32,17 +34,17 @@ class AppointmentController extends AbstractController
             $date = str_replace('T12:00:00', '', $date);
         }
 
-        $currentAppointment=$paginator->paginate(
-            $appointmentRepository->findAppointmentByDate($date), 
-            $request->query->getInt('page',1),
+        $currentAppointment = $paginator->paginate(
+            $appointmentRepository->findAppointmentByDate($date),
+            $request->query->getInt('page', 1),
             10
-        ); 
+        );
         $patientsJSON = $this->getPatientsJSON($doctrine);
         $pathwaysJSON = $this->getPathwaysJSON($doctrine);
         //dd($doctrine->getManager()->getRepository("App\Entity\Patient")->findall(),$patients);
         //créer la page de gestion des rendez-vous en envoyant la liste de tous les rendez-vous, patients et parcours stockés en database
         return $this->render('appointment/index.html.twig', [
-            'currentappointments' =>$currentAppointment ,
+            'currentappointments' => $currentAppointment,
             'currentdate' => $date,
             'patientsJSON' => $patientsJSON,
             'pathwaysJSON' => $pathwaysJSON
@@ -140,9 +142,9 @@ class AppointmentController extends AbstractController
         $appointment = $appointmentRepository->findOneBy(['id' => $param['idappointment']]);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway-hidden"]]);
-        $dayappointment = \DateTime::createFromFormat('d/m/Y H:i:s', str_replace(" ","",$param['dayappointment']).' '."00:00:00");
-        echo($param['dayappointment']);
-        echo($dayappointment->format('d/m/Y H:i:s'));
+        $dayappointment = \DateTime::createFromFormat('d/m/Y H:i:s', str_replace(" ", "", $param['dayappointment']) . ' ' . "00:00:00");
+        echo ($param['dayappointment']);
+        echo ($dayappointment->format('d/m/Y H:i:s'));
         if ($param["earliestappointmenttime"] != "") {
             $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
         } else {
@@ -393,24 +395,69 @@ class AppointmentController extends AbstractController
     /*
      * @brief Return the appointments list who are scheduled and use the pathway in the parameter (pathway id id)
      */
-    public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id) {
+    public function GetAppointmentByActivityId(ManagerRegistry $doctrine, int $id)
+    {
         $pathway = $doctrine->getRepository("App\Entity\Pathway")->findBy(["id" => $id]);
         $appointments = $doctrine->getRepository("App\Entity\Appointment")->findBy(["pathway" => $pathway]);
-        
+
         $data = [];
         foreach ($appointments as $appointment) {
             // We only add the appointments who are scheduled
             if ($appointment->isScheduled() == true) {
                 $data[] =
-                [
-                    "appointment_id" => $appointment->getId(),
-                    "appointment_day" => $appointment->getDayappointment(),
-                    "patient_firstname" => $appointment->getPatient()->getFirstname(),
-                    "patient_lastname" => $appointment->getPatient()->getLastname(),
-                ]; 
+                    [
+                        "appointment_id" => $appointment->getId(),
+                        "appointment_day" => $appointment->getDayappointment(),
+                        "patient_firstname" => $appointment->getPatient()->getFirstname(),
+                        "patient_lastname" => $appointment->getPatient()->getLastname(),
+                    ];
             }
         }
         return new JsonResponse($data);
+    }
+
+    /*
+     * @brief Allows to auto Add several appointments
+     */
+    public function autoAddAppointment(ManagerRegistry $doctrine, Request $request, PatientRepository $patientRepository, AppointmentRepository $appointmentRepository)
+    {
+        global $date;
+        $params = $request->request->all();
+        $patientMaxId = $patientRepository->findMaxId();
+        $newId = $patientMaxId + 1;
+        $quantity = $params["quantity"];
+        $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $params["pathway"]]);
+        if ($params["earliestappointmenttime"] != "") {
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', $params['earliestappointmenttime']);
+        } else {
+            $earliestappointmenttime = \DateTime::createFromFormat('H:i', "06:00");
+        }
+        if ($params["latestappointmenttime"] != "") {
+
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', $params['latestappointmenttime']);
+        } else {
+            $latestappointmenttime = \DateTime::createFromFormat('H:i', "22:00");
+        }
+        $dayAppointment = \DateTime::createFromFormat("Y-m-d H:i:s", str_replace("/", "", $params['date'] . " 00:00:00"));
+        //var_dump($dayAppointment);
+        for ($i = 0; $i < $quantity; $i++) {
+            $patient = new Patient();
+            $patient->setLastname("Simulation");
+            $patient->setFirstname($pathway . "_" . $newId);
+            //Adding the patient in the database
+            $patientRepository->add($patient, true);
+            $appointment = new Appointment();
+            $appointment->setDayappointment($dayAppointment);
+            $appointment->setEarliestappointmenttime($earliestappointmenttime);
+            $appointment->setLatestappointmenttime($latestappointmenttime);
+            $appointment->setPatient($patient);
+            $appointment->setPathway($pathway);
+            $appointment->setScheduled(false);
+            $appointmentRepository->add($appointment, true);
+            $newId++;
+        }
+        return $this->redirectToRoute('Appointment', [], Response::HTTP_SEE_OTHER);
+
     }
 
     /*
@@ -418,9 +465,9 @@ class AppointmentController extends AbstractController
      */
     public function autocompleteAppointment(Request $request, AppointmentRepository $appointmentRepository)
     {
-        $utf8 = array( 
-            "œ"=>"oe",
-            "æ"=>"ae",
+        $utf8 = array(
+            "œ" => "oe",
+            "æ" => "ae",
             "à" => "a",
             "á" => "a",
             "â" => "a",
@@ -553,19 +600,57 @@ class AppointmentController extends AbstractController
             "&#7925;" => "y",
             "&#7927;" => "y",
             "&#7923;" => "y",
-            );
-        $term = strtr(mb_strtolower($request->query->get('term'),'UTF-8'), $utf8);
+        );
+        $term = strtr(mb_strtolower($request->query->get('term'), 'UTF-8'), $utf8);
         $results = array();
         $appointments = $appointmentRepository->getAllAppointmentOrderByPatientLastname();
         foreach ($appointments as $appointment) {
-            if (   strpos(strtr(mb_strtolower($appointment["lastname"],'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($appointment["firstname"],'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($appointment["lastname"]." ".$appointment["firstname"],'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($appointment["firstname"]." ".$appointment["lastname"],'UTF-8'),$utf8), $term) !== false) {
-                    $day=date_format($appointment["dayappointment"], 'd/m/Y');
-                    $earliestappointmenttime=date_format($appointment["earliestappointmenttime"], 'H:i');
-                    $latestappointmenttime=date_format($appointment["latestappointmenttime"], 'H:i');
-                    $results[] = [
+            if (
+                strpos(
+                    strtr(
+                        mb_strtolower(
+                            $appointment["lastname"],
+                            'UTF-8'
+                        ),
+                        $utf8
+                    ),
+                    $term
+                ) !== false
+                || strpos(
+                    strtr(
+                        mb_strtolower(
+                            $appointment["firstname"],
+                            'UTF-8'
+                        ),
+                        $utf8
+                    ),
+                    $term
+                ) !== false
+                || strpos(
+                    strtr(
+                        mb_strtolower(
+                            $appointment["lastname"] . " " . $appointment["firstname"],
+                            'UTF-8'
+                        ),
+                        $utf8
+                    ),
+                    $term
+                ) !== false
+                || strpos(
+                    strtr(
+                        mb_strtolower(
+                            $appointment["firstname"] . " " . $appointment["lastname"],
+                            'UTF-8'
+                        ),
+                        $utf8
+                    ),
+                    $term
+                ) !== false
+            ) {
+                $day = date_format($appointment["dayappointment"], 'd/m/Y');
+                $earliestappointmenttime = date_format($appointment["earliestappointmenttime"], 'H:i');
+                $latestappointmenttime = date_format($appointment["latestappointmenttime"], 'H:i');
+                $results[] = [
                     'id' => $appointment["id"],
                     'value' => $appointment["lastname"] . ' ' . $appointment["firstname"] . ' ' . $day,
                     'firstname' => $appointment["firstname"],
@@ -578,7 +663,7 @@ class AppointmentController extends AbstractController
                 ];
             }
         }
-        if(count($results)==0){
+        if (count($results) == 0) {
             $results[] = [
                 'id' => "notfound",
                 'value' => 'Aucun résultat',
@@ -587,4 +672,3 @@ class AppointmentController extends AbstractController
         return new JsonResponse($results);
     }
 }
-

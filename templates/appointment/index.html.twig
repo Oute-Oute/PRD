@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
-{% block javascripts %} 
-        {% if app.user == null %}<script type="text/javascript">document.location.href="/"</script>
-		{% endif %}
-	{% endblock %}
+{% block javascripts %}
+	{% if app.user == null %}
+		<script type="text/javascript">
+			document.location.href = "/"
+		</script>
+	{% endif %}
+{% endblock %}
 {% block title %}Liste des rendez-vous
 {% endblock %}
 
@@ -22,18 +25,19 @@
 {% endblock %}
 
 
-
 {% block body %}
 	<div class="index">
 		<h1 id="title">Liste des rendez-vous du
 			{{ currentdate|date("d/m/Y") }}</h1>
 
 		<!-- bouton pour l'ajout d'un nouveau rendez-vous -->
-		<button type="button" class="btn-add" onclick="addAppointment()">Ajouter un nouveau rendez-vous</button>
-		<button type="button" class="btn-add" onclick="CreateAuto()">Gérer les rendez-vous</button>
+		<button type="button" class="btn-add" onclick="addAppointment('add')">Ajouter un nouveau rendez-vous</button>
+		<button type="button" class="btn-add" onclick="addAppointment('auto')">Ajouter automatiquement des rendez-vous</button>
+
 
 		<div><input type="text" id="autocompleteInputPatientName" onkeyup="displayAll()" placeholder="Rechercher">
-		<i>3 caractères minimum</i></div>
+			<i>3 caractères minimum</i>
+		</div>
 		<!-- affichage de la liste de tous les rendez-vous -->
 		<table class="table table-striped" id='tableAppointment'>
 			<thead>
@@ -51,11 +55,9 @@
 			</thead>
 		</div>
 	</th>
-	
 
-</tr>
-</thead>
-<tbody id="appointmentTable">
+
+</tr></thead><tbody id="appointmentTable">
 {% for appointment in currentappointments %}
 	<tr class="original">
 		<td>{{ appointment.lastname }}
@@ -64,7 +66,7 @@
 		<td>{{ appointment.dayappointment|date("d/m/Y") }}</td>
 		<td>
 			<button type="button" class="btn-infos btn-secondary" onclick="showAppointment('{{ appointment.id }}')">Informations</a>
-			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.lastname }}', '{{ appointment.firstname }}', '{{ appointment.pathwayname }}', '{{ appointment.dayappointment|date(" d/m/Y") }}', '{{ appointment.earliestappointmenttime|date("H:i") }}', '{{ appointment.latestappointmenttime|date("H:i") }}')">Éditer</a>
+			<button type="button" class="btn-edit btn-secondary" onclick="editAppointment('{{ appointment.id }}', '{{ appointment.lastname }}', '{{ appointment.firstname }}', '{{ appointment.pathwayname }}', '{{ appointment.dayappointment|date(" d/m/y") }}', '{{ appointment.earliestappointmenttime|date(" h:i") }}', '{{ appointment.latestappointmenttime|date(" h:i") }}')">Éditer</a>
 			<button type="button" class="btn-delete btn-secondary" onclick="showPopup({{appointment.id}})">Supprimer</button>
 		</td>
 	</tr>
@@ -72,36 +74,14 @@
 	<tr>
 		<td colspan="5">Pas de rendez-vous créés !</td>
 	</tr>
-{% endfor %}
-
-</tbody>
-</table>
-	<div id="paginator">
-		{{knp_pagination_render(currentappointments,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}
-	</div>
-</div>
-{{ include ('appointment/add_appointment.html.twig') }}
-{{ include ('appointment/modal-auto.html.twig') }}
-{{ include ('appointment/edit_appointment.html.twig') }}
-{{ include ('appointment/show_appointment.html.twig') }}
-{{ include ('appointment/select_day.html.twig')}}
-{{ include ('appointment/modal_popup.html.twig')}}
-
-
-<script>
-	$( "#autocompleteInputPatientName" ).autocomplete({
-	source: "/autocompleteAppointment",
-	minLength: 3,
-	select: function( event, ui ) {
-		if(ui.item.id!="notfound") {
-			filterAppointment( ui.item);
-		}
-		else{
-			ui.item.value="";
-		}
-	}
-	}
-	);
-</script>
-{% endblock %}
-	
+{% endfor %}</tbody></table><div id="paginator">{{knp_pagination_render(currentappointments,'@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig')}}</div></div>{{ include ('appointment/add_appointment.html.twig') }}{{ include ('appointment/modal-auto.html.twig') }}{{ include ('appointment/edit_appointment.html.twig') }}{{ include ('appointment/show_appointment.html.twig') }}{{ include ('appointment/select_day.html.twig')}}{{ include ('appointment/modal_popup.html.twig')}}<script>$("#autocompleteInputPatientName").autocomplete({
+source: "/autocompleteAppointment",
+minLength: 3,
+select: function (event, ui) {
+if (ui.item.id != "notfound") {
+filterAppointment(ui.item);
+} else {
+ui.item.value = "";
+}
+}
+});</script>{% endblock %}

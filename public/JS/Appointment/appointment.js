@@ -22,14 +22,19 @@ function changeDate() {
 /**
  * Allows to open a modal to create a new appointment
  */
-function addAppointment() {
+function addAppointment(mode) {
   while (tagsPathways.length > 0) {
     tagsPathways.pop();
   }
   while (tagsPatients.length > 0) {
     tagsPatients.pop();
   }
-  $("#add-appointment-modal").modal("show");
+  if (mode == "add") {
+    $("#add-appointment-modal").modal("show");
+  }
+  if (mode == "auto") {
+    $("#auto-modal").modal("show");
+  }
   var dataPatients = JSON.parse(document.getElementById("patientValues").value.replaceAll("3aZt3r", " "));
   for (var i = 0; i < dataPatients.length; i++) {
     firstname = dataPatients[i]["firstname"];
@@ -462,9 +467,6 @@ function showPopup(id) {
   $('#modal-popup').modal('show')
 }
 
-function CreateAuto() {
-  $("#auto-modal").modal("show");
-}
 function hideAuto() {
   $("#auto-modal").modal("hide");
 }
