@@ -39,17 +39,26 @@ class PatientRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
+    //    /**
 //     * @return Patient[] Returns an array of Patient objects
 //     */
-   public function findAllPatient(): array
-   {
-       return $this->createQueryBuilder('p')
-           ->orderBy('LOWER(p.lastname)')
-           ->getQuery()
-           ->getResult()
-       ;
-   }
+    public function findAllPatient(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('LOWER(p.lastname)')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findMaxId(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('MAX(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?Patient
 //    {
