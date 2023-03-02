@@ -966,7 +966,7 @@ class ModificationPlanningController extends AbstractController
             $categoryMaterialResource = array();
             if (!array_key_exists($key, $activitiesMaterialResources)) {
                 $categoryMaterialResource[] = array(
-                    'id' => "h-default",
+                    'id' => "m-default",
                     'quantity' => 0,
                     'categoryname' => "Pas de Catégorie nécessaire"
                 );
