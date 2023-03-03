@@ -17,43 +17,44 @@ class PatientController extends AbstractController
 {
 
     /*
-      * @brief Allows to list every patients in the database with the paginator
+     * @brief Allows to list every patients in the database with the paginator
      */
-    public function patientGet(Request $request, PaginatorInterface $paginator,PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
+    public function patientGet(Request $request, PaginatorInterface $paginator, PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
-        $patients=$paginator->paginate(
+        $patients = $paginator->paginate(
             $patientRepository->findAllPatient(),
-            $request->query->getInt('page',1),
+            $request->query->getInt('page', 1),
             8
-        ); 
+        );
         return $this->render('patient/index.html.twig', ['patients' => $patients]);
     }
-    
+
     /*
-      * @brief Allows to list every patients in the database without pagination
+     * @brief Allows to list every patients in the database without pagination
      */
-    public function getAllPatient(PatientRepository $patientRepository){
-        $patient=$patientRepository->findBy(array(),array('lastname' => 'ASC')); 
-        return $patient; 
+    public function getAllPatient(PatientRepository $patientRepository)
+    {
+        $patient = $patientRepository->findBy(array(), array('lastname' => 'ASC'));
+        return $patient;
 
     }
 
     /*
-      * @brief Allows to add a patient in the database
+     * @brief Allows to add a patient in the database
      */
     public function patientAdd(Request $request, PatientRepository $patientRepository): Response
     {
         //Get parameters from the request
         $param = $request->request->all();
 
-        $lastname = $param['lastname'];       // le nom
-        $firstname = $param['firstname'];     // le prenom
+        $lastname = $param['lastname']; // le nom
+        $firstname = $param['firstname']; // le prenom
 
         //Creating the patient
-        $patient = new Patient(); 
+        $patient = new Patient();
         $patient->setLastname($lastname);
         $patient->setFirstname($firstname);
-            
+
         //Adding the patient in the database
         $patientRepository->add($patient, true);
 
@@ -61,7 +62,7 @@ class PatientController extends AbstractController
     }
 
     /*
-      * @brief Allows to edit a patient that is already in the database
+     * @brief Allows to edit a patient that is already in the database
      */
     public function patientEdit(Request $request, PatientRepository $patientRepository, EntityManagerInterface $entityManager): Response
     {
@@ -85,37 +86,33 @@ class PatientController extends AbstractController
     }
 
     /*
-      * @brief Allows to delete a patient that is already in the database
+     * @brief Allows to delete a patient that is already in the database
      */
-    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository,ManagerRegistry $doctrine): Response
+    public function patientDelete(Patient $patient, EntityManagerInterface $entityManager, PatientRepository $patientRepository, ManagerRegistry $doctrine): Response
     {
         //Deleting linked data to the patient
         $appointmentRepository = $doctrine->getManager()->getRepository("App\Entity\Appointment");
         $appointments = $appointmentRepository->findBy(['patient' => $patient]);
 
-        foreach($appointments as $appointment)
-        {
+        foreach ($appointments as $appointment) {
             $date = $appointment->getDayappointment()->format('Y-m-d');
-             
+
             $scheduledActivityRepository = $doctrine->getManager()->getRepository("App\Entity\ScheduledActivity");
             $scheduledActivities = $scheduledActivityRepository->findBy(['appointment' => $appointment]);
 
-            foreach($scheduledActivities as $scheduledActivity)
-            {
-                
+            foreach ($scheduledActivities as $scheduledActivity) {
+
                 $materialResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\MaterialResourceScheduled");
                 $allMaterialResourceScheduled = $materialResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
-                foreach($allMaterialResourceScheduled as $materialResourceScheduled)
-                {
+                foreach ($allMaterialResourceScheduled as $materialResourceScheduled) {
                     $materialResourceScheduledRepository->remove($materialResourceScheduled, true);
                 }
 
                 $humanResourceScheduledRepository = $doctrine->getManager()->getRepository("App\Entity\HumanResourceScheduled");
                 $allHumanResourceScheduled = $humanResourceScheduledRepository->findBy(['scheduledactivity' => $scheduledActivity]);
 
-                foreach($allHumanResourceScheduled as $humanResourceScheduled)
-                {
+                foreach ($allHumanResourceScheduled as $humanResourceScheduled) {
                     $humanResourceScheduledRepository->remove($humanResourceScheduled, true);
                 }
 
@@ -138,7 +135,7 @@ class PatientController extends AbstractController
     }
 
     /*
-      * @brief Allows to display the data of a specific patient
+     * @brief Allows to display the data of a specific patient
      */
     public function getDataPatient(ManagerRegistry $doctrine)
     {
@@ -147,16 +144,16 @@ class PatientController extends AbstractController
     }
 
     /*
-      * @brief Allows to display every appointments linked to a specific patient
+     * @brief Allows to display every appointments linked to a specific patient
      */
     public function getAppointmentByPatientId($id, ManagerRegistry $doctrine)
     {
-        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(["id"=>$id]);
-        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["patient"=>$patient]);
-        $appointmentArray=[];
+        $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(["id" => $id]);
+        $appointments = $doctrine->getManager()->getRepository("App\Entity\Appointment")->findBy(["patient" => $patient]);
+        $appointmentArray = [];
         foreach ($appointments as $appointment) {
             $date = $appointment->getDayappointment()->format('U');
-            if($date >= date('U')){
+            if ($date >= date('U')) {
                 $appointmentArray[] = [
                     'pathwayname' => $appointment->getPathway()->getPathwayname(),
                     'date' => $appointment->getDayappointment()->format('d-m-Y'),
@@ -168,13 +165,13 @@ class PatientController extends AbstractController
     }
 
     /*
-      * @brief Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
+     * @brief Allows to autocomplete the searchbar with the firstname and lastname of patients that are in database
      */
     public function autocompletePatient(Request $request, PatientRepository $patientRepository)
     {
-        $utf8 = array( 
-            "œ"=>"oe",
-            "æ"=>"ae",
+        $utf8 = array(
+            "œ" => "oe",
+            "æ" => "ae",
             "à" => "a",
             "á" => "a",
             "â" => "a",
@@ -307,13 +304,19 @@ class PatientController extends AbstractController
             "&#7925;" => "y",
             "&#7927;" => "y",
             "&#7923;" => "y",
-            );
-        $term = strtr(mb_strtolower($request->query->get('term'),'UTF-8'), $utf8);
+        );
+        $term = strtr(mb_strtolower($request->query->get('term'), 'UTF-8'), $utf8);
         $patients = $patientRepository->findAll();
         $results = array();
         foreach ($patients as $patient) {
-            if (   strpos(strtr(mb_strtolower($patient->getLastname()." ".$patient->getFirstname(),'UTF-8'),$utf8), $term) !== false 
-                || strpos(strtr(mb_strtolower($patient->getFirstname()." ".$patient->getLastname(),'UTF-8'),$utf8), $term) !== false) {
+            if (
+                strpos(strtr(mb_strtolower($patient->getLastname() . " " . $patient->getFirstname(),
+                    'UTF-8'),
+                    $utf8), $term) !== false
+                || strpos(strtr(mb_strtolower($patient->getFirstname() . " " . $patient->getLastname(),
+                    'UTF-8'),
+                    $utf8), $term) !== false
+            ) {
                 $results[] = [
                     'id' => $patient->getId(),
                     'value' => $patient->getLastname() . ' ' . $patient->getFirstname(),
@@ -323,7 +326,7 @@ class PatientController extends AbstractController
                 ];
             }
         }
-        if(count($results)==0){
+        if (count($results) == 0) {
             $results[] = [
                 'id' => "notfound",
                 'value' => 'Aucun résultat',

@@ -471,7 +471,6 @@ class AppointmentController extends AbstractController
             "à" => "a",
             "á" => "a",
             "â" => "a",
-            "à" => "a",
             "ä" => "a",
             "å" => "a",
             "&#257;" => "a",
