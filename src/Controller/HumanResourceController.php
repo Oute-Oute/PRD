@@ -740,6 +740,64 @@ class HumanResourceController extends AbstractController
         return $activitiesArray;
     }
 
+
+    public function HRAutoAdd(Request $request, HumanResourceRepository $humanResourceRepository, ManagerRegistry $doctrine): Response
+    {
+        if ($request->getMethod() === 'POST') {
+            $param = $request->request->all();
+
+            for ($i = 0; $i < $param["quantity"]; $i++) {
+                $humanResource = new HumanResource();
+                //working hours
+                $workingday = array();
+                array_push($workingday, $param['begin'] . ':00', $param['end'] . ':00');
+                $humanResourceRepository = new HumanResourceRepository($doctrine);
+                $humanResource->setHumanresourcename("");
+                $humanResourceRepository->add($humanResource, true);
+                $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
+
+                //We get all categories from the database
+                $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
+                $categories = $categoryOfHumanResourceRepository->findAll();
+
+                //We get all working hours
+                $workingHoursRepository = new WorkingHoursRepository($doctrine);
+
+                //We get the number of category linked to the new human resource
+                $nbCategory = $param['nbCategory'];
+                //filling working hours
+                for ($j = 0; $j < 7; $j++) {
+                    if (($workingday[0] != ':00') && ($workingday[1] != ':00')) {
+                        $workingHoursDay = new WorkingHours();
+                        $dayBegin = DateTime::createFromFormat('H:i:s', $workingday[0]);
+                        $dayEnd = DateTime::createFromFormat('H:i:s', $workingday[1]);
+                        $workingHoursDay->setStarttime($dayBegin);
+                        $workingHoursDay->setEndtime($dayEnd);
+                        $workingHoursDay->setHumanresource($humanResource);
+                        $workingHoursDay->setDayweek($j);
+                        $workingHoursRepository->add($workingHoursDay, true);
+                    }
+                }
+                //creating links between categories and the resource
+                $categories = "";
+                for ($k = 0; $k < $nbCategory; $k++) {
+                    $linkCategRes = new CategoryOfHumanResource();
+
+                    $linkCategRes->setHumanresource($humanResource);
+                    $linkCategRes->setHumanResourcecategory($humanResourceCategoryRepository->findById($param['id-category-' . $k])[0]);
+                    $categories .= $linkCategRes->getHumanResourcecategory()->getCategoryname() . "-";
+                    $categoryOfHumanResourceRepository->add($linkCategRes, true);
+                }
+                $humanMaxId = $humanResourceRepository->findMaxId();
+                $categories = rtrim($categories, "-");
+                //var_dump($categories);
+                $humanResource->setHumanresourcename($categories . "_" . $humanMaxId);
+                $humanResourceRepository->add($humanResource, true);
+            }
+            return $this->redirectToRoute('index_human_resources', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
     /*
      * @brief Allows to autocomplete human resources researches
      */

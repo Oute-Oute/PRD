@@ -39,28 +39,36 @@ class HumanResourceRepository extends ServiceEntityRepository
         }
     }
 
-   /**
-    * @return HumanResource[] Returns an array of HumanResource objects
-    */
-   public function findAllHumanResources(): array
-   {
-       return $this->createQueryBuilder('h')
-       ->orderBy('h.id', 'ASC')
-           ->getQuery()
-           ->getResult()
-       ;
-   }
+    /**
+     * @return HumanResource[] Returns an array of HumanResource objects
+     */
+    public function findAllHumanResources(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->orderBy('h.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
-   /**
-    * @return HumanResource[] Returns an array of HumanResource objects
-    */
+    /**
+     * @return HumanResource[] Returns an array of HumanResource objects
+     */
     public function findHumanResourcesSorted(): array
     {
         return $this->createQueryBuilder('h')
             ->orderBy('LOWER(h.humanresourcename)')
             ->getQuery()
             ->getResult();
-    } 
+    }
+    public function findMaxId(): int
+    {
+        return $this->createQueryBuilder('h')
+            ->select('MAX(h.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?HumanResource
 //    {
