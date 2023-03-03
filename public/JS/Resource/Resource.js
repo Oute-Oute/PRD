@@ -258,6 +258,12 @@ function change_tab_human(id) {
  * @param {*} selected - the selected resource
  */
 function filterResource(type, selected = null) {
+    if (type == "human") {
+        delPath = "verifyHumanResourceScheduledAppointments";
+    }
+    else {
+        delPath = "verifyMaterialResourceScheduledAppointments";
+    }
     if (selected.id != "notfound") {
         var categoriesStr = [];
         //create a string of the categories of a resource
@@ -298,7 +304,7 @@ function filterResource(type, selected = null) {
         var deleteButton = document.createElement('button'); //create delete button
         deleteButton.setAttribute('class', 'btn-delete btn-secondary');
         deleteButton.append('Supprimer');
-        deleteButton.setAttribute('onclick', 'verifyHumanResourceScheduledAppointments(' + selected.id + ')');
+        deleteButton.setAttribute('onclick', delPath + '(' + selected.id + ')');
         //add all buttons to the cell
         buttons.appendChild(infos);
         buttons.appendChild(unavailabilities);
