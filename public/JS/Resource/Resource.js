@@ -74,18 +74,33 @@ function showEditMaterialCategModalForm(id, name) {
 /**
  * Allows to check fields in the modal form to create a human resource
  */
-function humanResourceVerify() {
-
+function humanResourceVerify(type) {
     // D'abord on recupere la div qui contient toutes les activity
-    let categoriesContainer = document.getElementById('categories-container')
-    let btnAdd = document.getElementById('btn-none-add-human-resource')
-    let divWorkingHoursBegin = document.getElementById('working-hours-input-begin')
-    let divWorkingHoursEnd = document.getElementById('working-hours-input-end')
+    let categoriesContainer
+    let btnAdd
+    let divWorkingHoursBegin
+    let divWorkingHoursEnd
+    let nbCategory
+    let nbOfDay
     let pbWorkingHoursSolo = false;
     let endHigherThanBegin = false;
-    let nbCategory = document.getElementById('nbCategory');
     var nbCateg = 0;
-
+    if (type == "new") {
+        categoriesContainer = document.getElementById('categories-container')
+        btnAdd = document.getElementById('btn-none-add-human-resource')
+        divWorkingHoursBegin = document.getElementById('working-hours-input-begin')
+        divWorkingHoursEnd = document.getElementById('working-hours-input-end')
+        nbCategory = document.getElementById('nbCategory');
+        nbOfDay = 7
+    }
+    if (type == "auto") {
+        categoriesContainer = document.getElementById('categories-container-auto')
+        btnAdd = document.getElementById('btn-none-add-human-resource-auto')
+        divWorkingHoursBegin = document.getElementById('working-hours-input-begin-auto')
+        divWorkingHoursEnd = document.getElementById('working-hours-input-end-auto')
+        nbCategory = document.getElementById('nbCategory-auto');
+        nbOfDay = 1
+    }
     for (let i = 0; i <= categoriesContainer.children.length - 1; i++) {
         if (categoriesContainer.children[i].children[0].checked) {
             categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-' + nbCateg)
@@ -93,10 +108,8 @@ function humanResourceVerify() {
             categoriesContainer.children[i].children[1].setAttribute('id', 'lbl-category-' + nbCateg)
             nbCateg = nbCateg + 1;
         }
-
     }
-
-    for (let j = 0; j <= 6; j++) {
+    for (let j = 0; j < nbOfDay; j++) {
         if ((divWorkingHoursBegin.children[j].value == '' && divWorkingHoursEnd.children[j].value != '') || (divWorkingHoursBegin.children[j].value != '' && divWorkingHoursEnd.children[j].value == '')) {
             pbWorkingHoursSolo = true;
         }
@@ -114,8 +127,6 @@ function humanResourceVerify() {
     else {
         btnAdd.click();
     }
-
-
 }
 
 
@@ -543,6 +554,7 @@ function showMaterialResourceCategoryModal(id) {
 }
 
 function resetWorkingHours(day, page) {
+    console.log("resetWorkingHours")
     if (page == 'new') {
         begin = document.getElementById('working-hours-input-begin')
         end = document.getElementById('working-hours-input-end')
@@ -550,6 +562,10 @@ function resetWorkingHours(day, page) {
     if (page == 'edit') {
         begin = document.getElementById('working-hours-input-begin-edit')
         end = document.getElementById('working-hours-input-end-edit')
+    }
+    if (page == 'auto') {
+        begin = document.getElementById('working-hours-input-begin-auto')
+        end = document.getElementById('working-hours-input-end-auto')
     }
 
     inputBegin = begin.getElementsByTagName('input')
