@@ -1,44 +1,50 @@
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
+	<link rel="stylesheet" href="{{ asset('CSS/Global/NewCrud.css') }}">
 {% endblock %}
- 
-<div class="modal" id="new-material-resource-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Ajouter une ressource matérielle</h2>
-            </div>
-            <form action="{{ path('MaterialResPost') }}" method="post">
-                <div class="modal-body">
-                    <!-- input invisible (juste pour passer le nb d'activité dans la requete -->
-                    <input style="display:none;" name="nbCategory" id="nbCategory">
 
-                    <div class='flex-col'>
-                            <label class="label" for='name'> Nom de la ressource </label>
-                            <input  required="required" class="input" id='resourcename' type='text' name='resourcename'>
-                    </div> 
- 
-                    <fieldset id="fs-add-material-category">
-                        <legend>Choisissez les catégories de votre ressource</legend>
-                         <div id="categories-container"> 
-                                {% for material_resource_category in material_resources_categories %} 
-                                <div>
-                                <input value = '{{material_resource_category.id }}'type="checkbox" id="category" name="category">
-                                <label id = "lbl-category">{{ material_resource_category.categoryname }}</label>
-                                </div>
-                                {% else %}
-                                    <p> Pas de catégories créées ! </p>
-                                {% endfor %}
-                            </div>
-                    </fieldset>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-                    <button type = "button" onclick="materialResourceVerify()" class="btn-valide btn-secondary"> Ajouter </button>
-                    <button id = 'btn-none-add-human-resource' style = "display : none" type = "submit"></button>
-                </div>
-    	    </form>
-        </div>
-    </div>
-</div>
-</div>
+<div class="modal" id="new-material-resource-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Ajouter une ressource matérielle</h2>
+			</div>
+			<form action="{{ path('MaterialResPost') }}" method="post">
+				<div
+					class="modal-body">
+					<!-- input invisible (juste pour passer le nb d'activité dans la requete -->
+					<input style="display:none;" name="nbCategory" id="nbCategory">
+
+					<div class='flex-col'>
+						<label class="label" for='name'>
+							Nom de la ressource
+						</label>
+						<input required="required" class="input" id='resourcename' type='text' name='resourcename'>
+					</div>
+
+					<fieldset id="fs-add-material-category">
+						<legend>Choisissez les catégories de votre ressource</legend>
+						<div id="categories-container">
+							{% for material_resource_category in material_resources_categories %}
+								<div>
+									<input value='{{material_resource_category.id }}' type="checkbox" id="category" name="category">
+									<label id="lbl-category">{{ material_resource_category.categoryname }}</label>
+								</div>
+							{% else %}
+								<p>
+									Pas de catégories créées !
+								</p>
+							{% endfor %}
+						</div>
+					</fieldset>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+					<button type="button" onclick="materialResourceVerify('new')" class="btn-valide btn-secondary">
+						Ajouter
+					</button>
+					<button id='btn-none-add-material-resource' style="display : none" type="submit"></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div></div>

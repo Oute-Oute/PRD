@@ -755,14 +755,11 @@ class HumanResourceController extends AbstractController
                 $humanResource->setHumanresourcename("");
                 $humanResourceRepository->add($humanResource, true);
                 $humanResourceCategoryRepository = new HumanResourceCategoryRepository($doctrine);
-
                 //We get all categories from the database
                 $categoryOfHumanResourceRepository = new CategoryOfHumanResourceRepository($doctrine);
                 $categories = $categoryOfHumanResourceRepository->findAll();
-
                 //We get all working hours
                 $workingHoursRepository = new WorkingHoursRepository($doctrine);
-
                 //We get the number of category linked to the new human resource
                 $nbCategory = $param['nbCategory'];
                 //filling working hours
@@ -782,7 +779,6 @@ class HumanResourceController extends AbstractController
                 $categories = "";
                 for ($k = 0; $k < $nbCategory; $k++) {
                     $linkCategRes = new CategoryOfHumanResource();
-
                     $linkCategRes->setHumanresource($humanResource);
                     $linkCategRes->setHumanResourcecategory($humanResourceCategoryRepository->findById($param['id-category-' . $k])[0]);
                     $categories .= $linkCategRes->getHumanResourcecategory()->getCategoryname() . "-";
@@ -790,7 +786,6 @@ class HumanResourceController extends AbstractController
                 }
                 $humanMaxId = $humanResourceRepository->findMaxId();
                 $categories = rtrim($categories, "-");
-                //var_dump($categories);
                 $humanResource->setHumanresourcename($categories . "_" . $humanMaxId);
                 $humanResourceRepository->add($humanResource, true);
             }

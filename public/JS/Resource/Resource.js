@@ -101,7 +101,7 @@ function humanResourceVerify(type) {
         nbCategory = document.getElementById('nbCategory-auto');
         nbOfDay = 1
     }
-    for (let i = 0; i <= categoriesContainer.children.length - 1; i++) {
+    for (let i = 0; i < categoriesContainer.children.length; i++) {
         if (categoriesContainer.children[i].children[0].checked) {
             categoriesContainer.children[i].children[0].setAttribute('name', 'id-category-' + nbCateg)
             categoriesContainer.children[i].children[0].setAttribute('id', 'id-category-' + nbCateg)
@@ -133,13 +133,24 @@ function humanResourceVerify(type) {
 /**
  * Allows to check fields in the modal form to create a material resource
  */
-function materialResourceVerify() {
+function materialResourceVerify(type) {
 
     // D'abord on recupere la div qui contient toutes les activity
-    let categoriesContainer = document.getElementById('categories-container')
-    let btnAdd = document.getElementById('btn-none-add-human-resource')
-    let nbCategory = document.getElementById('nbCategory');
+    let categoriesContainer
+    let btnAdd
+    let nbCategory
     var nbCateg = 0;
+    if (type == "new") {
+        categoriesContainer = document.getElementById('categories-container')
+        btnAdd = document.getElementById('btn-none-add-material-resource')
+        nbCategory = document.getElementById('nbCategory');
+    }
+    if (type == "auto") {
+        categoriesContainer = document.getElementById('categories-container-auto')
+        btnAdd = document.getElementById('btn-none-add-material-resource-auto')
+        nbCategory = document.getElementById('nbCategory-auto');
+    }
+
     // On parcours toutes nos activités 
     // On set leur 'name' et on verifie leurs contenus
     for (let i = 0; i <= categoriesContainer.children.length - 1; i++) {
@@ -269,6 +280,12 @@ function change_tab_human(id) {
  * @param {*} selected - the selected resource
  */
 function filterResource(type, selected = null) {
+    if (type == "human") {
+        delPath = "verifyHumanResourceScheduledAppointments";
+    }
+    else {
+        delPath = "verifyMaterialResourceScheduledAppointments";
+    }
     if (selected.id != "notfound") {
         var categoriesStr = [];
         //create a string of the categories of a resource
@@ -309,7 +326,7 @@ function filterResource(type, selected = null) {
         var deleteButton = document.createElement('button'); //create delete button
         deleteButton.setAttribute('class', 'btn-delete btn-secondary');
         deleteButton.append('Supprimer');
-        deleteButton.setAttribute('onclick', 'verifyHumanResourceScheduledAppointments(' + selected.id + ')');
+        deleteButton.setAttribute('onclick', delPath + '(' + selected.id + ')');
         //add all buttons to the cell
         buttons.appendChild(infos);
         buttons.appendChild(unavailabilities);

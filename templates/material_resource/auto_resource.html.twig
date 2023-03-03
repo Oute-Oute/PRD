@@ -10,15 +10,17 @@
 				<h2 class="modal-title">Ajouter automatiquement des ressources humaines</h2>
 			</div>
 
-			<form action="{{ path('HumanResPost') }}" method="post">
+			<form action="{{ path('MRAutoAdd') }}" method="post">
+
 				<div
 					class="modal-body">
 					<!-- input invisible (juste pour passer le nb d'activité dans la requete -->
-					<input style="display:none;" name="nbCategory" id="nbCategory">
+					<input style="display:none;" name="nbCategory" id="nbCategory-auto">
 					<fieldset id="fs-add-human-category">
 						<legend>Choisissez les catégories de votre ressource</legend>
 
-						<div id="categories-container">
+						<div id="categories-container-auto">
+
 							{% for material_resource_category in material_resources_categories %}
 								<div>
 									<input value='{{material_resource_category.id }}' type="checkbox" id="category" name="category">
@@ -36,17 +38,18 @@
 					<legend id="">Choisissez la quantité de ressources</legend>
 					<div id='quantity-auto'>
 						<div id="quantity">
-							<input type="number" id="quantity" name="quantity" min="1" max="100" value="1" placeholder="Quantité">
+							<input type="number" id="quantity" name="quantity" min="1" max="100" placeholder="Quantité" required>
 						</div>
 
 					</div>
 				</fieldset>
 				<div class="modal-footer">
 					<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-					<button type="button" onclick="humanResourceVerify()" class="btn-valide btn-secondary">
+					<button type="button" onclick="materialResourceVerify('auto')" class="btn-valide btn-secondary">
 						Ajouter
 					</button>
-					<button id='btn-none-add-human-resource' style="display : none" type="submit"></button>
+					<button id='btn-none-add-material-resource-auto' style="display : none" type="submit"></button>
+
 				</div>
 			</form>
 		</div>

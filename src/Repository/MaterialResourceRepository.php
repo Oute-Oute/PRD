@@ -40,15 +40,25 @@ class MaterialResourceRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return MaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
-    */
+     * @return MaterialResourceCategory[] Returns an array of MaterialResourceCategory objects
+     */
     public function findMaterialResourcesSorted(): array
     {
         return $this->createQueryBuilder('m')
             ->orderBy('LOWER(m.materialresourcename)')
             ->getQuery()
             ->getResult();
-    } 
+    }
+
+    public function findMaxId(): int
+    {
+        return $this->createQueryBuilder('m')
+            ->select('MAX(m.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
 
 //    /**
 //     * @return MaterialResource[] Returns an array of MaterialResource objects
