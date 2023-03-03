@@ -397,10 +397,10 @@ AppointmentAutoAdd:
 
 HRAutoAdd:
   path: /HRAutoAdd
-  controller : App\Controller\HumanResourceController::autoAddHR
+  controller : App\Controller\HumanResourceController::HRAutoAdd
   methods: [POST]
 
 MRAutoAdd:
   path: /MRAutoAdd
-  controller : App\Controller\MaterialResourceController::autoAddMR
+  controller : App\Controller\MaterialResourceController::MRAutoAdd
   methods: [POST]
