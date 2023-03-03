@@ -152,7 +152,8 @@ ul.ui-autocomplete {
 
 #working-hours-input-begin,
 #working-hours-input-begin-edit,
-#working-hours-infos-begin {
+#working-hours-infos-begin,
+#working-hours-input-begin-auto {
 	display: flex;
 	flex-direction: column;
 	width: 33%;
@@ -162,7 +163,8 @@ ul.ui-autocomplete {
 
 #working-hours-input-end,
 #working-hours-input-end-edit,
-#working-hours-infos-end {
+#working-hours-infos-end,
+#working-hours-input-end-auto {
 	display: flex;
 	flex-direction: column;
 	width: 33%;
