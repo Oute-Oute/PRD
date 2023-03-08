@@ -19,7 +19,7 @@ class CategoryOfHumanResource
 
     /**
      * @ORM\ManyToOne(targetEntity=HumanResource::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $humanresource;
 
@@ -28,7 +28,7 @@ class CategoryOfHumanResource
      * @ORM\JoinColumn(nullable=false)
      */
     private $humanresourcecategory;
- 
+
     public function getId(): ?int
     {
         return $this->id;

@@ -19,13 +19,13 @@ class ScheduledActivity
 
     /**
      * @ORM\ManyToOne(targetEntity=Activity::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $activity;
 
     /**
      * @ORM\ManyToOne(targetEntity=Appointment::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $appointment;
 

@@ -19,7 +19,7 @@ class CategoryOfMaterialResource
 
     /**
      * @ORM\ManyToOne(targetEntity=MaterialResource::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $materialresource;
 

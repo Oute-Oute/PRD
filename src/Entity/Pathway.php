@@ -39,18 +39,6 @@ class Pathway
         return $this;
     }
 
-    public function getPathway(): ?Pathway
-    {
-        return $this->pathway;
-    }
-
-    public function setPathway(?Pathway $pathway): self
-    {
-        $this->pathway = $pathway;
-
-        return $this;
-    }
-
     public function __toString()
     {
         return $this->getPathwayname();

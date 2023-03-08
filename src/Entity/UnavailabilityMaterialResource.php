@@ -19,13 +19,13 @@ class UnavailabilityMaterialResource
 
     /**
      * @ORM\ManyToOne(targetEntity=MaterialResource::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $materialresource;
 
     /**
      * @ORM\ManyToOne(targetEntity=Unavailability::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false,)
      */
     private $unavailability;
 

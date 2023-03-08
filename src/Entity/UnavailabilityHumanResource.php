@@ -19,13 +19,13 @@ class UnavailabilityHumanResource
 
     /**
      * @ORM\ManyToOne(targetEntity=HumanResource::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $humanresource;
 
     /**
      * @ORM\ManyToOne(targetEntity=Unavailability::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $unavailability;
 

@@ -19,13 +19,13 @@ class MaterialResourceScheduled
 
     /**
      * @ORM\ManyToOne(targetEntity=ScheduledActivity::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $scheduledactivity;
 
     /**
      * @ORM\ManyToOne(targetEntity=MaterialResource::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $materialresource;
 
