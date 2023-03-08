@@ -404,3 +404,13 @@ MRAutoAdd:
   path: /MRAutoAdd
   controller : App\Controller\MaterialResourceController::MRAutoAdd
   methods: [POST]
+
+SerializeDB:
+  path: /serializeDB
+  controller: App\Controller\TestsController::serializeDB
+  methods: [GET]
+
+DeserializeDB:
+  path: /deserializeDB
+  controller: App\Controller\TestsController::deserializeDB
+  methods: [GET]
