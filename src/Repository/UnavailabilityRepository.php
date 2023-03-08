@@ -39,6 +39,11 @@ class UnavailabilityRepository extends ServiceEntityRepository
         }
     }
 
+    public function deleteALl(): void
+    {
+        $this->getEntityManager()->createQuery('DELETE FROM App\Entity\Unavailability')->execute();
+    }
+
 //    /**
 //     * @return Unavailability[] Returns an array of Unavailability objects
 //     */

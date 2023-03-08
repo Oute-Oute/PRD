@@ -39,6 +39,14 @@ class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function deleteALl()
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->delete();
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
+
 //    /**
 //     * @return CategoryOfMaterialResource[] Returns an array of CategoryOfMaterialResource objects
 //     */

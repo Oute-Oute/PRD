@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\ScheduledActivity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Doctrine_Core; 
+use Doctrine\ORM\Doctrine_Core;
 
 /**
  * @extends ServiceEntityRepository<ScheduledActivity>
@@ -41,12 +41,20 @@ class ScheduledActivityRepository extends ServiceEntityRepository
     }
 
     public function findSchedulerActivitiesByDate($date)
-    {   
-        $qb= $this->createQueryBuilder('sa')
+    {
+        $qb = $this->createQueryBuilder('sa')
             ->join('sa.appointment', 'a')
             ->where('a.dayappointment = :date')
             ->setParameter('date', $date);
-        $query=$qb->getQuery()->getResult();
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
+
+    public function deleteALl()
+    {
+        $qb = $this->createQueryBuilder('sa')
+            ->delete();
+        $query = $qb->getQuery()->getResult();
         return $query;
     }
 

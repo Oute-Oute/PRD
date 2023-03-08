@@ -60,6 +60,15 @@ class PatientRepository extends ServiceEntityRepository
         ;
     }
 
+    public function deleteALl()
+    {
+        $this->createQueryBuilder('p')
+            ->delete()
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
 //    public function findOneBySomeField($value): ?Patient
 //    {
 //        return $this->createQueryBuilder('p')

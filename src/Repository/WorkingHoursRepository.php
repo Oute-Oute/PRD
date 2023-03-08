@@ -39,6 +39,11 @@ class WorkingHoursRepository extends ServiceEntityRepository
         }
     }
 
+    public function deleteALl(): void
+    {
+        $this->getEntityManager()->createQuery('DELETE FROM App\Entity\WorkingHours')->execute();
+    }
+
 //    /**
 //     * @return WorkingHours[] Returns an array of WorkingHours objects
 //     */

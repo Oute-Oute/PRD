@@ -59,6 +59,13 @@ class MaterialResourceRepository extends ServiceEntityRepository
         ;
     }
 
+    public function deleteALl()
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->delete();
+        $qb->getQuery()->execute();
+    }
+
 
 //    /**
 //     * @return MaterialResource[] Returns an array of MaterialResource objects

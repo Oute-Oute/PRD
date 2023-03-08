@@ -39,6 +39,11 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function deleteALl(): void
+    {
+        $this->getEntityManager()->createQuery('DELETE FROM App\Entity\UnavailabilityHumanResource')->execute();
+    }
+
 //    /**
 //     * @return UnavailabilityHumanResource[] Returns an array of UnavailabilityHumanResource objects
 //     */

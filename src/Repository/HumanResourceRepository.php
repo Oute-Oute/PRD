@@ -70,6 +70,14 @@ class HumanResourceRepository extends ServiceEntityRepository
         ;
     }
 
+    public function deleteALl(): void
+    {
+        $this->createQueryBuilder('h')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
 //    public function findOneBySomeField($value): ?HumanResource
 //    {
 //        return $this->createQueryBuilder('h')

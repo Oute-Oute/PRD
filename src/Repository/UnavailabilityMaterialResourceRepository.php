@@ -39,6 +39,11 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function deleteALl(): void
+    {
+        $this->getEntityManager()->createQuery('DELETE FROM App\Entity\UnavailabilityMaterialResource')->execute();
+    }
+
 //    /**
 //     * @return UnavailabilityMaterialResource[] Returns an array of UnavailabilityMaterialResource objects
 //     */
