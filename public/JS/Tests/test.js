@@ -80,6 +80,8 @@ function NewTest() {
 	newTest.appendChild(newTestData);
 	testsGrid.appendChild(newTest);
 	numberOfTests++;
+	//redirect to /serializeDB
+	window.location.href = "/serializeDB";
 }
 
 function DeleteTest(id) {
