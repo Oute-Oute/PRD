@@ -18,14 +18,14 @@ class SimulationInfo
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean")
      */
-    private $simulationnumber;
+    private $iscurrent;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
-    private $simulationdate;
+    private $simulationdatetime;
 
     /**
      * @ORM\Column(type="integer")
@@ -47,26 +47,26 @@ class SimulationInfo
         return $this->id;
     }
 
-    public function getSimulationnumber(): ?int
+    public function isCurrent(): ?bool
     {
-        return $this->simulationnumber;
+        return $this->iscurrent;
     }
 
-    public function setSimulationnumber(int $simulationnumber): self
+    public function setCurrent(bool $current): self
     {
-        $this->simulationnumber = $simulationnumber;
+        $this->iscurrent = $current;
 
         return $this;
     }
 
-    public function getSimulationdate(): ?\DateTimeInterface
+    public function getSimulationdatetime(): ?\DateTimeInterface
     {
-        return $this->simulationdate;
+        return $this->simulationdatetime;
     }
 
-    public function setSimulationdate(\DateTimeInterface $simulationdate): self
+    public function setSimulationdatetime(\DateTimeInterface $simulationdate): self
     {
-        $this->simulationdate = $simulationdate;
+        $this->simulationdatetime = $simulationdate;
 
         return $this;
     }

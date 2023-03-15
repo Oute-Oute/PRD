@@ -78,6 +78,15 @@ class HumanResourceRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    public function getNumberOfHumanResources(): int
+    {
+        return $this->createQueryBuilder('h')
+            ->select('COUNT(h.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     public function setFromArray(array $data, ManagerRegistry $registry)
     {
         $humanResource = new HumanResource();

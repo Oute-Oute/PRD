@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\SimulationInfo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @extends ServiceEntityRepository<SimulationInfo>
@@ -21,13 +22,15 @@ class SimulationInfoRepository extends ServiceEntityRepository
         parent::__construct($registry, SimulationInfo::class);
     }
 
-    public function add(SimulationInfo $entity, bool $flush = false): void
+    public function add(SimulationInfo $entity, bool $flush = false): int
     {
         $this->getEntityManager()->persist($entity);
-
+        $lastId = new Integer;
         if ($flush) {
             $this->getEntityManager()->flush();
+            $lastId = $entity->getId();
         }
+        return $lastId;
     }
 
     public function remove(SimulationInfo $entity, bool $flush = false): void
@@ -37,6 +40,14 @@ class SimulationInfoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findAllOrderByCurrent(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->orderBy('s.iscurrent', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

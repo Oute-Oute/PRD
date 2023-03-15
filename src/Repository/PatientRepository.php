@@ -69,10 +69,18 @@ class PatientRepository extends ServiceEntityRepository
         ;
     }
 
+    public function getNumberOfPatients(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     public function setFromArray(array $data, ManagerRegistry $registry)
     {
         $patient = new Patient();
-        $patient->setId($data['id']);
         $patient->setFirstname($data['firstname']);
         $patient->setLastname($data['lastname']);
         $this->add($patient, true);

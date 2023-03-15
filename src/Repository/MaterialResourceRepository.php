@@ -66,6 +66,15 @@ class MaterialResourceRepository extends ServiceEntityRepository
         $qb->getQuery()->execute();
     }
 
+    public function getNumberOfMaterialResources(): int
+    {
+        return $this->createQueryBuilder('m')
+            ->select('COUNT(m.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     public function setFromArray(array $data, ManagerRegistry $registry)
     {
         $materialResource = new MaterialResource();
