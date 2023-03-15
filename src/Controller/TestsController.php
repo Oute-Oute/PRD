@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -42,49 +43,54 @@ class TestsController extends AbstractController
     {
         $entities = [];
         $filenames = ["patients", "appointments", "humanresources", "categoryofhumanresources", "workinghours", "materialresources", "categoryofmaterialresources", "unavailabilities", "unavailabilityhumanresources", "unavailabilitymaterialresources", "scheduledactivities", "humanresourcescheduled", "materialresourcescheduled"];
-        $entities[0] = $doctrine->getRepository("App\Entity\Patient")->findAll();
-        $entities[1] = $doctrine->getRepository("App\Entity\Appointment")->findAll();
-        $entities[2] = $doctrine->getRepository("App\Entity\HumanResource")->findAll();
-        $entities[3] = $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->findAll();
-        $entities[4] = $doctrine->getRepository("App\Entity\WorkingHours")->findAll();
-        $entities[5] = $doctrine->getRepository("App\Entity\MaterialResource")->findAll();
-        $entities[6] = $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->findAll();
-        $entities[7] = $doctrine->getRepository("App\Entity\Unavailability")->findAll();
-        $entities[8] = $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->findAll();
-        $entities[9] = $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->findAll();
-        $entities[10] = $doctrine->getRepository("App\Entity\ScheduledActivity")->findAll();
-        $entities[11] = $doctrine->getRepository("App\Entity\HumanResourceScheduled")->findAll();
-        $entities[12] = $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->findAll();
-        //var_dump($doctrine->getRepository("App\Entity\HumanResourceScheduled"));
+        $entitiesNames = ["Patient", "Appointment", "HumanResource", "CategoryOfHumanResource", "WorkingHours", "MaterialResource", "CategoryOfMaterialResource", "Unavailability", "UnavailabilityHumanResource", "UnavailabilityMaterialResource", "ScheduledActivity", "HumanResourceScheduled", "MaterialResourceScheduled"];
+        $sequenceNames = ["patient", "appointment", "human_resource", "category_of_human_resource", "working_hours", "material_resource", "category_of_material_resource", "unavailability", "unavailability_human_resource", "unavailability_material_resource", "scheduled_activity", "human_resource_scheduled", "material_resource_scheduled"];
+        for ($i = 0; $i < sizeof($entitiesNames); $i++) {
+            $entities[$i] = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->findAll();
+        }
         $dir = "Simulations";
-        $newDir = $dir . "/2";
+        $newDir = $dir . "/4";
         if (!file_exists($newDir)) {
             mkdir($newDir, 0777, true);
         }
         for ($i = 0; $i < sizeof($entities); $i++) {
             $file = fopen($newDir . "/" . $filenames[$i] . ".json", "w");
-            $serializer = new Serializer([new ObjectNormalizer()]);
+            $serializer = new Serializer([new DateTimeNormalizer(), new ObjectNormalizer()]);
             $formatted = $serializer->normalize($entities[$i]);
             fwrite($file, json_encode($formatted));
             fclose($file);
         }
         //drain the tables
-        $doctrine->getRepository("App\Entity\HumanResourceScheduled")->deleteALl();
-        $doctrine->getRepository("App\Entity\MaterialResourceScheduled")->deleteALl();
-        $doctrine->getRepository("App\Entity\ScheduledActivity")->deleteALl();
-        $doctrine->getRepository("App\Entity\UnavailabilityHumanResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\UnavailabilityMaterialResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\Unavailability")->deleteALl();
-        $doctrine->getRepository("App\Entity\WorkingHours")->deleteALl();
-        $doctrine->getRepository("App\Entity\HumanResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\CategoryOfHumanResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\MaterialResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\CategoryOfMaterialResource")->deleteALl();
-        $doctrine->getRepository("App\Entity\Appointment")->deleteALl();
-        $doctrine->getRepository("App\Entity\Patient")->deleteALl();
-
-
+        for ($i = 0; $i < sizeof($entitiesNames); $i++) {
+            $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->deleteALl();
+        }
+        //reset sqlLite sequences
+        for ($i = 0; $i < sizeof($sequenceNames); $i++) {
+            $doctrine->getConnection()->exec("DELETE FROM sqlite_sequence WHERE name = '" . $sequenceNames[$i] . "'");
+        }
         return new JsonResponse($formatted);
+    }
+
+    public function deSerializeDB(ManagerRegistry $doctrine): Response
+    {
+        $entities = [];
+        $filenames = ["patients", "appointments", "humanresources", "categoryofhumanresources", "workinghours", "materialresources", "categoryofmaterialresources", "unavailabilities", "unavailabilityhumanresources", "unavailabilitymaterialresources", "scheduledactivities", "humanresourcescheduled", "materialresourcescheduled"];
+        $entitiesNames = ["Patient", "Appointment", "HumanResource", "CategoryOfHumanResource", "WorkingHours", "MaterialResource", "CategoryOfMaterialResource", "Unavailability", "UnavailabilityHumanResource", "UnavailabilityMaterialResource", "ScheduledActivity", "HumanResourceScheduled", "MaterialResourceScheduled"];
+        $dir = "Simulations";
+        $newDir = $dir . "/3";
+        for ($i = 0; $i < sizeof($filenames); $i++) {
+            $file = fopen($newDir . "/" . $filenames[$i] . ".json", "r");
+            $json = fread($file, filesize($newDir . "/" . $filenames[$i] . ".json"));
+            $entities[$i] = json_decode($json, true);
+            fclose($file);
+        }
+        for ($i = 0; $i < sizeof($entitiesNames); $i++) {
+            for ($j = 0; $j < sizeof($entities[$i]); $j++) {
+                $entity = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i]);
+                $entity->setFromArray($entities[$i][$j], $doctrine);
+            }
+        }
+        return new JsonResponse($entities);
     }
 
 }
