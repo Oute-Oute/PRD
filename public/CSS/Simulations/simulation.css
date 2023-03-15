@@ -1,4 +1,5 @@
-.test-container {
+.test-container,
+.current-test-container {
     text-align: center;
     display: block;
     border: none;
@@ -14,16 +15,21 @@
     margin-bottom: 5%;
     margin-left: 5%;
     margin-right: 5%;
+    cursor: pointer;
+}
+
+.test-container {
+    background-color: #F2EFE9;
+}
+
+.current-test-container {
+    background-color: #b0f3ad;
 }
 
 .test-data {
     font-weight: normal;
     font-size: 1em;
     text-align: center;
-}
-
-.test-line {
-
 }
 
 .test-cell {
@@ -33,21 +39,22 @@
     width: 50%;
 }
 
-.bin:hover{
+.bin:hover {
     background-color: #ffffff;
     border-radius: 50%;
     box-shadow: 0px 0px 7px #505050;
 }
 
-.bin-cell{
+.bin-cell {
     vertical-align: bottom;
     text-align: right;
 }
 
-.all-tests-container{
-    height:80%
+.all-tests-container {
+    height: 80%
 }
-.all-tests{
+
+.all-tests {
     overflow: auto;
     width: 100%;
     display: grid;
@@ -60,8 +67,8 @@
     align-items: center;
 }
 
-body{
-    overflow:hidden
+body {
+    overflow: hidden
 }
 
 #all-header-test {

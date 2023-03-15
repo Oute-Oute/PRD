@@ -1,15 +1,17 @@
-<div class="modal" id="modal-popup">
+<div class="modal" id="modal-delete">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-title">Attention</h2>
 			</div>
 			<div class="modal-body">
-				<p>Voulez vous vraiment supprimer ce test ?<br></p>
+				<p id="delete-msg"></p><br>
+
+				<p>Attention, cette action est irréversible !</p>
 			</div>
 			<div class="modal-footer">
 				<button id="delete-test-button" onclick="" class="btn-valide btn-secondary" style="float:right; margin-right:10px;">Supprimer</button>
-				<button type="button" onclick="$('#modal-popup').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>
+				<button type="button" onclick="$('#modal-delete').modal('hide');" class="btn-delete btn-secondary" style="float:right; margin-right:10px;">Annuler</button>
 			</div>
 		</div>
 	</div>
