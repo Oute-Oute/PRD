@@ -44,6 +44,27 @@ class WorkingHoursRepository extends ServiceEntityRepository
         $this->getEntityManager()->createQuery('DELETE FROM App\Entity\WorkingHours')->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $workingHours = new WorkingHours();
+        $workingHours->setDayweek($data['dayweek']);
+        $startTime = new \DateTime($data['starttime']);
+        $workingHours->setStarttime($startTime);
+        $endTime = new \DateTime($data['endtime']);
+        $workingHours->setEndtime($endTime);
+        $workingHours->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
+        $this->add($workingHours, true);
+        $this->changeId($workingHours->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId): void
+    {
+        $this->getEntityManager()->createQuery('UPDATE App\Entity\WorkingHours w SET w.id = :newId WHERE w.id = :oldId')
+            ->setParameter('newId', $newId)
+            ->setParameter('oldId', $oldId)
+            ->execute();
+    }
+
 //    /**
 //     * @return WorkingHours[] Returns an array of WorkingHours objects
 //     */

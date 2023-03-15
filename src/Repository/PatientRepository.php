@@ -69,6 +69,28 @@ class PatientRepository extends ServiceEntityRepository
         ;
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $patient = new Patient();
+        $patient->setId($data['id']);
+        $patient->setFirstname($data['firstname']);
+        $patient->setLastname($data['lastname']);
+        $this->add($patient, true);
+        $this->changeId($patient->getId(), $data['id']);
+    }
+
+    public function changeId(int $oldId, int $newId)
+    {
+        $query = $this->createQueryBuilder('p')
+            ->update()
+            ->set('p.id', $newId)
+            ->where('p.id = :oldId')
+            ->setParameter('oldId', $oldId)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
 //    public function findOneBySomeField($value): ?Patient
 //    {
 //        return $this->createQueryBuilder('p')

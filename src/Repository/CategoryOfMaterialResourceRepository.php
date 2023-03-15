@@ -47,6 +47,29 @@ class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
         return $query;
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $categoryOfMaterialResource = new CategoryOfMaterialResource();
+        $materialResourceCategory = $registry->getRepository("App\Entity\MaterialResourceCategory")->find($data['materialresourcecategory']['id']);
+        $categoryOfMaterialResource->setMaterialresourcecategory($materialResourceCategory);
+        $materialResource = $registry->getRepository("App\Entity\MaterialResource")->find($data['materialresource']['id']);
+        $categoryOfMaterialResource->setMaterialresource($materialResource);
+        $this->add($categoryOfMaterialResource, true);
+        $this->changeId($categoryOfMaterialResource->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->update()
+            ->set('c.id', ':newId')
+            ->where('c.id = :oldId')
+            ->setParameter('newId', $newId)
+            ->setParameter('oldId', $oldId);
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
+
 //    /**
 //     * @return CategoryOfMaterialResource[] Returns an array of CategoryOfMaterialResource objects
 //     */

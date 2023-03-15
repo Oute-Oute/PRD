@@ -66,7 +66,23 @@ class MaterialResourceRepository extends ServiceEntityRepository
         $qb->getQuery()->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $materialResource = new MaterialResource();
+        $materialResource->setMaterialresourcename($data['materialresourcename']);
+        $this->add($materialResource, true);
+        $this->changeId($materialResource->getId(), $data['id']);
+    }
 
+    public function changeId(int $oldId, int $newId)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->update();
+        $qb->set('m.id', $newId);
+        $qb->where('m.id = :oldId');
+        $qb->setParameter('oldId', $oldId);
+        $qb->getQuery()->execute();
+    }
 //    /**
 //     * @return MaterialResource[] Returns an array of MaterialResource objects
 //     */

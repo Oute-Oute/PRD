@@ -111,4 +111,33 @@ class AppointmentRepository extends ServiceEntityRepository
         $query = $qb->getQuery()->getResult();
         return $query;
     }
+
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $appointment = new Appointment();
+        $day = new \DateTime($data['dayappointment']);
+        $earliestappointmenttime = new \DateTime($data['earliestappointmenttime']);
+        $latestappointmenttime = new \DateTime($data['latestappointmenttime']);
+        $patient = $registry->getRepository('App\Entity\Patient')->find($data['patient']["id"]);
+        $pathway = $registry->getRepository('App\Entity\Pathway')->find($data['pathway']["id"]);
+        $appointment->setDayappointment($day);
+        $appointment->setEarliestappointmenttime($earliestappointmenttime);
+        $appointment->setLatestappointmenttime($latestappointmenttime);
+        $appointment->setScheduled($data['scheduled']);
+        $appointment->setPatient($patient);
+        $appointment->setPathway($pathway);
+        $this->add($appointment, true);
+    }
+
+    public function changeId($id, $newId)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->update()
+            ->set('a.id', ':newId')
+            ->where('a.id = :id')
+            ->setParameter('newId', $newId)
+            ->setParameter('id', $id);
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
 }

@@ -62,6 +62,28 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
         $query->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $categoryOfHumanResource = new CategoryOfHumanResource();
+        $humanResource = $registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']);
+        $categoryOfHumanResource->setHumanresource($humanResource);
+        $humanResourceCategory = $registry->getRepository('App\Entity\HumanResourceCategory')->find($data['humanresourcecategory']['id']);
+        $categoryOfHumanResource->setHumanresourcecategory($humanResourceCategory);
+        $this->add($categoryOfHumanResource, true);
+        $this->changeId($categoryOfHumanResource->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->update();
+        $qb->set('c.id', $newId);
+        $qb->where('c.id = :oldId');
+        $qb->setParameter('oldId', $oldId);
+        $query = $qb->getQuery();
+        $query->execute();
+    }
+
 //    /**
 //     * @return CategoryOfHumanResource[] Returns an array of CategoryOfHumanResource objects
 //     */

@@ -65,6 +65,27 @@ class MaterialResourceScheduledRepository extends ServiceEntityRepository
         return $query;
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $materialResourceScheduled = new MaterialResourceScheduled();
+        $materialResourceScheduled->setMaterialresource($registry->getRepository('App\Entity\MaterialResource')->find($data['materialresource']['id']));
+        $materialResourceScheduled->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
+        $this->add($materialResourceScheduled, true);
+        $this->changeId($materialResourceScheduled->getId(), $data['id']);
+        return $materialResourceScheduled;
+    }
+
+    public function changeId($oldId, $newId)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->update();
+        $qb->set('m.id', $qb->expr()->literal($newId));
+        $qb->where('m.id = :oldId');
+        $qb->setParameter('oldId', $oldId);
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
+
 //    /**
 //     * @return MaterialResourceScheduled[] Returns an array of MaterialResourceScheduled objects
 //     */

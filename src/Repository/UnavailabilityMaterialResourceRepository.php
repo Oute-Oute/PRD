@@ -44,6 +44,25 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
         $this->getEntityManager()->createQuery('DELETE FROM App\Entity\UnavailabilityMaterialResource')->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $unavailabilityMR = new UnavailabilityMaterialResource();
+        $materialResource = $registry->getRepository('App\Entity\MaterialResource')->findOneBy(['id' => $data['materialresource']['id']]);
+        $unavailabilityMR->setMaterialresource($materialResource);
+        $unavailability = $registry->getRepository('App\Entity\Unavailability')->findOneBy(['id' => $data['unavailability']['id']]);
+        $unavailabilityMR->setUnavailability($unavailability);
+        $this->add($unavailabilityMR, true);
+        $this->changeId($unavailabilityMR->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId): void
+    {
+        $this->getEntityManager()->createQuery('UPDATE App\Entity\UnavailabilityMaterialResource u SET u.id = :newId WHERE u.id = :oldId')
+            ->setParameter('newId', $newId)
+            ->setParameter('oldId', $oldId)
+            ->execute();
+    }
+
 //    /**
 //     * @return UnavailabilityMaterialResource[] Returns an array of UnavailabilityMaterialResource objects
 //     */

@@ -64,6 +64,26 @@ class HumanResourceScheduledRepository extends ServiceEntityRepository
         $qb->getQuery()->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $humanResourceScheduled = new HumanResourceScheduled();
+        $humanResourceScheduled->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
+        $humanResourceScheduled->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
+        $this->add($humanResourceScheduled, true);
+        $this->changeId($humanResourceScheduled->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId)
+    {
+        $qb = $this->createQueryBuilder('h');
+        $q = $qb->update()
+            ->set('h.id', $newId)
+            ->where('h.id = :oldId')
+            ->setParameter('oldId', $oldId)
+            ->getQuery();
+        $p = $q->execute();
+    }
+
 //    /**
 //     * @return HumanResourceScheduled[] Returns an array of HumanResourceScheduled objects
 //     */

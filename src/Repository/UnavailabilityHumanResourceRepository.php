@@ -44,6 +44,25 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
         $this->getEntityManager()->createQuery('DELETE FROM App\Entity\UnavailabilityHumanResource')->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $unavailabilityHR = new UnavailabilityHumanResource();
+        $humanResource = $registry->getRepository('App\Entity\HumanResource')->findOneBy(['id' => $data['humanresource']['id']]);
+        $unavailabilityHR->setHumanresource($humanResource);
+        $unavailability = $registry->getRepository('App\Entity\Unavailability')->findOneBy(['id' => $data['unavailability']['id']]);
+        $unavailabilityHR->setUnavailability($unavailability);
+        $this->add($unavailabilityHR, true);
+        $this->changeId($unavailabilityHR->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId): void
+    {
+        $this->getEntityManager()->createQuery('UPDATE App\Entity\UnavailabilityHumanResource u SET u.id = :newId WHERE u.id = :oldId')
+            ->setParameter('newId', $newId)
+            ->setParameter('oldId', $oldId)
+            ->execute();
+    }
+
 //    /**
 //     * @return UnavailabilityHumanResource[] Returns an array of UnavailabilityHumanResource objects
 //     */

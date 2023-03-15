@@ -78,6 +78,24 @@ class HumanResourceRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $humanResource = new HumanResource();
+        $humanResource->setHumanresourcename($data['humanresourcename']);
+        $this->add($humanResource, true);
+        $this->changeId($humanResource->getId(), $data['id']);
+    }
+
+    public function changeId(int $oldId, int $newId): void
+    {
+        $this->createQueryBuilder('h')
+            ->update()
+            ->set('h.id', $newId)
+            ->where('h.id = :oldId')
+            ->setParameter('oldId', $oldId)
+            ->getQuery()
+            ->execute();
+    }
 //    public function findOneBySomeField($value): ?HumanResource
 //    {
 //        return $this->createQueryBuilder('h')

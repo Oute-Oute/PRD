@@ -58,6 +58,33 @@ class ScheduledActivityRepository extends ServiceEntityRepository
         return $query;
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $scheduledActivity = new ScheduledActivity();
+        $appointment = $registry->getRepository('App\Entity\Appointment')->find($data['appointment']['id']);
+        $scheduledActivity->setAppointment($appointment);
+        $activity = $registry->getRepository('App\Entity\Activity')->find($data['activity']['id']);
+        $scheduledActivity->setActivity($activity);
+        $startTime = new \DateTime($data['starttime']);
+        $scheduledActivity->setStarttime($startTime);
+        $endTime = new \DateTime($data['endtime']);
+        $scheduledActivity->setEndtime($endTime);
+        $this->add($scheduledActivity, true);
+        $this->changeId($scheduledActivity->getId(), $data['id']);
+    }
+
+
+    public function changeId($oldId, $newId)
+    {
+        $qb = $this->createQueryBuilder('sa')
+            ->update()
+            ->set('sa.id', ':newId')
+            ->where('sa.id = :oldId')
+            ->setParameter('newId', $newId)
+            ->setParameter('oldId', $oldId);
+        $query = $qb->getQuery()->getResult();
+        return $query;
+    }
 //    public function findOneBySomeField($value): ?ScheduledActivity
 //    {
 //        return $this->createQueryBuilder('s')

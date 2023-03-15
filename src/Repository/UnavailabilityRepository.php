@@ -44,6 +44,28 @@ class UnavailabilityRepository extends ServiceEntityRepository
         $this->getEntityManager()->createQuery('DELETE FROM App\Entity\Unavailability')->execute();
     }
 
+    public function setFromArray(array $data, ManagerRegistry $registry)
+    {
+        $unavailability = new Unavailability();
+        $startTime = new \DateTime($data['startdatetime']);
+        $unavailability->setStartdatetime($startTime);
+        $endTime = new \DateTime($data['enddatetime']);
+        $unavailability->setEnddatetime($endTime);
+        $this->add($unavailability, true);
+        $this->changeId($unavailability->getId(), $data['id']);
+    }
+
+    public function changeId($oldId, $newId)
+    {
+        $this->createQueryBuilder('u')
+            ->update()
+            ->set('u.id', $newId)
+            ->where('u.id = :oldId')
+            ->setParameter('oldId', $oldId)
+            ->getQuery()
+            ->execute();
+    }
+
 //    /**
 //     * @return Unavailability[] Returns an array of Unavailability objects
 //     */
