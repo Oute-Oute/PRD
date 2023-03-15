@@ -412,5 +412,5 @@ SerializeDB:
 
 DeserializeDB:
   path: /deserializeDB
-  controller: App\Controller\TestsController::deserializeDB
+  controller: App\Controller\TestsController::deSerializeDB
   methods: [GET]
