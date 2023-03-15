@@ -365,9 +365,9 @@ Statistics:
   controller: App\Controller\StatisticsController::index
   methods: [GET]
 
-Tests:
-  path: /tests
-  controller: App\Controller\TestsController::index
+Simulations:
+  path: /simulations
+  controller: App\Controller\SimulationsController::index
   methods: [GET]
 
 Ethics:
@@ -407,10 +407,30 @@ MRAutoAdd:
 
 SerializeDB:
   path: /serializeDB
-  controller: App\Controller\TestsController::serializeDB
+  controller: App\Controller\SimulationsController::serializeDB
   methods: [GET]
 
 DeserializeDB:
   path: /deserializeDB
-  controller: App\Controller\TestsController::deSerializeDB
+  controller: App\Controller\SimulationsController::deSerializeDB
   methods: [GET]
+
+AjaxGetSimInfos:
+  path: /ajaxGetSimInfos
+  controller: App\Controller\SimulationsController::getInfos
+  methods: [GET]
+
+SaveSimulation:
+  path: /saveSimulation
+  controller: App\Controller\SimulationsController::saveSimulation
+  methods: [GET]
+
+NewSimulation: 
+  path: /newSimulation
+  controller: App\Controller\SimulationsController::NewSimulation
+  methods: [GET]
+
+DeleteSimulation:
+  path: /deleteSimulation
+  controller: App\Controller\SimulationsController::deleteSimulation
+  methods: [POST]
