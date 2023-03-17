@@ -6,6 +6,7 @@
  */
 
 var currentDateStr = $_GET("date");
+console.log(currentDateStr)
 
 /**
  * @function $_GET
@@ -31,6 +32,7 @@ function $_GET(param) {
 
 document.addEventListener("DOMContentLoaded", function () {
 	getSimulations();
+	document.getElementById("load-large").style.visibility = "hidden";
 });
 
 function NewSimulation() {
@@ -52,6 +54,7 @@ function SaveSimulation() {
 }
 
 function getSimulations() {
+	console.log(document.getElementById("simInfos").value)
 	data = JSON.parse(document.getElementById("simInfos").value)
 	console.log(data)
 	for (var i = 0; i < data.length; i++) {
@@ -122,7 +125,7 @@ function getSimulations() {
 }
 
 function DeleteSimulation(idToDelete) {
-	console.log(idToDelete)
+	document.getElementById("load-large").style.visibility = "visible";
 	$.ajax({
 		url: "/deleteSimulation",
 		type: "POST",
@@ -130,15 +133,11 @@ function DeleteSimulation(idToDelete) {
 			'id': idToDelete
 		},
 		success: function (data) {
-			console.log(data)
-			elementId = 'test-container-' + idToDelete
-			document.getElementById(elementId).remove();
+			location.reload();
 		},
 		error: function (data) {
 			if (data.status == 200) {
-				console.log(idToDelete)
-				elementId = 'test-container-' + idToDelete
-				document.getElementById(elementId).remove()
+				location.reload();
 			}
 			else {
 				console.log(data)
@@ -161,6 +160,25 @@ function showChangePopup(id) {
 	$('#modal-change').modal('show')
 }
 
-function changeSimulation(id) {
-
+function ChangeSimulation(id) {
+	document.getElementById("load-large").style.visibility = "visible";
+	$.ajax({
+		url: "/changeSimulation",
+		type: "POST",
+		data: {
+			'id': id
+		},
+		success: function (data) {
+			location.reload();
+		},
+		error: function (data) {
+			if (data.status == 200) {
+				location.reload();
+			}
+			else {
+				console.log(data)
+			}
+		},
+	});
+	$('#modal-change').modal('hide')
 }
