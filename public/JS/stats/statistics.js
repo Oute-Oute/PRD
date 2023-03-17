@@ -5,7 +5,7 @@
  * @version 1.0
  */
 
-var currentDateStr = $_GET("date");
+var currentDateStr
 var numberOfErrors = 0;
 
 /**
@@ -45,6 +45,8 @@ function $_GET(param) {
  * @see GetDataErrors 
 */
 document.addEventListener("DOMContentLoaded", function () {
+	currentDateStr = document.getElementById("date").value;
+	console.log(currentDateStr)
 	getNumberOfHR();
 	getNumberOfMR();
 	getNumberOfPatients();
@@ -128,8 +130,8 @@ function getWaitingTimes() {
 		if (appointment != undefined) {
 			appointment.sort((a, b) => (a.start > b.start) ? 1 : -1)
 			for (i = 0; i < appointment.length - 1; i++) {
-				diff =  appointment[i + 1].start-appointment[i].end
-				diff=diff/1000/60
+				diff = appointment[i + 1].start - appointment[i].end
+				diff = diff / 1000 / 60
 				waitingTimesArray.push(diff)
 			}
 		}
@@ -139,7 +141,7 @@ function getWaitingTimes() {
 	max = Math.max(...waitingTimesArray)//get the maximum waiting time
 	mean = Math.round(waitingTimesArray.reduce((a, b) => a + b, 0) / waitingTimesArray.length)//get the mean waiting time
 	console.log(min, max, mean)
-	if (waitingTimesArray.length==0) {//if there is no activity planned
+	if (waitingTimesArray.length == 0) {//if there is no activity planned
 		document.getElementById("minWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"
 		document.getElementById("maxWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"
 		document.getElementById("meanWaitingTime").innerHTML = "Aucune activité planifiée"//display the message "Aucune activité planifiée"

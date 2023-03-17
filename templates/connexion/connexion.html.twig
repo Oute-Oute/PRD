@@ -4,9 +4,12 @@
 	<link rel="stylesheet" href="{{ asset('CSS/Connexion/connexion.css') }}">
 
 {% endblock %}
-{% block javascripts %} 
-        {% if app.user != null %}<script type="text/javascript">document.location.href="/ConsultationPlanning"</script>
-		{% endif %}
+{% block javascripts %}
+	{% if app.user != null %}
+		<script type="text/javascript">
+			document.location.href = "/Simulations"
+		</script>
+	{% endif %}
 {% endblock %}
 {% block body %}
 	<head>

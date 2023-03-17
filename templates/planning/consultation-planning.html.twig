@@ -32,103 +32,59 @@
 	{% endfor %}
 	<div class="all-container" id="all">
 		<h1>Consultation du Planning</h1>
-		
 
-	<div id="calendar-container" class="calendar-container">
-	<div class="top">
-		<table class="header-ressource-consultation" style="font-size:medium;">
-			<td class="header-td">
-				{% if app.user != null %}
-					{% if app.user.roles[1] != 'Visiteur' %}
-						<button class="btn-calendar-edit" onclick="modify({{app.user.getId()}})">Modifier le planning</button>
-					{% endif %}
-				{% endif %}
-				<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
-				<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
-					<option value="0" selected disabled>Changer l'affichage
-					</option>
-					<option value="patients">Patients</option>
-					<option value="rh">Ressources Humaines</option>
-					<option value="rm">Ressources Matérielles</option>
-				</select>
-				<button id="filterbutton" onclick="filterShow()" class="btn-calendar-edit" title="Filtrer l'affichage">
-					<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewbox="0 0 24 24" width="24px">
-						<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
-					</svg>
-				</button>
-				<td class="header-td-center">
-					<input required type="date" placeholder="Choisir une date" class="form-control" id="Date" onchange="newDate('consultation')" autocomplete="off" title="Choisir une date à afficher" value="{{currentdate}}" .str_replace('t12:00:00','')></input>
+
+		<div id="calendar-container" class="calendar-container">
+			<div class="top">
+				<table class="header-ressource-consultation" style="font-size:medium;">
+					<td class="header-td">
+						{% if app.user != null %}
+							{% if app.user.roles[1] != 'Visiteur' %}
+								<button class="btn-calendar-edit" onclick="modify({{app.user.getId()}})">Modifier le planning</button>
+							{% endif %}
+						{% endif %}
+						<input type="hidden" name="typeResources" id="typeResources" value='{{headerResources}}'>
+						<select class="btn-calendar-edit" id="displayList" onchange="changePlanning()">
+							<option value="0" selected disabled>Changer l'affichage
+							</option>
+							<option value="patients">Patients</option>
+							<option value="rh">Ressources Humaines</option>
+							<option value="rm">Ressources Matérielles</option>
+						</select>
+						<button id="filterbutton" onclick="filterShow()" class="btn-calendar-edit" title="Filtrer l'affichage">
+							<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewbox="0 0 24 24" width="24px">
+								<g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g>
+							</svg>
+						</button>
+					</td>
+					<td class="header-td-center" style="font-size:xx-large">Simulation du
+						{{ dateFormatted }}</td>
+
+					<input id="Date" value="{{currentdate}}" .str_replace('t12:00:00','') hidden>
 				</td>
-				<div id="filterId" class="filter-container" style="display:none; left:30%">
-				</div>
-			
-			<td class="header-td-right">
-				<div class="date-button">
-					<button id="previousButton" class="btn-calendar-edit" onclick="PreviousDay('consultation')" title="Aller au jour d'avant">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-					</button>
-					<button class="btn-calendar-edit" onclick="Today('consultation')" title="Aller à aujourd'hui">Aujourd'hui</button>
-					<button id="previousButton" class="btn-calendar-edit" onclick="NextDay('consultation')" title="Aller au jour d'après">
-						<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-					</button>
-					<input type="hidden" id="appointments" value='{{getAppointmentsJSON.content}}'/>
-					<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
-					<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
-					<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
-				</div>
-				
-			</td>
-		</table>
-		</div>
-		<table class="header-ressource-consultation" style="margin-left:10px;">
-			<td id="header-type" class="header-td" >Patients</td>
-			<td class="header-td-center">{{ dateFormatted }}</td>
-			<td id="zoom-div" class="header-td-right header-td-zoom">
-				<input id="zoom-value" type="hidden" value="00:20:00">
-				<button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
-				<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
-				<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button>
-			</td>
-		</table>
+			</input>
+		</td>
+		<div id="filterId" class="filter-container" style="display:none; left:30%"></div>
 
-		<div id='calendar'></div>
+		<td class="header-td-right">
+
+			<input type="hidden" id="appointments" value='{{getAppointmentsJSON.content}}'/>
+			<input type="hidden" id="events" value='{{getDisplayedActivitiesJSON.content}}'/>
+			<input type="hidden" id="material" value='{{getMaterialResourceScheduledJSON.content}}'/>
+			<input type="hidden" id="human" value='{{getHumanResourceScheduledJSON.content}}'/>
+		</td>
 	</div>
-</div>
-<script>
-	reload("consultation");
-</script>
-<div class="modal" id="modify-planning-modal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title">
-					<span id="show-title"></span>
-				</h2>
-			</div>
-			<form method="post" action="/ModificationPlanning">
-				<div class="modal-body">
-					<label class="label-event">Horaires de l'activité :
-					</label>
-					<div class="input-container onWhite">
-						<input class="input-modal-date" type="time" id="start" name="start" disabled>
-						<input class="input-modal-date" type="time" id="end" name="end" disabled></br>
-					<label class="label-event">Parcours :</label>
-				</br>
-				<input class="input-modal" type="text" id="parcours" name="parcours" disabled></input>
-		</br>
-		<label class="label-event">Patient :</label>
-	</br>
-	<input class="input-modal" type="text" id="patient" name="patient" disabled>
-	</input>
-	</br>
-	<label class="label-event">Ressource Humaine :</label>
-	</br>
-	<input class="input-modal" type="text" id="rh" name="rh" disabled></input>
-	</br>
-	<label class="label-event">Ressource Matérielle :</label>
-	</br>
-	<input class="input-modal" type="text" id="rm" name="rm" disabled></input>
-	</div>
-	<div class="modal-footer">
-	<button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button>
-	</div></div></form> </div></div>{% endblock %}
+</td></table></div><table class="header-ressource-consultation" style="margin-left:10px;"><td id="header-type" class="header-td">Patients</td><td id="zoom-div" class="header-td-right header-td-zoom"><input id="zoom-value" type="hidden" value="00:20:00"><button id="zoom-minus" class="btn-calendar-edit" onclick="zoomChange('minus')" title="Dézoomer">Zoom -</button>
+<button id="zoom-default" class="btn-calendar-edit" onclick="zoomChange('default')" title="Zoom par défaut">Défaut</button>
+<button id="zoom-plus" class="btn-calendar-edit" onclick="zoomChange('plus')" title="Zoomer">Zoom +</button></td></table><div id='calendar'></div></div></div><script>reload("consultation");</script><div class="modal" id="modify-planning-modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header">
+<h2 class="modal-title">
+	<span id="show-title"></span>
+</h2></div><form method="post" action="/ModificationPlanning">
+<div class="modal-body">
+	<label class="label-event">Horaires de l'activité :
+	</label>
+	<div class="input-container onWhite">
+		<input class="input-modal-date" type="time" id="start" name="start" disabled>
+		<input class="input-modal-date" type="time" id="end" name="end" disabled></br>
+	<label class="label-event">Parcours :</label>
+</br><input class="input-modal" type="text" id="parcours" name="parcours" disabled></input></br><label class="label-event">Patient :</label></br><input class="input-modal" type="text" id="patient" name="patient" disabled></input></br><label class="label-event">Ressource Humaine :</label></br><input class="input-modal" type="text" id="rh" name="rh" disabled></input></br><label class="label-event">Ressource Matérielle :</label></br><input class="input-modal" type="text" id="rm" name="rm" disabled></input></div><div class="modal-footer"> <button type="button" class="btn-consult btn-secondary" data-bs-dismiss="modal">Fermer</button></div></div></form></div></div>{% endblock %}

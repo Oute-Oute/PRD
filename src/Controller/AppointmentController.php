@@ -28,7 +28,9 @@ class AppointmentController extends AbstractController
     {
 
         global $date;
-        $date = date(('Y-m-d'));
+        $date = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(array("iscurrent" => 1))->getSimulationdatetime();
+
+        $date = $date->format('Y-m-d');
         if (isset($_GET["date"])) {
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
@@ -104,7 +106,7 @@ class AppointmentController extends AbstractController
         //parse_str($nameParsed[0], $nameParsed);
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
-        $dayappointment = \DateTime::createFromFormat('d-m-Y H:i:s', str_replace("/", "-", $param['dayappointment'] . ' ' . "00:00:00"));
+        $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', $param['dayappointment'] . ' ' . "00:00:00");
 
         if ($param["earliestappointmenttime"] != "") {
             $earliestappointmenttime = \DateTime::createFromFormat('H:i', $param['earliestappointmenttime']);
@@ -423,8 +425,13 @@ class AppointmentController extends AbstractController
     {
         global $date;
         $params = $request->request->all();
-        $patientMaxId = $patientRepository->findMaxId();
-        $newId = $patientMaxId + 1;
+        $numberOfPatient = sizeof($patientRepository->findAll());
+        if ($numberOfPatient == 0) {
+            $newId = 1;
+        } else {
+            $patientMaxId = $patientRepository->findMaxId();
+            $newId = $patientMaxId + 1;
+        }
         $quantity = $params["quantity"];
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $params["pathway"]]);
         if ($params["earliestappointmenttime"] != "") {

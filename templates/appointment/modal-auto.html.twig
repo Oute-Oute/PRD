@@ -11,22 +11,6 @@
 			<form action="{{ path('AppointmentAutoAdd') }}" method="post" onsubmit="return lookAutocompletes()">
 
 				<div class="modal-content" style="padding:20px;">
-					<div class="appointment-list">
-						<div id="div-edit-activity">
-							<div id="infos-rdv">
-								<label class="label-rdv">
-									Parcours
-								</label>
-								<label class="label-barre">|</label>
-								<label class="label-rdv">
-									Quantité
-								</label>
-							</div>
-							<div id="div-resources">
-								<ul id="list-resources"></ul>
-							</div>
-						</div>
-					</div>
 					<div id="add" class="add_app">
 						<div id="div-add-resources">
 							<input type="hidden" id="pathwayValues" name="pathwayValues" value={{pathwaysJSON.content}}/>
@@ -36,7 +20,6 @@
 
 							<input class="input-add-pathway" id="resource-nb" name="quantity" min="1" max="100" placeholder="Qte" type="number" title="Choisissez la quantité de la ressource" required>
 						</input>
-						<img onclick="addResources()" src="../img/plus.png" class="plus-button" title="Ajouter la ressource">
 					</img>
 				</div>
 				<label class="label" for='earliestappointmenttime'>

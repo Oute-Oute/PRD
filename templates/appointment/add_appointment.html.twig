@@ -1,60 +1,54 @@
-
 <!-- add-appointment-modal -->
 
-        <link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
-        <script src="js/jquery-ui/external/jquery/jquery.js"></script>
-        <script src="js/jquery-ui/jquery-ui.min.js"></script>    
+<link href="js/jquery-ui/jquery-ui.css" rel="stylesheet">
+<script src="js/jquery-ui/external/jquery/jquery.js"></script>
+<script src="js/jquery-ui/jquery-ui.min.js"></script>
 
 <div class="modal" id="add-appointment-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Ajouter un rendez-vous</h2>
-      </div>
-      <form action="{{ path('AppointmentAdd') }}" method="post" onsubmit="return lookAutocompletes()">
-        <div class="modal-body">
-          <div style="color: red;" id="wrong-add-input" style="visibility:hidden"></div>
-          <div class="flex-col">
-            <label class="label" for='idpatient'> Patient </label>
-            <input type="hidden" id="patientValues" name="patientValues" value={{patientsJSON.content}} />
-            <input class="input" type="text" id="autocompletePatientAdd" name="patient" autocomplete="off" required/>
-          </div>
-          </br>
-          <div class="flex-col">
-            <label class="label" for='idpathway'> Parcours </label>
-            <input type="hidden" id="pathwayValues" name="pathwayValues" value={{pathwaysJSON.content}} />
-            <input class="input" type="text" id="autocompletePathwayAdd" name="pathway" autocomplete="off" required/>
-          </div>
-          </br>
-          <div class="flex-col">
-            <label class="label" onclick="openDayModale('new')" for='dayappointment label'> Jour du rendez-vous (cliquez pour selectionnez) </label>
-            <input class="input" id="dateSelected" name='dayappointment'  onclick="openDayModale('new')" required>
-          </div>
-          </br>
-          <div class="flex-col">
-            <label class="label" for='earliestappointmenttime'> Heure d'arrivée au plus tôt </label>
-            <input class="input" type='time' name='earliestappointmenttime' >
-          </div>
-          </br>
-          <div class="flex-col">
-            <label class="label" for='latestappointmenttime'> Heure de fin au plus tard </label>
-            <input class="input" type='time' name='latestappointmenttime' >
-          </div>
-          </br>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
-          <button type="submit" class="btn-valide btn-secondary"> Ajouter </button>
-        </div>
-	    </form>
-    </div>
-  </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Ajouter un rendez-vous</h2>
+			</div>
+			<form action="{{ path('AppointmentAdd') }}" method="post" onsubmit="return lookAutocompletes()">
+				<div class="modal-body">
+					<div style="color: red;" id="wrong-add-input" style="visibility:hidden"></div>
+					<div class="flex-col">
+						<label class="label" for='idpatient'>
+							Patient
+						</label>
+						<input type="hidden" id="patientValues" name="patientValues" value={{patientsJSON.content}}>
+						<input class="input" type="text" id="autocompletePatientAdd" name="patient" autocomplete="off" required/>
+					</div>
+				</br>
+				<div class="flex-col">
+					<label class="label" for='idpathway'>
+						Parcours
+					</label>
+					<input type="hidden" id="pathwayValues" name="pathwayValues" value={{pathwaysJSON.content}}>
+					<input class="input" type="text" id="autocompletePathwayAdd" name="pathway" autocomplete="off" required/>
+				</div>
+			</br>
+			<input class="input" id="dateSelected" name='dayappointment' value={{currentdate}} hidden required>
+			<div class="flex-col">
+				<label class="label" for='earliestappointmenttime'>
+					Heure d'arrivée au plus tôt
+				</label>
+				<input class="input" type='time' name='earliestappointmenttime'>
+			</div>
+		</br>
+		<div class="flex-col">
+			<label class="label" for='latestappointmenttime'>
+				Heure de fin au plus tard
+			</label>
+			<input class="input" type='time' name='latestappointmenttime'>
+		</div>
+	</br>
 </div>
-<script>
-$( "#autocompletePatientAdd" ).autocomplete({
-	source: tagsPatients
-});
-$( "#autocompletePathwayAdd" ).autocomplete({
-	source: tagsPathways
-});
-</script>
+<div class="modal-footer">
+	<button type="button" class="btn-delete btn-secondary" onclick="hideNewModalForm()">Annuler</button>
+	<button type="submit" class="btn-valide btn-secondary">
+		Ajouter
+	</button>
+</div></form></div></div></div><script>$("#autocompletePatientAdd").autocomplete({source: tagsPatients});
+$("#autocompletePathwayAdd").autocomplete({source: tagsPathways});</script>

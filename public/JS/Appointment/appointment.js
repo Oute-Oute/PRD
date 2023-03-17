@@ -121,7 +121,6 @@ function editAppointment(
   document.getElementById("autocompletePathwayEdit").value = idpathway;
   document.getElementById("pathway-hidden").value = idpathway;
   document.getElementById("dayAppointment").value = dayappointment
-  document.getElementById("dayAppointment-hidden").value = dayappointment
   document.getElementById("earliestappointmenttime").value = earliestappointmenttime;
   document.getElementById("latestappointmenttime").value = latestappointmenttime;
 
@@ -413,9 +412,6 @@ function filterAppointment(selected) {
     var pathway = document.createElement('td');
     pathway.append(selected.pathway);
     tr.appendChild(pathway);
-    var dayAppointment = document.createElement('td');
-    dayAppointment.append(selected.dayappointment);
-    tr.appendChild(dayAppointment);
     var buttons = document.createElement('td');
     var infos = document.createElement('button');
     infos.setAttribute('class', 'btn-infos btn-secondary');

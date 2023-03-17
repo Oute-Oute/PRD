@@ -23,8 +23,9 @@ class StatisticsController extends AbstractController
     public function index(ManagerRegistry $doctrine, ScheduledActivityRepository $SAR): Response
     {
         global $date;
+        $date = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(array("iscurrent" => 1))->getSimulationdatetime();
         global $dateFormatted;
-        $date = date(('Y-m-d'));
+        $date = $date->format('Y-m-d');
         if (isset($_GET["date"])) {
             $date = $_GET["date"];
             $date = str_replace('T12:00:00', '', $date);
@@ -456,8 +457,8 @@ class StatisticsController extends AbstractController
                             'occupancies' => $occupancyArray,
                             'numberOfResources' => 1
                         );
-                        unset($HumanResourceArray);//We delete the array of the human resources
-                        $humanId[] = $HumanResourceScheduled->getHumanresource()->getId();//We add the id of the human resource in the array of the ids
+                        unset($HumanResourceArray); //We delete the array of the human resources
+                        $humanId[] = $HumanResourceScheduled->getHumanresource()->getId(); //We add the id of the human resource in the array of the ids
                     }
                 }
                 //We do the same thing for the material resources
@@ -500,12 +501,12 @@ class StatisticsController extends AbstractController
                     }
                 }
                 /* BEGINNING OF THE SLOT CALCULATION */
-                if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getEndtime() <= $nineam) {//If the activity starts before 9am and ends before 9am we add the duration to the first slot
+                if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getEndtime() <= $nineam) { //If the activity starts before 9am and ends before 9am we add the duration to the first slot
                     //var_dump($displayedActivity->getStarttime());
                     $duration = $displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -513,9 +514,9 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -523,12 +524,11 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getEndtime() <= $twelvepm) {//If the activity starts before 12pm and ends before 12pm we add the duration to the second slot
+                } else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getEndtime() <= $twelvepm) { //If the activity starts before 12pm and ends before 12pm we add the duration to the second slot
                     $duration = $displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -536,22 +536,21 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
                         foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {
-                            for ($i = 0; $i < sizeof($materialCategories); $i++) {//We add the duration to the occupancy of the category of the material resource
+                            for ($i = 0; $i < sizeof($materialCategories); $i++) { //We add the duration to the occupancy of the category of the material resource
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
                                 }
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getEndtime() <= $threepm) {//If the activity starts before 3pm and ends before 3pm we add the duration to the third slot
+                } else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getEndtime() <= $threepm) { //If the activity starts before 3pm and ends before 3pm we add the duration to the third slot
                     $duration = $displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -559,9 +558,9 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -569,12 +568,11 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getEndtime() <= $sixpm) {//If the activity starts before 6pm and ends before 6pm we add the duration to the fourth slot
+                } else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getEndtime() <= $sixpm) { //If the activity starts before 6pm and ends before 6pm we add the duration to the fourth slot
                     $duration = $displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -582,9 +580,9 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -592,12 +590,11 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $sixpm && $displayedActivity->getEndtime() <= $ninepm) {//If the activity starts before 9pm and ends before 9pm we add the duration to the fifth slot
+                } else if ($displayedActivity->getStarttime() >= $sixpm && $displayedActivity->getEndtime() <= $ninepm) { //If the activity starts before 9pm and ends before 9pm we add the duration to the fifth slot
                     $duration = $displayedActivity->getEndtime()->diff($displayedActivity->getStarttime());
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][4]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][4]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -605,9 +602,9 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][4]['occupancy'] += ($duration->i + $duration->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][4]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -615,14 +612,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getStarttime() < $nineam && $displayedActivity->getEndtime() > $nineam) {//If the activity starts before 9am and ends after 9am we add the duration to the first and second slot
-                    $duration = $displayedActivity->getStartTime()->diff($nineam);//We calculate the duration of the activity before 9am
-                    $durationbis = $nineam->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 9am
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
-                        $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);                        
+                } else if ($displayedActivity->getStarttime() >= $sixam && $displayedActivity->getStarttime() < $nineam && $displayedActivity->getEndtime() > $nineam) { //If the activity starts before 9am and ends after 9am we add the duration to the first and second slot
+                    $duration = $displayedActivity->getStartTime()->diff($nineam); //We calculate the duration of the activity before 9am
+                    $durationbis = $nineam->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 9am
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
+                        $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -631,10 +627,10 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);
                         $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -643,14 +639,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getStarttime() < $twelvepm && $displayedActivity->getEndtime() > $twelvepm) {//If the activity starts before 12pm and ends after 12pm we add the duration to the second and third slot
-                    $duration = $displayedActivity->getStartTime()->diff($twelvepm);//We calculate the duration of the activity before 12pm
-                    $durationbis = $twelvepm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 12pm
+                } else if ($displayedActivity->getStarttime() >= $nineam && $displayedActivity->getStarttime() < $twelvepm && $displayedActivity->getEndtime() > $twelvepm) { //If the activity starts before 12pm and ends after 12pm we add the duration to the second and third slot
+                    $duration = $displayedActivity->getStartTime()->diff($twelvepm); //We calculate the duration of the activity before 12pm
+                    $durationbis = $twelvepm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 12pm
                     foreach ($humanResourcesByActivity as $humanResource) {
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -659,10 +654,10 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
                         $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -671,14 +666,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getStarttime() < $threepm && $displayedActivity->getEndtime() > $threepm) {//If the activity starts before 3pm and ends after 3pm we add the duration to the third and fourth slot
-                    $duration = $displayedActivity->getStartTime()->diff($threepm);//We calculate the duration of the activity before 3pm
-                    $durationbis = $threepm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 3pm
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                } else if ($displayedActivity->getStarttime() >= $twelvepm && $displayedActivity->getStarttime() < $threepm && $displayedActivity->getEndtime() > $threepm) { //If the activity starts before 3pm and ends after 3pm we add the duration to the third and fourth slot
+                    $duration = $displayedActivity->getStartTime()->diff($threepm); //We calculate the duration of the activity before 3pm
+                    $durationbis = $threepm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 3pm
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -687,10 +681,10 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
                         $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -699,14 +693,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                } 
-                else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getStarttime() < $sixpm && $displayedActivity->getEndtime() > $sixpm) {//If the activity starts before 6pm and ends after 6pm we add the duration to the fourth and fifth slot
-                    $duration = $displayedActivity->getStartTime()->diff($sixpm);//We calculate the duration of the activity before 6pm
-                    $durationbis = $sixpm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 6pm
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                } else if ($displayedActivity->getStarttime() >= $threepm && $displayedActivity->getStarttime() < $sixpm && $displayedActivity->getEndtime() > $sixpm) { //If the activity starts before 6pm and ends after 6pm we add the duration to the fourth and fifth slot
+                    $duration = $displayedActivity->getStartTime()->diff($sixpm); //We calculate the duration of the activity before 6pm
+                    $durationbis = $sixpm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 6pm
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][4]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -715,10 +708,10 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($duration->i + $duration->h * 60);
                         $materialResources[$materialResource->getId()]['occupancies'][4]['occupancy'] += ($durationbis->i + $durationbis->h * 60);
-                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the material resource
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
                             for ($i = 0; $i < sizeof($materialCategories); $i++) {
                                 if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][3]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -727,16 +720,15 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                }
-                else if($displayedActivity->getStartTime()>=$sixam && $displayedActivity->getStartTime()<$nineam && $displayedActivity->getEndTime()>$twelvepm){//We add the duration to the first, the second and the third slot
-                    $duration = $displayedActivity->getStartTime()->diff($nineam);//We calculate the duration of the activity before 9am
-                    $durationbis = 180;//We calculate the duration of the activity between 9am and 12pm
-                    $durationter = $twelvepm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 12pm
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                } else if ($displayedActivity->getStartTime() >= $sixam && $displayedActivity->getStartTime() < $nineam && $displayedActivity->getEndTime() > $twelvepm) { //We add the duration to the first, the second and the third slot
+                    $duration = $displayedActivity->getStartTime()->diff($nineam); //We calculate the duration of the activity before 9am
+                    $durationbis = 180; //We calculate the duration of the activity between 9am and 12pm
+                    $durationter = $twelvepm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 12pm
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][0]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($durationbis);
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($durationter->i + $durationter->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][0]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -760,17 +752,16 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                }
-                else if($displayedActivity->getStartTime()>=$nineam && $displayedActivity->getStartTime()<$twelvepm && $displayedActivity->getEndTime()>$threepm){//We add the duration to the second, third slot and fourth slot
-                    $duration = $displayedActivity->getStartTime()->diff($twelvepm);//We calculate the duration of the activity before 12pm
-                    $durationbis = 180;//We calculate the duration of the activity between 12pm and 3pm
-                    $durationter = $threepm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 3pm
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                } else if ($displayedActivity->getStartTime() >= $nineam && $displayedActivity->getStartTime() < $twelvepm && $displayedActivity->getEndTime() > $threepm) { //We add the duration to the second, third slot and fourth slot
+                    $duration = $displayedActivity->getStartTime()->diff($twelvepm); //We calculate the duration of the activity before 12pm
+                    $durationbis = 180; //We calculate the duration of the activity between 12pm and 3pm
+                    $durationter = $threepm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 3pm
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis);
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($durationter->i + $durationter->h * 60);
 
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -780,13 +771,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $humanResources[$humanResource->getId()]['occupancies'][1]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($durationbis);
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($durationter->i + $durationter->h * 60);
-                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){//We add the duration to the occupancy of the category of the material resource
-                            for($i=0;$i<sizeof($materialCategories);$i++){
-                                if($materialCategories[$i]["title"]==$category["name"]){
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
+                            for ($i = 0; $i < sizeof($materialCategories); $i++) {
+                                if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][1]['occupancy'] += ($duration->i + $duration->h * 60);
                                     $materialCategories[$i]["occupancies"][2]['occupancy'] += ($durationbis);
                                     $materialCategories[$i]["occupancies"][3]['occupancy'] += ($durationter->i + $durationter->h * 60);
@@ -794,17 +785,16 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                }
-                else if($displayedActivity->getStartTime()>=$twelvepm && $displayedActivity->getStartTime()<$threepm && $displayedActivity->getEndTime()>$sixpm){//We add the duration to the third slot and fourth slot
-                    $duration = $displayedActivity->getStartTime()->diff($threepm);//We calculate the duration of the activity before 3pm
-                    $durationbis = 180;//We calculate the duration of the activity between 3pm and 6pm
-                    $durationter = $sixpm->diff($displayedActivity->getEndTime());//We calculate the duration of the activity after 6pm
+                } else if ($displayedActivity->getStartTime() >= $twelvepm && $displayedActivity->getStartTime() < $threepm && $displayedActivity->getEndTime() > $sixpm) { //We add the duration to the third slot and fourth slot
+                    $duration = $displayedActivity->getStartTime()->diff($threepm); //We calculate the duration of the activity before 3pm
+                    $durationbis = 180; //We calculate the duration of the activity between 3pm and 6pm
+                    $durationter = $sixpm->diff($displayedActivity->getEndTime()); //We calculate the duration of the activity after 6pm
 
-                    foreach ($humanResourcesByActivity as $humanResource) {//We add the duration to the occupancy of the human resource
+                    foreach ($humanResourcesByActivity as $humanResource) { //We add the duration to the occupancy of the human resource
                         $humanResources[$humanResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
                         $humanResources[$humanResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis);
                         $humanResources[$humanResource->getId()]['occupancies'][4]['occupancy'] += ($durationter->i + $durationter->h * 60);
-                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) {//We add the duration to the occupancy of the category of the human resource
+                        foreach ($humanResources[$humanResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the human resource
                             for ($i = 0; $i < sizeof($humanCategories); $i++) {
                                 if ($humanCategories[$i]["title"] == $category["name"]) {
                                     $humanCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
@@ -814,13 +804,13 @@ class StatisticsController extends AbstractController
                             }
                         }
                     }
-                    foreach ($materialResourcesByActivity as $materialResource) {//We add the duration to the occupancy of the material resource
+                    foreach ($materialResourcesByActivity as $materialResource) { //We add the duration to the occupancy of the material resource
                         $materialResources[$materialResource->getId()]['occupancies'][2]['occupancy'] += ($duration->i + $duration->h * 60);
                         $materialResources[$materialResource->getId()]['occupancies'][3]['occupancy'] += ($durationbis);
                         $materialResources[$materialResource->getId()]['occupancies'][4]['occupancy'] += ($durationter->i + $durationter->h * 60);
-                        foreach($materialResources[$materialResource->getId()]['categories'] as $category){//We add the duration to the occupancy of the category of the material resource
-                            for($i=0;$i<sizeof($materialCategories);$i++){
-                                if($materialCategories[$i]["title"]==$category["name"]){
+                        foreach ($materialResources[$materialResource->getId()]['categories'] as $category) { //We add the duration to the occupancy of the category of the material resource
+                            for ($i = 0; $i < sizeof($materialCategories); $i++) {
+                                if ($materialCategories[$i]["title"] == $category["name"]) {
                                     $materialCategories[$i]["occupancies"][2]['occupancy'] += ($duration->i + $duration->h * 60);
                                     $materialCategories[$i]["occupancies"][3]['occupancy'] += ($durationbis);
                                     $materialCategories[$i]["occupancies"][4]['occupancy'] += ($durationter->i + $durationter->h * 60);

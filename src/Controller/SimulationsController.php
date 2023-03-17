@@ -102,6 +102,7 @@ class SimulationsController extends AbstractController
             $entities[$i] = json_decode($json, true);
             fclose($file);
         }
+        var_dump($entities[0]);
         for ($i = 0; $i < sizeof($entitiesNames); $i++) {
             for ($j = 0; $j < sizeof($entities[$i]); $j++) {
                 $entity = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i]);
@@ -154,11 +155,24 @@ class SimulationsController extends AbstractController
         return new JsonResponse("success");
     }
 
-    public function loadSimulation(ManagerRegistry $doctrine, $id): Response
+    public function changeSimulation(ManagerRegistry $doctrine): Response
     {
-        $this->serializeDB($doctrine, true);
-        $this->deSerializeDB($doctrine, $id);
-        return $this->redirectToRoute('Simulations');
+        $id = $_POST["id"];
+        $currentSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]);
+        if ($currentSim != null) {
+            $currentSim->setCurrent(false);
+            $doctrine->getRepository("App\Entity\SimulationInfo")->add($currentSim, true);
+            $this->serializeDB($doctrine, true);
+        }
+        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]);
+        $simInfo->setCurrent(true);
+        $dir = "Simulations";
+        $simDir = $dir . "/" . $id;
+        if (is_dir($simDir)) {
+            $this->deSerializeDB($doctrine, $id);
+        }
+        $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true);
+        return new JsonResponse(['success' => 'true']);
     }
 
     public function deleteSimulation(ManagerRegistry $doctrine): Response
@@ -166,6 +180,7 @@ class SimulationsController extends AbstractController
         $id = $_POST["id"];
         var_dump($id);
         $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]);
+        $iscurrent = $simInfo->Iscurrent();
         $doctrine->getRepository("App\Entity\SimulationInfo")->remove($simInfo, true);
         $dir = "Simulations";
         $simDir = $dir . "/" . $id;
@@ -183,6 +198,15 @@ class SimulationsController extends AbstractController
                 }
             }
             rmdir($simDir);
+        }
+        if ($iscurrent) {
+            $newSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findBy(array(), array('id' => 'ASC'), 1, 0);
+            if ($newSim != null) {
+                $this->deSerializeDB($doctrine, $newSim[0]->getId());
+                var_dump($newSim[0]);
+                $newSim[0]->setCurrent(true);
+                $doctrine->getRepository("App\Entity\SimulationInfo")->add($newSim[0], true);
+            }
         }
         return new JsonResponse(['success' => 'true']);
         //return $this->redirectToRoute('Simulations');
