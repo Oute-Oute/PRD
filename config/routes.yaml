@@ -434,3 +434,8 @@ DeleteSimulation:
   path: /deleteSimulation
   controller: App\Controller\SimulationsController::deleteSimulation
   methods: [POST]
+
+ChnageSimulation:
+  path: /changeSimulation
+  controller: App\Controller\SimulationsController::changeSimulation
+  methods: [POST]
