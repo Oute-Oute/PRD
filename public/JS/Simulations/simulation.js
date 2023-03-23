@@ -6,7 +6,7 @@
  */
 
 var currentDateStr = $_GET("date");
-console.log(currentDateStr)
+
 
 /**
  * @function $_GET
@@ -45,7 +45,7 @@ function SaveSimulation() {
 		url: "/saveSimulation",
 		type: "GET",
 		success: function (data) {
-			console.log(data)
+			location.reload();
 		},
 		error: function (data) {
 			console.log(data);
