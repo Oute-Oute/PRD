@@ -26,7 +26,7 @@ class ConnexionController extends AbstractController
         $userRepository = new UserRepository($doctrine);
         $username = $request->request->get('username');
         $password = $request->request->get('password');
-        $user     = $userRepository->findOneBy(['username' => $username]);
+        $user = $userRepository->findOneBy(['username' => $username]);
 
         //Creation variable erreur si probleme
         $messageError1 = "Erreur";
@@ -35,14 +35,16 @@ class ConnexionController extends AbstractController
         if ($user === null) {
             // user not found
             return $this->render('connexion/connexion.html.twig', [
-                'error' => $messageError1, 'message' => $messageError2,
+                'error' => $messageError1,
+                'message' => $messageError2,
             ]);
         } else {
             if (password_verify($password, $user->getPassword())) {
-                return $this->redirectToRoute('ConsultationPlanning', []);
+                return $this->redirectToRoute('Simulations', []);
             } else {
                 return $this->render('connexion/connexion.html.twig', [
-                    'error' => $messageError1, 'message' => $messageError2,
+                    'error' => $messageError1,
+                    'message' => $messageError2,
                 ]);
             }
         }
