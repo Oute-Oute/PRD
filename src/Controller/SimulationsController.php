@@ -20,8 +20,9 @@ class SimulationsController extends AbstractController
 
     public $date;
     public $dateFormatted;
+
     /*
-     * @brief Allows to get stats
+     * @brief Allow to get the simulation page
      * @param ManagerRegistry $doctrine
      * @return Response
      */
@@ -45,42 +46,48 @@ class SimulationsController extends AbstractController
         ]);
     }
 
+    /*
+     * @brief Allow to serialize the database into json files
+     * @param ManagerRegistry $doctrine
+     * @param bool $delete
+     * @return Response
+     */
     public function serializeDB(ManagerRegistry $doctrine, bool $delete = false): int
     {
         $entities = [];
+        //set the names of the files and the entities
         $filenames = ["patients", "appointments", "humanresources", "categoryofhumanresources", "workinghours", "materialresources", "categoryofmaterialresources", "unavailabilities", "unavailabilityhumanresources", "unavailabilitymaterialresources", "scheduledactivities", "humanresourcescheduled", "materialresourcescheduled"];
         $entitiesNames = ["Patient", "Appointment", "HumanResource", "CategoryOfHumanResource", "WorkingHours", "MaterialResource", "CategoryOfMaterialResource", "Unavailability", "UnavailabilityHumanResource", "UnavailabilityMaterialResource", "ScheduledActivity", "HumanResourceScheduled", "MaterialResourceScheduled"];
         $sequenceNames = ["patient", "appointment", "human_resource", "category_of_human_resource", "working_hours", "material_resource", "category_of_material_resource", "unavailability", "unavailability_human_resource", "unavailability_material_resource", "scheduled_activity", "human_resource_scheduled", "material_resource_scheduled"];
         for ($i = 0; $i < sizeof($entitiesNames); $i++) {
-            $entities[$i] = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->findAll();
+            $entities[$i] = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->findAll(); //get all the entities
         }
-        $numberOfPatients = sizeof($entities[0]);
-        $numberOfHumanResources = sizeof($entities[2]);
-        $numberOfMaterialResources = sizeof($entities[5]);
-        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]);
-        if ($simInfo != null) {
+        $numberOfPatients = sizeof($entities[0]); //get the number of patients
+        $numberOfHumanResources = sizeof($entities[2]); //get the number of human resources
+        $numberOfMaterialResources = sizeof($entities[5]); //get the number of material resources
+        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]); //get the current simulation info
+        if ($simInfo != null) { //if there is a current simulation info update it
             $simInfo->setNumberOfPatient($numberOfPatients);
             $simInfo->setNumberOfHumanResource($numberOfHumanResources);
             $simInfo->setNumberOfMaterialResource($numberOfMaterialResources);
             $simInfo->setCurrent(true);
-            $id = $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true);
-            $dir = "Simulations";
-            $simDir = $dir . "/" . $id;
-            if (!file_exists($simDir)) {
+            $id = $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true); //add the simulation info and get the id
+            $dir = "Simulations"; //set the directory
+            $simDir = $dir . "/" . $id; //set the simulation directory
+            if (!file_exists($simDir)) { //if the directory doesn't exist create it
                 mkdir($simDir, 0777, true);
             }
-            for ($i = 0; $i < sizeof($entities); $i++) {
-                $file = fopen($simDir . "/" . $filenames[$i] . ".json", "w");
-                $serializer = new Serializer([new DateTimeNormalizer(), new ObjectNormalizer()]);
-                $formatted = $serializer->normalize($entities[$i]);
-                fwrite($file, json_encode($formatted));
-                fclose($file);
+            for ($i = 0; $i < sizeof($entities); $i++) { //serialize the entities
+                $file = fopen($simDir . "/" . $filenames[$i] . ".json", "w"); //open the file
+                $serializer = new Serializer([new DateTimeNormalizer(), new ObjectNormalizer()]); //create the serializer
+                $formatted = $serializer->normalize($entities[$i]); //normalize the entities
+                fwrite($file, json_encode($formatted)); //write the entities into the file
+                fclose($file); //close the file
             }
         }
-        //drain the tables
-        if ($delete) {
-            for ($i = 0; $i < sizeof($entitiesNames); $i++) {
-                $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->deleteALl();
+        if ($delete) { //if the delete parameter is true
+            for ($i = 0; $i < sizeof($entitiesNames); $i++) { //delete all the entities
+                $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i])->deleteALl(); //delete all the entities
             }
             //reset sqlLite sequences
             for ($i = 0; $i < sizeof($sequenceNames); $i++) {
@@ -90,34 +97,46 @@ class SimulationsController extends AbstractController
         return 0;
     }
 
+    /*
+     * @brief Allow to deSerialize the database from json files and insert them into the database
+     * @param ManagerRegistry $doctrine
+     * @param int $id
+     * @return Response
+     */
     public function deSerializeDB(ManagerRegistry $doctrine, int $id): void
     {
         $entities = [];
+        //set the names of the files and the entities
         $filenames = ["patients", "appointments", "humanresources", "categoryofhumanresources", "workinghours", "materialresources", "categoryofmaterialresources", "unavailabilities", "unavailabilityhumanresources", "unavailabilitymaterialresources", "scheduledactivities", "humanresourcescheduled", "materialresourcescheduled"];
         $entitiesNames = ["Patient", "Appointment", "HumanResource", "CategoryOfHumanResource", "WorkingHours", "MaterialResource", "CategoryOfMaterialResource", "Unavailability", "UnavailabilityHumanResource", "UnavailabilityMaterialResource", "ScheduledActivity", "HumanResourceScheduled", "MaterialResourceScheduled"];
-        $dir = "Simulations";
-        $newDir = $dir . "/" . $id;
-        for ($i = 0; $i < sizeof($filenames); $i++) {
-            $file = fopen($newDir . "/" . $filenames[$i] . ".json", "r");
-            $json = fread($file, filesize($newDir . "/" . $filenames[$i] . ".json"));
-            $entities[$i] = json_decode($json, true);
-            fclose($file);
+        $dir = "Simulations"; //set the directory
+        $newDir = $dir . "/" . $id; //set the simulation directory
+        for ($i = 0; $i < sizeof($filenames); $i++) { //deserialize the entities
+            $file = fopen($newDir . "/" . $filenames[$i] . ".json", "r"); //open the file
+            $json = fread($file, filesize($newDir . "/" . $filenames[$i] . ".json")); //read the file
+            $entities[$i] = json_decode($json, true); //decode the json
+            fclose($file); //close the file
         }
-        usleep(1000);
-        for ($i = 0; $i < sizeof($entitiesNames); $i++) {
+        usleep(1000); //wait 1ms to avoid errors
+        for ($i = 0; $i < sizeof($entitiesNames); $i++) { //insert the entities into the database
             for ($j = 0; $j < sizeof($entities[$i]); $j++) {
-                $entity = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i]);
-                $entity->setFromArray($entities[$i][$j], $doctrine);
+                $entity = $doctrine->getRepository("App\Entity\\" . $entitiesNames[$i]); //get the entity
+                $entity->setFromArray($entities[$i][$j], $doctrine); //set the entity from the array
             }
         }
     }
 
+    /*
+     * @brief Allow to get the simulation infos
+     * @param ManagerRegistry $doctrine
+     * @return JsonResponse
+     */
     public function getInfos(ManagerRegistry $doctrine)
     {
-        $infosArray = [];
-        $infos = $doctrine->getRepository("App\Entity\SimulationInfo")->findAllOrderByCurrent();
+        $infosArray = []; //create the array
+        $infos = $doctrine->getRepository("App\Entity\SimulationInfo")->findAllOrderByCurrent(); //get the simulation infos
         for ($i = 0; $i < sizeof($infos); $i++) {
-            $infosArray[$i] = [
+            $infosArray[$i] = [ //add the infos to the array
                 "id" => $infos[$i]->getId(),
                 "simulationDateTime" => $infos[$i]->getSimulationdatetime(),
                 "numberOfPatients" => $infos[$i]->getNumberofpatient(),
@@ -126,88 +145,107 @@ class SimulationsController extends AbstractController
                 "isCurrent" => $infos[$i]->Iscurrent()
             ];
         }
-        $infos = new JsonResponse($infosArray);
+        $infos = new JsonResponse($infosArray); //create the json response
         return $infos;
     }
 
+    /*
+     * @brief Allow to create a new simulation
+     * @param ManagerRegistry $doctrine
+     * @return JsonResponse
+     */
     public function NewSimulation(ManagerRegistry $doctrine): Response
     {
-        $this->serializeDB($doctrine, true);
-        $currentSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]);
-        if ($currentSim != null) {
-            $currentSim->setCurrent(false);
+        $this->serializeDB($doctrine, true); //serialize the database
+        $currentSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]); //get the current simulation info
+        if ($currentSim != null) { //if there is a current simulation info update it
+            $currentSim->setCurrent(false); //set the current simulation info to false
         }
-        $simInfo = new SimulationInfo();
-        $simInfo->setNumberOfPatient(0);
-        $simInfo->setNumberOfHumanResource(0);
-        $simInfo->setNumberOfMaterialResource(0);
-        $simInfo->setCurrent(true);
-        $date = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
-        $date->format('Y-m-d H:i:s');
-        $simInfo->setSimulationdatetime($date);
-        $id = $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true);
-        return $this->redirectToRoute('Simulations');
+        $simInfo = new SimulationInfo(); //create a new simulation info
+        $simInfo->setNumberOfPatient(0); //set the number of patients to 0
+        $simInfo->setNumberOfHumanResource(0); //set the number of human resources to 0
+        $simInfo->setNumberOfMaterialResource(0); //set the number of material resources to 0
+        $simInfo->setCurrent(true); //set the current simulation info to true
+        $date = new \DateTime("now", new \DateTimeZone('Europe/Paris')); //get the current date
+        $date->format('Y-m-d H:i:s'); //format the date
+        $simInfo->setSimulationdatetime($date); //set the simulation date
+        $id = $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true); //add the simulation info to the database
+        return $this->redirectToRoute('Simulations'); //redirect to the simulation page
     }
 
+    /*
+     * @brief Allow to save the current simulation
+     * @param ManagerRegistry $doctrine
+     * @return JsonResponse
+     */
     public function saveSimulation(ManagerRegistry $doctrine): Response
     {
-        $this->serializeDB($doctrine);
-        return $this->redirectToRoute('Simulations');
+        $this->serializeDB($doctrine); //serialize the database
+        return $this->redirectToRoute('Simulations'); //redirect to the simulation page
     }
 
+    /*
+     * @brief Allow to change the current simulation
+     * @param ManagerRegistry $doctrine
+     * @return JsonResponse
+     */
     public function changeSimulation(ManagerRegistry $doctrine): Response
     {
-        $id = $_POST["id"];
-        $currentSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]);
-        if ($currentSim != null) {
-            $currentSim->setCurrent(false);
-            $doctrine->getRepository("App\Entity\SimulationInfo")->add($currentSim, true);
-            $this->serializeDB($doctrine, true);
+        $id = $_POST["id"]; //get the id of the simulation
+        $currentSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["iscurrent" => true]); //get the current simulation info
+        if ($currentSim != null) { //if there is a current simulation info update it
+            $currentSim->setCurrent(false); //set the current simulation info to false
+            $doctrine->getRepository("App\Entity\SimulationInfo")->add($currentSim, true); //add the simulation info to the database
+            $this->serializeDB($doctrine, true); //serialize the database
         }
-        usleep(1000);
-        $dir = "Simulations";
-        $simDir = $dir . "/" . $id;
-        if (is_dir($simDir)) {
-            $this->deSerializeDB($doctrine, $id);
+        usleep(1000); //wait 1ms to avoid errors
+        $dir = "Simulations"; //set the directory
+        $simDir = $dir . "/" . $id; //set the simulation directory
+        if (is_dir($simDir)) { //if the simulation directory exists
+            $this->deSerializeDB($doctrine, $id); //deserialize the database
         }
-        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]);
-        $simInfo->setCurrent(true);
-        $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true);
-        return $this->redirectToRoute('Simulations');
+        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]); //get the simulation info
+        $simInfo->setCurrent(true); //set the current simulation info to true
+        $doctrine->getRepository("App\Entity\SimulationInfo")->add($simInfo, true); //add the simulation info to the database
+        return $this->redirectToRoute('Simulations'); //redirect to the simulation page
     }
 
+    /*
+     * @brief Allow to delete a simulation
+     * @param ManagerRegistry $doctrine
+     * @return JsonResponse
+     */
     public function deleteSimulation(ManagerRegistry $doctrine): Response
     {
-        $id = $_POST["id"];
-        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]);
-        $iscurrent = $simInfo->Iscurrent();
-        $doctrine->getRepository("App\Entity\SimulationInfo")->remove($simInfo, true);
-        $dir = "Simulations";
-        $simDir = $dir . "/" . $id;
-        if (is_dir($simDir)) {
-            $it = new RecursiveDirectoryIterator($simDir, RecursiveDirectoryIterator::SKIP_DOTS);
-            $files = new RecursiveIteratorIterator(
+        $id = $_POST["id"]; //get the id of the simulation
+        $simInfo = $doctrine->getRepository("App\Entity\SimulationInfo")->findOneBy(["id" => $id]); //get the simulation info
+        $iscurrent = $simInfo->Iscurrent(); //get if the simulation is the current simulation
+        $doctrine->getRepository("App\Entity\SimulationInfo")->remove($simInfo, true); //remove the simulation info from the database
+        $dir = "Simulations"; //set the directory
+        $simDir = $dir . "/" . $id; //set the simulation directory
+        if (is_dir($simDir)) { //if the simulation directory exists
+            $it = new RecursiveDirectoryIterator($simDir, RecursiveDirectoryIterator::SKIP_DOTS); //get the files in the simulation directory
+            $files = new RecursiveIteratorIterator( //get the files in the simulation directory
                 $it,
                 RecursiveIteratorIterator::CHILD_FIRST
             );
             foreach ($files as $file) {
-                if ($file->isDir()) {
-                    rmdir($file->getRealPath());
+                if ($file->isDir()) { //if the file is a directory
+                    rmdir($file->getRealPath()); //remove the directory
                 } else {
-                    unlink($file->getRealPath());
+                    unlink($file->getRealPath()); //remove the file
                 }
             }
-            rmdir($simDir);
+            rmdir($simDir); //remove the simulation directory
         }
-        if ($iscurrent) {
-            $newSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findBy(array(), array('id' => 'ASC'), 1, 0);
-            if ($newSim != null) {
-                $this->deSerializeDB($doctrine, $newSim[0]->getId());
-                $newSim[0]->setCurrent(true);
-                $doctrine->getRepository("App\Entity\SimulationInfo")->add($newSim[0], true);
+        if ($iscurrent) { //if the simulation is the current simulation
+            $newSim = $doctrine->getRepository("App\Entity\SimulationInfo")->findBy(array(), array('id' => 'ASC'), 1, 0); //get the first simulation info
+            if ($newSim != null) { //if there is a simulation info
+                $this->deSerializeDB($doctrine, $newSim[0]->getId()); //deserialize the database
+                $newSim[0]->setCurrent(true); //set the current simulation info to true
+                $doctrine->getRepository("App\Entity\SimulationInfo")->add($newSim[0], true); //add the simulation info to the database
             }
         }
-        //return new JsonResponse(['success' => 'true']);
-        return $this->redirectToRoute('Simulations');
+        return $this->redirectToRoute('Simulations'); //redirect to the simulation page
     }
 }
