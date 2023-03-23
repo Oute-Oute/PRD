@@ -103,7 +103,11 @@ class AppointmentController extends AbstractController
         $param = $request->request->all();
 
         $name = explode(" ", $param["patient"]);
-        //parse_str($nameParsed[0], $nameParsed);
+        if (sizeof($name) > 2) {
+            for ($i = 2; $i < sizeof($name); $i++) {
+                $name[1] = $name[1] . " " . $name[$i];
+            }
+        }
         $patient = $doctrine->getManager()->getRepository("App\Entity\Patient")->findOneBy(['firstname' => $name[1], 'lastname' => $name[0]]);
         $pathway = $doctrine->getManager()->getRepository("App\Entity\Pathway")->findOneBy(['pathwayname' => $param["pathway"]]);
         $dayappointment = \DateTime::createFromFormat('Y-m-d H:i:s', $param['dayappointment'] . ' ' . "00:00:00");
@@ -213,7 +217,10 @@ class AppointmentController extends AbstractController
             //suppression des données associées au rendez-vous de la table ScheduledActivity
             $scheduledActivityRepository->remove($scheduledActivity, true);
         }
-
+        //suppression du patient
+        $patientRepository = $doctrine->getManager()->getRepository("App\Entity\Patient");
+        $patient = $patientRepository->findOneBy(['id' => $appointment->getPatient()->getId()]);
+        $patientRepository->remove($patient, true);
         //suppression du rendez-vous
         $appointmentRepository->remove($appointment, true);
 
