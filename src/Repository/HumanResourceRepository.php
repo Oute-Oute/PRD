@@ -92,6 +92,14 @@ class HumanResourceRepository extends ServiceEntityRepository
         $humanResource = new HumanResource();
         $humanResource->setHumanresourcename($data['humanresourcename']);
         $this->add($humanResource, true);
+        if ($humanResource->getId() == NULL) {
+            $hr2 = new HumanResource();
+            $hr2->setHumanresourcename($data['humanresourcename']);
+            $hr2->setId($data['id']);
+            $this->add($hr2, true);
+            $humanResource = $hr2
+            ;
+        }
         $this->changeId($humanResource->getId(), $data['id']);
     }
 
@@ -104,6 +112,9 @@ class HumanResourceRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->getQuery()
             ->execute();
+
+        //change sequence value
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'human_resource' . "'");
     }
 //    public function findOneBySomeField($value): ?HumanResource
 //    {

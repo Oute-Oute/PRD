@@ -83,7 +83,17 @@ class PatientRepository extends ServiceEntityRepository
         $patient = new Patient();
         $patient->setFirstname($data['firstname']);
         $patient->setLastname($data['lastname']);
-        $this->add($patient, true);
+        $this->getEntityManager()->persist($patient);
+        $this->getEntityManager()->flush();
+        if ($patient->getId() == NULL) {
+            $patient2 = new Patient();
+            $patient2->setId($data['id']);
+            $patient2->setFirstname($data['firstname']);
+            $patient2->setLastname($data['lastname']);
+            $this->getEntityManager()->persist($patient2);
+            $this->getEntityManager()->flush();
+            $patient = $patient2;
+        }
         $this->changeId($patient->getId(), $data['id']);
     }
 
@@ -97,6 +107,8 @@ class PatientRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute()
         ;
+        //change sequence value
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'patient' . "'");
     }
 
 //    public function findOneBySomeField($value): ?Patient

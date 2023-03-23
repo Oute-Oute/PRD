@@ -52,6 +52,14 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
         $unavailability = $registry->getRepository('App\Entity\Unavailability')->findOneBy(['id' => $data['unavailability']['id']]);
         $unavailabilityMR->setUnavailability($unavailability);
         $this->add($unavailabilityMR, true);
+        if ($unavailabilityMR->getId() == NULL) {
+            $UMR = new UnavailabilityMaterialResource();
+            $UMR->setMaterialresource($materialResource);
+            $UMR->setUnavailability($unavailability);
+            $UMR->setId($data['id']);
+            $this->add($UMR, true);
+            $unavailabilityMR = $UMR;
+        }
         $this->changeId($unavailabilityMR->getId(), $data['id']);
     }
 
@@ -61,6 +69,8 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId)
             ->execute();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability_material_resource' . "'");
     }
 
 //    /**

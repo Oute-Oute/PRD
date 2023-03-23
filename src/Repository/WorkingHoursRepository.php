@@ -54,6 +54,16 @@ class WorkingHoursRepository extends ServiceEntityRepository
         $workingHours->setEndtime($endTime);
         $workingHours->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
         $this->add($workingHours, true);
+        if ($workingHours->getId() == NULL) {
+            $WH = new WorkingHours();
+            $WH->setDayweek($data['dayweek']);
+            $WH->setStarttime($startTime);
+            $WH->setEndtime($endTime);
+            $WH->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
+            $WH->setId($data['id']);
+            $this->add($WH, true);
+            $workingHours = $WH;
+        }
         $this->changeId($workingHours->getId(), $data['id']);
     }
 
@@ -63,6 +73,8 @@ class WorkingHoursRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId)
             ->execute();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'working_hours' . "'");
     }
 
 //    /**

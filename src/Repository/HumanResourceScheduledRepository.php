@@ -70,6 +70,14 @@ class HumanResourceScheduledRepository extends ServiceEntityRepository
         $humanResourceScheduled->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
         $humanResourceScheduled->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
         $this->add($humanResourceScheduled, true);
+        if ($humanResourceScheduled->getId() == null) {
+            $HRS = new $humanResourceScheduled();
+            $HRS->setHumanresource($registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']));
+            $HRS->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
+            $HRS->setId($data['id']);
+            $this->add($HRS, true);
+            $humanResourceScheduled = $HRS;
+        }
         $this->changeId($humanResourceScheduled->getId(), $data['id']);
     }
 
@@ -82,6 +90,8 @@ class HumanResourceScheduledRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->getQuery();
         $p = $q->execute();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'human_resource_scheduled' . "'");
     }
 
 //    /**

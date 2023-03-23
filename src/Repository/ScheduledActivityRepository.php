@@ -70,6 +70,16 @@ class ScheduledActivityRepository extends ServiceEntityRepository
         $endTime = new \DateTime($data['endtime']);
         $scheduledActivity->setEndtime($endTime);
         $this->add($scheduledActivity, true);
+        if ($scheduledActivity->getId() == NULL) {
+            $SA = new $scheduledActivity();
+            $SA->setAppointment($appointment);
+            $SA->setActivity($activity);
+            $SA->setStarttime($startTime);
+            $SA->setEndtime($endTime);
+            $SA->setId($data['id']);
+            $this->add($SA, true);
+            $scheduledActivity = $SA;
+        }
         $this->changeId($scheduledActivity->getId(), $data['id']);
     }
 
@@ -83,6 +93,9 @@ class ScheduledActivityRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'scheduled_activity' . "'");
+
         return $query;
     }
 //    public function findOneBySomeField($value): ?ScheduledActivity

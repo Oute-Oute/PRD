@@ -70,6 +70,14 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
         $humanResourceCategory = $registry->getRepository('App\Entity\HumanResourceCategory')->find($data['humanresourcecategory']['id']);
         $categoryOfHumanResource->setHumanresourcecategory($humanResourceCategory);
         $this->add($categoryOfHumanResource, true);
+        if ($categoryOfHumanResource->getId() == null) {
+            $CHR = new $categoryOfHumanResource();
+            $CHR->setHumanresource($humanResource);
+            $CHR->setHumanresourcecategory($humanResourceCategory);
+            $CHR->setId($data['id']);
+            $this->add($CHR, true);
+            $categoryOfHumanResource = $CHR;
+        }
         $this->changeId($categoryOfHumanResource->getId(), $data['id']);
     }
 
@@ -82,6 +90,8 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
         $qb->setParameter('oldId', $oldId);
         $query = $qb->getQuery();
         $query->execute();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'category_of_human_resource' . "'");
     }
 
 //    /**

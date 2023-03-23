@@ -126,6 +126,18 @@ class AppointmentRepository extends ServiceEntityRepository
         $appointment->setScheduled($data['scheduled']);
         $appointment->setPatient($patient);
         $appointment->setPathway($pathway);
+        if ($appointment->getId() == null) {
+            $appointment2 = new Appointment();
+            $appointment2->setDayappointment($day);
+            $appointment2->setEarliestappointmenttime($earliestappointmenttime);
+            $appointment2->setLatestappointmenttime($latestappointmenttime);
+            $appointment2->setScheduled($data['scheduled']);
+            $appointment2->setPatient($patient);
+            $appointment2->setPathway($pathway);
+            $appointment2->setId($data['id']);
+            $this->add($appointment2, true);
+            $appointment = $appointment2;
+        }
         $this->add($appointment, true);
     }
 
@@ -138,6 +150,9 @@ class AppointmentRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('id', $id);
         $query = $qb->getQuery()->getResult();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'appointment' . "'");
+
         return $query;
     }
 }

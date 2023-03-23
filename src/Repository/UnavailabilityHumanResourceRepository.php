@@ -50,8 +50,19 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
         $humanResource = $registry->getRepository('App\Entity\HumanResource')->findOneBy(['id' => $data['humanresource']['id']]);
         $unavailabilityHR->setHumanresource($humanResource);
         $unavailability = $registry->getRepository('App\Entity\Unavailability')->findOneBy(['id' => $data['unavailability']['id']]);
+        var_dump($unavailability);
+        var_dump($data['unavailability']['id']);
+
         $unavailabilityHR->setUnavailability($unavailability);
         $this->add($unavailabilityHR, true);
+        if ($unavailabilityHR->getId() == NULL) {
+            $UHR = new UnavailabilityHumanResource();
+            $UHR->setHumanresource($humanResource);
+            $UHR->setUnavailability($unavailability);
+            $UHR->setId($data['id']);
+            $this->add($UHR, true);
+            $unavailabilityHR = $UHR;
+        }
         $this->changeId($unavailabilityHR->getId(), $data['id']);
     }
 
@@ -61,6 +72,7 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId)
             ->execute();
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability_human_resource' . "'");
     }
 
 //    /**

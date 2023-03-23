@@ -71,6 +71,14 @@ class MaterialResourceScheduledRepository extends ServiceEntityRepository
         $materialResourceScheduled->setMaterialresource($registry->getRepository('App\Entity\MaterialResource')->find($data['materialresource']['id']));
         $materialResourceScheduled->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
         $this->add($materialResourceScheduled, true);
+        if ($materialResourceScheduled->getId() == NULL) {
+            $MRS = new $materialResourceScheduled();
+            $MRS->setMaterialresource($registry->getRepository('App\Entity\MaterialResource')->find($data['materialresource']['id']));
+            $MRS->setScheduledactivity($registry->getRepository('App\Entity\ScheduledActivity')->find($data['scheduledactivity']['id']));
+            $MRS->setId($data['id']);
+            $this->add($MRS, true);
+            $materialResourceScheduled = $MRS;
+        }
         $this->changeId($materialResourceScheduled->getId(), $data['id']);
         return $materialResourceScheduled;
     }
@@ -83,6 +91,9 @@ class MaterialResourceScheduledRepository extends ServiceEntityRepository
         $qb->where('m.id = :oldId');
         $qb->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'material_resource_scheduled' . "'");
+
         return $query;
     }
 

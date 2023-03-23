@@ -80,6 +80,13 @@ class MaterialResourceRepository extends ServiceEntityRepository
         $materialResource = new MaterialResource();
         $materialResource->setMaterialresourcename($data['materialresourcename']);
         $this->add($materialResource, true);
+        if ($materialResource->getId() == NULL) {
+            $MR = new $materialResource();
+            $MR->setMaterialresourcename($data['materialresourcename']);
+            $MR->setId($data['id']);
+            $this->add($MR, true);
+            $materialResource = $MR;
+        }
         $this->changeId($materialResource->getId(), $data['id']);
     }
 
@@ -91,6 +98,7 @@ class MaterialResourceRepository extends ServiceEntityRepository
         $qb->where('m.id = :oldId');
         $qb->setParameter('oldId', $oldId);
         $qb->getQuery()->execute();
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'material_resource' . "'");
     }
 //    /**
 //     * @return MaterialResource[] Returns an array of MaterialResource objects

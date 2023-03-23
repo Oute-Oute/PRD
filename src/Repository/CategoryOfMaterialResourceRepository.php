@@ -55,6 +55,14 @@ class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
         $materialResource = $registry->getRepository("App\Entity\MaterialResource")->find($data['materialresource']['id']);
         $categoryOfMaterialResource->setMaterialresource($materialResource);
         $this->add($categoryOfMaterialResource, true);
+        if ($categoryOfMaterialResource->getId() == NULL) {
+            $CMR = new $categoryOfMaterialResource();
+            $CMR->setMaterialresourcecategory($materialResourceCategory);
+            $CMR->setMaterialresource($materialResource);
+            $CMR->setId($data['id']);
+            $this->add($CMR, true);
+            $categoryOfMaterialResource = $CMR;
+        }
         $this->changeId($categoryOfMaterialResource->getId(), $data['id']);
     }
 
@@ -67,6 +75,8 @@ class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
+
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'category_of_material_resource' . "'");
         return $query;
     }
 

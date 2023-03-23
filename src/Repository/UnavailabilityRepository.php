@@ -52,6 +52,14 @@ class UnavailabilityRepository extends ServiceEntityRepository
         $endTime = new \DateTime($data['enddatetime']);
         $unavailability->setEnddatetime($endTime);
         $this->add($unavailability, true);
+        if ($unavailability->getId() == NULL) {
+            $unavailability2 = new Unavailability();
+            $unavailability2->setStartdatetime($startTime);
+            $unavailability2->setEnddatetime($endTime);
+            $unavailability2->setId($data['id']);
+            $this->add($unavailability2, true);
+            $unavailability = $unavailability2;
+        }
         $this->changeId($unavailability->getId(), $data['id']);
     }
 
@@ -64,6 +72,7 @@ class UnavailabilityRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->getQuery()
             ->execute();
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability' . "'");
     }
 
 //    /**
