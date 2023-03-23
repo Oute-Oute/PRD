@@ -368,7 +368,7 @@ function importData() {
 					errorImport.innerHTML = "Il y a une erreur sur les ressources dans le fichier. (Soit le nombre de ressource est incohérent soit certaines ressources sont devenues en partie indisponibles entre temps)</br> Veuillez vérifier le fichier."
 					break;
 				case 3:
-					errorImport.innerHTML = "Il y a une erreur sur le format du fichier. </br> Il doit y avoir que des nombres dans le fichier. </br> Veuillez vérifier le fichier."
+					errorImport.innerHTML = "Il y a une erreur sur le format du fichier. </br> Il ne doit y avoir que des nombres dans le fichier. </br> Veuillez vérifier le fichier."
 					break;
 				case 4:
 					errorImport.innerHTML = "Il y a une erreur sur le format du fichier. </br> Au moins une ressource est utilisée plus d'une fois par la même activité. </br> Veuillez vérifier le fichier."
