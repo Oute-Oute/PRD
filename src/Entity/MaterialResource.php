@@ -27,6 +27,13 @@ class MaterialResource
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getMaterialresourcename(): ?string
     {
         return $this->materialresourcename;

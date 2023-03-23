@@ -27,6 +27,13 @@ class HumanResource
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getHumanresourcename(): ?string
     {
         return $this->humanresourcename;
@@ -42,5 +49,5 @@ class HumanResource
     public function __toString()
     {
         return $this->getHumanresourcename();
-    } 
+    }
 }

@@ -37,6 +37,13 @@ class WorkingHours
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * @ORM\ManyToOne(targetEntity=HumanResource::class)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")

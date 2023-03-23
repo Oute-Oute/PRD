@@ -32,6 +32,13 @@ class Unavailability
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getStartdatetime(): ?\DateTimeInterface
     {
         return $this->startdatetime;
