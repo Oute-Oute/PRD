@@ -70,7 +70,7 @@ class UnavailabilityMaterialResourceRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->execute();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability_material_resource' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'unavailability_material_resource' . "'");
     }
 
 //    /**

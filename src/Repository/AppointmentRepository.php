@@ -151,7 +151,7 @@ class AppointmentRepository extends ServiceEntityRepository
             ->setParameter('id', $id);
         $query = $qb->getQuery()->getResult();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'appointment' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'appointment' . "'");
 
         return $query;
     }

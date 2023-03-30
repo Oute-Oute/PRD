@@ -91,7 +91,7 @@ class HumanResourceScheduledRepository extends ServiceEntityRepository
             ->getQuery();
         $p = $q->execute();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'human_resource_scheduled' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'human_resource_scheduled' . "'");
     }
 
 //    /**

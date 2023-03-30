@@ -72,7 +72,7 @@ class UnavailabilityHumanResourceRepository extends ServiceEntityRepository
             ->setParameter('newId', $newId)
             ->setParameter('oldId', $oldId)
             ->execute();
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability_human_resource' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'unavailability_human_resource' . "'");
     }
 
 //    /**

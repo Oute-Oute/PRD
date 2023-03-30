@@ -65,10 +65,10 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
     public function setFromArray(array $data, ManagerRegistry $registry)
     {
         $categoryOfHumanResource = new CategoryOfHumanResource();
-        $humanResource = $registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']);
-        $categoryOfHumanResource->setHumanresource($humanResource);
         $humanResourceCategory = $registry->getRepository('App\Entity\HumanResourceCategory')->find($data['humanresourcecategory']['id']);
         $categoryOfHumanResource->setHumanresourcecategory($humanResourceCategory);
+        $humanResource = $registry->getRepository('App\Entity\HumanResource')->find($data['humanresource']['id']);
+        $categoryOfHumanResource->setHumanresource($humanResource);
         $this->add($categoryOfHumanResource, true);
         if ($categoryOfHumanResource->getId() == null) {
             $CHR = new $categoryOfHumanResource();
@@ -91,7 +91,7 @@ class CategoryOfHumanResourceRepository extends ServiceEntityRepository
         $query = $qb->getQuery();
         $query->execute();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'category_of_human_resource' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'category_of_human_resource' . "'");
     }
 
 //    /**

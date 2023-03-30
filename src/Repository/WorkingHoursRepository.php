@@ -74,7 +74,7 @@ class WorkingHoursRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->execute();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'working_hours' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'working_hours' . "'");
     }
 
 //    /**
