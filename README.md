@@ -4,6 +4,7 @@
 | Version | Date       | Auteur           |
 | ------- | ---------- | ---------------- |
 | 1.0     | 2023.03.01 | BLUMSTEIN Thomas |
+| 1.1     | 2023.29.03 | BLUMSTEIN Thomas |
 
 ## Sommaire
 <!-- TOC -->
@@ -19,6 +20,12 @@
   - [Compilation du projet](#compilation-du-projet)
     - [1. Clonage du projet](#1-clonage-du-projet)
     - [2. Lancement du projet](#2-lancement-du-projet)
+- [Architecture du projet](#architecture-du-projet)
+  - [Versions des librairies et Frameworks](#versions-des-librairies-et-frameworks)
+  - [1. Base de données](#1-base-de-données)
+  - [2. Frontend](#2-frontend)
+  - [3. Backend](#3-backend)
+  
 <!-- TOC -->
 
 ## Prérequis
@@ -147,3 +154,47 @@ importante)
 
 - Ouvrez un navigateur et tapez l'adresse inscrite dans l'encadré vert (ici http://127.0.0.1:8000)
 - Si tout s'est bien déroulé, la page de connexion du projet devrait s'afficher et vous pourrez vous connecter.
+
+# Architecture du projet
+
+Le projet est organisé en modèle Modèle Vue Contrôleur (MVC) Symfony reliant le site à une base de données et en 3 dossiers principaux
+
+## Versions des librairies et Frameworks
+
+Au 29/03/2023, les versions utilisées sont les suivantes :
+- PHP : v7.4.3
+- Symfony : v5.4.20
+- nodeJS : v18.14.0
+- Scoop : v0.3.1
+- Composer : v2.5.1
+- Librairies Javascript
+  - Bootstrap : v5.1.3
+  - FullCalendar Scheduler : v5.11.0
+  - Jquery : v3.6.0
+  - JqueryUI : v1.13.1
+  - Popper : v2.10.2
+  - AnimEvent : v1.0.17
+  - LeaderLine : v1.0.7
+
+## 1. Base de données
+
+La base de données est une base SQLITE3. Elle est située dans le dossier `src/var` et est nommée `database.sqlite` . Le serveur Symfony y accède sous forme d'entités qui sont situées dans le dossier `src/Entity` . Chaque entité correspond à une table de la base de données. (ex : `src/Entity/Appointment.php` correspond à la table `Appointment` de la base de données et permet de générer des objets `Appointment` qui seront utilisés dans le code du projet et qui correpondent aux entrées de la table.)
+
+La base de données est organisée suivant le modèle relationnel suivant :
+
+![bdd](https://i.imgur.com/gOx7Py9.jpg)  
+
+La table `SimulationInfos` n'est utilisée que dans l'outil de simulation et n'existe pas dans la base de données de l'outil de planification.
+
+## 2. Frontend
+
+Le frontend est composé de 2 dossiers principaux :
+- `public` : contient les fichiers statiques (css, js, images, etc.) chacun dans un sous-dossier séparé.
+- `templates` : contient les fichiers twig (fichiers html utilisés par symfony) qui seront affichés par le navigateur.
+
+## 3. Backend
+
+Les fichiers utilisés par le serveur Symfony sont situés dans le dossier src et organisés en 3 sous- dossiers :
+- `Controller` : contient les fichiers php qui gèrent les requêtes du navigateur et qui renvoient les pages twig.
+- `Entity` : contient les fichiers php qui correspondent aux entités de la base de données.
+- `Repository` : contient les fichiers php qui permettent de récupérer les données de la base de données.
