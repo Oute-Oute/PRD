@@ -108,7 +108,7 @@ class PatientRepository extends ServiceEntityRepository
             ->execute()
         ;
         //change sequence value
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'patient' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'patient' . "'");
     }
 
 //    public function findOneBySomeField($value): ?Patient

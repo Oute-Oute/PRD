@@ -92,7 +92,7 @@ class MaterialResourceScheduledRepository extends ServiceEntityRepository
         $qb->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'material_resource_scheduled' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'material_resource_scheduled' . "'");
 
         return $query;
     }

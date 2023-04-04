@@ -72,7 +72,7 @@ class UnavailabilityRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId)
             ->getQuery()
             ->execute();
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'unavailability' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'unavailability' . "'");
     }
 
 //    /**

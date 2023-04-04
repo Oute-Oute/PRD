@@ -76,7 +76,7 @@ class CategoryOfMaterialResourceRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'category_of_material_resource' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'category_of_material_resource' . "'");
         return $query;
     }
 

@@ -94,7 +94,7 @@ class ScheduledActivityRepository extends ServiceEntityRepository
             ->setParameter('oldId', $oldId);
         $query = $qb->getQuery()->getResult();
 
-        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId WHERE name = '" . 'scheduled_activity' . "'");
+        $this->getEntityManager()->getConnection()->exec("UPDATE sqlite_sequence SET seq = $newId+1 WHERE name = '" . 'scheduled_activity' . "'");
 
         return $query;
     }
