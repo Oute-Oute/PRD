@@ -45,5 +45,4 @@ var/cache/dev/url_matching_routes.php
 var/log/dev.log
 var/database.sqlite-journal
 README.pdf
-/public/Simulations/
 /doc/
